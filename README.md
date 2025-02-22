@@ -1,48 +1,46 @@
 ## Requisitos
 
-Para ejecutar este repositorio, necesitas tener instalados los siguientes componentes:
+To launch this repository you will first need this software:
 
 - Java 23
-- Node.js
-- npm
+- MariaDB 11.4
+- HeidiSQL (optional)
 
-# Getting Started with Create React App
+## Instalación
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+### 1. Clone the repo
 
-## Available Scripts
+```sh
+git clone https://github.com/tu-usuario/holos.git
+cd holos
+```
 
-In the project directory, you can run:
+### 2. Configure Database
 
-### `npm start`
+Open mysql command line:
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+```sh
+mysql -u root -p
+```
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+if it shows an error check if MariaDB bin folder is added to the PATH:
+C:\Program Files\MariaDB 11.4\bin
 
-### `npm test`
+Create the database and user
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+```SQL
+CREATE DATABASE holos_db;
+CREATE USER 'H0l0s_DB'@'localhost' IDENTIFIED BY 'H0l0s1$PP';
+GRANT ALL PRIVILEGES ON holos_db.* TO 'H0l0s_DB'@'localhost';
+FLUSH PRIVILEGES;
+```
 
-### `npm run build`
+### 3. Run the app
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+Install the java extension package for VS Code, it will make everything easier
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+Go to the HolosApplication.java and press the run button over 'public static void'
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+## 3.1. Check database is connected (optional)
 
-### `npm run eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
-
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
-
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+To check if the database and the backend are connected use HeidiSQL, create a new connection with the application.properties user and password and see how the user table has appeared inside de holos_db database 
