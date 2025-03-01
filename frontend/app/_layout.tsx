@@ -1,21 +1,28 @@
-import { createDrawerNavigator } from '@react-navigation/drawer';
+import { createDrawerNavigator } from "@react-navigation/drawer";
 import HomeScreen from "./src/screens/HomeScreen";
-// import LoginScreen from "./src/screens/LoginScreen";
+import ExploreScreen from "./src/screens/ExploreScreen/ExploreScreen";
+import SearchIcon from "@/assets/svgs/SearchIcon";
 
-const Drawer = createDrawerNavigator()
+const Drawer = createDrawerNavigator();
 
 export default function RootLayout() {
   return (
-    // <NavigationContainer>
-      <Drawer.Navigator 
-        initialRouteName="Inicio"
-        screenOptions={{
-          headerShown: true, // para poder incluir el botón burger en la cabecera
+    <Drawer.Navigator
+      initialRouteName="Inicio"
+      screenOptions={{
+        headerShown: true,
+      }}
+    >
+      <Drawer.Screen name="Inicio" component={HomeScreen} />
+      <Drawer.Screen
+        name="Explorar"
+        component={ExploreScreen}
+        options={{
+          drawerIcon: ({ color, size }) => (
+            <SearchIcon width={size} height={size} />
+          ),
         }}
-      >
-        <Drawer.Screen name="Inicio" component={HomeScreen} />
-        {/* <Drawer.Screen name="Iniciar Sesión" component={LoginScreen} /> */}
-      </Drawer.Navigator>
-    //</NavigationContainer>
-);
+      />
+    </Drawer.Navigator>
+  );
 }
