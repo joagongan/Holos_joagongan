@@ -5,11 +5,11 @@ import {
   View,
   TextInput,
   Image,
-  StyleSheet,
   TouchableOpacity,
+  LayoutChangeEvent,
 } from "react-native";
-import styles from "./ExploreScreen.styles";
 import { Ionicons } from "@expo/vector-icons";
+import styles from "./ExploreScreen.styles";
 
 interface Category {
   id: number;
@@ -24,10 +24,27 @@ interface Artist {
 }
 
 export default function ExploreScreen() {
-  const [searchText, setSearchText] = useState<string>("");
-  const [showAllCategories, setShowAllCategories] = useState<boolean>(false);
+  const [searchText, setSearchText] = useState("");
+  const [showAllCategories, setShowAllCategories] = useState(false);
 
-  // Datos de ejemplo
+  // Mide el ancho disponible (incluye paddingHorizontal si el onLayout está en ScrollView)
+  const [containerWidth, setContainerWidth] = useState(0);
+
+  // --- BREAKPOINT: si es >= 1024, consideramos "pantalla grande"
+  const isBigScreen = containerWidth >= 1024;
+
+  // Ajustes para columnas, gap, padding horizontal según el tamaño de la pantalla
+  const COLUMNS = isBigScreen ? 5 : 4; // 6 columnas en grande, 4 en móvil
+  const GAP = isBigScreen ? 24 : 16; // más gap en pantallas grandes
+  const horizontalPadding = isBigScreen ? 48 : 32; // padding total (16 * 2 en móvil, 24 * 2 o 48 total en grande)
+
+  // Calculamos el ancho de cada ítem
+  // Restamos paddingHorizontal total y los gaps entre columnas
+  const itemWidth = containerWidth
+    ? (containerWidth - horizontalPadding - GAP * (COLUMNS - 1)) / COLUMNS
+    : 0;
+
+  // Ejemplo de datos
   const [categories, setCategories] = useState<Category[]>([
     { id: 1, name: "Pintura", image: "https://picsum.photos/200?random=1" },
     { id: 2, name: "Escultura", image: "https://picsum.photos/200?random=2" },
@@ -35,67 +52,138 @@ export default function ExploreScreen() {
     { id: 4, name: "Dibujo", image: "https://picsum.photos/200?random=4" },
     { id: 5, name: "Grabado", image: "https://picsum.photos/200?random=5" },
     { id: 6, name: "Diseño", image: "https://picsum.photos/200?random=6" },
+    { id: 7, name: "Street Art", image: "https://picsum.photos/200?random=7" },
+    {
+      id: 8,
+      name: "Arte Digital",
+      image: "https://picsum.photos/200?random=8",
+    },
+    { id: 9, name: "Muralismo", image: "https://picsum.photos/200?random=9" },
+    {
+      id: 10,
+      name: "Caligrafía",
+      image: "https://picsum.photos/200?random=10",
+    },
+    {
+      id: 11,
+      name: "Instalación",
+      image: "https://picsum.photos/200?random=11",
+    },
+    {
+      id: 12,
+      name: "Performance",
+      image: "https://picsum.photos/200?random=12",
+    },
   ]);
 
   const [newArtists, setNewArtists] = useState<Artist[]>([
-    { id: 1, name: "Artista 1", image: "https://picsum.photos/200?random=7" },
-    { id: 2, name: "Artista 2", image: "https://picsum.photos/200?random=8" },
-    { id: 3, name: "Artista 3", image: "https://picsum.photos/200?random=9" },
-    { id: 4, name: "Artista 4", image: "https://picsum.photos/200?random=10" },
+    { id: 1, name: "Artista 1", image: "https://picsum.photos/200?random=13" },
+    { id: 2, name: "Artista 2", image: "https://picsum.photos/200?random=14" },
+    { id: 3, name: "Artista 3", image: "https://picsum.photos/200?random=15" },
+    { id: 4, name: "Artista 4", image: "https://picsum.photos/200?random=16" },
+    { id: 5, name: "Artista 5", image: "https://picsum.photos/200?random=17" },
+    { id: 6, name: "Artista 6", image: "https://picsum.photos/200?random=18" },
+    { id: 7, name: "Artista 7", image: "https://picsum.photos/200?random=19" },
+    { id: 8, name: "Artista 8", image: "https://picsum.photos/200?random=20" },
   ]);
 
   useEffect(() => {
     // Aquí irían las llamadas reales a tu backend
   }, []);
 
+  // Maneja cambio de layout
+  const handleLayout = (event: LayoutChangeEvent) => {
+    const width = event.nativeEvent.layout.width;
+    setContainerWidth(width);
+  };
+
   const handleSearch = (text: string) => {
     setSearchText(text);
   };
 
+  const categoriesToShow = isBigScreen ? 5 : 4;
+  // Muestra solo 4 categorías si no se ha pulsado "ver más"
   const displayedCategories = showAllCategories
     ? categories
-    : categories.slice(0, 4);
+    : categories.slice(0, categoriesToShow);
 
   return (
-    <ScrollView style={styles.container}>
+    // onLayout para medir ancho del ScrollView
+    <ScrollView style={styles.container} onLayout={handleLayout}>
       <TextInput
         style={styles.searchBar}
-        placeholder="Buscar arte o artistas"
+        placeholder="Encuentra arte o artistas para ti"
         value={searchText}
         onChangeText={handleSearch}
       />
 
       <Text style={styles.title}>Categorías</Text>
       <View style={styles.categoriesContainer}>
-        {displayedCategories.map((category) => (
-          <View key={category.id} style={styles.categoryItem}>
-            <Image
-              source={{ uri: category.image }}
-              style={styles.categoryImage}
-            />
-            <Text style={styles.categoryText}>{category.name}</Text>
-          </View>
-        ))}
+        {displayedCategories.map((category, index) => {
+          const isLastInRow = index % COLUMNS === COLUMNS - 1;
+          return (
+            <View
+              key={category.id}
+              style={[
+                styles.categoryItem,
+                {
+                  width: itemWidth,
+                  marginRight: isLastInRow ? 0 : GAP,
+                },
+              ]}
+            >
+              <View style={styles.categoryImageContainer}>
+                <Image
+                  source={{ uri: category.image }}
+                  style={styles.categoryImage}
+                />
+              </View>
+              <Text style={styles.categoryText}>{category.name}</Text>
+            </View>
+          );
+        })}
       </View>
 
-      {/* flecha abajo */}
-      {!showAllCategories && categories.length > 4 && (
+      {/* Botón para ver más/menos */}
+      {categories.length > 4 && (
         <TouchableOpacity
           style={styles.seeMoreButton}
-          onPress={() => setShowAllCategories(true)}
+          onPress={() => setShowAllCategories(!showAllCategories)}
         >
-          <Ionicons name="chevron-down" size={24} color="black" />
+          <Ionicons
+            name={showAllCategories ? "chevron-up" : "chevron-down"}
+            size={24}
+            color="black"
+          />
         </TouchableOpacity>
       )}
 
       <Text style={styles.title}>Novedades</Text>
       <View style={styles.artistsContainer}>
-        {newArtists.map((artist) => (
-          <View key={artist.id} style={styles.artistItem}>
-            <Image source={{ uri: artist.image }} style={styles.artistImage} />
-            <Text style={styles.artistText}>{artist.name}</Text>
-          </View>
-        ))}
+        {newArtists.map((artist, index) => {
+          const isLastInRow = index % COLUMNS === COLUMNS - 1;
+          return (
+            <View
+              key={artist.id}
+              style={[
+                styles.artistItem,
+                {
+                  width: itemWidth,
+                  marginRight: isLastInRow ? 0 : GAP,
+                },
+              ]}
+            >
+              <View style={styles.artistImageContainer}>
+                <Image
+                  source={{ uri: artist.image }}
+                  style={styles.artistImage}
+                />
+              </View>
+
+              <Text style={styles.artistText}>{artist.name}</Text>
+            </View>
+          );
+        })}
       </View>
     </ScrollView>
   );
