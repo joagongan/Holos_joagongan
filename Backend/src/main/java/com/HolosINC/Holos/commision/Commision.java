@@ -17,10 +17,12 @@ import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 @Entity
 @Table(name = "commisions")
 @Data
+@EqualsAndHashCode(callSuper=false)
 @Inheritance(strategy = InheritanceType.JOINED)
 public class Commision extends Work{
 
