@@ -27,19 +27,14 @@ export default function ExploreScreen() {
   const [searchText, setSearchText] = useState("");
   const [showAllCategories, setShowAllCategories] = useState(false);
 
-  // Mide el ancho disponible (incluye paddingHorizontal si el onLayout está en ScrollView)
   const [containerWidth, setContainerWidth] = useState(0);
 
-  // --- BREAKPOINT: si es >= 1024, consideramos "pantalla grande"
   const isBigScreen = containerWidth >= 1024;
 
-  // Ajustes para columnas, gap, padding horizontal según el tamaño de la pantalla
-  const COLUMNS = isBigScreen ? 5 : 4; // 6 columnas en grande, 4 en móvil
-  const GAP = isBigScreen ? 24 : 16; // más gap en pantallas grandes
-  const horizontalPadding = isBigScreen ? 48 : 32; // padding total (16 * 2 en móvil, 24 * 2 o 48 total en grande)
+  const COLUMNS = isBigScreen ? 5 : 4;
+  const GAP = isBigScreen ? 24 : 16;
+  const horizontalPadding = isBigScreen ? 48 : 32;
 
-  // Calculamos el ancho de cada ítem
-  // Restamos paddingHorizontal total y los gaps entre columnas
   const itemWidth = containerWidth
     ? (containerWidth - horizontalPadding - GAP * (COLUMNS - 1)) / COLUMNS
     : 0;
@@ -91,7 +86,6 @@ export default function ExploreScreen() {
     // Aquí irían las llamadas reales a tu backend
   }, []);
 
-  // Maneja cambio de layout
   const handleLayout = (event: LayoutChangeEvent) => {
     const width = event.nativeEvent.layout.width;
     setContainerWidth(width);
@@ -102,13 +96,11 @@ export default function ExploreScreen() {
   };
 
   const categoriesToShow = isBigScreen ? 5 : 4;
-  // Muestra solo 4 categorías si no se ha pulsado "ver más"
   const displayedCategories = showAllCategories
     ? categories
     : categories.slice(0, categoriesToShow);
 
   return (
-    // onLayout para medir ancho del ScrollView
     <ScrollView style={styles.container} onLayout={handleLayout}>
       <TextInput
         style={styles.searchBar}

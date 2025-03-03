@@ -6,29 +6,26 @@ const isBigScreen = width >= 1024;
 export default StyleSheet.create({
   container: {
     flex: 1,
-    // OJO: este paddingHorizontal: 16 se suma al que calculas en horizontalPadding
-    // Para que no haya conflicto, puedes dejarlo en 0 y manejarlo
-    // en tu cálculo itemWidth. O lo mantienes, pero ajusta el horizontalPadding.
     paddingHorizontal: 16,
     paddingVertical: 16,
   },
 
   searchBar: {
-    width: "80%", // No ocupa todo el ancho
-    alignSelf: "center", // Centrada
+    width: "80%",
+    alignSelf: "center",
     borderWidth: 1,
     borderColor: "#ddd",
-    borderRadius: 24, // Bordes más redondeados, estilo pill
+    borderRadius: 24,
     paddingHorizontal: 16,
     paddingVertical: isBigScreen ? 14 : 10,
     marginBottom: 16,
-    backgroundColor: "#f9f9f9", // Fondo claro
+    backgroundColor: "#f9f9f9",
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
-    elevation: 2, // Para Android
-    fontSize: 18, // Aquí defines el tamaño de la letra
+    elevation: 2,
+    fontSize: 18,
   },
 
   title: {
