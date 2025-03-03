@@ -26,6 +26,7 @@ export default StyleSheet.create({
     shadowRadius: 4,
     elevation: 2,
     fontSize: 18,
+    color: isBigScreen ? "#000" : "#000",
   },
 
   title: {

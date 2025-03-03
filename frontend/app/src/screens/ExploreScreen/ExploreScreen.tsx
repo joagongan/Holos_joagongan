@@ -24,13 +24,11 @@ interface Artist {
 }
 
 export default function ExploreScreen() {
-  const [searchText, setSearchText] = useState("");
-  const [showAllCategories, setShowAllCategories] = useState(false);
-
-  const [containerWidth, setContainerWidth] = useState(0);
+  const [searchText, setSearchText] = useState<string>("");
+  const [showAllCategories, setShowAllCategories] = useState<boolean>(false);
+  const [containerWidth, setContainerWidth] = useState<number>(0);
 
   const isBigScreen = containerWidth >= 1024;
-
   const COLUMNS = isBigScreen ? 5 : 4;
   const GAP = isBigScreen ? 24 : 16;
   const horizontalPadding = isBigScreen ? 48 : 32;
@@ -39,7 +37,7 @@ export default function ExploreScreen() {
     ? (containerWidth - horizontalPadding - GAP * (COLUMNS - 1)) / COLUMNS
     : 0;
 
-  // Ejemplo de datos
+  // Datos de ejemplo para categorías y artistas
   const [categories, setCategories] = useState<Category[]>([
     { id: 1, name: "Pintura", image: "https://picsum.photos/200?random=1" },
     { id: 2, name: "Escultura", image: "https://picsum.photos/200?random=2" },
@@ -83,7 +81,7 @@ export default function ExploreScreen() {
   ]);
 
   useEffect(() => {
-    // Aquí irían las llamadas reales a tu backend
+    // Aquí podrías hacer llamadas a tu backend
   }, []);
 
   const handleLayout = (event: LayoutChangeEvent) => {
@@ -95,16 +93,29 @@ export default function ExploreScreen() {
     setSearchText(text);
   };
 
-  const categoriesToShow = isBigScreen ? 5 : 4;
-  const displayedCategories = showAllCategories
-    ? categories
-    : categories.slice(0, categoriesToShow);
+  const filteredCategories = searchText
+    ? categories.filter((category) =>
+        category.name.toLowerCase().includes(searchText.toLowerCase())
+      )
+    : categories;
+
+  const displayedCategories =
+    searchText || showAllCategories
+      ? filteredCategories
+      : filteredCategories.slice(0, isBigScreen ? 5 : 4);
+
+  const filteredArtists = searchText
+    ? newArtists.filter((artist) =>
+        artist.name.toLowerCase().includes(searchText.toLowerCase())
+      )
+    : newArtists;
 
   return (
     <ScrollView style={styles.container} onLayout={handleLayout}>
       <TextInput
         style={styles.searchBar}
         placeholder="Encuentra arte o artistas para ti"
+        placeholderTextColor="rgba(50, 50, 50, 0.8)"
         value={searchText}
         onChangeText={handleSearch}
       />
@@ -118,10 +129,7 @@ export default function ExploreScreen() {
               key={category.id}
               style={[
                 styles.categoryItem,
-                {
-                  width: itemWidth,
-                  marginRight: isLastInRow ? 0 : GAP,
-                },
+                { width: itemWidth, marginRight: isLastInRow ? 0 : GAP },
               ]}
             >
               <View style={styles.categoryImageContainer}>
@@ -136,8 +144,8 @@ export default function ExploreScreen() {
         })}
       </View>
 
-      {/* Botón para ver más/menos */}
-      {categories.length > 4 && (
+      {/* Botón para ver más/menos, solo si no se está buscando */}
+      {categories.length > 4 && !searchText && (
         <TouchableOpacity
           style={styles.seeMoreButton}
           onPress={() => setShowAllCategories(!showAllCategories)}
@@ -152,17 +160,14 @@ export default function ExploreScreen() {
 
       <Text style={styles.title}>Novedades</Text>
       <View style={styles.artistsContainer}>
-        {newArtists.map((artist, index) => {
+        {filteredArtists.map((artist, index) => {
           const isLastInRow = index % COLUMNS === COLUMNS - 1;
           return (
             <View
               key={artist.id}
               style={[
                 styles.artistItem,
-                {
-                  width: itemWidth,
-                  marginRight: isLastInRow ? 0 : GAP,
-                },
+                { width: itemWidth, marginRight: isLastInRow ? 0 : GAP },
               ]}
             >
               <View style={styles.artistImageContainer}>
@@ -171,7 +176,6 @@ export default function ExploreScreen() {
                   style={styles.artistImage}
                 />
               </View>
-
               <Text style={styles.artistText}>{artist.name}</Text>
             </View>
           );
