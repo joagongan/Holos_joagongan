@@ -4,13 +4,16 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
-import java.util.Set;
-import lombok.Data;
-//import com.HolosINC.Holos.Work;
 
+import java.util.Set;
+
+import com.HolosINC.Holos.artist.Artist;
+import com.HolosINC.Holos.work.Work;
+
+import lombok.Data;
 
 @Data
 @Entity
@@ -25,6 +28,9 @@ public class Category {
     private String name;
     private String description;
     
-    //@OneToMany(mappedBy = "category")
-    //private Set<Work> works;
+    @ManyToMany(mappedBy = "category")
+    private Set<Artist> artist;
+
+    @ManyToMany(mappedBy = "category")
+    private Set<Work> works;
 }
