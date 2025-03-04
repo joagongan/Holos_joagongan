@@ -1,7 +1,5 @@
 package com.HolosINC.Holos.Category;
 
-import java.util.Locale.Category;
-
 import com.HolosINC.Holos.work.Work;
 
 import jakarta.persistence.Entity;
@@ -24,7 +22,7 @@ public class WorkCategory {
 
     @ManyToOne
     @JoinColumn(name = "work_id")
-    private Work Work;
+    private Work work;
 
     @ManyToOne
     @JoinColumn(name = "category_id")

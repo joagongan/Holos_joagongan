@@ -10,9 +10,6 @@ import jakarta.persistence.Table;
 
 import java.util.Set;
 
-import com.HolosINC.Holos.artist.Artist;
-import com.HolosINC.Holos.work.Work;
-
 import lombok.Data;
 
 @Data
@@ -23,14 +20,14 @@ public class Category {
     @Id
     @SequenceGenerator(name = "category_seq", sequenceName = "category_sequence", initialValue = 100)
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "category_seq")
-    private Integer id;
+    private Long id;
 
     private String name;
     private String description;
     
     @ManyToMany(mappedBy = "category")
-    private Set<Artist> artist;
+    private Set<ArtistCategory> artistCategories;
 
     @ManyToMany(mappedBy = "category")
-    private Set<Work> works;
+    private Set<WorkCategory> workscCategories;
 }

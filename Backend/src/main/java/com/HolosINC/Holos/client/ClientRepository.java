@@ -5,6 +5,6 @@ import org.springframework.data.jpa.repository.Query;
 
 public interface ClientRepository extends JpaRepository<Client, Long> {
 
-    @Query("SELECT TRUE FROM clients WHERE id = :id")
+    @Query("SELECT CASE WHEN COUNT(c) > 0 THEN true ELSE false END FROM Client c WHERE c.id = :id")
     boolean isClient(Long id);
 }

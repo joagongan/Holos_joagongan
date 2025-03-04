@@ -1,7 +1,5 @@
 package com.HolosINC.Holos.Category;
 
-import java.util.Locale.Category;
-
 import com.HolosINC.Holos.artist.Artist;
 
 import jakarta.persistence.Entity;

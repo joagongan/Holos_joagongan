@@ -5,6 +5,6 @@ import org.springframework.data.jpa.repository.Query;
 
 public interface ArtistRepository extends JpaRepository<Artist, Long> {
 
-    @Query("SELECT TRUE FROM clients WHERE id = :id")
+    @Query("SELECT CASE WHEN COUNT(a) > 0 THEN true ELSE false END FROM Artist a WHERE a.id = :id")
     boolean isArtist(Long id);
 }
