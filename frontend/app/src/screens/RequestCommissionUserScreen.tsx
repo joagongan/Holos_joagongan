@@ -1,12 +1,30 @@
 import React,  { useState } from "react";
-import { View, Text, Image, StyleSheet, TextInput } from "react-native";
+import { View, Text, Image, StyleSheet, TextInput, TouchableOpacity, Alert } from "react-native";
+import * as ImagePicker from "expo-image-picker";
 
 
 export default function RequestCommissionUserScreen ({ navigation }) {
 
   const [inputText, setInputText] = useState("");
+  const [selectedImage, setSelectedImage] = useState<string | null>(null);
+
+  const pickImage = async () => {
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: true,
+      aspect: [4, 3],
+      quality: 1,
+    });
+
+    if (!result.canceled) {
+      setSelectedImage(result.assets[0].uri);
+    }
+  };
     
-      
+  const handleSend = () => {
+    Alert.alert("Solicitud enviada", inputText || "Debe de ingresar una descripción del trabajo");
+  };
+
   return (
     <View style={styles.container}>
     {/* Título de la pagina */}
@@ -37,16 +55,41 @@ export default function RequestCommissionUserScreen ({ navigation }) {
     </View>
     
     {/* Input de Texto */}
-    <View style={styles.inputContainer}>
-      <Text style={styles.titleBannerInputText}>DESCRIBA EL TRABAJO DESEADO:</Text>
-      <TextInput
-        style={styles.input}
-        placeholder="Describa su solicitud..."
-        multiline
-        value={inputText}
-        onChangeText={setInputText}
-      />
+    <View style={styles.containerTextPhoto}>
+      <View style={styles.inputContainer}>
+        <Text style={styles.titleBannerInputText}>DESCRIBA EL TRABAJO DESEADO:</Text>
+        <TextInput
+          style={styles.input}
+          placeholder="Describa su solicitud..."
+          multiline
+          value={inputText}
+          onChangeText={setInputText}
+        />
+      </View>
+
+      <View style={styles.previewContainer}>
+        {selectedImage ? (
+        <Image source={{ uri: selectedImage }} style={styles.previewImage} />
+          ) : (
+        <Text style={styles.placeholderText}>No hay imagen seleccionada</Text>
+        )}
+      </View>
     </View>
+   
+    
+    {/* Contenedor de botones en fila */}
+    <View style={styles.buttonContainer}>
+        {/* Botón para seleccionar imagen */}
+        <TouchableOpacity style={styles.imageButton} onPress={pickImage}>
+          <Text style={styles.buttonText}>📸 Agregar Foto</Text>
+        </TouchableOpacity>
+
+        {/* Botón de enviar */}
+        <TouchableOpacity style={styles.sendButton} onPress={handleSend}>
+          <Text style={styles.buttonText}>Enviar</Text>
+        </TouchableOpacity>
+      </View>
+
   </View>
 );
     
@@ -128,9 +171,23 @@ const styles = StyleSheet.create({
         },
 
     inputContainer: {
-      height:"30%",
-      marginTop: 10,
-      },
+      flex: 1, 
+      paddingRight: 10,
+    },
+
+    previewContainer: {
+      flex: 1,
+      justifyContent: "center",
+      alignItems: "center",
+      backgroundColor: "#F0F0F0",
+      borderRadius: 10,
+    },
+
+    placeholderText: {
+      fontSize: 16,
+      color: "#666",
+      textAlign: "center",
+    },
 
     titleBannerInputText:{
       fontWeight: "bold",
@@ -147,6 +204,46 @@ const styles = StyleSheet.create({
       borderColor: "#173C75",
       height: "100%",
       textAlignVertical: "top"
-    }
+    },
+
+    previewImage: {
+      width: "90%",
+      height: "90%",
+      resizeMode: "contain",
+      borderRadius: 10,
+    },
+
+    containerTextPhoto: {
+      flexDirection: "row",
+      height: 300,
+      marginTop: 15,
+    },
+
+    buttonContainer: {
+      flexDirection: "row",
+      justifyContent: "center",
+      marginTop: 15,
+    },
+  
+    imageButton: {
+      backgroundColor: "#FFA500",
+      paddingVertical: 10,
+      paddingHorizontal: 20,
+      borderRadius: 5,
+      marginRight: 10, 
+    },
+  
+    sendButton: {
+      backgroundColor: "#173C75",
+      paddingVertical: 10,
+      paddingHorizontal: 20,
+      borderRadius: 5,
+    },
+  
+    buttonText: {
+      color: "#FFF",
+      fontWeight: "bold",
+      fontSize: 16,
+    },
  
 });
