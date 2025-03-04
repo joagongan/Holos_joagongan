@@ -37,7 +37,7 @@ public class MilestoneController {
         return ResponseEntity.ok(milestoneService.getById(id));
     }
 
-    @GetMapping("/milestones/{commision_id}")
+    @GetMapping("/milestones/commision/{commision_id}")
     public ResponseEntity<List<Milestone>> getMilestonesByCommisionId(@PathVariable("commision_id") Long commision_id) {
         return ResponseEntity.ok(milestoneService.getByCommisionId(commision_id));
     }
