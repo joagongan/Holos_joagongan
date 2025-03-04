@@ -1,7 +1,11 @@
-import React from "react";
-import { View, Text, Image, StyleSheet } from "react-native";
+import React,  { useState } from "react";
+import { View, Text, Image, StyleSheet, TextInput } from "react-native";
+
 
 export default function RequestCommissionUserScreen ({ navigation }) {
+
+  const [inputText, setInputText] = useState("");
+    
       
   return (
     <View style={styles.container}>
@@ -31,8 +35,18 @@ export default function RequestCommissionUserScreen ({ navigation }) {
         />
       </View>
     </View>
-
-  
+    
+    {/* Input de Texto */}
+    <View style={styles.inputContainer}>
+      <Text style={styles.titleBannerInputText}>DESCRIBA EL TRABAJO DESEADO:</Text>
+      <TextInput
+        style={styles.input}
+        placeholder="Describa su solicitud..."
+        multiline
+        value={inputText}
+        onChangeText={setInputText}
+      />
+    </View>
   </View>
 );
     
@@ -111,6 +125,28 @@ const styles = StyleSheet.create({
         width: "90%",
         height: "100%",
         resizeMode: "contain"
-        }
+        },
+
+    inputContainer: {
+      height:"30%",
+      marginTop: 10,
+      },
+
+    titleBannerInputText:{
+      fontWeight: "bold",
+      fontSize: 40,
+      color: "#173C75",
+      marginBottom: 10,
+    
+    },
+    input: {
+      backgroundColor: "#FFF",
+      padding: 10,
+      borderRadius: 5,
+      borderWidth: 1,
+      borderColor: "#173C75",
+      height: "100%",
+      textAlignVertical: "top"
+    }
  
 });
