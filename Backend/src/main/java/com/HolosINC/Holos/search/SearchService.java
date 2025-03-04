@@ -31,7 +31,15 @@ public class SearchService {
     public Page<Work> searchWorks(String query, Double minPrice, Double maxPrice, int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
 
-        if (query != null) {
+        if (minPrice != null && maxPrice != null && minPrice > maxPrice) {
+            throw new IllegalArgumentException("Error: minPrice no puede ser mayor que maxPrice.");
+        }
+
+        if (query != null && (minPrice != null || maxPrice != null)) {
+            return workRepository.searchByTitleAndPrice(query, minPrice, maxPrice, pageable);
+        }
+
+        if (query != null ) {
             return workRepository.searchByTitle(query, pageable);
         } 
         if (minPrice != null || maxPrice != null) {
@@ -40,8 +48,13 @@ public class SearchService {
         return workRepository.findAll(pageable);
     }
 
-    public Page<Artist> searchArtists(String query, Integer minWorksDone, int page, int size) {
+    public Page<Artist> searchArtists(String query, Integer minWorks, int page, int size) {
     Pageable pageable = PageRequest.of(page, size);
+
+    if (query != null && minWorks != null) {
+        return artistRepository.searchByNameAndWorksDone(query, minWorks, pageable);
+    }
+    
 
     if (query != null) {
         Page<Artist> byName = artistRepository.searchByName(query, pageable);
@@ -56,8 +69,8 @@ public class SearchService {
         return new PageImpl<>(combinedResults, pageable, combinedResults.size());
     }
 
-    if (minWorksDone != null) {
-        return artistRepository.searchByMinWorks(minWorksDone, pageable);
+    if (minWorks != null) {
+        return artistRepository.searchByMinWorks(minWorks, pageable);
     }
 
     return artistRepository.findAll(pageable);
