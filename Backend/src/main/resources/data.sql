@@ -21,3 +21,7 @@ INSERT INTO works_done (id, image) VALUES
 (1, NULL),
 (3, NULL),
 (4, NULL);
+INSERT INTO categories (name, description) VALUES
+('Painting', 'Artworks created using paint on a surface'),
+('Digital Art', 'Artworks made using digital tools'),
+('Sculpture', 'Three-dimensional art made by shaping materials');
