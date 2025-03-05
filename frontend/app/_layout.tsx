@@ -4,6 +4,7 @@ import HomeScreen from "./src/screens/HomeScreen";
 import UserProfileScreen from "./src/screens/UserProfile/UserProfileScreen";
 import OrderHistoryScreen from "./src/screens/UserProfile/OrderHistoryScreen";
 import ArtworksScreen from "./src/screens/UserProfile/ArtworksScreen";
+import ProfileIcon from "@/assets/svgs/profileIcon";
 // import LoginScreen from "./src/screens/LoginScreen";
 
 const Drawer = createDrawerNavigator()
@@ -21,7 +22,15 @@ export default function RootLayout() {
       >
         <Drawer.Screen name="Inicio" component={HomeScreen} />
         {/* <Drawer.Screen name="Iniciar Sesión" component={LoginScreen} /> */}
-      <Drawer.Screen name="Perfil" component={UserProfileStack} />
+        <Drawer.Screen
+          name="Perfil"
+          component={UserProfileStack}
+          options={{
+            drawerIcon: ({ color, size }) => (
+              <ProfileIcon size={size} />
+            ),
+          }}
+        />
       </Drawer.Navigator>
     //</NavigationContainer>
   );
