@@ -9,16 +9,16 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
+import jakarta.persistence.UniqueConstraint;
 import lombok.Data;
 
 import javax.validation.constraints.NotNull;
 
 import com.HolosINC.Holos.artist.Artist;
-import com.HolosINC.Holos.commision.Commision;
 
 @Data
 @Entity
-@Table(name = "status_kanban_order")
+@Table(name = "status_kanban_order", uniqueConstraints = @UniqueConstraint(columnNames = { "artist", "order"}))
 public class StatusKanbanOrder {
 
     @Id
@@ -27,24 +27,18 @@ public class StatusKanbanOrder {
 	protected Long id;
 
     @NotNull
-    @Column(unique = true, nullable = false)
+    @Column(nullable = false)
+    private String name;
+
+    @NotNull
     private Integer order;
 
     private String description;
 
     @NotNull
-    @Column(unique = true, nullable = false)
     private String color;
-
-    @ManyToOne
-    @JoinColumn(name = "commision_id")
-    private Commision commisions;
 
     @ManyToOne
     @JoinColumn(name = "artist_id")
     private Artist artist;
-
-    @ManyToOne
-    @JoinColumn(name = "status_kanban_id")
-    private StatusKanban statusKanban;
 }

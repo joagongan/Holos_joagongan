@@ -13,8 +13,7 @@ public interface StatusKanbanOrderRepository extends JpaRepository<StatusKanbanO
     @Query("SELECT s FROM StatusKanbanOrder s WHERE s.order = :order")
     Optional<StatusKanbanOrder> findByOrder(Integer order);
 
-    @Query("SELECT s FROM StatusKanbanOrder s WHERE s.statusKanban.id = :statusKanbanId ORDER BY s.order ASC")
-    List<StatusKanbanOrder> findByStatusKanbanIdOrderByOrderAsc(Long statusKanbanId);
-
+    @Query("SELECT s FROM StatusKanbanOrder s WHERE s.order = :order AND s.artist.id = :id")
+    List<StatusKanbanOrder> findByOrderAndArtist(Integer order, Long id);
 }
 
