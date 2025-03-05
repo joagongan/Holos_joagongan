@@ -31,6 +31,7 @@ public class StatusKanbanOrder {
     private String name;
 
     @NotNull
+    @Column(name = "kanban_order")
     private Integer order;
 
     private String description;
