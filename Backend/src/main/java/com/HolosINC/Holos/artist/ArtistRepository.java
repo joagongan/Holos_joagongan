@@ -10,13 +10,13 @@ public interface ArtistRepository extends JpaRepository<Artist, Long> {
     @Query("SELECT COUNT(*) > 0 FROM Artist a WHERE a.id = :id")
     boolean isArtist(Long id);
 
-    @Query("SELECT a FROM Artist a WHERE LOWER(a.baseUser.name) LIKE LOWER(CONCAT('%', :query, '%'))")
+    @Query("SELECT a FROM Artist a WHERE LOWER(a.name) LIKE LOWER(CONCAT('%', :query, '%'))")
     Page<Artist> searchByName(String query, Pageable pageable);
 
-    @Query("SELECT a FROM Artist a WHERE LOWER(a.baseUser.username) LIKE LOWER(CONCAT('%', :query, '%'))")
+    @Query("SELECT a FROM Artist a WHERE LOWER(a.username) LIKE LOWER(CONCAT('%', :query, '%'))")
     Page<Artist> searchByUsername(String query, Pageable pageable);
 
-    @Query("SELECT a FROM Artist a WHERE LOWER(a.baseUser.email) LIKE LOWER(CONCAT('%', :query, '%'))")
+    @Query("SELECT a FROM Artist a WHERE LOWER(a.email) LIKE LOWER(CONCAT('%', :query, '%'))")
     Page<Artist> searchByEmail(String query, Pageable pageable);
 
     @Query("SELECT a FROM Artist a WHERE " +
@@ -26,9 +26,9 @@ public interface ArtistRepository extends JpaRepository<Artist, Long> {
 
 
     @Query("SELECT a FROM Artist a WHERE " +
-       "(LOWER(a.baseUser.name) LIKE LOWER(CONCAT('%', :query, '%')) " +
-       "OR LOWER(a.baseUser.username) LIKE LOWER(CONCAT('%', :query, '%')) " +
-       "OR LOWER(a.baseUser.email) LIKE LOWER(CONCAT('%', :query, '%'))) " +
+       "(LOWER(a.name) LIKE LOWER(CONCAT('%', :query, '%')) " +
+       "OR LOWER(a.username) LIKE LOWER(CONCAT('%', :query, '%')) " +
+       "OR LOWER(a.email) LIKE LOWER(CONCAT('%', :query, '%'))) " +
        "AND (:minWorksDone IS NULL OR " +
        "(SELECT COUNT(wd) FROM WorksDone wd WHERE wd.artist = a) >= :minWorksDone)")
     Page<Artist> searchByNameAndWorksDone(String query, Integer minWorksDone, Pageable pageable);
