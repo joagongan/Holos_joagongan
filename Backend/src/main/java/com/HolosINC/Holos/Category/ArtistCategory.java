@@ -9,10 +9,13 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.SequenceGenerator;
+import jakarta.persistence.Table;
+import jakarta.persistence.UniqueConstraint;
 import lombok.Data;
 
 @Data
 @Entity
+@Table(uniqueConstraints = @UniqueConstraint(columnNames = { "id_friend_1", "id_friend_2"}))
 public class ArtistCategory {
     
     @Id
