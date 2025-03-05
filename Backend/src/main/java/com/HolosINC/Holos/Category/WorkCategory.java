@@ -15,7 +15,7 @@ import lombok.Data;
 
 @Data
 @Entity
-@Table(uniqueConstraints = @UniqueConstraint(columnNames = { "id_friend_1", "id_friend_2"}))
+@Table(uniqueConstraints = @UniqueConstraint(columnNames = { "work_id", "category_id"}))
 public class WorkCategory {
     
     @Id
