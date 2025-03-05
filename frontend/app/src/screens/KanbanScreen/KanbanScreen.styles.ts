@@ -7,7 +7,7 @@ export default StyleSheet.create({
 
   container: {
     flex: 1,
-    backgroundColor: "#F0F0F0",
+    backgroundColor: "#e4f3fc",
     padding: 40,
     margin: 10
   },
@@ -30,7 +30,7 @@ export default StyleSheet.create({
     padding: 16,
     paddingTop: 24,
     flexWrap: "wrap",
-    backgroundColor: "#bfe6fc", // Fondo azul pastel
+    backgroundColor: "#f5f9fc", // Fondo azul pastel
     borderRadius: 12,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },

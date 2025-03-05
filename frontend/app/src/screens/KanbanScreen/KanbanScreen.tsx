@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
-import { Text, View, TouchableOpacity } from 'react-native';
-import styles from './KanbanScreen.styles'; // Importar los estilos creados en styles.ts
+import { Text, View, TouchableOpacity, Dimensions, ScrollView, StyleSheet } from 'react-native';
 
 // Tipo para una tarea
 interface Task {
@@ -39,8 +38,8 @@ interface KanbanColumnProps {
 const KanbanColumn: React.FC<KanbanColumnProps> = ({ title, tasks, moveTask, columnName }) => {
   return (
     <View style={styles.kanbanColumn}>
-      <View style= {styles.banner}>
-      <Text style={styles.bannerText}>{title}</Text>
+      <View style={styles.banner}>
+        <Text style={styles.bannerText}>{title}</Text>
       </View>
       {tasks.map((task) => (
         <TaskCard key={task.id} task={task} moveTask={moveTask} column={columnName} />
@@ -61,7 +60,8 @@ const KanbanBoard: React.FC = () => {
   const [tasks, setTasks] = useState<KanbanBoardState>({
     todo: [
       { id: 1, name: 'Tarea 1' },
-      { id: 2, name: 'Tarea 2' }
+      { id: 2, name: 'Tarea 2' },
+      { id: 5, name: 'Tarea 5' }
     ],
     inProgress: [
       { id: 3, name: 'Tarea 3' }
@@ -106,6 +106,7 @@ const KanbanBoard: React.FC = () => {
   };
 
   return (
+    <ScrollView>
       <View style={styles.container}>
         {/* Título de la página */}
         <View style={styles.banner}>
@@ -113,12 +114,66 @@ const KanbanBoard: React.FC = () => {
         </View>
 
         <View style={styles.kanbanBoard}>
-          <KanbanColumn title="To Do" tasks={tasks.todo} moveTask={moveTask} columnName="todo"/>
+          <KanbanColumn title="To Do" tasks={tasks.todo} moveTask={moveTask} columnName="todo" />
           <KanbanColumn title="In Progress" tasks={tasks.inProgress} moveTask={moveTask} columnName="inProgress" />
           <KanbanColumn title="Done" tasks={tasks.done} moveTask={moveTask} columnName="done" />
         </View>
       </View>
-    );
-  };
+    </ScrollView>
+  );
+};
 
 export default KanbanBoard;
+
+const { width } = Dimensions.get('window');
+const isBigScreen = width >= 1024;
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: "#F0F0F0",
+    padding: isBigScreen ? 40 : 20,
+  },
+  banner: {
+    backgroundColor: "#183771",
+    paddingVertical: 15,
+    alignItems: "center",
+    justifyContent: "center",
+    borderRadius:5
+  },
+  bannerText: {
+    color: "#FFFFFF",
+    fontWeight: "bold",
+    fontSize: isBigScreen ? 24 : 20,
+  },
+  kanbanBoard: {
+    flexDirection: isBigScreen ? 'row' : 'column',
+    justifyContent: 'space-between',
+    marginTop: 20,
+  },
+  kanbanColumn: {
+    flex: 1,
+    margin: 10,
+    
+  },
+  taskCard: {
+    backgroundColor: "#FFFFFF",
+    padding: 15,
+    marginTop: 15,
+    borderRadius: 8,
+    shadowColor: "#000",
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    shadowOffset: { width: 0, height: 2 },
+    elevation: 3,
+  },
+  moveButton: {
+    backgroundColor: "#183771",
+    padding: 7,
+    marginTop: 10,
+    borderRadius: 5,
+    width: '33%',
+    alignItems: 'center',
+    alignSelf: 'center',
+  },
+});
