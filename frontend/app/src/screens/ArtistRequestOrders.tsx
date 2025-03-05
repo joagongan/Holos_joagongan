@@ -47,6 +47,49 @@ export default function ArtistRequestOrders({ navigation }) {
             </TouchableOpacity>
           </View>
         </View>
+        <View style={styles.card}>
+        <Image source={{ uri: 'https://picsum.photos/id/16/200/300' }} style={styles.profileIcon} />          
+        <View style={styles.textContainer}>
+            <Text style={styles.text}>Solicitud de nuevo usuario 3</Text>
+            <Text style={styles.text}>Descripción: Cuadro abstracto  con pintura acrílica</Text>
+          </View>
+          
+          <View style={styles.actions}>
+            <TouchableOpacity style={styles.acceptButton}>
+              <Ionicons name="checkmark" size={24} color="#183771" />
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.rejectButton}>
+              <Ionicons name="close" size={24} color="#183771" />
+            </TouchableOpacity>
+          </View>
+        </View>
+
+        <Text style={styles.sectionTitle}>SOLICITUDES ACEPTADAS/DENEGADAS</Text>
+
+        <View style={styles.card}>
+        <Image source={{ uri: 'https://picsum.photos/id/17/200/300' }} style={styles.profileIcon} />          
+        <View style={styles.textContainer}>
+            <Text style={styles.text}>usuario19239</Text>
+            <Text style={styles.text}>Descripción: Paisaje con acuarela</Text>
+          </View>
+          
+          <View style={styles.actions}>
+            <Text> Solicitud aceptada</Text>
+          </View>
+        </View>
+
+        <View style={styles.card}>
+        <Image source={{ uri: 'https://picsum.photos/id/50/200/300' }} style={styles.profileIcon} />          
+        <View style={styles.textContainer}>
+            <Text style={styles.text}>jdb2496</Text>
+            <Text style={styles.text}>Descripción: Impresionismo con tinta china</Text>
+          </View>
+          
+          <View style={styles.actions}>
+            <Text> Solicitud denegada</Text>
+          </View>
+        </View>
+        
 
       </ScrollView>
     </View>
