@@ -14,5 +14,4 @@ INSERT INTO categories (name, description) VALUES
 (1,'Painting', 'Artworks created using paint on a surface'),
 (2,'Digital Art', 'Artworks made using digital tools'),
 (3,'Sculpture', 'Three-dimensional art made by shaping materials');
-
 */

@@ -6,6 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.HolosINC.Holos.work.Work;
+
 @Service
 public class CategoryService {
 
@@ -27,23 +29,13 @@ public class CategoryService {
 
     @Transactional(readOnly = true)
     public List<Category> findCategoriesByWork(Long workId) {
-        List<WorkCategory> workCategory = workCategoryRepository.findWorkCategoryByWork(workId);
-        List<Category> categories = new ArrayList<>();
-        for(WorkCategory wc: workCategory){
-            Category c = wc.getCategory();
-            categories.add(c);
-        }
+        List<Category> categories = workCategoryRepository.findCategoriesOfWork(workId);
         return categories;
     }
 
     @Transactional(readOnly = true)
     public List<Category> findCategoriesByArtist(Long artistId) {
-        List<ArtistCategory> artistCategory = artistCategoryRepository.findArtistCategoryByArtist(artistId);
-        List<Category> categories = new ArrayList<>();
-        for(ArtistCategory ac: artistCategory){
-            Category c = ac.getCategory();
-            categories.add(c);
-        }
+        List<Category> categories = artistCategoryRepository.findCategoriesOfArtist(artistId);
         return categories;
     }
 

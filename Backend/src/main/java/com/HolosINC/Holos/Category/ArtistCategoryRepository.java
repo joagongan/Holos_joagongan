@@ -1,6 +1,7 @@
 package com.HolosINC.Holos.Category;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -13,8 +14,8 @@ public interface ArtistCategoryRepository extends JpaRepository<ArtistCategory, 
     @Query("SELECT COUNT(ac) > 0 FROM ArtistCategory ac WHERE ac.artist.id = :artistId AND ac.category.id = :categoryId")
     Boolean artistCategoryExist(Long artistId, Long categoryId);
 
-    @Query("SELECT ac FROM ArtistCategory ac WHERE ac.artist.id = :artistId")
-    List<ArtistCategory> findArtistCategoryByArtist(Long artistId);
+    @Query("SELECT ac.category FROM ArtistCategory ac WHERE ac.artist.id = :artistId")
+    List<Category> findCategoriesOfArtist(Long artistId);
 
     @Query("SELECT ac FROM ArtistCategory ac WHERE ac.category.id = :categoryId")
     List<ArtistCategory> findByCategory(Long categoryId);
@@ -23,5 +24,5 @@ public interface ArtistCategoryRepository extends JpaRepository<ArtistCategory, 
     List<ArtistCategory> findByCategoryName(String categoryName);
 
     @Query("SELECT ac FROM ArtistCategory ac WHERE ac.artist.id = :artistId AND ac.category.id = :categoryId")
-    List<ArtistCategory> findByArtistAndCategory(Long artistId, Long categoryId);
+    Optional<ArtistCategory> findByArtistAndCategory(Long artistId, Long categoryId);
 }
