@@ -63,4 +63,24 @@ public class CommisionService {
 
         return commisionRepository.save(commision);
     }
+
+    @Transactional
+    public void cancelCommision(Long commisionId, Long clientId) {
+        Commision commision = commisionRepository.findById(commisionId)
+                .orElseThrow(() -> new ResourceNotFoundException("Commision", "id", commisionId));
+
+        if (!commision.getClient().getId().equals(clientId)) {
+            throw new IllegalArgumentException("El cliente no tiene permisos para cancelar esta comisión.");
+        }
+
+        if (!(commision.getStatus() == StatusCommision.REQUESTED ||
+            commision.getStatus() == StatusCommision.IN_WAIT_LIST ||
+            commision.getStatus() == StatusCommision.ACCEPTED)) {
+            throw new IllegalStateException("La comisión no puede ser cancelada en su estado actual.");
+        }
+
+        //commision.setStatus(StatusCommision.CANCELED);
+        commisionRepository.save(commision);
+    }
+
 }
