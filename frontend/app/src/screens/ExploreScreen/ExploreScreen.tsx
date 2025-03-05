@@ -29,15 +29,26 @@ export default function ExploreScreen() {
   const [containerWidth, setContainerWidth] = useState<number>(0);
 
   const isBigScreen = containerWidth >= 1024;
-  const COLUMNS = isBigScreen ? 5 : 4;
-  const GAP = isBigScreen ? 24 : 16;
-  const horizontalPadding = isBigScreen ? 48 : 32;
 
-  const itemWidth = containerWidth
-    ? (containerWidth - horizontalPadding - GAP * (COLUMNS - 1)) / COLUMNS
+  const COLUMNS_BIG = 5;
+
+  const COLUMNS_MOBILE = 2;
+
+  const GAP_BIG = 24;
+  const GAP_MOBILE = 16;
+  const horizontalPaddingBig = 48;
+  const horizontalPaddingMobile = 32;
+
+  const columns = isBigScreen ? COLUMNS_BIG : COLUMNS_MOBILE;
+  const gap = isBigScreen ? GAP_BIG : GAP_MOBILE;
+  const horizontalPadding = isBigScreen
+    ? horizontalPaddingBig
+    : horizontalPaddingMobile;
+
+  const itemWidth = isBigScreen
+    ? (containerWidth - horizontalPadding - gap * (columns - 1)) / columns
     : 0;
 
-  // Datos de ejemplo para categorías y artistas
   const [categories, setCategories] = useState<Category[]>([
     { id: 1, name: "Pintura", image: "https://picsum.photos/200?random=1" },
     { id: 2, name: "Escultura", image: "https://picsum.photos/200?random=2" },
@@ -80,9 +91,7 @@ export default function ExploreScreen() {
     { id: 8, name: "Artista 8", image: "https://picsum.photos/200?random=20" },
   ]);
 
-  useEffect(() => {
-    // Aquí podrías hacer llamadas a tu backend
-  }, []);
+  useEffect(() => {}, []);
 
   const handleLayout = (event: LayoutChangeEvent) => {
     const width = event.nativeEvent.layout.width;
@@ -94,15 +103,15 @@ export default function ExploreScreen() {
   };
 
   const filteredCategories = searchText
-    ? categories.filter((category) =>
-        category.name.toLowerCase().includes(searchText.toLowerCase())
+    ? categories.filter((cat) =>
+        cat.name.toLowerCase().includes(searchText.toLowerCase())
       )
     : categories;
 
-  const displayedCategories =
-    searchText || showAllCategories
-      ? filteredCategories
-      : filteredCategories.slice(0, isBigScreen ? 5 : 4);
+  let displayedCategories = filteredCategories;
+  if (isBigScreen && !searchText && !showAllCategories) {
+    displayedCategories = filteredCategories.slice(0, 5);
+  }
 
   const filteredArtists = searchText
     ? newArtists.filter((artist) =>
@@ -121,31 +130,63 @@ export default function ExploreScreen() {
       />
 
       <Text style={styles.title}>Categorías</Text>
-      <View style={styles.categoriesContainer}>
-        {displayedCategories.map((category, index) => {
-          const isLastInRow = index % COLUMNS === COLUMNS - 1;
-          return (
-            <View
-              key={category.id}
-              style={[
-                styles.categoryItem,
-                { width: itemWidth, marginRight: isLastInRow ? 0 : GAP },
-              ]}
-            >
-              <View style={styles.categoryImageContainer}>
+
+      {/* 
+        RENDER CONDICIONAL PARA CATEGORÍAS:
+        - Si es big screen => cuadrícula
+        - Si es móvil => scroll horizontal 
+      */}
+      {isBigScreen ? (
+        <View style={styles.categoriesContainer}>
+          {displayedCategories.map((category, index) => {
+            const isLastInRow = index % COLUMNS_BIG === COLUMNS_BIG - 1;
+            return (
+              <View
+                key={category.id}
+                style={[
+                  styles.categoryItemBig,
+                  {
+                    width: itemWidth,
+                    marginRight: isLastInRow ? 0 : GAP_BIG,
+                  },
+                ]}
+              >
+                <View style={styles.categoryImageContainerBig}>
+                  <Image
+                    source={{ uri: category.image }}
+                    style={styles.categoryImage}
+                  />
+                </View>
+                <Text style={styles.categoryTextBig}>{category.name}</Text>
+              </View>
+            );
+          })}
+        </View>
+      ) : (
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          style={styles.categoriesContainerMobile}
+        >
+          {displayedCategories.map((category) => (
+            <View key={category.id} style={styles.categoryItemMobile}>
+              <View style={styles.categoryImageContainerMobile}>
                 <Image
                   source={{ uri: category.image }}
                   style={styles.categoryImage}
                 />
               </View>
-              <Text style={styles.categoryText}>{category.name}</Text>
+              <Text style={styles.categoryTextMobile}>{category.name}</Text>
             </View>
-          );
-        })}
-      </View>
+          ))}
+        </ScrollView>
+      )}
 
-      {/* Botón para ver más/menos, solo si no se está buscando */}
-      {categories.length > 4 && !searchText && (
+      {/* 
+        Sólo mostrar botón "ver más" en pantallas grandes
+        y sólo si hay más de 5 categorías y no se está buscando 
+      */}
+      {isBigScreen && categories.length > 5 && !searchText && (
         <TouchableOpacity
           style={styles.seeMoreButton}
           onPress={() => setShowAllCategories(!showAllCategories)}
@@ -159,26 +200,59 @@ export default function ExploreScreen() {
       )}
 
       <Text style={styles.title}>Novedades</Text>
+
       <View style={styles.artistsContainer}>
         {filteredArtists.map((artist, index) => {
-          const isLastInRow = index % COLUMNS === COLUMNS - 1;
-          return (
-            <View
-              key={artist.id}
-              style={[
-                styles.artistItem,
-                { width: itemWidth, marginRight: isLastInRow ? 0 : GAP },
-              ]}
-            >
-              <View style={styles.artistImageContainer}>
-                <Image
-                  source={{ uri: artist.image }}
-                  style={styles.artistImage}
-                />
+          if (isBigScreen) {
+            const isLastInRow = index % COLUMNS_BIG === COLUMNS_BIG - 1;
+            return (
+              <View
+                key={artist.id}
+                style={[
+                  styles.artistItemBig,
+                  {
+                    width: itemWidth,
+                    marginRight: isLastInRow ? 0 : GAP_BIG,
+                  },
+                ]}
+              >
+                <View style={styles.artistImageContainerBig}>
+                  <Image
+                    source={{ uri: artist.image }}
+                    style={styles.artistImage}
+                  />
+                </View>
+                <Text style={styles.artistTextBig}>{artist.name}</Text>
               </View>
-              <Text style={styles.artistText}>{artist.name}</Text>
-            </View>
-          );
+            );
+          } else {
+            const screenWidth = containerWidth - horizontalPaddingMobile;
+            const mobileItemWidth =
+              (screenWidth - GAP_MOBILE * (COLUMNS_MOBILE - 1)) /
+              COLUMNS_MOBILE;
+            const isLastInRow = index % COLUMNS_MOBILE === COLUMNS_MOBILE - 1;
+
+            return (
+              <View
+                key={artist.id}
+                style={[
+                  styles.artistItemMobile,
+                  {
+                    width: mobileItemWidth,
+                    marginRight: isLastInRow ? 0 : GAP_MOBILE,
+                  },
+                ]}
+              >
+                <View style={styles.artistImageContainerMobile}>
+                  <Image
+                    source={{ uri: artist.image }}
+                    style={styles.artistImage}
+                  />
+                </View>
+                <Text style={styles.artistTextMobile}>{artist.name}</Text>
+              </View>
+            );
+          }
         })}
       </View>
     </ScrollView>

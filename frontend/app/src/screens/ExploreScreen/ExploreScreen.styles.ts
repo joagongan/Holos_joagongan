@@ -3,6 +3,11 @@ import { StyleSheet, Dimensions } from "react-native";
 const { width } = Dimensions.get("window");
 const isBigScreen = width >= 1024;
 
+const MOBILE_CATEGORY_WIDTH = 160;
+const MOBILE_CATEGORY_HEIGHT = 180;
+const MOBILE_ARTIST_WIDTH = 160;
+const MOBILE_ARTIST_HEIGHT = 180;
+
 export default StyleSheet.create({
   container: {
     flex: 1,
@@ -26,7 +31,7 @@ export default StyleSheet.create({
     shadowRadius: 4,
     elevation: 2,
     fontSize: 18,
-    color: isBigScreen ? "#000" : "#000",
+    color: "#000",
   },
 
   title: {
@@ -46,8 +51,7 @@ export default StyleSheet.create({
     flexWrap: "wrap",
     marginBottom: 16,
   },
-
-  categoryItem: {
+  categoryItemBig: {
     marginTop: 6,
     aspectRatio: 0.94,
     borderRadius: 16,
@@ -56,8 +60,7 @@ export default StyleSheet.create({
     marginBottom: 16,
     elevation: 3,
   },
-
-  categoryImageContainer: {
+  categoryImageContainerBig: {
     width: "80%",
     aspectRatio: 1,
     borderRadius: 12,
@@ -70,16 +73,42 @@ export default StyleSheet.create({
     elevation: 5,
     overflow: "hidden",
   },
-
-  categoryImage: {
-    width: "100%",
-    height: "100%",
-    resizeMode: "cover",
+  categoryTextBig: {
+    marginTop: 2,
+    fontSize: 20,
+    fontWeight: "600",
+    color: "#333",
+    textAlign: "center",
   },
 
-  categoryText: {
-    marginTop: 2,
-    fontSize: isBigScreen ? 20 : 12,
+  categoriesContainerMobile: {
+    marginBottom: 16,
+  },
+  categoryItemMobile: {
+    width: MOBILE_CATEGORY_WIDTH,
+    height: MOBILE_CATEGORY_HEIGHT,
+    borderRadius: 16,
+    justifyContent: "center",
+    alignItems: "center",
+    marginBottom: 16,
+    marginRight: 16,
+    elevation: 3,
+  },
+  categoryImageContainerMobile: {
+    width: "80%",
+    aspectRatio: 1,
+    borderRadius: 12,
+    marginBottom: 8,
+    backgroundColor: "#fff",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 0.4,
+    shadowRadius: 16,
+    elevation: 5,
+    overflow: "hidden",
+  },
+  categoryTextMobile: {
+    fontSize: 16,
     fontWeight: "600",
     color: "#333",
     textAlign: "center",
@@ -108,15 +137,14 @@ export default StyleSheet.create({
     marginBottom: 16,
   },
 
-  artistItem: {
+  artistItemBig: {
     aspectRatio: 0.94,
     justifyContent: "center",
     alignItems: "center",
     marginBottom: 16,
     elevation: 3,
   },
-
-  artistImageContainer: {
+  artistImageContainerBig: {
     width: "80%",
     aspectRatio: 1,
     borderRadius: 12,
@@ -129,17 +157,48 @@ export default StyleSheet.create({
     elevation: 5,
     overflow: "hidden",
   },
+  artistTextBig: {
+    fontSize: 18,
+    fontWeight: "600",
+    color: "#333",
+    textAlign: "center",
+  },
 
-  artistImage: {
+  artistItemMobile: {
+    aspectRatio: 0.94,
+    justifyContent: "center",
+    alignItems: "center",
+    marginBottom: 16,
+    elevation: 3,
+  },
+  artistImageContainerMobile: {
+    width: "80%",
+    aspectRatio: 1,
+    borderRadius: 12,
+    marginBottom: 8,
+    backgroundColor: "#fff",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 0.4,
+    shadowRadius: 16,
+    elevation: 5,
+    overflow: "hidden",
+  },
+  artistTextMobile: {
+    fontSize: 16,
+    fontWeight: "600",
+    color: "#333",
+    textAlign: "center",
+  },
+
+  categoryImage: {
     width: "100%",
     height: "100%",
     resizeMode: "cover",
   },
-
-  artistText: {
-    fontSize: isBigScreen ? 20 : 12,
-    fontWeight: "600",
-    color: "#333",
-    textAlign: "center",
+  artistImage: {
+    width: "100%",
+    height: "100%",
+    resizeMode: "cover",
   },
 });
