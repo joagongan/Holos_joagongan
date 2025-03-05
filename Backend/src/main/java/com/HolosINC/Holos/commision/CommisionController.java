@@ -7,7 +7,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import io.swagger.v3.oas.annotations.parameters.RequestBody;
@@ -42,5 +44,20 @@ public class CommisionController {
     public ResponseEntity<Commision> getCommisionById(@PathVariable Long id) {
         Commision commision = commisionService.getCommisionById(id);
         return commision != null ? ResponseEntity.ok(commision) : ResponseEntity.notFound().build();
+    }
+
+    @PutMapping("/{id}/status")
+    public ResponseEntity<?> updateCommisionStatus(
+            @PathVariable Long id,
+            @RequestParam Long artistId,
+            @RequestParam boolean accept) {
+        try {
+            Commision updatedCommision = commisionService.updateCommisionStatus(id, artistId, accept);
+            return ResponseEntity.ok(updatedCommision);
+        } catch (IllegalStateException e) {
+            return ResponseEntity.badRequest().body("Error: " + e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().body("⚠ Error interno: " + e.getMessage());
+        }
     }
 }
