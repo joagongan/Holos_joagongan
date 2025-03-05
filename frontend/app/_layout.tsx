@@ -1,19 +1,28 @@
-import { createDrawerNavigator } from '@react-navigation/drawer';
+import { createDrawerNavigator } from "@react-navigation/drawer";
 import HomeScreen from "./src/screens/HomeScreen";
-import WorkDetailScreen from "./src/screens/WorkDetailScreen";
+import ExploreScreen from "./src/screens/ExploreScreen/ExploreScreen";
+import SearchIcon from "@/assets/svgs/SearchIcon";
 
 const Drawer = createDrawerNavigator();
 
 export default function RootLayout() {
   return (
-    <Drawer.Navigator 
+    <Drawer.Navigator
       initialRouteName="Inicio"
       screenOptions={{
-        headerShown: true, // Muestra el header con el botón "hamburguesa"
+        headerShown: true,
       }}
     >
       <Drawer.Screen name="Inicio" component={HomeScreen} />
-      <Drawer.Screen name="Obra" component={WorkDetailScreen} />
+      <Drawer.Screen
+        name="Explorar"
+        component={ExploreScreen}
+        options={{
+          drawerIcon: ({ color, size }) => (
+            <SearchIcon width={size} height={size} />
+          ),
+        }}
+      />
     </Drawer.Navigator>
   );
 }
