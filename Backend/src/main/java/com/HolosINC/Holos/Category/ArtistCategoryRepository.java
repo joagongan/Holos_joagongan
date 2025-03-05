@@ -10,18 +10,18 @@ import org.springframework.stereotype.Repository;
 public interface ArtistCategoryRepository extends JpaRepository<ArtistCategory, Long> {
     
 
-    @Query("SELECT CASE WHEN COUNT(ac) > 0 THEN TRUE ELSE FALSE END FROM ArtistCategory ac WHERE ac.artist.id = ?1 AND ac.category.id = ?2")
+    @Query("SELECT COUNT(ac) > 0 FROM ArtistCategory ac WHERE ac.artist.id = :artistId AND ac.category.id = :categoryId")
     Boolean artistCategoryExist(Long artistId, Long categoryId);
 
-    @Query("SELECT ac FROM ArtistCategory ac WHERE ac.artist.id = ?1")
+    @Query("SELECT ac FROM ArtistCategory ac WHERE ac.artist.id = :artistId")
     List<ArtistCategory> findArtistCategoryByArtist(Long artistId);
 
-    @Query("SELECT ac FROM ArtistCategory ac WHERE ac.category.id = ?1")
+    @Query("SELECT ac FROM ArtistCategory ac WHERE ac.category.id = :categoryId")
     List<ArtistCategory> findByCategory(Long categoryId);
 
-    @Query("SELECT ac FROM ArtistCategory ac WHERE ac.category.name = ?1")
+    @Query("SELECT ac FROM ArtistCategory ac WHERE ac.category.name = :categoryName")
     List<ArtistCategory> findByCategoryName(String categoryName);
 
-    @Query("SELECT ac FROM ArtistCategory ac WHERE ac.artist.id = ?1 AND ac.category.id = ?2")
+    @Query("SELECT ac FROM ArtistCategory ac WHERE ac.artist.id = :artistId AND ac.category.id = :categoryId")
     List<ArtistCategory> findByArtistAndCategory(Long artistId, Long categoryId);
 }

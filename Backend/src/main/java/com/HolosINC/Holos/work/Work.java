@@ -31,9 +31,6 @@ public class Work {
     private String description;
     private Double price;
 
-    @OneToMany(mappedBy = "work")
-    private Set<WorkCategory> workCategories;
-
     @ManyToOne
     @JoinColumn(name = "artist_id", nullable = false)
     private Artist artist;

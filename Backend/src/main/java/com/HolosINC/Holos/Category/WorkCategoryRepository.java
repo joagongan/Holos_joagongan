@@ -2,24 +2,25 @@ package com.HolosINC.Holos.Category;
 
 import java.util.List;
 
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface WorkCategoryRepository {
+public interface WorkCategoryRepository extends JpaRepository<WorkCategory, Long> {
     
-    @Query("SELECT CASE WHEN COUNT(wc) > 0 THEN TRUE ELSE FALSE END FROM WorkCategory wc WHERE wc.work.id = ?1 AND wc.category.id = ?2")
+    @Query("SELECT COUNT(wc) > 0 FROM WorkCategory wc WHERE wc.work.id = :workId AND wc.category.id = :categoryId")
     boolean workCategoryExist(Long workId, Long categoryId);
 
-    @Query("SELECT wc FROM WorkCategory wc WHERE wc.work.id = ?1")
+    @Query("SELECT wc FROM WorkCategory wc WHERE wc.work.id = :workId")
     List<WorkCategory> findWorkCategoryByWork(Long workId);
 
-    @Query("SELECT wc FROM WorkCategory wc WHERE wc.category.id = ?1")
+    @Query("SELECT wc FROM WorkCategory wc WHERE wc.category.id = :categoryId")
     List<WorkCategory> findByCategory(Long categoryId);
 
-    @Query("SELECT wc FROM WorkCategory wc WHERE wc.category.name = ?1")
+    @Query("SELECT wc FROM WorkCategory wc WHERE wc.category.name = :categoryName")
     List<WorkCategory> findByCategoryName(String categoryName);
 
-    @Query("SELECT wc FROM WorkCategory wc WHERE wc.work.id = ?1 AND wc.category.id = ?2")
+    @Query("SELECT wc FROM WorkCategory wc WHERE wc.work.id = :workId AND wc.category.id = :categoryId")
     List<WorkCategory> findByWorkAndCategory(Long workId, Long categoryId);
 }
