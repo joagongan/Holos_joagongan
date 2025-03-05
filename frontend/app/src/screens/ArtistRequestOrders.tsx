@@ -1,5 +1,5 @@
 import React from "react";
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from "react-native";
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Image} from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 
 export default function ArtistRequestOrders({ navigation }) {
@@ -14,10 +14,30 @@ export default function ArtistRequestOrders({ navigation }) {
         {/* Nueva Solicitudes */}
         <Text style={styles.sectionTitle}>NUEVAS SOLICITUDES</Text>
         <View style={styles.card}>
-          <View style={styles.profileIcon} />
-          <View style={styles.textContainer}>
+        <Image source={{ uri: 'https://picsum.photos/200/300?grayscale' }} style={styles.profileIcon} />          
+        <View style={styles.textContainer}>
             <Text style={styles.text}>Solicitud de nuevo usuario 1</Text>
+            <Text style={styles.text}>Descripción: Paisaje hecho con aerografía</Text>
           </View>
+          
+          <View style={styles.actions}>
+            <TouchableOpacity style={styles.acceptButton}>
+              <Ionicons name="checkmark" size={24} color="#183771" />
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.rejectButton}>
+              <Ionicons name="close" size={24} color="#183771" />
+            </TouchableOpacity>
+          </View>
+        </View>
+
+        <View style={styles.card}>
+        <Image source={{ uri: 'https://picsum.photos/seed/picsum/200/300' }} style={styles.profileIcon} />          
+        <View style={styles.textContainer}>
+            <Text style={styles.text}>Solicitud de nuevo usuario 2</Text>
+            <Text style={styles.text}>Descripción: Retrato expresivo en óleo sobre lienzo</Text>
+
+          </View>
+          
           <View style={styles.actions}>
             <TouchableOpacity style={styles.acceptButton}>
               <Ionicons name="checkmark" size={24} color="#183771" />
