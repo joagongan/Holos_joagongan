@@ -16,14 +16,19 @@ public interface ArtistRepository extends JpaRepository<Artist, Integer> {
     @Query("SELECT a FROM Artist a WHERE LOWER(a.baseUser.email) LIKE LOWER(CONCAT('%', :query, '%'))")
     Page<Artist> searchByEmail(String query, Pageable pageable);
 
-    @Query("SELECT a FROM Artist a WHERE a.numSlotsOfWork >= :minWorks")
-    Page<Artist> searchByMinWorks(Integer minWorks, Pageable pageable);
+    @Query("SELECT a FROM Artist a WHERE " +
+       "(:minWorksDone IS NULL OR " +
+       "(SELECT COUNT(wd) FROM WorksDone wd WHERE wd.artist = a) >= :minWorksDone)")
+    Page<Artist> searchByMinWorksDone(Integer minWorksDone, Pageable pageable);
 
-    @Query("SELECT a FROM Artist a WHERE (LOWER(a.baseUser.name) LIKE LOWER(CONCAT('%', :query, '%')) " +
+
+    @Query("SELECT a FROM Artist a WHERE " +
+       "(LOWER(a.baseUser.name) LIKE LOWER(CONCAT('%', :query, '%')) " +
        "OR LOWER(a.baseUser.username) LIKE LOWER(CONCAT('%', :query, '%')) " +
        "OR LOWER(a.baseUser.email) LIKE LOWER(CONCAT('%', :query, '%'))) " +
-       "AND (:minWorksDone IS NULL OR a.numSlotsOfWork >= :minWorksDone)")
+       "AND (:minWorksDone IS NULL OR " +
+       "(SELECT COUNT(wd) FROM WorksDone wd WHERE wd.artist = a) >= :minWorksDone)")
     Page<Artist> searchByNameAndWorksDone(String query, Integer minWorksDone, Pageable pageable);
 
-
 }
+
