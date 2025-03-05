@@ -1,7 +1,5 @@
 package com.HolosINC.Holos.work;
 
-import java.util.Set;
-
 import com.HolosINC.Holos.artist.Artist;
 
 import jakarta.persistence.Entity;
@@ -11,8 +9,6 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Inheritance;
 import jakarta.persistence.InheritanceType;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.JoinTable;
-import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.Data;
