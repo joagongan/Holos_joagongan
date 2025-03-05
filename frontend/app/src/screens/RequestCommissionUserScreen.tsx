@@ -1,5 +1,6 @@
 import React,  { useState } from "react";
 import { View, Text, Image, StyleSheet, TextInput, TouchableOpacity, Alert } from "react-native";
+import Icon from "react-native-vector-icons/MaterialIcons";
 import * as ImagePicker from "expo-image-picker";
 
 
@@ -84,7 +85,7 @@ export default function RequestCommissionUserScreen ({ navigation }) {
     <View style={styles.buttonContainer}>
         {/* Botón para seleccionar imagen */}
         <TouchableOpacity style={styles.imageButton} onPress={pickImage}>
-          <Text style={styles.buttonText}>📸 Agregar Foto</Text>
+          <Icon name="photo-camera" size={24} color="#183771" />
         </TouchableOpacity>
 
         {/* Botón de enviar */}
@@ -115,7 +116,7 @@ const styles = StyleSheet.create({
     bannerText: {
         color: "#FFFFFF",
         fontWeight: "bold",
-        fontSize: 55
+        fontSize: 25,
         },
 
     content: {
@@ -136,20 +137,24 @@ const styles = StyleSheet.create({
 
     labelArtist: {
         fontWeight: "bold",
-        fontSize: 50,
+        fontSize: 25,
         color: "#000",
         marginBottom: 10
         },
 
     artistContainer: {
-        backgroundColor: "#FFFFFF",
-        width: "40%",
-        height: "70%",
-        borderRadius: 40,
-        alignItems: "center",
-        justifyContent: "center",
-        padding: 10
-        },
+      backgroundColor: "#FFF",
+      width: 120,
+      height: 120,
+      borderRadius: 60,
+      alignItems: "center",
+      justifyContent: "center",
+      shadowColor: "#000",
+      shadowOffset: { width: 0, height: 2 },
+      shadowOpacity: 0.2,
+      shadowRadius: 4,
+      elevation: 5,
+},
 
     artistImage: {
         width: "70%",
@@ -159,7 +164,6 @@ const styles = StyleSheet.create({
 
     commissionTable: {
         flex:2,
-        backgroundColor: "#F8D7FF",
         marginLeft: 10,
         borderRadius: 10,
         alignItems: "center",
@@ -179,7 +183,7 @@ const styles = StyleSheet.create({
     },
 
     previewContainer: {
-      flex: 1,
+      flex: 1/3,
       justifyContent: "center",
       alignItems: "center",
       backgroundColor: "#F0F0F0",
@@ -194,7 +198,7 @@ const styles = StyleSheet.create({
 
     titleBannerInputText:{
       fontWeight: "bold",
-      fontSize: 40,
+      fontSize: 25,
       color: "#173C75",
       marginBottom: 10,
     
@@ -229,7 +233,7 @@ const styles = StyleSheet.create({
     },
   
     imageButton: {
-      backgroundColor: "#FFA500",
+      backgroundColor: "#FECEF1",
       paddingVertical: 10,
       paddingHorizontal: 20,
       borderRadius: 5,
