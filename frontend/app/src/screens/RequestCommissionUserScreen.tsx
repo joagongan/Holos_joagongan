@@ -4,7 +4,7 @@ import Icon from "react-native-vector-icons/MaterialIcons";
 import * as ImagePicker from "expo-image-picker";
 
 
-export default function RequestCommissionUserScreen ({ navigation }) {
+export default function RequestCommissionUserScreen ({}) {
 
   const [inputText, setInputText] = useState("");
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
