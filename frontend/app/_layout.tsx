@@ -1,21 +1,19 @@
 import { createDrawerNavigator } from '@react-navigation/drawer';
 import HomeScreen from "./src/screens/HomeScreen";
-// import LoginScreen from "./src/screens/LoginScreen";
+import WorkDetailScreen from "./src/screens/WorkDetailScreen";
 
-const Drawer = createDrawerNavigator()
+const Drawer = createDrawerNavigator();
 
 export default function RootLayout() {
   return (
-    // <NavigationContainer>
-      <Drawer.Navigator 
-        initialRouteName="Inicio"
-        screenOptions={{
-          headerShown: true, // para poder incluir el botón burger en la cabecera
-        }}
-      >
-        <Drawer.Screen name="Inicio" component={HomeScreen} />
-        {/* <Drawer.Screen name="Iniciar Sesión" component={LoginScreen} /> */}
-      </Drawer.Navigator>
-    //</NavigationContainer>
-);
+    <Drawer.Navigator 
+      initialRouteName="Inicio"
+      screenOptions={{
+        headerShown: true, // Muestra el header con el botón "hamburguesa"
+      }}
+    >
+      <Drawer.Screen name="Inicio" component={HomeScreen} />
+      <Drawer.Screen name="Obra" component={WorkDetailScreen} />
+    </Drawer.Navigator>
+  );
 }
