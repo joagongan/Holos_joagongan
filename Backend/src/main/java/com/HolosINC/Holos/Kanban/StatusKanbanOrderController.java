@@ -1,5 +1,7 @@
 package com.HolosINC.Holos.Kanban;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,7 +23,22 @@ public class StatusKanbanOrderController {
     }
 
     @DeleteMapping("/{id}")
-    public void deleteStatusKanbanOrder(@PathVariable Long id) {
+    public void deleteStatusKanbanOrder(@PathVariable Integer id) {
         statusKanbanOrderService.deleteStatusKanbanOrder(id);
+    }
+
+    @GetMapping("/artist/{artistId}")
+    public List<StatusKanbanOrder> getStatusKanbanOrderByArtist(@PathVariable Integer artistId) {
+        return statusKanbanOrderService.findAllStatusKanbanOrderByArtist(artistId);
+    }
+
+    @GetMapping
+    public List<StatusKanbanOrder> getAllStatusKanbanOrder() {
+        return statusKanbanOrderService.findAllStatusKanbanOrder();
+    }
+
+    @GetMapping("/{id}")
+    public StatusKanbanOrder getStatusKanbanOrder(@PathVariable Integer id) {
+        return statusKanbanOrderService.findStatusKanbanOrder(id);
     }
 }
