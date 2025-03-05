@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import {
   Text,
   ScrollView,
@@ -7,6 +7,8 @@ import {
   Image,
   TouchableOpacity,
   LayoutChangeEvent,
+  NativeSyntheticEvent,
+  NativeScrollEvent,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import styles from "./ExploreScreen.styles";
@@ -29,11 +31,8 @@ export default function ExploreScreen() {
   const [containerWidth, setContainerWidth] = useState<number>(0);
 
   const isBigScreen = containerWidth >= 1024;
-
   const COLUMNS_BIG = 5;
-
   const COLUMNS_MOBILE = 2;
-
   const GAP_BIG = 24;
   const GAP_MOBILE = 16;
   const horizontalPaddingBig = 48;
@@ -45,6 +44,7 @@ export default function ExploreScreen() {
     ? horizontalPaddingBig
     : horizontalPaddingMobile;
 
+  // Para calcular el ancho de cada item en pantallas grandes
   const itemWidth = isBigScreen
     ? (containerWidth - horizontalPadding - gap * (columns - 1)) / columns
     : 0;
@@ -91,6 +91,24 @@ export default function ExploreScreen() {
     { id: 8, name: "Artista 8", image: "https://picsum.photos/200?random=20" },
   ]);
 
+  const scrollViewRef = useRef<ScrollView>(null);
+
+  const [contentWidth, setContentWidth] = useState(0);
+  const [viewWidth, setViewWidth] = useState(0);
+  const [scrollX, setScrollX] = useState(0);
+
+  const showLeftArrow = scrollX > 0;
+  const showRightArrow = scrollX + viewWidth < contentWidth;
+
+  const handleScrollRight = () => {
+    scrollViewRef.current?.scrollTo({ x: scrollX + 195, animated: true });
+  };
+
+  const handleScrollLeft = () => {
+    const newX = scrollX - 195 < 0 ? 0 : scrollX - 195;
+    scrollViewRef.current?.scrollTo({ x: newX, animated: true });
+  };
+
   useEffect(() => {}, []);
 
   const handleLayout = (event: LayoutChangeEvent) => {
@@ -131,11 +149,6 @@ export default function ExploreScreen() {
 
       <Text style={styles.title}>Categorías</Text>
 
-      {/* 
-        RENDER CONDICIONAL PARA CATEGORÍAS:
-        - Si es big screen => cuadrícula
-        - Si es móvil => scroll horizontal 
-      */}
       {isBigScreen ? (
         <View style={styles.categoriesContainer}>
           {displayedCategories.map((category, index) => {
@@ -163,29 +176,53 @@ export default function ExploreScreen() {
           })}
         </View>
       ) : (
-        <ScrollView
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          style={styles.categoriesContainerMobile}
-        >
-          {displayedCategories.map((category) => (
-            <View key={category.id} style={styles.categoryItemMobile}>
-              <View style={styles.categoryImageContainerMobile}>
-                <Image
-                  source={{ uri: category.image }}
-                  style={styles.categoryImage}
-                />
+        <View style={{ position: "relative" }}>
+          {showLeftArrow && (
+            <TouchableOpacity
+              style={styles.leftArrow}
+              onPress={handleScrollLeft}
+            >
+              <Ionicons name="chevron-back" size={24} color="black" />
+            </TouchableOpacity>
+          )}
+
+          <ScrollView
+            ref={scrollViewRef}
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            style={styles.categoriesContainerMobile}
+            onLayout={(e) => setViewWidth(e.nativeEvent.layout.width)}
+            onContentSizeChange={(w, h) => setContentWidth(w)}
+            onScroll={(e: NativeSyntheticEvent<NativeScrollEvent>) =>
+              setScrollX(e.nativeEvent.contentOffset.x)
+            }
+            scrollEventThrottle={16}
+          >
+            {displayedCategories.map((category) => (
+              <View key={category.id} style={styles.categoryItemMobile}>
+                <View style={styles.categoryImageContainerMobile}>
+                  <Image
+                    source={{ uri: category.image }}
+                    style={styles.categoryImage}
+                  />
+                </View>
+                <Text style={styles.categoryTextMobile}>{category.name}</Text>
               </View>
-              <Text style={styles.categoryTextMobile}>{category.name}</Text>
-            </View>
-          ))}
-        </ScrollView>
+            ))}
+          </ScrollView>
+
+          {showRightArrow && (
+            <TouchableOpacity
+              style={styles.rightArrow}
+              onPress={handleScrollRight}
+            >
+              <Ionicons name="chevron-forward" size={24} color="black" />
+            </TouchableOpacity>
+          )}
+        </View>
       )}
 
-      {/* 
-        Sólo mostrar botón "ver más" en pantallas grandes
-        y sólo si hay más de 5 categorías y no se está buscando 
-      */}
+      {/* Botón "ver más" en pantallas grandes (si aplica) */}
       {isBigScreen && categories.length > 5 && !searchText && (
         <TouchableOpacity
           style={styles.seeMoreButton}

@@ -3,15 +3,14 @@ import { StyleSheet, Dimensions } from "react-native";
 const { width } = Dimensions.get("window");
 const isBigScreen = width >= 1024;
 
-const MOBILE_CATEGORY_WIDTH = 160;
-const MOBILE_CATEGORY_HEIGHT = 180;
+const MOBILE_CATEGORY_WIDTH = 180;
+const MOBILE_CATEGORY_HEIGHT = 200;
 const MOBILE_ARTIST_WIDTH = 160;
 const MOBILE_ARTIST_HEIGHT = 180;
 
 export default StyleSheet.create({
   container: {
     flex: 1,
-    paddingHorizontal: 16,
     paddingVertical: 16,
   },
 
@@ -44,12 +43,14 @@ export default StyleSheet.create({
     borderBottomColor: "#ddd",
     paddingBottom: 4,
     letterSpacing: 0.5,
+    paddingHorizontal: 16,
   },
 
   categoriesContainer: {
     flexDirection: "row",
     flexWrap: "wrap",
     marginBottom: 16,
+    paddingHorizontal: 16,
   },
   categoryItemBig: {
     marginTop: 6,
@@ -81,18 +82,14 @@ export default StyleSheet.create({
     textAlign: "center",
   },
 
-  categoriesContainerMobile: {
-    marginBottom: 16,
-  },
+  categoriesContainerMobile: {},
   categoryItemMobile: {
     width: MOBILE_CATEGORY_WIDTH,
     height: MOBILE_CATEGORY_HEIGHT,
     borderRadius: 16,
     justifyContent: "center",
     alignItems: "center",
-    marginBottom: 16,
     marginRight: 16,
-    elevation: 3,
   },
   categoryImageContainerMobile: {
     width: "80%",
@@ -115,7 +112,7 @@ export default StyleSheet.create({
   },
 
   seeMoreButton: {
-    width: "100%",
+    width: "95%",
     height: 50,
     backgroundColor: "rgba(255, 255, 255, 0.2)",
     borderRadius: 16,
@@ -129,9 +126,12 @@ export default StyleSheet.create({
     shadowOpacity: 0.15,
     shadowRadius: 6,
     elevation: 3,
+    alignSelf: "center",
   },
 
   artistsContainer: {
+    paddingHorizontal: 16,
+
     flexDirection: "row",
     flexWrap: "wrap",
     marginBottom: 16,
@@ -200,5 +200,30 @@ export default StyleSheet.create({
     width: "100%",
     height: "100%",
     resizeMode: "cover",
+  },
+
+  leftArrow: {
+    position: "absolute",
+    left: 0,
+    top: "50%",
+    transform: [{ translateY: -12 }],
+    zIndex: 10,
+    backgroundColor: "#fff",
+    borderRadius: 16,
+    padding: 6,
+    elevation: 5,
+    marginLeft: 7,
+  },
+  rightArrow: {
+    position: "absolute",
+    right: 0,
+    top: "50%",
+    transform: [{ translateY: -12 }],
+    zIndex: 10,
+    backgroundColor: "#fff",
+    borderRadius: 16,
+    padding: 6,
+    elevation: 5,
+    marginRight: 7,
   },
 });
