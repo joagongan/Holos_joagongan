@@ -31,22 +31,14 @@ export default function ExploreScreen() {
   const [containerWidth, setContainerWidth] = useState<number>(0);
 
   const isBigScreen = containerWidth >= 1024;
+
   const COLUMNS_BIG = 5;
-  const COLUMNS_MOBILE = 2;
   const GAP_BIG = 24;
-  const GAP_MOBILE = 16;
-  const horizontalPaddingBig = 48;
-  const horizontalPaddingMobile = 32;
+  const HORIZONTAL_PADDING_BIG = 48;
 
-  const columns = isBigScreen ? COLUMNS_BIG : COLUMNS_MOBILE;
-  const gap = isBigScreen ? GAP_BIG : GAP_MOBILE;
-  const horizontalPadding = isBigScreen
-    ? horizontalPaddingBig
-    : horizontalPaddingMobile;
-
-  // Para calcular el ancho de cada item en pantallas grandes
   const itemWidth = isBigScreen
-    ? (containerWidth - horizontalPadding - gap * (columns - 1)) / columns
+    ? (containerWidth - HORIZONTAL_PADDING_BIG - GAP_BIG * (COLUMNS_BIG - 1)) /
+      COLUMNS_BIG
     : 0;
 
   const [categories, setCategories] = useState<Category[]>([
@@ -92,7 +84,6 @@ export default function ExploreScreen() {
   ]);
 
   const scrollViewRef = useRef<ScrollView>(null);
-
   const [contentWidth, setContentWidth] = useState(0);
   const [viewWidth, setViewWidth] = useState(0);
   const [scrollX, setScrollX] = useState(0);
@@ -108,8 +99,6 @@ export default function ExploreScreen() {
     const newX = scrollX - 195 < 0 ? 0 : scrollX - 195;
     scrollViewRef.current?.scrollTo({ x: newX, animated: true });
   };
-
-  useEffect(() => {}, []);
 
   const handleLayout = (event: LayoutChangeEvent) => {
     const width = event.nativeEvent.layout.width;
@@ -176,6 +165,7 @@ export default function ExploreScreen() {
           })}
         </View>
       ) : (
+        // VERSIÓN MÓVIL (scroll horizontal)
         <View style={{ position: "relative" }}>
           {showLeftArrow && (
             <TouchableOpacity
@@ -185,14 +175,13 @@ export default function ExploreScreen() {
               <Ionicons name="chevron-back" size={24} color="black" />
             </TouchableOpacity>
           )}
-
           <ScrollView
             ref={scrollViewRef}
             horizontal
             showsHorizontalScrollIndicator={false}
             style={styles.categoriesContainerMobile}
             onLayout={(e) => setViewWidth(e.nativeEvent.layout.width)}
-            onContentSizeChange={(w, h) => setContentWidth(w)}
+            onContentSizeChange={(w) => setContentWidth(w)}
             onScroll={(e: NativeSyntheticEvent<NativeScrollEvent>) =>
               setScrollX(e.nativeEvent.contentOffset.x)
             }
@@ -222,7 +211,7 @@ export default function ExploreScreen() {
         </View>
       )}
 
-      {/* Botón "ver más" en pantallas grandes (si aplica) */}
+      {/* Botón "ver más" en pantallas grandes (opcional) */}
       {isBigScreen && categories.length > 5 && !searchText && (
         <TouchableOpacity
           style={styles.seeMoreButton}
@@ -263,7 +252,9 @@ export default function ExploreScreen() {
               </View>
             );
           } else {
-            const screenWidth = containerWidth - horizontalPaddingMobile;
+            const screenWidth = containerWidth - 32;
+            const COLUMNS_MOBILE = 2;
+            const GAP_MOBILE = 16;
             const mobileItemWidth =
               (screenWidth - GAP_MOBILE * (COLUMNS_MOBILE - 1)) /
               COLUMNS_MOBILE;
