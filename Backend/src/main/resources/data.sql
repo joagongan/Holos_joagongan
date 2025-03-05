@@ -1,4 +1,4 @@
-INSERT INTO base_user (id, first_name, username, password, email, phone_number, image_profile, created_user) VALUES
+/*INSERT INTO base_user (id, first_name, username, password, email, phone_number, image_profile, created_user) VALUES
 (1, 'John', 'john_doe', 'password123', 'john.doe@example.com', '1234567890', 'profile1.jpg', '2025-02-28'),
 (2, 'Jane', 'jane_doe', 'password456', 'jane.doe@example.com', '0987654321', 'profile2.jpg', '2025-02-28'),
 (3, 'Yellow', 'yellow', 'password', 'yellow.artist@gmail.com', '0987654321', 'profile3.jpg', '2025-02-28');
@@ -14,3 +14,4 @@ INSERT INTO categories (name, description) VALUES
 ('Painting', 'Artworks created using paint on a surface'),
 ('Digital Art', 'Artworks made using digital tools'),
 ('Sculpture', 'Three-dimensional art made by shaping materials');
+*/

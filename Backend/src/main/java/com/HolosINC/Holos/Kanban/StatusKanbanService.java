@@ -7,9 +7,13 @@ import org.springframework.stereotype.Service;
 @Service
 public class StatusKanbanService {
 
-    @Autowired
     private StatusKanbanRepository statusKanbanRepository;
 
+    @Autowired
+    public StatusKanbanService(StatusKanbanRepository statusKanbanRepository) {
+        this.statusKanbanRepository = statusKanbanRepository;
+    }
+    
     public StatusKanban createStatusKanban(String name) {
         if (statusKanbanRepository.findByName(name).isPresent()) {
             throw new IllegalArgumentException("El estado ya existe.");

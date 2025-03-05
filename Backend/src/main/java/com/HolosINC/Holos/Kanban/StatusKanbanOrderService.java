@@ -10,11 +10,14 @@ import java.util.Optional;
 @Service
 public class StatusKanbanOrderService {
 
-    @Autowired
     private StatusKanbanOrderRepository statusKanbanOrderRepository;
+    private StatusKanbanRepository statusKanbanRepository;
 
     @Autowired
-    private StatusKanbanRepository statusKanbanRepository;
+    public StatusKanbanOrderService(StatusKanbanOrderRepository statusKanbanOrderRepository, StatusKanbanRepository statusKanbanRepository) {
+        this.statusKanbanOrderRepository = statusKanbanOrderRepository;
+        this.statusKanbanRepository = statusKanbanRepository;
+    }
 
     public StatusKanbanOrder createStatusKanbanOrder(Long statusKanbanId, Integer order, String description, String color) {
         Optional<StatusKanban> statusKanbanOpt = statusKanbanRepository.findById(statusKanbanId);
