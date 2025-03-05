@@ -20,7 +20,8 @@ INSERT INTO works (id, artist_id, name, description, price) VALUES
 INSERT INTO works_done (id, artist_id, image) VALUES 
 (1, 1, NULL),
 (3, 1, NULL),
-(4, 1, NULL);
+(4, 1, NULL),
+(5, 1, NULL);
 
 INSERT INTO categories (id, name, description) VALUES
 (1, 'Painting', 'Artworks created using paint on a surface'),
