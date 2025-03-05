@@ -23,6 +23,9 @@ export default function RequestCommissionUserScreen ({ navigation }) {
     
   const handleSend = () => {
     Alert.alert("Solicitud enviada", inputText || "Debe de ingresar una descripción del trabajo");
+    {/* Elimina el contenido de los estados*/}
+    setInputText("");
+    setSelectedImage(null);
   };
 
   return (
