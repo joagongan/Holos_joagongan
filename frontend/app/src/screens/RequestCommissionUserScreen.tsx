@@ -218,7 +218,7 @@ const styles = StyleSheet.create({
 
     containerTextPhoto: {
       flexDirection: "row",
-      height: 300,
+      height: "32%",
       marginTop: 15,
     },
 
