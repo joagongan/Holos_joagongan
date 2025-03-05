@@ -1,4 +1,5 @@
-import React, { useEffect, useState, useRef } from "react";
+// src/screens/ExploreScreen/ExploreScreen.tsx
+import React, { useState, useRef } from "react";
 import {
   Text,
   ScrollView,
@@ -11,7 +12,10 @@ import {
   NativeScrollEvent,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
+import { useNavigation } from "@react-navigation/native";
 import styles from "./ExploreScreen.styles";
+import { RootDrawerParamList } from "../../../_layout";
+import { DrawerNavigationProp } from "@react-navigation/drawer";
 
 interface Category {
   id: number;
@@ -19,29 +23,38 @@ interface Category {
   image: string;
 }
 
-interface Artist {
+interface Work {
   id: number;
   name: string;
   image: string;
+  price?: number;
+  artistName?: string;
 }
 
 export default function ExploreScreen() {
+  type ExploreNavProp = DrawerNavigationProp<RootDrawerParamList, "Explorar">;
+  const navigation = useNavigation<ExploreNavProp>();
+
   const [searchText, setSearchText] = useState<string>("");
   const [showAllCategories, setShowAllCategories] = useState<boolean>(false);
   const [containerWidth, setContainerWidth] = useState<number>(0);
 
+  // Consideramos "big screen" cuando el contenedor >= 1024
   const isBigScreen = containerWidth >= 1024;
 
+  // Constantes para layout de escritorio
   const COLUMNS_BIG = 5;
   const GAP_BIG = 24;
   const HORIZONTAL_PADDING_BIG = 48;
 
+  // Cálculo del ancho de cada tarjeta
   const itemWidth = isBigScreen
     ? (containerWidth - HORIZONTAL_PADDING_BIG - GAP_BIG * (COLUMNS_BIG - 1)) /
       COLUMNS_BIG
     : 0;
 
-  const [categories, setCategories] = useState<Category[]>([
+  // Categorías de ejemplo
+  const [categories] = useState<Category[]>([
     { id: 1, name: "Pintura", image: "https://picsum.photos/200?random=1" },
     { id: 2, name: "Escultura", image: "https://picsum.photos/200?random=2" },
     { id: 3, name: "Fotografía", image: "https://picsum.photos/200?random=3" },
@@ -72,17 +85,67 @@ export default function ExploreScreen() {
     },
   ]);
 
-  const [newArtists, setNewArtists] = useState<Artist[]>([
-    { id: 1, name: "Artista 1", image: "https://picsum.photos/200?random=13" },
-    { id: 2, name: "Artista 2", image: "https://picsum.photos/200?random=14" },
-    { id: 3, name: "Artista 3", image: "https://picsum.photos/200?random=15" },
-    { id: 4, name: "Artista 4", image: "https://picsum.photos/200?random=16" },
-    { id: 5, name: "Artista 5", image: "https://picsum.photos/200?random=17" },
-    { id: 6, name: "Artista 6", image: "https://picsum.photos/200?random=18" },
-    { id: 7, name: "Artista 7", image: "https://picsum.photos/200?random=19" },
-    { id: 8, name: "Artista 8", image: "https://picsum.photos/200?random=20" },
+  // Obras (novedades)
+  const [works] = useState<Work[]>([
+    {
+      id: 1,
+      name: "Obra 1",
+      image: "https://images.unsplash.com/photo-1506157786151-b8491531f063", // Pintura abstracta
+      price: 100,
+      artistName: "John Doe",
+    },
+    {
+      id: 2,
+      name: "Obra 2",
+      image: "https://images.unsplash.com/photo-1555685812-4b943f1cb0eb", // Paisaje
+      price: 200,
+      artistName: "Alice",
+    },
+    {
+      id: 3,
+      name: "Obra 3",
+      image: "https://images.unsplash.com/photo-1545239351-ef35f43d514b", // Arte moderno
+      price: 300,
+      artistName: "Bob",
+    },
+    {
+      id: 4,
+      name: "Obra 4",
+      image: "https://images.unsplash.com/photo-1519074002996-a69e7ac46a42", // Retrato clásico
+      price: 400,
+      artistName: "Charlie",
+    },
+    {
+      id: 5,
+      name: "Obra 5",
+      image: "https://images.unsplash.com/photo-1521747116042-5a810fda9664", // Pintura al óleo
+      price: 250,
+      artistName: "Diana",
+    },
+    {
+      id: 6,
+      name: "Obra 6",
+      image: "https://images.unsplash.com/photo-1513682121497-80211f36a7d3", // Arte contemporáneo
+      price: 180,
+      artistName: "Eve",
+    },
+    {
+      id: 7,
+      name: "Obra 7",
+      image: "https://images.unsplash.com/photo-1528207776546-365bb710ee93", // Arte colorido
+      price: 350,
+      artistName: "Frank",
+    },
+    {
+      id: 8,
+      name: "Obra 8",
+      image: "https://images.unsplash.com/photo-1506748686214-e9df14d4d9d0", // Pintura minimalista
+      price: 120,
+      artistName: "Georgia",
+    },
   ]);
 
+  // Para scroll horizontal en móvil (categorías)
   const scrollViewRef = useRef<ScrollView>(null);
   const [contentWidth, setContentWidth] = useState(0);
   const [viewWidth, setViewWidth] = useState(0);
@@ -101,30 +164,30 @@ export default function ExploreScreen() {
   };
 
   const handleLayout = (event: LayoutChangeEvent) => {
-    const width = event.nativeEvent.layout.width;
-    setContainerWidth(width);
+    setContainerWidth(event.nativeEvent.layout.width);
   };
 
   const handleSearch = (text: string) => {
     setSearchText(text);
   };
 
+  // Filtrar categorías según busqueda
   const filteredCategories = searchText
     ? categories.filter((cat) =>
         cat.name.toLowerCase().includes(searchText.toLowerCase())
       )
     : categories;
 
+  // Si no se está buscando y no has pulsado "ver más", mostramos solo 5
   let displayedCategories = filteredCategories;
   if (isBigScreen && !searchText && !showAllCategories) {
     displayedCategories = filteredCategories.slice(0, 5);
   }
 
-  const filteredArtists = searchText
-    ? newArtists.filter((artist) =>
-        artist.name.toLowerCase().includes(searchText.toLowerCase())
-      )
-    : newArtists;
+  // Filtrar obras
+  const filteredWorks = works.filter((w) =>
+    w.name.toLowerCase().includes(searchText.toLowerCase())
+  );
 
   return (
     <ScrollView style={styles.container} onLayout={handleLayout}>
@@ -138,6 +201,7 @@ export default function ExploreScreen() {
 
       <Text style={styles.title}>Categorías</Text>
 
+      {/* En escritorio, 5 columnas ajustadas de ancho */}
       {isBigScreen ? (
         <View style={styles.categoriesContainer}>
           {displayedCategories.map((category, index) => {
@@ -165,7 +229,7 @@ export default function ExploreScreen() {
           })}
         </View>
       ) : (
-        // VERSIÓN MÓVIL (scroll horizontal)
+        // En móvil: scroll horizontal
         <View style={{ position: "relative" }}>
           {showLeftArrow && (
             <TouchableOpacity
@@ -199,7 +263,6 @@ export default function ExploreScreen() {
               </View>
             ))}
           </ScrollView>
-
           {showRightArrow && (
             <TouchableOpacity
               style={styles.rightArrow}
@@ -211,7 +274,7 @@ export default function ExploreScreen() {
         </View>
       )}
 
-      {/* Botón "ver más" en pantallas grandes (opcional) */}
+      {/* Botón "ver más" en escritorio */}
       {isBigScreen && categories.length > 5 && !searchText && (
         <TouchableOpacity
           style={styles.seeMoreButton}
@@ -228,31 +291,39 @@ export default function ExploreScreen() {
       <Text style={styles.title}>Novedades</Text>
 
       <View style={styles.artistsContainer}>
-        {filteredArtists.map((artist, index) => {
+        {filteredWorks.map((work, index) => {
           if (isBigScreen) {
             const isLastInRow = index % COLUMNS_BIG === COLUMNS_BIG - 1;
             return (
-              <View
-                key={artist.id}
-                style={[
-                  styles.artistItemBig,
-                  {
-                    width: itemWidth,
-                    marginRight: isLastInRow ? 0 : GAP_BIG,
-                  },
-                ]}
+              <TouchableOpacity
+                key={work.id}
+                onPress={() => {
+                  // Navegación usando Drawer sin Stack
+                  navigation.navigate("WorkDetail", { workId: work.id });
+                }}
               >
-                <View style={styles.artistImageContainerBig}>
-                  <Image
-                    source={{ uri: artist.image }}
-                    style={styles.artistImage}
-                  />
+                <View
+                  style={[
+                    styles.artistItemBig,
+                    {
+                      width: itemWidth,
+                      marginRight: isLastInRow ? 0 : GAP_BIG,
+                    },
+                  ]}
+                >
+                  <View style={styles.artistImageContainerBig}>
+                    <Image
+                      source={{ uri: work.image }}
+                      style={styles.artistImage}
+                    />
+                  </View>
+                  <Text style={styles.artistTextBig}>{work.name}</Text>
                 </View>
-                <Text style={styles.artistTextBig}>{artist.name}</Text>
-              </View>
+              </TouchableOpacity>
             );
           } else {
-            const screenWidth = containerWidth - 32;
+            // Móvil: 2 columnas en un grid vertical
+            const screenWidth = containerWidth - 32; // 32 = padding horizontal
             const COLUMNS_MOBILE = 2;
             const GAP_MOBILE = 16;
             const mobileItemWidth =
@@ -261,24 +332,30 @@ export default function ExploreScreen() {
             const isLastInRow = index % COLUMNS_MOBILE === COLUMNS_MOBILE - 1;
 
             return (
-              <View
-                key={artist.id}
-                style={[
-                  styles.artistItemMobile,
-                  {
-                    width: mobileItemWidth,
-                    marginRight: isLastInRow ? 0 : GAP_MOBILE,
-                  },
-                ]}
+              <TouchableOpacity
+                key={work.id}
+                onPress={() => {
+                  navigation.navigate("WorkDetail", { workId: work.id });
+                }}
               >
-                <View style={styles.artistImageContainerMobile}>
-                  <Image
-                    source={{ uri: artist.image }}
-                    style={styles.artistImage}
-                  />
+                <View
+                  style={[
+                    styles.artistItemMobile,
+                    {
+                      width: mobileItemWidth,
+                      marginRight: isLastInRow ? 0 : GAP_MOBILE,
+                    },
+                  ]}
+                >
+                  <View style={styles.artistImageContainerMobile}>
+                    <Image
+                      source={{ uri: work.image }}
+                      style={styles.artistImage}
+                    />
+                  </View>
+                  <Text style={styles.artistTextMobile}>{work.name}</Text>
                 </View>
-                <Text style={styles.artistTextMobile}>{artist.name}</Text>
-              </View>
+              </TouchableOpacity>
             );
           }
         })}
