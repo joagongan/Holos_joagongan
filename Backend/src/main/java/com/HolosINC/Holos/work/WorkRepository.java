@@ -1,8 +1,9 @@
-package com.HolosINC.Holos.User;
+package com.HolosINC.Holos.work;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface UserRepository extends JpaRepository<User, Long> {
+public interface WorkRepository extends JpaRepository<Work, Long>{
+    
 }
