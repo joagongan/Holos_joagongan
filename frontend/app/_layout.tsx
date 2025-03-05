@@ -15,7 +15,7 @@ export default function RootLayout() {
         }}
       >
         <Drawer.Screen name="Inicio" component={HomeScreen} />
-        <Drawer.Screen name="Solicitudes" component={ArtistRequestOrders} />
+        <Drawer.Screen name="Pedidos" component={ArtistRequestOrders} />
 
         {/* <Drawer.Screen name="Iniciar Sesión" component={LoginScreen} /> */}
       </Drawer.Navigator>

@@ -8,7 +8,7 @@ const isBigScreen = width >= 1024;
 const MOBILE_PROFILE_ICON_SIZE = 40;
 const MOBILE_CARD_PADDING = 12;
 
-export default function ArtistRequestOrders({ navigation }) {
+export default function ArtistRequestOrders({}) {
   return (
     <View style={styles.container}>
       {/* Título de la página */}
