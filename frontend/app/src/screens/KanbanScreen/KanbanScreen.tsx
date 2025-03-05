@@ -18,7 +18,7 @@ interface TaskCardProps {
 const TaskCard: React.FC<TaskCardProps> = ({ task, moveTask, column }) => {
   return (
     <View style={styles.taskCard}>
-      <Text>{task.name}</Text>
+      <Text style={styles.taskText}>{task.name}</Text>
       <TouchableOpacity onPress={() => moveTask(task.id, column)} style={styles.moveButton}>
         <Text style={{ color: 'white' }}>Mover</Text>
       </TouchableOpacity>
@@ -113,11 +113,12 @@ const KanbanBoard: React.FC = () => {
           <Text style={styles.bannerText}>PROYECTOS PERSONALIZADOS</Text>
         </View>
 
-        <View style={styles.kanbanBoard}>
-          <KanbanColumn title="To Do" tasks={tasks.todo} moveTask={moveTask} columnName="todo" />
-          <KanbanColumn title="In Progress" tasks={tasks.inProgress} moveTask={moveTask} columnName="inProgress" />
-          <KanbanColumn title="Done" tasks={tasks.done} moveTask={moveTask} columnName="done" />
-        </View>
+        {/* Scroll horizontal para las columnas en móvil */}
+        <ScrollView horizontal contentContainerStyle={styles.kanbanBoard}>
+          <KanbanColumn title="Pendiente" tasks={tasks.todo} moveTask={moveTask} columnName="todo" />
+          <KanbanColumn title="En progreso" tasks={tasks.inProgress} moveTask={moveTask} columnName="inProgress" />
+          <KanbanColumn title="Completado" tasks={tasks.done} moveTask={moveTask} columnName="done" />
+        </ScrollView>
       </View>
     </ScrollView>
   );
@@ -125,7 +126,8 @@ const KanbanBoard: React.FC = () => {
 
 export default KanbanBoard;
 
-const { width } = Dimensions.get('window');
+const { width } = Dimensions.get("window");
+const isMobile = width < 768;
 const isBigScreen = width >= 1024;
 
 const styles = StyleSheet.create({
@@ -136,29 +138,34 @@ const styles = StyleSheet.create({
   },
   banner: {
     backgroundColor: "#183771",
-    paddingVertical: 15,
+    paddingVertical: isBigScreen ? 15 : 10,
     alignItems: "center",
     justifyContent: "center",
-    borderRadius:5
+    borderRadius: 5,
+  },
+  taskText: {
+    fontSize: isMobile ? 14 : 16, // Texto más pequeño en móvil
   },
   bannerText: {
     color: "#FFFFFF",
     fontWeight: "bold",
-    fontSize: isBigScreen ? 24 : 20,
+    fontSize: isBigScreen ? 24 : 18,
   },
   kanbanBoard: {
-    flexDirection: isBigScreen ? 'row' : 'column',
-    justifyContent: 'space-between',
+    flexDirection: isBigScreen ? "row" : "row", // En móvil y PC las columnas van en fila
+    justifyContent: isBigScreen ? "space-between" : "flex-start",
     marginTop: 20,
+    paddingHorizontal: isMobile ? 10 : 0,
   },
   kanbanColumn: {
-    flex: 1,
-    margin: 10,
-    
+    flex: isBigScreen ? 1 : 0, // En PC usa flex para que ocupe el mismo espacio, en móvil no
+    margin: isMobile ? 5 : 10,
+    padding: isMobile ? 5 : 15,
+    width: isMobile ? 300 : 400, // Tamaño fijo en móvil, en PC más grande
   },
   taskCard: {
     backgroundColor: "#FFFFFF",
-    padding: 15,
+    padding: isMobile ? 10 : 15,
     marginTop: 15,
     borderRadius: 8,
     shadowColor: "#000",
@@ -172,8 +179,8 @@ const styles = StyleSheet.create({
     padding: 7,
     marginTop: 10,
     borderRadius: 5,
-    width: '33%',
-    alignItems: 'center',
-    alignSelf: 'center',
+    width: isMobile ? "80%" : "33%",
+    alignItems: "center",
+    alignSelf: "center",
   },
 });
