@@ -39,7 +39,9 @@ interface KanbanColumnProps {
 const KanbanColumn: React.FC<KanbanColumnProps> = ({ title, tasks, moveTask, columnName }) => {
   return (
     <View style={styles.kanbanColumn}>
-      <Text style={styles.columnTitle}>{title}</Text>
+      <View style= {styles.banner}>
+      <Text style={styles.bannerText}>{title}</Text>
+      </View>
       {tasks.map((task) => (
         <TaskCard key={task.id} task={task} moveTask={moveTask} column={columnName} />
       ))}
@@ -104,12 +106,19 @@ const KanbanBoard: React.FC = () => {
   };
 
   return (
-    <View style={styles.kanbanBoard}>
-      <KanbanColumn title="To Do" tasks={tasks.todo} moveTask={moveTask} columnName="todo" />
-      <KanbanColumn title="In Progress" tasks={tasks.inProgress} moveTask={moveTask} columnName="inProgress" />
-      <KanbanColumn title="Done" tasks={tasks.done} moveTask={moveTask} columnName="done" />
-    </View>
-  );
-};
+      <View style={styles.container}>
+        {/* Título de la página */}
+        <View style={styles.banner}>
+          <Text style={styles.bannerText}>PROYECTOS PERSONALIZADOS</Text>
+        </View>
+
+        <View style={styles.kanbanBoard}>
+          <KanbanColumn title="To Do" tasks={tasks.todo} moveTask={moveTask} columnName="todo"/>
+          <KanbanColumn title="In Progress" tasks={tasks.inProgress} moveTask={moveTask} columnName="inProgress" />
+          <KanbanColumn title="Done" tasks={tasks.done} moveTask={moveTask} columnName="done" />
+        </View>
+      </View>
+    );
+  };
 
 export default KanbanBoard;
