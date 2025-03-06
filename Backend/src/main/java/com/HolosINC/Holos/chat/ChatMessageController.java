@@ -31,12 +31,12 @@ public class ChatMessageController {
     }
 
     @DeleteMapping("/{id}")
-    public void deleteChatMessage(@PathVariable Integer id) {
+    public void deleteChatMessage(@PathVariable Long id) {
         service.deleteMessage(id);
     }
 
     @GetMapping("/chat/{fromUserId}/{toUserId}")
-    public List<ChatMessage> getConversation(@PathVariable Integer fromUserId, @PathVariable Integer toUserId) {
+    public List<ChatMessage> getConversation(@PathVariable Long fromUserId, @PathVariable Long toUserId) {
         return service.findConversation(fromUserId, toUserId);
     }
 
@@ -46,7 +46,7 @@ public class ChatMessageController {
     }
 
     @GetMapping("/{id}")
-    public ChatMessage getChatMessage(@PathVariable Integer id) {
+    public ChatMessage getChatMessage(@PathVariable Long id) {
         return service.findChatMessage(id);
     }
 }

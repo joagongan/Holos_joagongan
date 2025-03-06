@@ -23,7 +23,7 @@ public class ChatMessageService {
     }
 
     @Transactional(readOnly = true)
-	public ChatMessage findChatMessage(Integer chatMessageId) {
+	public ChatMessage findChatMessage(Long chatMessageId) {
 		return chatMessageRepository.findById(chatMessageId)
 				.orElseThrow(() -> new ResourceNotFoundException("ChatMessage", "id", chatMessageId));
 	}
@@ -34,12 +34,12 @@ public class ChatMessageService {
 	}
 
     @Transactional(readOnly = true)
-	public List<ChatMessage> findConversation(Integer fromUserId, Integer toUserId) {
+	public List<ChatMessage> findConversation(Long fromUserId, Long toUserId) {
 		return chatMessageRepository.findConversation(fromUserId, toUserId);
 	}
 
     @Transactional
-    public void deleteMessage(Integer id) {
+    public void deleteMessage(Long id) {
         chatMessageRepository.deleteById(id);
     }
 }

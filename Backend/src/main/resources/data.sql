@@ -22,3 +22,7 @@ INSERT INTO works_done (id, artist_id, image) VALUES
 (2, 1, NULL),
 (3, 1, NULL),
 (4, 1, NULL);
+
+INSERT INTO chat_messages(id, creation_date, text, image, from_user, to_user) VALUES
+(1, '2025-02-28', 'Hello', NULL, 1, 2),
+(2, '2025-02-28', 'Hi', NULL, 2, 1);

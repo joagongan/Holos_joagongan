@@ -10,8 +10,8 @@ import org.springframework.stereotype.Repository;
 
 
 @Repository
-public interface ChatMessageRepository extends JpaRepository<ChatMessage, Integer>{
+public interface ChatMessageRepository extends JpaRepository<ChatMessage, Long>{
     @Query("SELECT m FROM ChatMessage m WHERE (m.fromUser.id = :fromUserId AND m.toUser.id = :toUserId) OR "
     + "(m.fromUser.id = :toUserId AND m.toUser.id = :fromUserId) ORDER BY m.creationDate DESC")
-    List<ChatMessage> findConversation(Integer fromUserId, Integer toUserId);     
+    List<ChatMessage> findConversation(Long fromUserId, Long toUserId);     
 }
