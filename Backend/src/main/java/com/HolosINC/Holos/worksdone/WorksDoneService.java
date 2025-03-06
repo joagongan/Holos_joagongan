@@ -1,19 +1,14 @@
 package com.HolosINC.Holos.worksdone;
 
-import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.BeanUtils;
-import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.HolosINC.Holos.artist.Artist;
-import com.HolosINC.Holos.artist.ArtistRepository;
 import com.HolosINC.Holos.artist.ArtistService;
-import com.HolosINC.Holos.commision.Commision;
-import com.HolosINC.Holos.commision.StatusCommision;
 import com.HolosINC.Holos.exceptions.ResourceNotFoundException;
 
 @Service
