@@ -13,13 +13,15 @@ import com.HolosINC.Holos.exceptions.ResourceNotFoundException;
 @Service
 public class StatusKanbanOrderService {
 
+
     private StatusKanbanOrderRepository statusKanbanOrderRepository;
     private ArtistService artistService;
 
 
     @Autowired
-    public StatusKanbanOrderService(StatusKanbanOrderRepository statusKanbanOrderRepository) {
+    public StatusKanbanOrderService(StatusKanbanOrderRepository statusKanbanOrderRepository, ArtistService artistService) {
         this.statusKanbanOrderRepository = statusKanbanOrderRepository;
+        this.artistService = artistService;
     }
 
     @Transactional
