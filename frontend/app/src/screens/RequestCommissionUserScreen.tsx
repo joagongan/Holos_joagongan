@@ -1,5 +1,5 @@
 import React,  { useState } from "react";
-import { View, Text, Image, StyleSheet, TextInput, TouchableOpacity, Alert } from "react-native";
+import { View, Text, Image, StyleSheet, TextInput, TouchableOpacity, Alert, Platform } from "react-native";
 import Icon from "react-native-vector-icons/MaterialIcons";
 import * as ImagePicker from "expo-image-picker";
 
@@ -8,7 +8,8 @@ export default function RequestCommissionUserScreen ({}) {
 
   const [inputText, setInputText] = useState("");
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
-
+  const isMobile = Platform.OS === "ios" || Platform.OS === "android";
+  
   const pickImage = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
@@ -23,7 +24,23 @@ export default function RequestCommissionUserScreen ({}) {
   };
     
   const handleSend = () => {
-    Alert.alert("Solicitud enviada", inputText || "Debe de ingresar una descripción del trabajo");
+   {/* Se muestra un pop-up u otro en función de si se está accediendo por móvil o por ordenador, con el objetivo de proporcionar  al cliente información
+      sobre el estado del formulario */}
+     if (!inputText.trim()) {
+      if(isMobile){
+        Alert.alert("Debe de ingresar una descripción del trabajo");
+      }else{ 
+        window.alert( "Debe de ingresar una descripción del trabajo");
+      }
+      return;
+    }else{
+      if(isMobile){
+        Alert.alert("Solicitud enviada");
+      }else{
+        window.alert("Solicitud enviada" );
+      }
+    }
+    
     {/* Elimina el contenido de los estados*/}
     setInputText("");
     setSelectedImage(null);
