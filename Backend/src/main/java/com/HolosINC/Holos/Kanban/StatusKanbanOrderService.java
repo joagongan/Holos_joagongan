@@ -109,9 +109,24 @@ public class StatusKanbanOrderService {
 	}
 
     @Transactional
-    public void deleteStatusKanbanOrder(Integer id) {
-        statusKanbanOrderRepository.deleteById(id);
+public void deleteStatusKanbanOrder(Integer id) {
+    StatusKanbanOrder statusToDelete = statusKanbanOrderRepository.findById(id)
+            .orElseThrow(() -> new ResourceNotFoundException("StatusKanbanOrder", "id", id));
+
+    Integer artistId = statusToDelete.getArtist().getId().intValue();
+    Integer orderDeleted = statusToDelete.getOrder();
+
+    statusKanbanOrderRepository.deleteById(id);
+
+    List<StatusKanbanOrder> statusList = statusKanbanOrderRepository.findByArtist(artistId);
+
+    for (StatusKanbanOrder status : statusList) {
+        if (status.getOrder() > orderDeleted) {
+            status.setOrder(status.getOrder() - 1);
+            statusKanbanOrderRepository.save(status);
+        }
     }
+}
 
     @Transactional
     public StatusKanbanOrder updateOrder(StatusKanbanOrder statusKanbanOrder) {
