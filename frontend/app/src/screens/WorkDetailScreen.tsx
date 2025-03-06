@@ -248,13 +248,6 @@ export default function WorkDetailScreen() {
       style={styles.container}
       contentContainerStyle={dynamicStyles.scrollContent}
     >
-      {/* Encabezado con flecha y texto para volver */}
-      <View style={dynamicStyles.header}>
-        <TouchableOpacity onPress={handleBackPress}>
-          <Text style={dynamicStyles.backText}>← VOLVER A EXPLORAR</Text>
-        </TouchableOpacity>
-      </View>
-
       {/* Contenedor principal */}
       <View style={dynamicStyles.contentContainer}>
         {/* Imagen con sombra */}
