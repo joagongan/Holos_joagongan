@@ -5,12 +5,17 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import com.HolosINC.Holos.artist.ArtistRepository;
+import com.HolosINC.Holos.artist.ArtistService;
 import com.HolosINC.Holos.exceptions.ResourceNotFoundException;
 
 @Service
 public class StatusKanbanOrderService {
 
     private StatusKanbanOrderRepository statusKanbanOrderRepository;
+    private ArtistService artistService;
+
 
     @Autowired
     public StatusKanbanOrderService(StatusKanbanOrderRepository statusKanbanOrderRepository) {
@@ -22,19 +27,36 @@ public class StatusKanbanOrderService {
         return statusKanbanOrderRepository.save(statusKanbanOrder);
     }
 
+    //Se pone el orden el último. Si no hay nada, el primero por dewfecto
+
+    @Transactional
+    public StatusKanbanOrder addStatusToKanban(String color, String description, String nombre, Integer artistId) {
+        StatusKanbanOrder statusKanbanOrder = new StatusKanbanOrder();
+        statusKanbanOrder.setColor(color);
+        statusKanbanOrder.setDescription(description);
+        statusKanbanOrder.setName(nombre);
+        List<StatusKanbanOrder> list = statusKanbanOrderRepository.findByArtist(artistId);
+        if(list.isEmpty()){
+            statusKanbanOrder.setOrder(1);  
+        }else{
+            statusKanbanOrder.setOrder(list.size()+1);
+        }
+        statusKanbanOrder.setArtist(artistService.findArtist(artistId.longValue()));
+        return statusKanbanOrderRepository.save(statusKanbanOrder);
+    }
+    
     @Transactional
     public StatusKanbanOrder updateStatusKanbanOrder(StatusKanbanOrder statusKanbanOrder) {
         return statusKanbanOrderRepository.save(statusKanbanOrder);
     }
 
-    //¿Añadir nombre?
-
     @Transactional
-    public StatusKanbanOrder updateKanban(int id, String color, String description) {
+    public StatusKanbanOrder updateKanban(int id, String color, String description, String nombre) {
         StatusKanbanOrder sk = statusKanbanOrderRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("StatusKanbanOrder", "id", id));
         sk.setColor(color);
         sk.setDescription(description);
+        sk.setName(nombre);
         return statusKanbanOrderRepository.save(sk);
     }
 

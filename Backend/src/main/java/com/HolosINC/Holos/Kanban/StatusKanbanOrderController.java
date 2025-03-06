@@ -19,6 +19,15 @@ public class StatusKanbanOrderController {
         return statusKanbanOrderService.createStatusKanbanOrder(statusKanbanOrder);
     }
 
+    //No he puesto orden porque para añadir una posición concreta es mucho lío, quizá mejor que se añada siempre el último y luego se pueda mover
+
+    @PostMapping
+    public ResponseEntity<StatusKanbanOrder> addStatusToKanban(@RequestParam String color, @RequestParam String description, 
+    @RequestParam String nombre, @RequestParam Integer artistId) {
+        StatusKanbanOrder sk = statusKanbanOrderService.addStatusToKanban(color, description, nombre, artistId);
+        return new ResponseEntity<>(sk, HttpStatus.OK);
+    }
+
     @PutMapping("/update")
     public StatusKanbanOrder updateStatusKanbanOrder(@RequestBody StatusKanbanOrder statusKanbanOrder) {
         return statusKanbanOrderService.updateStatusKanbanOrder(statusKanbanOrder);
@@ -27,8 +36,8 @@ public class StatusKanbanOrderController {
     //Cambiar color o descripción ¿Añadir nombre?
 
     @PutMapping("/{id}")
-    public ResponseEntity<StatusKanbanOrder> updateKanban(@PathVariable("id") int id, @RequestParam String color, @RequestParam String description) {
-        StatusKanbanOrder sk = statusKanbanOrderService.updateKanban(id, color, description);
+    public ResponseEntity<StatusKanbanOrder> updateKanban(@PathVariable("id") int id, @RequestParam String color, @RequestParam String description, @RequestParam String nombre) {
+        StatusKanbanOrder sk = statusKanbanOrderService.updateKanban(id, color, description, nombre);
         return new ResponseEntity<>(sk, HttpStatus.OK);
     }
 
