@@ -10,7 +10,7 @@ INSERT INTO clients (id, first_name, username, password, email, phone_number, im
 (9, 'Simón', 'simon', 'password009', 'simoncgs03@gmail.com', '1234567890', NULL, '2025-03-06'),
 (10, 'Javier', 'javies_pacheco', 'password010', 'pachecomarquezjavier@gmail.com', '1234567890', NULL, '2025-03-06'),
 (11, 'Henrique', 'henrique', 'password011', 'henrique.rebolho@gmail.com', '1234567890', NULL, '2025-03-06'),
-(12, 'Keegan', 'kaegan', 'password012', 'Kcullen3289@gmail.com ', '1234567890', NULL, '2025-03-06'),
+(12, 'Keegan', 'kaegan', 'password012', 'Kcullen3289@gmail.com', '1234567890', NULL, '2025-03-06'),
 (13, 'Carlos', 'carlos', 'password013', 'carlosperezsanchez199@gmail.com', '1234567890', NULL, '2025-03-06'),
 (14, 'Milagros', 'milagros', 'password014', 'milagros.huerta@gm.uca.es', '1234567890', NULL, '2025-03-06'),
 (15, 'Patricia', 'patricia', 'password015', 'kaleta1979@gmail.com', '1234567890', NULL, '2025-03-06'),
