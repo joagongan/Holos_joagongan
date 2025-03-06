@@ -28,8 +28,8 @@ INSERT INTO status_kanban_order (id, artist_id, name, kanban_order, description,
 (2, 1, 'Completado', 2, 'Tarea finalizada', 'green');
 
 INSERT INTO commisions (id, artist_id, client_id, name, description, price, status, num_milestones, accepted_date_by_artist, payment_arrangement, status_kanban_order_id) VALUES
-(1, 1, 1, 'Portrait Commission', 'Custom portrait painting', 250.0, 'REQUESTED', 3, NULL, 'FIFTYFIFTY', 1),
+(1, 1, 2, 'Portrait Commission', 'Custom portrait painting', 250.0, 'REQUESTED', 3, NULL, 'FIFTYFIFTY', 1),
 (2, 1, 2, 'Landscape Art', 'A detailed landscape commission', 300.0, 'REQUESTED', 2, NULL, 'FINAL', 1),
-(3, 1, 1, 'Abstract Expression', 'Abstract commission based on client ideas', 200.0, 'REQUESTED', 1, NULL, 'INITIAL', 2),
+(3, 1, 2, 'Abstract Expression', 'Abstract commission based on client ideas', 200.0, 'REQUESTED', 1, NULL, 'INITIAL', 2),
 (4, 1, 2, 'Surreal Concept Art', 'A surreal-style artwork', 500.0, 'REQUESTED', 2, NULL, 'MODERATOR', 2),
-(5, 1, 1, 'Forest Path', 'A peaceful forest pathway', 120.0, 'REQUESTED', 2, NULL, 'MODERATOR', 1);
+(5, 1, 2, 'Forest Path', 'A peaceful forest pathway', 120.0, 'REQUESTED', 2, NULL, 'MODERATOR', 1);
