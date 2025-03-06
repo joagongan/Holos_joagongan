@@ -22,3 +22,8 @@ INSERT INTO works_done (id, artist_id, image) VALUES
 (2, 1, NULL),
 (3, 1, NULL),
 (4, 1, NULL);
+
+INSERT INTO status_kanban_order (id, name, kanban_order, description, color, artist_id) VALUES
+(1, 'Sketch', 1, 'Fase inicial de dibujo', '#FF5733', 1),
+(2, 'LineArt', 2, 'Fase de tintao', '#FF5733', 1),
+(3, 'Finalizado', 3, 'Fase final de la obra', '#FF5733', 1);
