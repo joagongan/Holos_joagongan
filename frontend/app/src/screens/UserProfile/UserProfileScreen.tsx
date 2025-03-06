@@ -112,7 +112,6 @@ const UserProfileScreen = () => {
                     {user.role === "artist" ? (
                         <>
                             <Button title="Ver Historial de Trabajos" onPress={navigateToArtworks} color="#1E3A8A" />
-                            <Button title="Hacer un Pedido" color="#1E3A8A" />
                         </>
                     ) : (
                         <Button title="Ver Historial de Pedidos" onPress={navigateToOrderHistory} color="#1E3A8A" />
