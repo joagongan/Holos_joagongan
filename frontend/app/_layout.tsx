@@ -4,7 +4,7 @@ import HomeScreen from "./src/screens/HomeScreen";
 import UserProfileScreen from "./src/screens/UserProfile/UserProfileScreen";
 import OrderHistoryScreen from "./src/screens/UserProfile/OrderHistoryScreen";
 import ArtworksScreen from "./src/screens/UserProfile/ArtworksScreen";
-import ProfileIcon from "@/assets/svgs/profileIcon";
+import ProfileIcon from "@/assets/svgs/ProfileIcon";
 // import LoginScreen from "./src/screens/LoginScreen";
 
 const Drawer = createDrawerNavigator()
