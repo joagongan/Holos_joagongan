@@ -3,6 +3,8 @@ package com.HolosINC.Holos.Kanban;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -20,6 +22,20 @@ public class StatusKanbanOrderController {
     @PutMapping("/update")
     public StatusKanbanOrder updateStatusKanbanOrder(@RequestBody StatusKanbanOrder statusKanbanOrder) {
         return statusKanbanOrderService.updateStatusKanbanOrder(statusKanbanOrder);
+    }
+
+    //Cambiar color o descripción ¿Añadir nombre?
+
+    @PutMapping("/{id}")
+    public ResponseEntity<StatusKanbanOrder> updateKanban(@PathVariable("id") int id, @RequestParam String color, @RequestParam String description) {
+        StatusKanbanOrder sk = statusKanbanOrderService.updateKanban(id, color, description);
+        return new ResponseEntity<>(sk, HttpStatus.OK);
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<StatusKanbanOrder> updateOrder(@PathVariable("id") int id, @RequestParam Integer order) {
+        StatusKanbanOrder sk = statusKanbanOrderService.updateOrder(id, order);
+        return new ResponseEntity<>(sk, HttpStatus.OK);
     }
 
     @DeleteMapping("/{id}")

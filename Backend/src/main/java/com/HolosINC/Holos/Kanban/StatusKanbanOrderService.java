@@ -1,5 +1,6 @@
 package com.HolosINC.Holos.Kanban;
 
+import java.io.ObjectInputFilter.Status;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -26,6 +27,47 @@ public class StatusKanbanOrderService {
         return statusKanbanOrderRepository.save(statusKanbanOrder);
     }
 
+    //¿Añadir nombre?
+
+    @Transactional
+    public StatusKanbanOrder updateKanban(int id, String color, String description) {
+        StatusKanbanOrder sk = statusKanbanOrderRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("StatusKanbanOrder", "id", id));
+        sk.setColor(color);
+        sk.setDescription(description);
+        return statusKanbanOrderRepository.save(sk);
+    }
+
+    @Transactional
+    public StatusKanbanOrder updateOrder(int id, Integer order) {
+        StatusKanbanOrder sk = statusKanbanOrderRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("StatusKanbanOrder", "id", id));
+        if(sk.getOrder()==order){
+            return statusKanbanOrderRepository.save(null);
+        }else{
+            List<StatusKanbanOrder> list = statusKanbanOrderRepository.findByArtist(sk.getArtist().getId().intValue());
+            //Recorro los statuskanban order de cada artista para recolocarlos
+            for (StatusKanbanOrder sk2 : list) {
+                    if(sk.getOrder()>order){
+                        //Si el orden es mayor que el nuevo orden, tengo que bajar el resto sumándoles 1, hasta que lleguen a la posición del orden antiguo
+                        if(sk2.getOrder()>=order && sk2.getOrder()<sk.getOrder()){
+                            sk2.setOrder(sk2.getOrder()+1);
+                            statusKanbanOrderRepository.save(sk2);
+                        }
+                    }else{
+                        //Si el orden es menor que el nuevo orden, tengo que subir el resto restándoles 1, hasta que lleguen a la posición del orden antiguo
+                        //No pueden ser iguales porque fuera he descartado ese caso
+                        if(sk2.getOrder()<=order && sk2.getOrder()>sk.getOrder()){
+                            sk2.setOrder(sk2.getOrder()-1);
+                            statusKanbanOrderRepository.save(sk2);
+                        }
+                    }
+                    sk.setOrder(order);
+                    
+                }
+        }return statusKanbanOrderRepository.save(sk);
+    }
+
     @Transactional(readOnly = true)
 	public StatusKanbanOrder findStatusKanbanOrder(Integer statusKanbanOrderId) {
 		return statusKanbanOrderRepository.findById(statusKanbanOrderId)
@@ -47,5 +89,8 @@ public class StatusKanbanOrderService {
         statusKanbanOrderRepository.deleteById(id);
     }
 
-    // TODO: updateOrder
+    @Transactional
+    public StatusKanbanOrder updateOrder(StatusKanbanOrder statusKanbanOrder) {
+        return statusKanbanOrderRepository.save(statusKanbanOrder);
+    }
 }
