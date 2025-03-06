@@ -58,6 +58,18 @@ INSERT INTO works (id, artist_id, name, description, price) VALUES
 (4, 1, 'Abstract Art', 'A modern abstract composition', 180.0),
 (5, 1, 'Forest Path', 'A peaceful forest pathway', 120.0);
 
+INSERT INTO commisions (id, artist_id, client_id, status, num_milestones, accepted_date_by_artist, payment_arrangement, status_kanban_order_id) VALUES 
+(1, 1, 1, 'PENDING', 3, '2025-03-01', 'UPFRONT', 1),
+(2, 2, 2, 'IN_PROGRESS', 5, '2025-03-02', 'HALF_UPFRONT', 2),
+(3, 3, 3, 'COMPLETED', 2, '2025-02-28', 'FULL_PAYMENT', 3),
+(4, 4, 4, 'CANCELLED', 4, '2025-03-04', 'UPFRONT', 4),
+(5, 5, 5, 'IN_PROGRESS', 6, '2025-03-05', 'INSTALLMENTS', 5),
+(6, 6, 6, 'PENDING', 3, '2025-03-06', 'UPFRONT', 6),
+(7, 7, 7, 'COMPLETED', 2, '2025-02-27', 'FULL_PAYMENT', 7),
+(8, 8, 8, 'IN_PROGRESS', 4, '2025-03-03', 'HALF_UPFRONT', 8),
+(9, 9, 9, 'CANCELLED', 3, '2025-03-01', 'INSTALLMENTS', 9),
+(10, 10, 10, 'PENDING', 5, '2025-03-06', 'UPFRONT', 1);
+
 INSERT INTO status_kanban_order (id, artist_id, name, order, description, color) VALUES 
 (1, 1, 'To Do', 1, 'Tasks that need to be started', '#FF5733'),
 (2, 1, 'In Progress', 2, 'Tasks that are currently being worked on', '#33FF57'),
