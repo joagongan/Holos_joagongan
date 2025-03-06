@@ -58,6 +58,18 @@ INSERT INTO works (id, artist_id, name, description, price) VALUES
 (4, 1, 'Abstract Art', 'A modern abstract composition', 180.0),
 (5, 1, 'Forest Path', 'A peaceful forest pathway', 120.0);
 
+INSERT INTO status_kanban_order (id, artist_id, name, order, description, color) VALUES 
+(1, 1, 'To Do', 1, 'Tasks that need to be started', '#FF5733'),
+(2, 1, 'In Progress', 2, 'Tasks that are currently being worked on', '#33FF57'),
+(3, 1, 'Review', 3, 'Tasks that need to be reviewed before completion', '#3357FF'),
+(4, 1, 'Completed', 4, 'Tasks that have been finished', '#F1C40F'),
+(5, 1, 'Archived', 5, 'Tasks that are no longer active but stored for reference', '#8E44AD'),
+(6, 1, 'Idea', 6, 'New concept or idea being explored', '#FFAA33'),
+(7, 1, 'Sketching', 7, 'Initial sketches and drafts', '#33A8FF'),
+(8, 1, 'Coloring', 8, 'Adding colors to the artwork', '#A833FF'),
+(9, 1, 'Final Touches', 9, 'Adding final adjustments before completion', '#33FFA8'),
+(10, 1, 'Published', 10, 'The artwork is completed and shared', '#FF338A');
+
 INSERT INTO works_done (id, artist_id, image) VALUES 
 (1, 1, NULL),
 (2, 1, NULL),
