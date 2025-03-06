@@ -39,6 +39,6 @@ public class StatusKanbanOrder {
     private String color;
 
     @ManyToOne
-    @JoinColumn(name = "artist_id")
+    @JoinColumn(name = "artist_id", referencedColumnName = "id")
     private Artist artist;
 }

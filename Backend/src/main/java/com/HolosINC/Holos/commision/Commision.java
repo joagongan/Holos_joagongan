@@ -34,7 +34,7 @@ public class Commision extends Work{
     private EnumPaymentArrangement paymentArrangement;
 
     @ManyToOne
-    @JoinColumn(name = "status_kanban_order_id")
+    @JoinColumn(name = "status_kanban_order_id", referencedColumnName = "id")
     private StatusKanbanOrder statusKanbanOrder;
     
     // @OneToMany(mappedBy = "commision", cascade = CascadeType.ALL, orphanRemoval = true)
