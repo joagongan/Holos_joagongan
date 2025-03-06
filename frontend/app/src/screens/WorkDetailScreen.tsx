@@ -114,7 +114,6 @@ export default function WorkDetailScreen() {
   }
 
   // Estilos que se adaptan según el breakpoint isLargeScreen
-  // Aquí ajustas tamaños y disposición "row" vs "column"
   const dynamicStyles = StyleSheet.create({
     scrollContent: {
       flexGrow: 1,
@@ -125,7 +124,7 @@ export default function WorkDetailScreen() {
       marginBottom: isLargeScreen ? 20 : 10,
     },
     backText: {
-      fontSize: isLargeScreen ? 24 : 18,
+      fontSize: isLargeScreen ? 22 : 16,
       color: "#173F8A",
       fontWeight: "700",
     },
@@ -135,28 +134,28 @@ export default function WorkDetailScreen() {
       justifyContent: "flex-start",
       paddingHorizontal: isLargeScreen ? 80 : 20,
       paddingTop: isLargeScreen ? 10 : 0,
+      paddingBottom: 40,
     },
     imageContainer: {
-      // Para pantallas grandes, imagen grande y a la izquierda
-      // Para pantallas pequeñas, ocupa todo el ancho y menos altura
-      width: isLargeScreen ? 800 : "100%",
-      height: isLargeScreen ? 800 : 300,
+      width: isLargeScreen ? 700 : "100%",
+      height: isLargeScreen ? 700 : 300,
       backgroundColor: "#FFF",
       borderRadius: 12,
       marginRight: isLargeScreen ? 40 : 0,
-      marginBottom: isLargeScreen ? 0 : 20, // Para que haya espacio debajo en pantallas pequeñas
+      marginBottom: isLargeScreen ? 0 : 20,
       shadowColor: "#000",
-      shadowOffset: { width: 0, height: 4 },
-      shadowOpacity: 0.2,
+      shadowOffset: { width: 0, height: 5 },
+      shadowOpacity: 0.15,
       shadowRadius: 8,
       elevation: 6,
       overflow: "hidden",
       marginTop: isLargeScreen ? 0 : 20,
+      alignSelf: "center",
     },
     image: {
       width: "100%",
       height: "100%",
-      resizeMode: "contain",
+      resizeMode: "cover",
     },
     placeholder: {
       width: "100%",
@@ -168,22 +167,23 @@ export default function WorkDetailScreen() {
     infoContainer: {
       flex: 1,
       justifyContent: "flex-start",
-      marginLeft: isLargeScreen ? 90 : 0,
+      marginLeft: isLargeScreen ? 60 : 0,
       width: isLargeScreen ? "auto" : "100%",
       alignSelf: "center",
+      marginTop: isLargeScreen ? 0 : 10,
     },
     title: {
-      fontSize: isLargeScreen ? 36 : 26,
+      fontSize: isLargeScreen ? 32 : 24,
       fontWeight: "700",
       color: "#173F8A",
-      marginBottom: isLargeScreen ? 80 : 5,
+      marginBottom: isLargeScreen ? 40 : 10,
       textAlign: "left",
     },
     label: {
-      fontSize: isLargeScreen ? 22 : 18,
+      fontSize: isLargeScreen ? 20 : 16,
       fontWeight: "700",
       color: "#173F8A",
-      marginTop: isLargeScreen ? 40 : 20,
+      marginTop: isLargeScreen ? 30 : 20,
       marginBottom: 6,
       textAlign: "left",
     },
@@ -195,7 +195,7 @@ export default function WorkDetailScreen() {
       textAlign: "left",
     },
     price: {
-      fontSize: isLargeScreen ? 24 : 20,
+      fontSize: isLargeScreen ? 22 : 18,
       fontWeight: "700",
       color: "#000",
       marginTop: 6,
@@ -207,11 +207,16 @@ export default function WorkDetailScreen() {
       alignItems: "flex-start",
     },
     messageButton: {
-      width: isLargeScreen ? 600 : "100%",
+      width: isLargeScreen ? 350 : "100%",
       backgroundColor: "#FFD5EB",
-      paddingVertical: 16,
+      paddingVertical: 14,
       borderRadius: 8,
       marginBottom: 16,
+      shadowColor: "#000",
+      shadowOffset: { width: 0, height: 3 },
+      shadowOpacity: 0.2,
+      shadowRadius: 5,
+      elevation: 5,
     },
     messageButtonText: {
       color: "#173F8A",
@@ -220,10 +225,15 @@ export default function WorkDetailScreen() {
       textAlign: "center",
     },
     buyButton: {
-      width: isLargeScreen ? 600 : "100%",
+      width: isLargeScreen ? 350 : "100%",
       backgroundColor: "#173F8A",
-      paddingVertical: 16,
+      paddingVertical: 14,
       borderRadius: 8,
+      shadowColor: "#000",
+      shadowOffset: { width: 0, height: 3 },
+      shadowOpacity: 0.2,
+      shadowRadius: 5,
+      elevation: 5,
     },
     buyButtonText: {
       color: "#FFF",
@@ -296,6 +306,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     width: "100%",
+    backgroundColor: "#F7F8FA", // Fondo claro para un look más limpio
   },
   loaderContainer: {
     flex: 1,
