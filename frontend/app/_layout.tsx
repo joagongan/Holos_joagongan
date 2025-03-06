@@ -4,6 +4,7 @@ import { createDrawerNavigator } from "@react-navigation/drawer";
 import HomeScreen from "./src/screens/HomeScreen";
 import { createStackNavigator } from "@react-navigation/stack";
 import ExploreScreen from "./src/screens/ExploreScreen/ExploreScreen";
+import ArtistDetailScreen from "./src/screens/ArtistDetailScreen/ArtistDetailScreen";
 import WorkDetailScreen from "./src/screens/WorkDetailScreen"; // <-- lo importamos
 import SearchIcon from "@/assets/svgs/SearchIcon";
 
@@ -14,6 +15,7 @@ export type RootDrawerParamList = {
   Inicio: undefined;
   Explorar: undefined;
   WorkDetail: { workId: number };
+  ArtistDetail: { artistId: number };
 };
 
 export default function RootLayout() {
@@ -41,10 +43,11 @@ export default function RootLayout() {
     return (
       <Stack.Navigator>
         <Stack.Screen name="Explorar" component={ExploreScreen} />
-        <Drawer.Screen
+        <Stack.Screen
         name="WorkDetail"
         component={WorkDetailScreen}
       />
+      <Stack.Screen name="ArtistDetail" component={ArtistDetailScreen} />
       </Stack.Navigator>
     );
   }

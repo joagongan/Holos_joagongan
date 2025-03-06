@@ -82,10 +82,8 @@ const ALL_WORKS = [
 
 export default function WorkDetailScreen() {
   const route = useRoute();
+  const navigation = useNavigation<DrawerNavigationProp<RootDrawerParamList>>(); 
   const { workId } = route.params as { workId: number };
-
-  type ExploreNavProp = DrawerNavigationProp<RootDrawerParamList, "WorkDetail">;
-  const navigation = useNavigation<ExploreNavProp>();
 
   const [work, setWork] = useState<any>(null);
   const [loading, setLoading] = useState(true);
@@ -100,10 +98,6 @@ export default function WorkDetailScreen() {
     setWork(found || null);
     setLoading(false);
   }, [workId]);
-
-  const handleBackPress = () => {
-    navigation.navigate("Explorar");
-  };
 
   if (loading) {
     return (
@@ -202,6 +196,13 @@ export default function WorkDetailScreen() {
       marginBottom: isLargeScreen ? 30 : 20,
       textAlign: "left",
     },
+    artistName: {
+      fontSize: isLargeScreen ? 18 : 14,
+      fontWeight: "700",
+      color: "#173F8A",
+      marginTop: 10,
+      textAlign: "left",
+    },
     buttonColumn: {
       flexDirection: "column",
       alignItems: "flex-start",
@@ -266,6 +267,13 @@ export default function WorkDetailScreen() {
           <Text style={dynamicStyles.title}>
             {work?.name?.toUpperCase() || "TÍTULO OBRA"}
           </Text>
+
+          <Text style={dynamicStyles.label}>ARTISTA:</Text>
+          <TouchableOpacity
+            onPress={() => navigation.navigate("ArtistDetail", { artistId: work?.artist.id })}
+          >
+            <Text style={dynamicStyles.artistName}>{work?.artist?.name}</Text>
+          </TouchableOpacity>
 
           <Text style={dynamicStyles.label}>DESCRIPCIÓN:</Text>
           <Text style={dynamicStyles.description}>
