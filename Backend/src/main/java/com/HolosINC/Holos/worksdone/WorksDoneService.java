@@ -1,19 +1,30 @@
 package com.HolosINC.Holos.worksdone;
 
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.springframework.beans.BeanUtils;
+import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.HolosINC.Holos.artist.Artist;
+import com.HolosINC.Holos.artist.ArtistRepository;
+import com.HolosINC.Holos.artist.ArtistService;
+import com.HolosINC.Holos.commision.Commision;
+import com.HolosINC.Holos.commision.StatusCommision;
+import com.HolosINC.Holos.exceptions.ResourceNotFoundException;
 
 @Service
 public class WorksDoneService {
 
     private final WorksDoneRepository worksDoneRepository;
+    private final ArtistService artistService;
 
-    public WorksDoneService(WorksDoneRepository worksDoneRepository) {
+    public WorksDoneService(WorksDoneRepository worksDoneRepository, ArtistService artistService) {
         this.worksDoneRepository = worksDoneRepository;
+        this.artistService = artistService;
     }
 
     public WorksDone createWorksDone(WorksDone worksDone) {
@@ -22,6 +33,21 @@ public class WorksDoneService {
 
     public List<WorksDone> getAllWorksDone() {
         return worksDoneRepository.findAll();
+    }
+
+    @Transactional
+    public WorksDone updateWorksDone(WorksDone worksDone, Long worksDoneId, Long artistId) {
+        Artist artist = artistService.findArtist(artistId);
+
+        WorksDone worksDoneToUpdate = worksDoneRepository.findById(worksDoneId)
+            .orElseThrow(() -> new ResourceNotFoundException("WorksDone", "id", worksDoneId));
+
+        if (!worksDoneToUpdate.getArtist().getId().equals(artist.getId())) {
+            throw new IllegalArgumentException("El artista no tiene permisos para modificar este trabajo.");
+        }
+
+        BeanUtils.copyProperties(worksDone, worksDoneToUpdate, "id");
+        return worksDoneRepository.save(worksDoneToUpdate);
     }
 
     public WorksDone getWorksDoneById(Long id) {

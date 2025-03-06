@@ -2,16 +2,21 @@ package com.HolosINC.Holos.worksdone;
 
 import java.util.List;
 
+import javax.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.HolosINC.Holos.artist.Artist;
 import com.HolosINC.Holos.artist.ArtistService;
+import com.HolosINC.Holos.util.RestPreconditions;
 
 import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -53,6 +58,16 @@ public class WorksDoneController {
         Artist artist = artistService.findArtist(artistId);
         List<WorksDone> works = worksDoneService.getWorksDoneByArtist(artist);
         return ResponseEntity.ok(works);
+    }
+
+    @PutMapping(value = "/artist/{artistId}/{worksDoneId}")
+    public ResponseEntity<WorksDone> updateClinic(@PathVariable("worksDoneId") Long worksDoneId, 
+        @PathVariable("artistId") Long artistId,
+        @RequestBody @Valid WorksDone worksDone) {
+
+        RestPreconditions.checkNotNull(worksDoneService.getWorksDoneById(worksDoneId), "WorksDone", "ID", worksDoneId);
+
+        return new ResponseEntity<>(worksDoneService.updateWorksDone(worksDone, worksDoneId, artistId), HttpStatus.OK);
     }
 
 }
