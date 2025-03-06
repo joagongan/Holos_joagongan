@@ -92,7 +92,7 @@ INSERT INTO commisions (id, artist_id, client_id, status, num_milestones, accept
 (9, 9, 9, 'CANCELED', 3, '2025-03-01', 'MODERATED_PAYMENT', 9),
 (10, 10, 10, 'WAITLISTED', 5, '2025-03-06', 'INITIAL_PAYMENT', 1);
 
-INSERT INTO status_kanban_order (id, artist_id, name, order, description, color) VALUES 
+INSERT INTO status_kanban_order (id, artist_id, name, "order", description, color) VALUES 
 (1, 1, 'To Do', 1, 'Tasks that need to be started', '#FF5733'),
 (2, 1, 'In Progress', 2, 'Tasks that are currently being worked on', '#33FF57'),
 (3, 1, 'Review', 3, 'Tasks that need to be reviewed before completion', '#3357FF'),
