@@ -102,7 +102,7 @@ export default function WorkDetailScreen() {
   }, [workId]);
 
   const handleBackPress = () => {
-    navigation.navigate("Inicio");
+    navigation.navigate("Explorar");
   };
 
   if (loading) {
@@ -241,7 +241,7 @@ export default function WorkDetailScreen() {
       {/* Encabezado con flecha y texto para volver */}
       <View style={dynamicStyles.header}>
         <TouchableOpacity onPress={handleBackPress}>
-          <Text style={dynamicStyles.backText}>← VOLVER AL PERFIL</Text>
+          <Text style={dynamicStyles.backText}>← VOLVER A EXPLORAR</Text>
         </TouchableOpacity>
       </View>
 
