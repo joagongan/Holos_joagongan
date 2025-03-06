@@ -65,7 +65,7 @@ public class StatusKanbanOrderService {
         StatusKanbanOrder sk = statusKanbanOrderRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("StatusKanbanOrder", "id", id));
         if(sk.getOrder()==order){
-            return statusKanbanOrderRepository.save(null);
+            return statusKanbanOrderRepository.save(sk);
         }else{
             List<StatusKanbanOrder> list = statusKanbanOrderRepository.findByArtist(sk.getArtist().getId().intValue());
             //Recorro los statuskanban order de cada artista para recolocarlos
@@ -84,9 +84,9 @@ public class StatusKanbanOrderService {
                             statusKanbanOrderRepository.save(sk2);
                         }
                     }
-                    sk.setOrder(order);
                     
                 }
+                sk.setOrder(order);
         }return statusKanbanOrderRepository.save(sk);
     }
 
