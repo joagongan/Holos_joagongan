@@ -1,21 +1,49 @@
-import { createDrawerNavigator } from '@react-navigation/drawer';
+// RootLayout.tsx
+import React from "react";
+import { createDrawerNavigator } from "@react-navigation/drawer";
 import HomeScreen from "./src/screens/HomeScreen";
-// import LoginScreen from "./src/screens/LoginScreen";
+import ExploreScreen from "./src/screens/ExploreScreen/ExploreScreen";
+import WorkDetailScreen from "./src/screens/WorkDetailScreen"; // <-- lo importamos
+import SearchIcon from "@/assets/svgs/SearchIcon";
 
-const Drawer = createDrawerNavigator()
+const Drawer = createDrawerNavigator();
+
+export type RootDrawerParamList = {
+  Inicio: undefined;
+  Explorar: undefined;
+  WorkDetail: { workId: number };
+};
 
 export default function RootLayout() {
   return (
-    // <NavigationContainer>
-      <Drawer.Navigator 
-        initialRouteName="Inicio"
-        screenOptions={{
-          headerShown: true, // para poder incluir el botón burger en la cabecera
+    <Drawer.Navigator
+      initialRouteName="Inicio"
+      screenOptions={{
+        headerShown: true,
+      }}
+    >
+      {/* Pantalla visible en el Drawer */}
+      <Drawer.Screen name="Inicio" component={HomeScreen} />
+
+      {/* Pantalla visible en el Drawer */}
+      <Drawer.Screen
+        name="Explorar"
+        component={ExploreScreen}
+        options={{
+          drawerIcon: ({ size }) => <SearchIcon width={size} height={size} />,
         }}
-      >
-        <Drawer.Screen name="Inicio" component={HomeScreen} />
-        {/* <Drawer.Screen name="Iniciar Sesión" component={LoginScreen} /> */}
-      </Drawer.Navigator>
-    //</NavigationContainer>
-);
+      />
+
+      {/* Pantalla de detalle, oculta en el Drawer */}
+      <Drawer.Screen
+        name="WorkDetail"
+        component={WorkDetailScreen}
+        options={{
+          // Que no aparezca en el menú
+          drawerLabel: () => null,
+          drawerItemStyle: { height: 0 },
+        }}
+      />
+    </Drawer.Navigator>
+  );
 }
