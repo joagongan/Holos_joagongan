@@ -3,12 +3,14 @@ import { View, Text, Image, StyleSheet, TextInput, TouchableOpacity, Alert, Plat
 import Icon from "react-native-vector-icons/MaterialIcons";
 import * as ImagePicker from "expo-image-picker";
 
+const isLaptop = Platform.OS === 'web';
+
 
 export default function RequestCommissionUserScreen ({}) {
 
   const [inputText, setInputText] = useState("");
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
-  const isMobile = Platform.OS === "ios" || Platform.OS === "android";
+ 
   
   const pickImage = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
@@ -27,17 +29,17 @@ export default function RequestCommissionUserScreen ({}) {
    {/* Se muestra un pop-up u otro en función de si se está accediendo por móvil o por ordenador, con el objetivo de proporcionar  al cliente información
       sobre el estado del formulario */}
      if (!inputText.trim()) {
-      if(isMobile){
-        Alert.alert("Debe de ingresar una descripción del trabajo");
-      }else{ 
+      if(isLaptop){
         window.alert( "Debe de ingresar una descripción del trabajo");
+      }else{ 
+        Alert.alert("Debe de ingresar una descripción del trabajo");
       }
       return;
     }else{
-      if(isMobile){
-        Alert.alert("Solicitud enviada");
-      }else{
+      if(isLaptop){
         window.alert("Solicitud enviada" );
+      }else{
+        Alert.alert("Solicitud enviada");
       }
     }
     
