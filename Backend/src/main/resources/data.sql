@@ -10,6 +10,14 @@ INSERT INTO categories (id, name, description) VALUES
 (2,'Digital Art', 'Artworks made using digital tools'),
 (3,'Sculpture', 'Three-dimensional art made by shaping materials');
 
+
+INSERT INTO categories (id, name, description)
+VALUES
+  (1, 'Painting', 'Artworks created using paint on a surface'),
+  (2, 'Digital Art', 'Artworks made using digital tools'),
+  (3, 'Sculpture', 'Three-dimensional art made by shaping materials');
+
+
 INSERT INTO works (id, artist_id, name, description, price) VALUES 
 (1, 1, 'Sunset Painting', 'A beautiful sunset painting', 150.0),
 (2, 1, 'Ocean Waves', 'A calming ocean scene with waves', 200.0),
@@ -22,3 +30,4 @@ INSERT INTO works_done (id, artist_id, image) VALUES
 (2, 1, NULL),
 (3, 1, NULL),
 (4, 1, NULL);
+
