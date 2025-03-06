@@ -62,7 +62,7 @@ public class CommisionController {
         }
     }
 
-    @DeleteMapping("/{id}")
+    @PutMapping("/cancel/{id}")
     public ResponseEntity<?> cancelCommision(
             @PathVariable Long id,
             @RequestParam Long clientId) {

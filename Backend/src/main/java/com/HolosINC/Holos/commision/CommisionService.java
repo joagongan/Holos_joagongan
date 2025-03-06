@@ -79,7 +79,7 @@ public class CommisionService {
             throw new IllegalStateException("La comisión no puede ser cancelada en su estado actual.");
         }
 
-        //commision.setStatus(StatusCommision.CANCELED);
+        commision.setStatus(StatusCommision.CANCELED);
         commisionRepository.save(commision);
     }
 
