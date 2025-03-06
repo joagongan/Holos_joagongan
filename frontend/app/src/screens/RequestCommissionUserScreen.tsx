@@ -3,6 +3,14 @@ import { View, Text, Image, StyleSheet, TextInput, TouchableOpacity, Alert, Plat
 import Icon from "react-native-vector-icons/MaterialIcons";
 import * as ImagePicker from "expo-image-picker";
 
+
+{/* Images variables*/}
+const avatarArtist = "https://static.vecteezy.com/system/resources/previews/013/659/054/non_2x/human-avatar-user-ui-account-round-clip-art-icon-vector.jpg";
+const commissionTablePrice = "../../../assets/images/image.png";
+const cameraIcon = "photo-camera";
+//----------------------------------------------------
+
+
 const isLaptop = Platform.OS === 'web';
 
 
@@ -26,8 +34,10 @@ export default function RequestCommissionUserScreen ({}) {
   };
     
   const handleSend = () => {
+
    {/* Se muestra un pop-up u otro en función de si se está accediendo por móvil o por ordenador, con el objetivo de proporcionar  al cliente información
       sobre el estado del formulario */}
+      
      if (!inputText.trim()) {
       if(isLaptop){
         window.alert( "Debe de ingresar una descripción del trabajo");
@@ -42,10 +52,12 @@ export default function RequestCommissionUserScreen ({}) {
         Alert.alert("Solicitud enviada");
       }
     }
-    
+
     {/* Elimina el contenido de los estados*/}
     setInputText("");
     setSelectedImage(null);
+    
+    
   };
 
   return (
@@ -62,7 +74,7 @@ export default function RequestCommissionUserScreen ({}) {
         <Text style={styles.labelArtist}>ARTISTA:</Text>
         <View style={styles.artistContainer}>
           <Image 
-            source={{ uri: "https://static.vecteezy.com/system/resources/previews/013/659/054/non_2x/human-avatar-user-ui-account-round-clip-art-icon-vector.jpg" }} 
+            source={{ uri: avatarArtist }} 
             style={styles.artistImage} 
           />
         </View>
@@ -71,7 +83,7 @@ export default function RequestCommissionUserScreen ({}) {
       {/* Tabla de comisiones (Imagen) */}
       <View style={styles.commissionTable}>
         <Image 
-          source={require("../../../assets/images/image.png")} 
+          source={require(commissionTablePrice)} 
           style={styles.commissionImage} 
         />
       </View>
@@ -104,7 +116,7 @@ export default function RequestCommissionUserScreen ({}) {
     <View style={styles.buttonContainer}>
         {/* Botón para seleccionar imagen */}
         <TouchableOpacity style={styles.imageButton} onPress={pickImage}>
-          <Icon name="photo-camera" size={24} color="#183771" />
+          <Icon name = {cameraIcon} size={24} color="#183771" />
         </TouchableOpacity>
 
         {/* Botón de enviar */}
