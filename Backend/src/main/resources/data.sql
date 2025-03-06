@@ -13,7 +13,12 @@ INSERT INTO clients (id, first_name, username, password, email, phone_number, im
 (12, 'Keegan', 'kaegan', 'password123', 'Kcullen3289@gmail.com ', '1234567890', NULL, '2025-03-06'),
 (13, 'Carlos', 'carlos', 'password123', 'carlosperezsanchez199@gmail.com', '1234567890', NULL, '2025-03-06'),
 (14, 'Milagros', 'milagros', 'password123', 'milagros.huerta@gm.uca.es', '1234567890', NULL, '2025-03-06'),
-(11, 'Patricia', 'patricia', 'password123', 'kaleta1979@gmail.com', '1234567890', NULL, '2025-03-06');
+(15, 'Patricia', 'patricia', 'password123', 'kaleta1979@gmail.com', '1234567890', NULL, '2025-03-06'),
+(16,'Daniel', 'daniel', 'password789', 'megamagolas@gmail.com', '663522963', NULL, '2025-03-06'),
+(17,'Rafael', 'rafaelduque', 'password789', 'rafduqcol@alum.us.es', '722675760', NULL, '2025-03-06'),
+(18,'Rafael', 'rafaelcastillo', 'password789', 'rafaelcastillocebolla@gmail.com', '671168164', NULL, '2025-03-06'),
+(19,'Mohamed', 'mohamed', 'password789', 'mohmmedabourihhh@gmail.com', '602171961', NULL, '2025-03-06'),
+(20,'Enrique', 'enrique', 'password789', 'kiquegaraba@gmail.com', '600619217', NULL, '2025-03-06');
 
 INSERT INTO artists (id, first_name, username, password, email, phone_number, image_profile, created_user, num_slots_of_work, table_commisions_price) VALUES
 (1,'Braulio', 'braulio', 'password789', 'braulioolmedo116@gmail.com', '1234567890', NULL, '2025-03-06', 0, NULL),
@@ -37,9 +42,14 @@ INSERT INTO artists (id, first_name, username, password, email, phone_number, im
 (19,'Enrique', 'enrique', 'password789', 'kiquegaraba@gmail.com', '600619217', NULL, '2025-03-06', 0, NULL);
 
 INSERT INTO categories (id, name, description) VALUES
-(1,'Painting', 'Artworks created using paint on a surface'),
-(2,'Digital Art', 'Artworks made using digital tools'),
-(3,'Sculpture', 'Three-dimensional art made by shaping materials');
+(1, 'Painting', 'Artworks created using paint on a surface'),
+(2, 'Digital Art', 'Artworks made using digital tools'),
+(3, 'Sculpture', 'Three-dimensional art made by shaping materials'),
+(4, 'Photography', 'Artworks captured using a camera'),
+(5, 'Printmaking', 'Artworks created by printing techniques like etching or lithography'),
+(6, 'Drawing', 'Artworks created using pencils, charcoal, or ink on paper'),
+(7, 'Textile Art', 'Artworks made using fabric, thread, or weaving techniques'),
+(8, 'Ceramics', 'Artworks made from clay and hardened by heat');
 
 INSERT INTO works (id, artist_id, name, description, price) VALUES 
 (1, 1, 'Sunset Painting', 'A beautiful sunset painting', 150.0),
