@@ -58,6 +58,28 @@ INSERT INTO works (id, artist_id, name, description, price) VALUES
 (4, 1, 'Abstract Art', 'A modern abstract composition', 180.0),
 (5, 1, 'Forest Path', 'A peaceful forest pathway', 120.0);
 
+INSERT INTO milestones (id, name, accepted, milestone_date, commision_id) VALUES 
+(1, 'Initial Sketch', TRUE, '2025-03-02', 1),
+(2, 'Line Art', FALSE, '2025-03-05', 1),
+(3, 'Coloring Phase 1', TRUE, '2025-03-10', 2),
+(4, 'Final Touches', FALSE, '2025-03-15', 2),
+(5, '3D Model Base', TRUE, '2025-03-01', 3),
+(6, 'Texture Painting', FALSE, '2025-03-08', 3),
+(7, 'Concept Art Approval', TRUE, '2025-02-28', 4),
+(8, 'First Revision', FALSE, '2025-03-07', 4),
+(9, 'Final Rendering', TRUE, '2025-03-12', 5),
+(10, 'Lighting Adjustments', FALSE, '2025-03-18', 5),
+(11, 'Sketch Approval', TRUE, '2025-03-04', 6),
+(12, 'Base Colors', FALSE, '2025-03-09', 6),
+(13, 'Initial Composition', TRUE, '2025-02-27', 7),
+(14, 'Details Refinement', FALSE, '2025-03-06', 7),
+(15, 'Pose Approval', TRUE, '2025-03-03', 8),
+(16, 'Shading Process', FALSE, '2025-03-11', 8),
+(17, 'Sculpt Base Form', TRUE, '2025-03-02', 9),
+(18, 'Final Texture Mapping', FALSE, '2025-03-10', 9),
+(19, 'Animation Draft', TRUE, '2025-03-05', 10),
+(20, 'Final Review', FALSE, '2025-03-14', 10);
+
 INSERT INTO commisions (id, artist_id, client_id, status, num_milestones, accepted_date_by_artist, payment_arrangement, status_kanban_order_id) VALUES 
 (1, 1, 1, 'REQUESTED', 3, '2025-03-01', 'INITIAL_PAYMENT', 1),
 (2, 2, 2, 'WAITLISTED', 5, '2025-03-02', 'FIFTY_FIFTY', 2),
@@ -87,3 +109,4 @@ INSERT INTO works_done (id, artist_id, image) VALUES
 (2, 1, NULL),
 (3, 1, NULL),
 (4, 1, NULL);
+
