@@ -90,9 +90,10 @@ export default function WorkDetailScreen() {
   const [work, setWork] = useState<any>(null);
   const [loading, setLoading] = useState(true);
 
-  // Para distinguir si es pantalla pequeña o grande
+  // Detectar tamaño de pantalla
   const screenWidth = Dimensions.get("window").width;
-  const isMobile = screenWidth < 600;
+  // Decidimos que, si es >= 1024, lo tratamos como "pantalla grande"
+  const isLargeScreen = screenWidth >= 1024;
 
   useEffect(() => {
     const found = ALL_WORKS.find((w) => w.id === workId);
@@ -107,73 +108,182 @@ export default function WorkDetailScreen() {
   if (loading) {
     return (
       <View style={styles.loaderContainer}>
-        <ActivityIndicator size="large" color="#333" />
+        <ActivityIndicator size="large" color="#173F8A" />
       </View>
     );
   }
 
-  if (!work) {
-    return (
-      <View style={styles.notFoundContainer}>
-        <Text style={styles.notFoundText}>
-          No se encontró la obra con ID #{workId}.
-        </Text>
-      </View>
-    );
-  }
+  // Estilos que se adaptan según el breakpoint isLargeScreen
+  // Aquí ajustas tamaños y disposición "row" vs "column"
+  const dynamicStyles = StyleSheet.create({
+    scrollContent: {
+      flexGrow: 1,
+      paddingVertical: isLargeScreen ? 30 : 20,
+    },
+    header: {
+      paddingHorizontal: isLargeScreen ? 40 : 20,
+      marginBottom: isLargeScreen ? 20 : 10,
+    },
+    backText: {
+      fontSize: isLargeScreen ? 24 : 18,
+      color: "#173F8A",
+      fontWeight: "700",
+    },
+    contentContainer: {
+      flexDirection: isLargeScreen ? "row" : "column",
+      alignItems: "flex-start",
+      justifyContent: "flex-start",
+      paddingHorizontal: isLargeScreen ? 80 : 20,
+      paddingTop: isLargeScreen ? 10 : 0,
+    },
+    imageContainer: {
+      // Para pantallas grandes, imagen grande y a la izquierda
+      // Para pantallas pequeñas, ocupa todo el ancho y menos altura
+      width: isLargeScreen ? 800 : "100%",
+      height: isLargeScreen ? 800 : 300,
+      backgroundColor: "#FFF",
+      borderRadius: 12,
+      marginRight: isLargeScreen ? 40 : 0,
+      marginBottom: isLargeScreen ? 0 : 20, // Para que haya espacio debajo en pantallas pequeñas
+      shadowColor: "#000",
+      shadowOffset: { width: 0, height: 4 },
+      shadowOpacity: 0.2,
+      shadowRadius: 8,
+      elevation: 6,
+      overflow: "hidden",
+      marginTop: isLargeScreen ? 0 : 20,
+    },
+    image: {
+      width: "100%",
+      height: "100%",
+      resizeMode: "contain",
+    },
+    placeholder: {
+      width: "100%",
+      height: "100%",
+      justifyContent: "center",
+      alignItems: "center",
+      backgroundColor: "#E0E0E0",
+    },
+    infoContainer: {
+      flex: 1,
+      justifyContent: "flex-start",
+      marginLeft: isLargeScreen ? 90 : 0,
+      width: isLargeScreen ? "auto" : "100%",
+      alignSelf: "center",
+    },
+    title: {
+      fontSize: isLargeScreen ? 36 : 26,
+      fontWeight: "700",
+      color: "#173F8A",
+      marginBottom: isLargeScreen ? 80 : 5,
+      textAlign: "left",
+    },
+    label: {
+      fontSize: isLargeScreen ? 22 : 18,
+      fontWeight: "700",
+      color: "#173F8A",
+      marginTop: isLargeScreen ? 40 : 20,
+      marginBottom: 6,
+      textAlign: "left",
+    },
+    description: {
+      fontSize: isLargeScreen ? 18 : 16,
+      color: "#4A4A4A",
+      lineHeight: isLargeScreen ? 26 : 22,
+      marginBottom: 16,
+      textAlign: "left",
+    },
+    price: {
+      fontSize: isLargeScreen ? 24 : 20,
+      fontWeight: "700",
+      color: "#000",
+      marginTop: 6,
+      marginBottom: isLargeScreen ? 30 : 20,
+      textAlign: "left",
+    },
+    buttonColumn: {
+      flexDirection: "column",
+      alignItems: "flex-start",
+    },
+    messageButton: {
+      width: isLargeScreen ? 600 : "100%",
+      backgroundColor: "#FFD5EB",
+      paddingVertical: 16,
+      borderRadius: 8,
+      marginBottom: 16,
+    },
+    messageButtonText: {
+      color: "#173F8A",
+      fontSize: isLargeScreen ? 16 : 14,
+      fontWeight: "700",
+      textAlign: "center",
+    },
+    buyButton: {
+      width: isLargeScreen ? 600 : "100%",
+      backgroundColor: "#173F8A",
+      paddingVertical: 16,
+      borderRadius: 8,
+    },
+    buyButtonText: {
+      color: "#FFF",
+      fontSize: isLargeScreen ? 16 : 14,
+      fontWeight: "700",
+      textAlign: "center",
+    },
+  });
 
   return (
-    <ScrollView style={styles.container}>
+    <ScrollView
+      style={styles.container}
+      contentContainerStyle={dynamicStyles.scrollContent}
+    >
       {/* Encabezado con flecha y texto para volver */}
-      <View style={styles.header}>
+      <View style={dynamicStyles.header}>
         <TouchableOpacity onPress={handleBackPress}>
-          <Text style={styles.backText}>← VOLVER AL INICIO</Text>
+          <Text style={dynamicStyles.backText}>← VOLVER AL PERFIL</Text>
         </TouchableOpacity>
       </View>
 
-      <View
-        style={[
-          styles.contentContainer,
-          { flexDirection: isMobile ? "column" : "row" },
-        ]}
-      >
-        {/* Imagen a la izquierda (o arriba en móvil) */}
-        <View
-          style={[styles.imageContainer, { marginRight: isMobile ? 0 : 20 }]}
-        >
-          {work.image ? (
-            <Image source={{ uri: work.image }} style={styles.image} />
+      {/* Contenedor principal */}
+      <View style={dynamicStyles.contentContainer}>
+        {/* Imagen con sombra */}
+        <View style={dynamicStyles.imageContainer}>
+          {work?.image ? (
+            <Image source={{ uri: work.image }} style={dynamicStyles.image} />
           ) : (
-            // Si no hay imagen, un placeholder
-            <View style={styles.placeholder}>
+            <View style={dynamicStyles.placeholder}>
               <Text style={{ color: "#aaa" }}>Sin imagen</Text>
             </View>
           )}
         </View>
 
-        {/* Info a la derecha (o debajo en móvil) */}
-        <View style={styles.infoContainer}>
-          <Text style={styles.title}>
-            {work.name?.toUpperCase() || "TÍTULO OBRA"}
+        {/* Información de la obra */}
+        <View style={dynamicStyles.infoContainer}>
+          <Text style={dynamicStyles.title}>
+            {work?.name?.toUpperCase() || "TÍTULO OBRA"}
           </Text>
 
-          <Text style={styles.label}>DESCRIPCIÓN:</Text>
-          <Text style={styles.description}>
-            {work.description || "Sin descripción disponible"}
+          <Text style={dynamicStyles.label}>DESCRIPCIÓN:</Text>
+          <Text style={dynamicStyles.description}>
+            {work?.description || "Sin descripción disponible"}
           </Text>
 
-          <Text style={styles.label}>PRECIO:</Text>
-          <Text style={styles.price}>
-            {work.price ? `${work.price} €` : "No disponible"}
+          <Text style={dynamicStyles.label}>PRECIO:</Text>
+          <Text style={dynamicStyles.price}>
+            {work?.price ? `${work.price} €` : "No disponible"}
           </Text>
 
-          <View style={styles.buttonRow}>
-            <TouchableOpacity style={styles.messageButton}>
-              <Text style={styles.messageButtonText}>MANDAR UN MENSAJE</Text>
+          {/* Botones en columna */}
+          <View style={dynamicStyles.buttonColumn}>
+            <TouchableOpacity style={dynamicStyles.messageButton}>
+              <Text style={dynamicStyles.messageButtonText}>
+                MANDAR UN MENSAJE
+              </Text>
             </TouchableOpacity>
 
-            <TouchableOpacity style={styles.buyButton}>
-              <Text style={styles.buyButtonText}>COMPRAR</Text>
+            <TouchableOpacity style={dynamicStyles.buyButton}>
+              <Text style={dynamicStyles.buyButtonText}>COMPRAR</Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -182,132 +292,14 @@ export default function WorkDetailScreen() {
   );
 }
 
-// Estilos
 const styles = StyleSheet.create({
-  // Contenedor principal
   container: {
     flex: 1,
-    backgroundColor: "#FFFFFF",
+    width: "100%",
   },
-
-  // Loader
   loaderContainer: {
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "#FFFFFF",
-  },
-
-  // Obra no encontrada
-  notFoundContainer: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "#FFFFFF",
-  },
-  notFoundText: {
-    fontSize: 18,
-    color: "#666",
-  },
-
-  // Encabezado
-  header: {
-    paddingHorizontal: 20,
-    paddingTop: 10,
-    paddingBottom: 10,
-    backgroundColor: "#FFFFFF",
-  },
-  backText: {
-    fontSize: 16,
-    color: "#173F8A",
-    fontWeight: "600",
-  },
-
-  // Layout principal
-  contentContainer: {
-    flex: 1,
-    paddingHorizontal: 20,
-    paddingBottom: 30,
-    // Espacio entre la imagen y la info en "row"
-    alignItems: "flex-start",
-  },
-
-  // Imagen
-  imageContainer: {
-    width: "100%", // Para móvil
-    maxWidth: 400, // Límite en desktop
-    marginBottom: 20,
-  },
-  image: {
-    width: "100%",
-    aspectRatio: 1.2, // Ajusta la proporción
-    resizeMode: "cover",
-    borderRadius: 8,
-  },
-  placeholder: {
-    backgroundColor: "#eee",
-    width: "100%",
-    aspectRatio: 1.2,
-    justifyContent: "center",
-    alignItems: "center",
-    borderRadius: 8,
-  },
-
-  // Info y texto
-  infoContainer: {
-    flex: 1,
-  },
-  title: {
-    fontSize: 20,
-    fontWeight: "700",
-    color: "#173F8A",
-    marginBottom: 10,
-  },
-  label: {
-    fontSize: 15,
-    fontWeight: "600",
-    color: "#173F8A",
-    marginTop: 14,
-    marginBottom: 4,
-  },
-  description: {
-    fontSize: 14,
-    color: "#4A4A4A",
-    lineHeight: 20,
-  },
-  price: {
-    fontSize: 16,
-    fontWeight: "600",
-    color: "#333",
-    marginTop: 6,
-  },
-
-  // Botones
-  buttonRow: {
-    flexDirection: "row",
-    marginTop: 20,
-  },
-  messageButton: {
-    backgroundColor: "#FFD5EB",
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-    borderRadius: 6,
-    marginRight: 12,
-  },
-  messageButtonText: {
-    color: "#173F8A",
-    fontSize: 14,
-    fontWeight: "600",
-  },
-  buyButton: {
-    backgroundColor: "#173F8A",
-    paddingHorizontal: 20,
-    paddingVertical: 12,
-    borderRadius: 6,
-  },
-  buyButtonText: {
-    color: "#FFF",
-    fontSize: 14,
-    fontWeight: "600",
   },
 });
