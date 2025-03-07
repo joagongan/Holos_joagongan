@@ -61,7 +61,7 @@ public class WorksDoneController {
     }
 
     @PutMapping(value = "/artist/{artistId}/{worksDoneId}")
-    public ResponseEntity<WorksDone> updateClinic(@PathVariable("worksDoneId") Long worksDoneId, 
+    public ResponseEntity<WorksDone> updateWorksDone(@PathVariable("worksDoneId") Long worksDoneId, 
         @PathVariable("artistId") Long artistId,
         @RequestBody @Valid WorksDone worksDone) {
 
