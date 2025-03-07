@@ -18,7 +18,7 @@ import com.HolosINC.Holos.artist.Artist;
 
 @Data
 @Entity
-@Table(name = "status_kanban_order", uniqueConstraints = @UniqueConstraint(columnNames = { "artist_id", "order"}))
+@Table(name = "status_kanban_order", uniqueConstraints = @UniqueConstraint(columnNames = { "artist_id", "order_client"}))
 public class StatusKanbanOrder {
 
     @Id
@@ -31,7 +31,7 @@ public class StatusKanbanOrder {
     private String name;
 
     @NotNull
-    private Integer order;
+    private Integer order_client;
 
     private String description;
 
@@ -39,6 +39,6 @@ public class StatusKanbanOrder {
     private String color;
 
     @ManyToOne
-    @JoinColumn(name = "artist_id", referencedColumnName = "id")
+    @JoinColumn(name = "artist_id", referencedColumnName = "id",  nullable = false)
     private Artist artist;
 }

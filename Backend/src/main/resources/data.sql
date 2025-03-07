@@ -1,4 +1,4 @@
-/*
+
 INSERT INTO clients (id, first_name, username, password, email, phone_number, image_profile, created_user) VALUES
 (1, 'Jeenii', 'jeenni', 'password001', 'reinapata20@gmail.com', '123456789', NULL, '2025-03-06'),
 (2, 'Emilio', 'emilio', 'password002', 'emilio.esp99@gmail.com', '123456789', NULL, '2025-03-06'),
@@ -21,7 +21,7 @@ INSERT INTO clients (id, first_name, username, password, email, phone_number, im
 (19,'Mohamed', 'mohamed', 'password019', 'mohmmedabourihhh@gmail.com', '602171961', NULL, '2025-03-06'),
 (20,'Enrique', 'enrique', 'password020', 'kiquegaraba@gmail.com', '600619217', NULL, '2025-03-06');
 
-*/
+
 INSERT INTO artists (id, first_name, username, password, email, phone_number, image_profile, created_user, num_slots_of_work, table_commisions_price) VALUES
 (1,'Braulio', 'braulio', 'password021', 'braulioolmedo116@gmail.com', '1234567890', NULL, '2025-03-06', 0, NULL),
 (2,'Claudia', 'claudia', 'password022', 'xlaequis@gmail.com', '1234567890', NULL, '2025-03-06', 0, NULL),
@@ -60,7 +60,34 @@ INSERT INTO works (id, artist_id, name, description, price) VALUES
 (4, 1, 'Abstract Art', 'A modern abstract composition', 180.0),
 (5, 1, 'Forest Path', 'A peaceful forest pathway', 120.0);
 
-/*
+
+INSERT INTO status_kanban_order (id, artist_id, name, order_client, description, color) VALUES 
+(1, 1, 'To Do', 1, 'Tasks that need to be started', '#FF5733'),
+(2, 2, 'In Progress', 2, 'Tasks that are currently being worked on', '#33FF57'),
+(3, 3, 'Review', 3, 'Tasks that need to be reviewed before completion', '#3357FF'),
+(4, 4, 'Completed', 4, 'Tasks that have been finished', '#F1C40F'),
+(5, 5, 'Archived', 5, 'Tasks that are no longer active but stored for reference', '#8E44AD'),
+(6, 6, 'Idea', 6, 'New concept or idea being explored', '#FFAA33'),
+(7, 7, 'Sketching', 7, 'Initial sketches and drafts', '#33A8FF'),
+(8, 8, 'Coloring', 8, 'Adding colors to the artwork', '#A833FF'),
+(9, 9, 'Final Touches', 9, 'Adding final adjustments before completion', '#33FFA8'),
+(10, 10, 'Published', 10, 'The artwork is completed and shared', '#FF338A');
+
+
+INSERT INTO commisions (id, artist_id, name, description, price, client_id, status, num_milestones, accepted_date_by_artist, payment_arrangement, status_kanban_order_id) VALUES 
+(1, 1,'Sunset Painting', 'A beautiful sunset painting', 150.0, 1, 'REQUESTED', 3, '2025-03-01', 'INITIAL', 1),
+(2, 2, 'Ocean Waves', 'A calming ocean scene with waves', 200.0, 2, 'ACCEPTED', 4, '2025-03-02', 'FINAL', 2),
+(3, 3, 'Starry Night Replica', 'Inspired by Van Gogh’s Starry Night', 300.0, 3, 'REQUESTED', 5, '2025-03-03', 'FIFTYFIFTY', 3),
+(4, 4, 'Abstract Art', 'A modern abstract composition', 180.0, 4, 'IN_WAIT_LIST', 2, '2025-03-04', 'MODERATOR', 4),
+(5, 5, 'Forest Path', 'A peaceful forest pathway', 120.0, 5, 'ENDED', 6, '2025-03-05', 'INITIAL', 5),
+(6, 6, 'Sunset Horizon', 'A stunning view of the horizon at sunset', 250.0, 6, 'REJECTED', 1, '2025-03-06', 'FIFTYFIFTY', 6),
+(7, 7, 'Mountain Landscape', 'A beautiful mountain landscape painting', 350.0, 7, 'CANCELED', 4, '2025-03-07', 'FINAL', 7),
+(8, 8, 'Spring Flowers', 'A vibrant painting of spring flowers', 160.0, 8, 'ENDED', 3, '2025-03-08', 'INITIAL', 8),
+(9, 9, 'Cityscape', 'A modern cityscape in digital format', 400.0, 9, 'ACCEPTED', 5, '2025-03-09', 'FINAL', 9),
+(10, 10, 'Autumn Leaves', 'A peaceful autumn scene with falling leaves', 220.0, 10, 'REQUESTED', 2, '2025-03-10', 'MODERATOR', 10);
+
+
+
 INSERT INTO milestones (id, name, accepted, milestone_date, commision_id) VALUES 
 (1, 'Initial Sketch', TRUE, '2025-03-02', 1),
 (2, 'Line Art', FALSE, '2025-03-05', 1),
@@ -84,31 +111,6 @@ INSERT INTO milestones (id, name, accepted, milestone_date, commision_id) VALUES
 (20, 'Final Review', FALSE, '2025-03-14', 10);
 
 
-INSERT INTO commisions (id, artist_id, client_id, status, num_milestones, accepted_date_by_artist, payment_arrangement, status_kanban_order_id) VALUES 
-(1, 1, 1, 'REQUESTED', 3, '2025-03-01', 'INITIAL_PAYMENT', 1),
-(2, 2, 2, 'WAITLISTED', 5, '2025-03-02', 'FIFTY_FIFTY', 2),
-(3, 3, 3, 'COMPLETED', 2, '2025-02-28', 'FINAL_PAYMENT', 3),
-(4, 4, 4, 'CANCELED', 4, '2025-03-04', 'INITIAL_PAYMENT', 4),
-(5, 5, 5, 'ACCEPTED', 6, '2025-03-05', 'MODERATED_PAYMENT', 5),
-(6, 6, 6, 'REQUESTED', 3, '2025-03-06', 'INITIAL_PAYMENT', 6),
-(7, 7, 7, 'COMPLETED', 2, '2025-02-27', 'FINAL_PAYMENT', 7),
-(8, 8, 8, 'ACCEPTED', 4, '2025-03-03', 'FIFTY_FIFTY', 8),
-(9, 9, 9, 'CANCELED', 3, '2025-03-01', 'MODERATED_PAYMENT', 9),
-(10, 10, 10, 'WAITLISTED', 5, '2025-03-06', 'INITIAL_PAYMENT', 1);
-*/
-/*
-INSERT INTO status_kanban_order (id, artist_id, name, order, description, color) VALUES 
-(1, 1, 'To Do', 1, 'Tasks that need to be started', '#FF5733'),
-(2, 2, 'In Progress', 2, 'Tasks that are currently being worked on', '#33FF57'),
-(3, 3, 'Review', 3, 'Tasks that need to be reviewed before completion', '#3357FF'),
-(4, 4, 'Completed', 4, 'Tasks that have been finished', '#F1C40F'),
-(5, 5, 'Archived', 5, 'Tasks that are no longer active but stored for reference', '#8E44AD'),
-(6, 6, 'Idea', 6, 'New concept or idea being explored', '#FFAA33'),
-(7, 7, 'Sketching', 7, 'Initial sketches and drafts', '#33A8FF'),
-(8, 8, 'Coloring', 8, 'Adding colors to the artwork', '#A833FF'),
-(9, 9, 'Final Touches', 9, 'Adding final adjustments before completion', '#33FFA8'),
-(10, 10, 'Published', 10, 'The artwork is completed and shared', '#FF338A');
-*/
 INSERT INTO works_done (id, artist_id, image) VALUES 
 (1, 1, NULL),
 (2, 1, NULL),
