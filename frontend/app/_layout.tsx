@@ -2,7 +2,6 @@
 import React from "react";
 import { createDrawerNavigator } from "@react-navigation/drawer";
 import HomeScreen from "./src/screens/HomeScreen";
-// import LoginScreen from "./src/screens/LoginScreen";
 import RequestCommissionUserScreen from "./src/screens/RequestCommissionUserScreen";
 import { createStackNavigator } from "@react-navigation/stack";
 import ExploreScreen from "./src/screens/ExploreScreen/ExploreScreen";
