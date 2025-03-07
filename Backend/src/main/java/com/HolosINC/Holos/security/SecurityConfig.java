@@ -12,10 +12,10 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/api/v1/search/**").permitAll() // 🔹 Permite acceso a la búsqueda sin login
-                .anyRequest().authenticated() // 🔒 El resto de la API sigue protegida
+                .requestMatchers("/api/v1/search/**").permitAll()
+                .anyRequest().permitAll()
             )
-            .csrf(csrf -> csrf.disable()); // Opcional: Desactivar CSRF si no usas formularios
+            .csrf(csrf -> csrf.disable());
 
         return http.build();
     }
