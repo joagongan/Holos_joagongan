@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Text, View, TouchableOpacity, Dimensions, ScrollView, StyleSheet } from 'react-native';
+import { Text, View, TouchableOpacity, Dimensions, ScrollView, StyleSheet, Alert, Platform } from 'react-native';
 
 // Tipo para una tarea
 interface Task {
@@ -16,11 +16,12 @@ interface TaskCardProps {
 
 // Componente para una tarjeta
 const TaskCard: React.FC<TaskCardProps> = ({ task, moveTask, column }) => {
+  const buttonText = column === 'done' ? 'Archivar comisión' : 'Mover';
   return (
     <View style={styles.taskCard}>
       <Text style={styles.taskText}>{task.name}</Text>
       <TouchableOpacity onPress={() => moveTask(task.id, column)} style={styles.moveButton}>
-        <Text style={{ color: 'white' }}>Mover</Text>
+        <Text style={{ color: 'white' }}>{buttonText}</Text>
       </TouchableOpacity>
     </View>
   );
@@ -72,38 +73,56 @@ const KanbanBoard: React.FC = () => {
   });
 
   const moveTask = (taskId: number, fromColumn: string) => {
-    const taskToMove = Object.values(tasks)
-      .flat()
-      .find((task) => task.id === taskId);
-
-    const newTasks = { ...tasks };
-
-    // Eliminar la tarea de su columna actual
-    for (let column in newTasks) {
-      newTasks[column as keyof KanbanBoardState] = newTasks[column as keyof KanbanBoardState].filter(
-        (task) => task.id !== taskId
-      );
-    }
-
-    // Determinar la columna destino y mover la tarea
-    if (taskToMove) {
-      switch (fromColumn) {
-        case 'todo':
-          newTasks['inProgress'].push(taskToMove);
-          break;
-        case 'inProgress':
-          newTasks['done'].push(taskToMove);
-          break;
-        case 'done':
-          newTasks['todo'].push(taskToMove);
-          break;
-        default:
-          break;
+    const confirmationMessage = "Esta acción no se puede deshacer. ¿Está seguro de continuar?";
+  
+    const onConfirm = () => {
+      const taskToMove = Object.values(tasks)
+        .flat()
+        .find((task) => task.id === taskId);
+  
+      const newTasks = { ...tasks };
+  
+      // Eliminar la tarea de su columna actual
+      for (let column in newTasks) {
+        newTasks[column as keyof KanbanBoardState] = newTasks[column as keyof KanbanBoardState].filter(
+          (task) => task.id !== taskId
+        );
       }
+  
+      // Si la tarea está en "done", simplemente la eliminamos
+      if (fromColumn === "done") {
+        setTasks(newTasks);
+        return;
+      }
+  
+      // Determinar la columna destino y mover la tarea
+      if (taskToMove) {
+        switch (fromColumn) {
+          case "todo":
+            newTasks["inProgress"].push(taskToMove);
+            break;
+          case "inProgress":
+            newTasks["done"].push(taskToMove);
+            break;
+        }
+      }
+  
+      setTasks(newTasks);
+    };
+  
+    // **Mostrar alerta dependiendo de la plataforma**
+    if (Platform.OS === "web") {
+      if (window.confirm(confirmationMessage)) {
+        onConfirm();
+      }
+    } else {
+      Alert.alert("Confirmación", confirmationMessage, [
+        { text: "Cancelar", style: "cancel" },
+        { text: "Sí, continuar", onPress: onConfirm }
+      ]);
     }
-
-    setTasks(newTasks);
   };
+  
 
   return (
     <ScrollView>
