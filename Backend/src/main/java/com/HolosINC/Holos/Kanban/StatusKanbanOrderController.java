@@ -32,15 +32,22 @@ public class StatusKanbanOrderController {
     //Cambiar color o descripción ¿Añadir nombre?
 
     @PutMapping("/{id}/updateKanban")
-    public ResponseEntity<StatusKanbanOrder> updateKanban(@PathVariable("id") int id, @RequestParam String color, @RequestParam String description, @RequestParam String nombre) {
-        StatusKanbanOrder sk = statusKanbanOrderService.updateKanban(id, color, description, nombre);
-        return new ResponseEntity<>(sk, HttpStatus.OK);
+    public ResponseEntity<StatusKanbanOrder> updateKanban(@RequestBody StatusKanbanOrder sk) {
+        Integer id = sk.getId().intValue();
+        String color = sk.getColor();
+        String nombre = sk.getName();
+        String description = sk.getDescription();
+
+        StatusKanbanOrder sk2 = statusKanbanOrderService.updateKanban(id, color, description, nombre);
+        return new ResponseEntity<>(sk2, HttpStatus.OK);
     }
 
     @PutMapping("/{id}/updateKanbanOrder")
-    public ResponseEntity<StatusKanbanOrder> updateOrder(@PathVariable("id") int id, @RequestParam Integer order) {
-        StatusKanbanOrder sk = statusKanbanOrderService.updateOrder(id, order);
-        return new ResponseEntity<>(sk, HttpStatus.OK);
+    public ResponseEntity<StatusKanbanOrder> updateOrder(@RequestBody StatusKanbanOrder sk) {
+        Integer id = sk.getId().intValue();
+        Integer order = sk.getOrder();
+        StatusKanbanOrder sk2 = statusKanbanOrderService.updateOrder(id, order);
+        return new ResponseEntity<>(sk2, HttpStatus.OK);
     }
 
     @DeleteMapping("/{id}")
