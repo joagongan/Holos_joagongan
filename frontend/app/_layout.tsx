@@ -9,6 +9,8 @@ import ExploreScreen from "./src/screens/ExploreScreen/ExploreScreen";
 import ArtistDetailScreen from "./src/screens/ArtistDetailScreen/ArtistDetailScreen";
 import WorkDetailScreen from "./src/screens/WorkDetailScreen"; // <-- lo importamos
 import SearchIcon from "@/assets/svgs/SearchIcon";
+import KanbanIcon from "@/assets/svgs/KanbanIconProps";
+import KanbanScreen from "./src/screens/KanbanScreen/KanbanScreen";
 
 const Drawer = createDrawerNavigator();
 const Stack = createStackNavigator();
@@ -40,6 +42,13 @@ export default function RootLayout() {
           drawerIcon: ({ size }) => <SearchIcon width={size} height={size} />,
         }}
       />
+      <Drawer.Screen
+        name="Panel de comisiones"
+        component={KanbanScreen}
+        options={{
+          drawerIcon: ({ size }) => <KanbanIcon width={size} height={size} />,
+        }}
+      />
     </Drawer.Navigator>
   );
 }
@@ -47,7 +56,7 @@ export default function RootLayout() {
 function ExploreStack() {
   return (
     <Stack.Navigator>
-      <Stack.Screen name="Explorar" component={ExploreScreen} />
+      <Stack.Screen name="All" component={ExploreScreen} />
       <Stack.Screen name="WorkDetail" component={WorkDetailScreen} />
       <Stack.Screen name="ArtistDetail" component={ArtistDetailScreen} />
       <Stack.Screen name="RequestCommission" component={RequestCommissionUserScreen} />
