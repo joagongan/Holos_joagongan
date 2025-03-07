@@ -1,11 +1,15 @@
+import { createDrawerNavigator } from "@react-navigation/drawer";
+import { createStackNavigator } from "@react-navigation/stack";
+import HomeScreen from "./src/screens/HomeScreen";
+import UserProfileScreen from "./src/screens/UserProfile/UserProfileScreen";
+import OrderHistoryScreen from "./src/screens/UserProfile/OrderHistoryScreen";
+import ArtworksScreen from "./src/screens/UserProfile/ArtworksScreen";
+import ProfileIcon from "@/assets/svgs/ProfileIcon";
 // RootLayout.tsx
 import React from "react";
-import { createDrawerNavigator } from "@react-navigation/drawer";
-import HomeScreen from "./src/screens/HomeScreen";
 import ArtistRequestOrders from './src/screens/ArtistRequestOrders';
 // import LoginScreen from "./src/screens/LoginScreen";
 import RequestCommissionUserScreen from "./src/screens/RequestCommissionUserScreen";
-import { createStackNavigator } from "@react-navigation/stack";
 import ExploreScreen from "./src/screens/ExploreScreen/ExploreScreen";
 import ArtistDetailScreen from "./src/screens/ArtistDetailScreen/ArtistDetailScreen";
 import WorkDetailScreen from "./src/screens/WorkDetailScreen"; // <-- lo importamos
@@ -35,7 +39,15 @@ export default function RootLayout() {
     >
       {/* Pantalla visible en el Drawer */}
       <Drawer.Screen name="Inicio" component={HomeScreen} />
-
+      <Drawer.Screen
+        name="Perfil"
+        component={UserProfileStack}
+        options={{
+          drawerIcon: ({ color, size }) => (
+            <ProfileIcon size={size} />
+          ),
+        }}
+      />
       {/* Pantalla visible en el Drawer */}
       <Drawer.Screen
         name="Explorar"
@@ -59,6 +71,16 @@ export default function RootLayout() {
         }}
       />
     </Drawer.Navigator>
+  );
+}
+
+function UserProfileStack() {
+  return (
+    <Stack.Navigator>
+      <Stack.Screen name="Perfil" component={UserProfileScreen} />
+      <Stack.Screen name="Historial de Pedidos" component={OrderHistoryScreen} /> 
+      <Stack.Screen name="Obras Subidas" component={ArtworksScreen} />
+    </Stack.Navigator>
   );
 }
 
