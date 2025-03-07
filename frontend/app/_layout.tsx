@@ -2,6 +2,8 @@
 import React from "react";
 import { createDrawerNavigator } from "@react-navigation/drawer";
 import HomeScreen from "./src/screens/HomeScreen";
+import ArtistRequestOrders from './src/screens/ArtistRequestOrders';
+// import LoginScreen from "./src/screens/LoginScreen";
 import RequestCommissionUserScreen from "./src/screens/RequestCommissionUserScreen";
 import { createStackNavigator } from "@react-navigation/stack";
 import ExploreScreen from "./src/screens/ExploreScreen/ExploreScreen";
@@ -9,6 +11,7 @@ import ArtistDetailScreen from "./src/screens/ArtistDetailScreen/ArtistDetailScr
 import WorkDetailScreen from "./src/screens/WorkDetailScreen"; // <-- lo importamos
 import SearchIcon from "@/assets/svgs/SearchIcon";
 import KanbanIcon from "@/assets/svgs/KanbanIconProps";
+import RequestIcon from "@/assets/svgs/RequestIcon";
 import KanbanScreen from "./src/screens/KanbanScreen/KanbanScreen";
 
 const Drawer = createDrawerNavigator();
@@ -46,6 +49,13 @@ export default function RootLayout() {
         component={KanbanScreen}
         options={{
           drawerIcon: ({ size }) => <KanbanIcon width={size} height={size} />,
+        }}
+      />
+      <Drawer.Screen
+        name="Pedidos"
+        component={ArtistRequestOrders}
+        options={{
+          drawerIcon: ({ size }) => <RequestIcon width={size} height={size} />,
         }}
       />
     </Drawer.Navigator>
