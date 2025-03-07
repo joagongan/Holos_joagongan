@@ -2,6 +2,8 @@
 import React from "react";
 import { createDrawerNavigator } from "@react-navigation/drawer";
 import HomeScreen from "./src/screens/HomeScreen";
+// import LoginScreen from "./src/screens/LoginScreen";
+import RequestCommissionUserScreen from "./src/screens/RequestCommissionUserScreen";
 import { createStackNavigator } from "@react-navigation/stack";
 import ExploreScreen from "./src/screens/ExploreScreen/ExploreScreen";
 import ArtistDetailScreen from "./src/screens/ArtistDetailScreen/ArtistDetailScreen";
@@ -16,6 +18,7 @@ export type RootDrawerParamList = {
   Explorar: undefined;
   WorkDetail: { workId: number };
   ArtistDetail: { artistId: number };
+  RequestCommission: { artistId: number };
 };
 
 export default function RootLayout() {
@@ -39,16 +42,15 @@ export default function RootLayout() {
       />
     </Drawer.Navigator>
   );
-  function ExploreStack() {
-    return (
-      <Stack.Navigator>
-        <Stack.Screen name="Explorar" component={ExploreScreen} />
-        <Stack.Screen
-        name="WorkDetail"
-        component={WorkDetailScreen}
-      />
+}
+
+function ExploreStack() {
+  return (
+    <Stack.Navigator>
+      <Stack.Screen name="Explorar" component={ExploreScreen} />
+      <Stack.Screen name="WorkDetail" component={WorkDetailScreen} />
       <Stack.Screen name="ArtistDetail" component={ArtistDetailScreen} />
-      </Stack.Navigator>
-    );
-  }
+      <Stack.Screen name="RequestCommission" component={RequestCommissionUserScreen} />
+    </Stack.Navigator>
+  );
 }
