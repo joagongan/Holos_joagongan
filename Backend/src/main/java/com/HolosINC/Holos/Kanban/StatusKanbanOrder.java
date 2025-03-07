@@ -13,12 +13,14 @@ import jakarta.persistence.UniqueConstraint;
 import lombok.Data;
 
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
 
 import com.HolosINC.Holos.artist.Artist;
 
 @Data
 @Entity
-@Table(name = "status_kanban_order", uniqueConstraints = @UniqueConstraint(columnNames = { "artist_id", "order"}))
+//@Table(name = "status_kanban_order", uniqueConstraints = @UniqueConstraint(columnNames = { "artist_id", "order"}))
+@Table(name = "status_kanban_order")
 public class StatusKanbanOrder {
 
     @Id
@@ -31,14 +33,16 @@ public class StatusKanbanOrder {
     private String name;
 
     @NotNull
+    @Column(name = "kanban_order")
     private Integer order;
 
     private String description;
 
     @NotNull
+    //@Pattern(regexp = "^#([A-Fa-f0-9]{6})$")
     private String color;
 
-    @ManyToOne
+    @ManyToOne(optional = false)
     @JoinColumn(name = "artist_id")
     private Artist artist;
 }
