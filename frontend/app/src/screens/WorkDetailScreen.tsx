@@ -82,10 +82,8 @@ const ALL_WORKS = [
 
 export default function WorkDetailScreen() {
   const route = useRoute();
+  const navigation = useNavigation<DrawerNavigationProp<RootDrawerParamList>>(); 
   const { workId } = route.params as { workId: number };
-
-  type ExploreNavProp = DrawerNavigationProp<RootDrawerParamList, "WorkDetail">;
-  const navigation = useNavigation<ExploreNavProp>();
 
   const [work, setWork] = useState<any>(null);
   const [loading, setLoading] = useState(true);
@@ -93,16 +91,13 @@ export default function WorkDetailScreen() {
   // Para distinguir si es pantalla pequeña o grande
   const screenWidth = Dimensions.get("window").width;
   const isMobile = screenWidth < 600;
+  const isLargeScreen = screenWidth >= 1024;
 
   useEffect(() => {
     const found = ALL_WORKS.find((w) => w.id === workId);
     setWork(found || null);
     setLoading(false);
   }, [workId]);
-
-  const handleBackPress = () => {
-    navigation.navigate("Inicio");
-  };
 
   if (loading) {
     return (
@@ -112,37 +107,154 @@ export default function WorkDetailScreen() {
     );
   }
 
-  if (!work) {
-    return (
-      <View style={styles.notFoundContainer}>
-        <Text style={styles.notFoundText}>
-          No se encontró la obra con ID #{workId}.
-        </Text>
-      </View>
-    );
-  }
+  // Estilos que se adaptan según el breakpoint isLargeScreen
+  const dynamicStyles = StyleSheet.create({
+    scrollContent: {
+      flexGrow: 1,
+      paddingVertical: isLargeScreen ? 30 : 20,
+    },
+    header: {
+      paddingHorizontal: isLargeScreen ? 40 : 20,
+      marginBottom: isLargeScreen ? 20 : 10,
+    },
+    backText: {
+      fontSize: isLargeScreen ? 22 : 16,
+      color: "#173F8A",
+      fontWeight: "700",
+    },
+    contentContainer: {
+      flexDirection: isLargeScreen ? "row" : "column",
+      alignItems: "flex-start",
+      justifyContent: "flex-start",
+      paddingHorizontal: isLargeScreen ? 80 : 20,
+      paddingTop: isLargeScreen ? 10 : 0,
+      paddingBottom: 40,
+    },
+    imageContainer: {
+      width: isLargeScreen ? 700 : "100%",
+      height: isLargeScreen ? 700 : 300,
+      backgroundColor: "#FFF",
+      borderRadius: 12,
+      marginRight: isLargeScreen ? 40 : 0,
+      marginBottom: isLargeScreen ? 0 : 20,
+      shadowColor: "#000",
+      shadowOffset: { width: 0, height: 5 },
+      shadowOpacity: 0.15,
+      shadowRadius: 8,
+      elevation: 6,
+      overflow: "hidden",
+      marginTop: isLargeScreen ? 0 : 20,
+      alignSelf: "center",
+    },
+    image: {
+      width: "100%",
+      height: "100%",
+      resizeMode: "cover",
+    },
+    placeholder: {
+      width: "100%",
+      height: "100%",
+      justifyContent: "center",
+      alignItems: "center",
+      backgroundColor: "#E0E0E0",
+    },
+    infoContainer: {
+      flex: 1,
+      justifyContent: "flex-start",
+      marginLeft: isLargeScreen ? 60 : 0,
+      width: isLargeScreen ? "auto" : "100%",
+      alignSelf: "center",
+      marginTop: isLargeScreen ? 0 : 10,
+    },
+    title: {
+      fontSize: isLargeScreen ? 32 : 24,
+      fontWeight: "700",
+      color: "#173F8A",
+      marginBottom: isLargeScreen ? 40 : 10,
+      textAlign: "left",
+    },
+    label: {
+      fontSize: isLargeScreen ? 20 : 16,
+      fontWeight: "700",
+      color: "#173F8A",
+      marginTop: isLargeScreen ? 30 : 20,
+      marginBottom: 6,
+      textAlign: "left",
+    },
+    description: {
+      fontSize: isLargeScreen ? 18 : 16,
+      color: "#4A4A4A",
+      lineHeight: isLargeScreen ? 26 : 22,
+      marginBottom: 16,
+      textAlign: "left",
+    },
+    price: {
+      fontSize: isLargeScreen ? 22 : 18,
+      fontWeight: "700",
+      color: "#000",
+      marginTop: 6,
+      marginBottom: isLargeScreen ? 30 : 20,
+      textAlign: "left",
+    },
+    artistName: {
+      fontSize: isLargeScreen ? 18 : 14,
+      fontWeight: "700",
+      color: "#173F8A",
+      marginTop: 10,
+      textAlign: "left",
+    },
+    buttonColumn: {
+      flexDirection: "column",
+      alignItems: "flex-start",
+    },
+    messageButton: {
+      width: isLargeScreen ? 350 : "100%",
+      backgroundColor: "#FFD5EB",
+      paddingVertical: 14,
+      borderRadius: 8,
+      marginBottom: 16,
+      shadowColor: "#000",
+      shadowOffset: { width: 0, height: 3 },
+      shadowOpacity: 0.2,
+      shadowRadius: 5,
+      elevation: 5,
+    },
+    messageButtonText: {
+      color: "#173F8A",
+      fontSize: isLargeScreen ? 16 : 14,
+      fontWeight: "700",
+      textAlign: "center",
+    },
+    buyButton: {
+      width: isLargeScreen ? 350 : "100%",
+      backgroundColor: "#173F8A",
+      paddingVertical: 14,
+      borderRadius: 8,
+      shadowColor: "#000",
+      shadowOffset: { width: 0, height: 3 },
+      shadowOpacity: 0.2,
+      shadowRadius: 5,
+      elevation: 5,
+    },
+    buyButtonText: {
+      color: "#FFF",
+      fontSize: isLargeScreen ? 16 : 14,
+      fontWeight: "700",
+      textAlign: "center",
+    },
+  });
 
   return (
-    <ScrollView style={styles.container}>
-      {/* Encabezado con flecha y texto para volver */}
-      <View style={styles.header}>
-        <TouchableOpacity onPress={handleBackPress}>
-          <Text style={styles.backText}>← VOLVER AL INICIO</Text>
-        </TouchableOpacity>
-      </View>
-
-      <View
-        style={[
-          styles.contentContainer,
-          { flexDirection: isMobile ? "column" : "row" },
-        ]}
-      >
-        {/* Imagen a la izquierda (o arriba en móvil) */}
-        <View
-          style={[styles.imageContainer, { marginRight: isMobile ? 0 : 20 }]}
-        >
-          {work.image ? (
-            <Image source={{ uri: work.image }} style={styles.image} />
+    <ScrollView
+      style={styles.container}
+      contentContainerStyle={dynamicStyles.scrollContent}
+    >
+      {/* Contenedor principal */}
+      <View style={dynamicStyles.contentContainer}>
+        {/* Imagen con sombra */}
+        <View style={dynamicStyles.imageContainer}>
+          {work?.image ? (
+            <Image source={{ uri: work.image }} style={dynamicStyles.image} />
           ) : (
             // Si no hay imagen, un placeholder
             <View style={styles.placeholder}>
@@ -157,9 +269,16 @@ export default function WorkDetailScreen() {
             {work.name?.toUpperCase() || "TÍTULO OBRA"}
           </Text>
 
-          <Text style={styles.label}>DESCRIPCIÓN:</Text>
-          <Text style={styles.description}>
-            {work.description || "Sin descripción disponible"}
+          <Text style={dynamicStyles.label}>ARTISTA:</Text>
+          <TouchableOpacity
+            onPress={() => navigation.navigate("ArtistDetail", { artistId: work?.artist.id })}
+          >
+            <Text style={dynamicStyles.artistName}>{work?.artist?.name}</Text>
+          </TouchableOpacity>
+
+          <Text style={dynamicStyles.label}>DESCRIPCIÓN:</Text>
+          <Text style={dynamicStyles.description}>
+            {work?.description || "Sin descripción disponible"}
           </Text>
 
           <Text style={styles.label}>PRECIO:</Text>
