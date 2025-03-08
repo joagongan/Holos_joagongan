@@ -22,8 +22,8 @@ jobs:
 
       - name: Run auto-fix with Black and Isort
         run: |
-          black . || echo "Black fixed the code"
-          isort . || echo "Isort fixed the code"
+          black . --check || black .
+          isort . --check-only || isort .
 
       - name: Commit and push changes
         run: |
