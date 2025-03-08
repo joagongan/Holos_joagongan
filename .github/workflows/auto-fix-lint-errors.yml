@@ -8,10 +8,6 @@ on:
 permissions:
   contents: write
 
-  #comprobar error
-
-  
-
 jobs:
   lint-and-fix:
     runs-on: ubuntu-latest
