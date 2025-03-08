@@ -5,12 +5,14 @@ import java.util.List;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.web.cors.CorsConfiguration;
 
 @Configuration
+@EnableWebSecurity
 public class SecurityConfig {
 
     @SuppressWarnings("unused")
@@ -23,13 +25,14 @@ public class SecurityConfig {
                 config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE"));
                 config.setAllowedHeaders(List.of("*"));
                 return config;
-            }))		
-			.csrf(AbstractHttpConfigurer::disable)		
-			.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))			
-			.headers((headers) -> headers.frameOptions((frameOptions) -> frameOptions.disable()))
+            }))        
+            .csrf(AbstractHttpConfigurer::disable)        
+            .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))            
+            .headers((headers) -> headers.frameOptions((frameOptions) -> frameOptions.disable()))
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers("/api/v1/search/**").permitAll()
-                .anyRequest().permitAll()
+                .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
+                .anyRequest().authenticated()
             )
             .csrf(csrf -> csrf.disable());
 
