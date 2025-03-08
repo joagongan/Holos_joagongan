@@ -2,16 +2,13 @@ package com.HolosINC.Holos.artist;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.Lob;
-import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 
 import java.sql.Blob;
-import java.util.Set;
 
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
-import com.HolosINC.Holos.Category.ArtistCategory;
 import com.HolosINC.Holos.model.BaseUser;
 
 import lombok.Data;
@@ -29,7 +26,4 @@ public class Artist extends BaseUser{
     
     @Lob
     private Blob tableCommisionsPrice;
-    
-    @OneToMany(mappedBy = "artist")
-    private Set<ArtistCategory> artistCategories;
 }

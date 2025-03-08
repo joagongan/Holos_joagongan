@@ -1,23 +1,18 @@
 package com.HolosINC.Holos.Category;
 
+import com.HolosINC.Holos.model.BaseEntity;
+
 import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 @Data
 @Entity
 @Table(name = "categories")
-public class Category {
-
-    @Id
-    @SequenceGenerator(name = "category_seq", sequenceName = "category_sequence", initialValue = 100)
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "category_seq")
-    private Long id;
+@EqualsAndHashCode(callSuper = true)
+public class Category extends BaseEntity{
 
     private String name;
     private String description;
