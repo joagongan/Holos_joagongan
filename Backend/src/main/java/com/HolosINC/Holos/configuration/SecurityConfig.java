@@ -15,7 +15,6 @@ import org.springframework.web.cors.CorsConfiguration;
 @EnableWebSecurity
 public class SecurityConfig {
 
-    @SuppressWarnings("unused")
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
@@ -30,9 +29,8 @@ public class SecurityConfig {
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))            
             .headers((headers) -> headers.frameOptions((frameOptions) -> frameOptions.disable()))
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/api/v1/search/**").permitAll()
                 .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
-                .anyRequest().authenticated()
+                .anyRequest().permitAll()
             )
             .csrf(csrf -> csrf.disable());
 
