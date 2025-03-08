@@ -22,23 +22,18 @@ jobs:
 
       - name: Run auto-fix with Black and Isort
         run: |
-          black . --check || black .
-          isort . --check-only || isort .
+          black . || echo "Black fixed the code"
+          isort . || echo "Isort fixed the code"
 
       - name: Commit and push changes
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
-          git fetch origin
-          git pull --no-rebase origin ${{ github.ref_name }}
+          
           git add .
           git commit -m "Auto-fix lint errors [bot]" || echo "No changes to commit"
           
-          # Determine the push behavior based on the event type
-          if [ "${{ github.event_name }}" == "push" ]; then
-            git push origin main
-          elif [ "${{ github.event_name }}" == "pull_request" ]; then
-            git push origin HEAD:${{ github.head_ref }}
-          fi
+          # Push the changes to the same branch from which the workflow was triggered
+          git push origin ${{ github.ref_name }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
