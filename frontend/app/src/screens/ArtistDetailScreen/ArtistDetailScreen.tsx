@@ -134,6 +134,7 @@ const ALL_ARTISTS = [
 
 const ArtistDetailScreen = ({ route }: any) => {
   const { artistId } = route.params as { artistId: number };
+  const navigation = useNavigation<DrawerNavigationProp<RootDrawerParamList>>(); 
 
   console.log(route.params);
   const [artist, setArtist] = useState<any>(null);
@@ -166,7 +167,7 @@ const ArtistDetailScreen = ({ route }: any) => {
       </View>
 
       <View style={styles.buttonContainer}>
-        <TouchableOpacity style={styles.button}>
+        <TouchableOpacity style={styles.button} onPress={() => navigation.navigate("RequestCommission", { artistId: artist.id })}>
           <Text style={styles.buttonText}>Solicitar trabajo</Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.button}>

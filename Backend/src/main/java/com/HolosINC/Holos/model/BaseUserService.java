@@ -28,6 +28,10 @@ public class BaseUserService {
         return user.get();
     }
 
+    public Boolean existsUser(String username) {
+        return baseUserRepository.existsUser(username).isPresent();
+    }
+
     public BaseUser findById(Long id) {
         return baseUserRepository.findById(id).orElse(null);
     }

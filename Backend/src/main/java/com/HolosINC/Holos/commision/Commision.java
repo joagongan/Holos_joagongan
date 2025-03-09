@@ -2,6 +2,7 @@ package com.HolosINC.Holos.commision;
 
 import java.util.Date;
 
+import com.HolosINC.Holos.client.Client;
 import com.HolosINC.Holos.Kanban.StatusKanbanOrder;
 import com.HolosINC.Holos.work.Work;
 
@@ -36,7 +37,8 @@ public class Commision extends Work{
     @ManyToOne
     @JoinColumn(name = "status_kanban_order_id")
     private StatusKanbanOrder statusKanbanOrder;
-    
-    // @OneToMany(mappedBy = "commision", cascade = CascadeType.ALL, orphanRemoval = true)
-    // private List<Milestones> milestones;
+
+    @ManyToOne
+    @JoinColumn(name = "client_id", nullable = false)
+    private Client client;
 }

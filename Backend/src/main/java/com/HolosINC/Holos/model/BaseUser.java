@@ -6,26 +6,23 @@ import java.sql.Date;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import com.HolosINC.Holos.auth.Authorities;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
 import jakarta.persistence.Inheritance;
 import jakarta.persistence.InheritanceType;
+import jakarta.persistence.JoinColumn;
 import jakarta.persistence.Lob;
-import jakarta.persistence.SequenceGenerator;
+import jakarta.persistence.ManyToOne;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 @Data
+@EqualsAndHashCode(callSuper = true)
 @Entity
 @Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
-public class BaseUser {
-
-    @Id
-	@SequenceGenerator(name = "entity_seq", sequenceName = "entity_sequence", initialValue = 100)
-	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "entity_seq")
-	protected Long id;
+public class BaseUser extends BaseEntity {
 
     @Size(min = 2, max = 255)
     @Column(name = "first_name")
@@ -54,4 +51,22 @@ public class BaseUser {
     @Column(name = "created_user")
     @NotNull
     protected Date createdUser;
+
+    @NotNull
+	@ManyToOne(optional = false)
+	@JoinColumn(name = "authority")
+	Authorities authority;
+
+	public Boolean hasAuthority(String auth) {
+		return authority.getAuthority().equals(auth);
+	}
+
+	public Boolean hasAnyAuthority(String... authorities) {
+		Boolean cond = false;
+		for (String auth : authorities) {
+			if (auth.equals(authority.getAuthority()))
+				cond = true;
+		}
+		return cond;
+	}
 }
