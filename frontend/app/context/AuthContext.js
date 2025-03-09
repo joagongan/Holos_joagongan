@@ -3,6 +3,7 @@ import * as SecureStore from 'expo-secure-store';
 import axios from 'axios';
 import { createContext, useState } from 'react';
 import { login } from '../api/AuthEndpoints';
+import { Platform } from 'react-native';
 
 const AuthenticationContext = createContext();
 

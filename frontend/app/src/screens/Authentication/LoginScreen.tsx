@@ -33,6 +33,7 @@ export default function LoginScreen ({ navigation }) {
                     message: `Welcome back ${loginUser.username}`,
                     type: 'success'
                 })
+                navigation.navigate('Inicio')
             },
             (errors) => {
                 setBackendErrors(errors)
