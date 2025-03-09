@@ -1,9 +1,15 @@
-INSERT INTO clients (id, first_name, username, password, email, phone_number, image_profile, created_user) VALUES
-(1, 'John', 'john_doe', 'password123', 'john.doe@example.com', '1234567890', NULL, '2025-02-28'),
-(2, 'Jane', 'jane_doe', 'password456', 'jane.doe@example.com', '1234567890', NULL, '2025-02-28');
+INSERT INTO authorities (id, authority) VALUES
+(1, 'ADMIN'),
+(2, 'CLIENT'),
+(3, 'ARTIST');
 
-INSERT INTO artists (id, first_name, username, password, email, phone_number, image_profile, created_user, num_slots_of_work, table_commisions_price) VALUES
-(1,'Yellow', 'yellow_doe', 'password789', 'yellow.doe@example.com', '1234567890', NULL, '2025-02-28', 3, NULL);
+INSERT INTO clients (id, first_name, username, password, email, phone_number, image_profile, created_user, authority) 
+VALUES 
+(1, 'John', 'john_doe', '$2a$10$Pa0sqxNtcHNYzE2BeEYLZODN47h0CwUk.C3.DNWbVNE.HK4t.w8Pm', 'john.doe@example.com', '1234567890', NULL, '2025-02-28', 2), 
+(2, 'Jane', 'jane_doe', '$2a$10$/qX3iXMXVNqGwxL0T7aAtO8uZitcy/BS0veWxSLqSsmEBmkokWCb2', 'jane.doe@example.com', '1234567890', NULL, '2025-02-28', 2);
+
+INSERT INTO artists (id, first_name, username, password, email, phone_number, image_profile, created_user, num_slots_of_work, table_commisions_price, authority) VALUES
+(1,'Yellow', 'yellow_doe', '$2a$10$EpGdCKwySrqJfMzPR2dizO1BCZiQwmaum2G0AyYl0EgMgf80OCypK', 'yellow.doe@example.com', '1234567890', NULL, '2025-02-28', 3, NULL, 3);
 
 INSERT INTO categories (id, name, description) VALUES
 (1,'Painting', 'Artworks created using paint on a surface'),

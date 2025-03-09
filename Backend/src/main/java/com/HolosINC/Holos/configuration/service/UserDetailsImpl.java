@@ -1,5 +1,4 @@
-package com.HolosINC.Holos.security.service;
-
+package com.HolosINC.Holos.configuration.service;
 import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
@@ -25,19 +24,20 @@ public class UserDetailsImpl implements UserDetails {
 	private Collection<? extends GrantedAuthority> authorities;
 
 	public UserDetailsImpl(Long id, String username, String password,
-			Collection<? extends GrantedAuthority> authorities) {
+	Collection<? extends GrantedAuthority> authorities) {
 		this.id = id;
 		this.username = username;
 		this.password = password;
 		this.authorities = authorities;
 	}
 
+
 	public static UserDetailsImpl build(BaseUser user) {
-		// List<GrantedAuthority> authorities = List.of(new SimpleGrantedAuthority(user.getAuthority().getAuthority()));
+		List<GrantedAuthority> authorities = List.of(new SimpleGrantedAuthority(user.getAuthority().getAuthority()));
 
 		return new UserDetailsImpl(user.getId(), user.getUsername(),
 				user.getPassword(),
-                List.of());
+				authorities);
 	}
 
 	@Override

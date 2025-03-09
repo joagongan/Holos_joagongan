@@ -1,4 +1,4 @@
-package com.HolosINC.Holos.security.auth.response;
+package com.HolosINC.Holos.auth.payload.response;
 
 import java.util.List;
 
