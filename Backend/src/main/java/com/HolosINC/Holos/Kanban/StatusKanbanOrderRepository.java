@@ -11,7 +11,7 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface StatusKanbanOrderRepository extends JpaRepository<StatusKanbanOrder, Integer> {
 
-    @Query("SELECT s FROM StatusKanbanOrder s WHERE s.order_client = :order_client AND s.artist.id = :id")
+    @Query("SELECT s FROM StatusKanbanOrder s WHERE s.order = :order_client AND s.artist.id = :id")
     Optional<StatusKanbanOrder> findByOrderAndArtist(Integer order_client, Integer id);
 
     @Query("SELECT s FROM StatusKanbanOrder s WHERE s.artist.id = :artistId")
