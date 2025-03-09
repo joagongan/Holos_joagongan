@@ -1,47 +1,50 @@
 
 INSERT INTO clients (id, first_name, username, password, email, phone_number, image_profile, created_user) VALUES
-(1, 'Jeenii', 'jeenni', 'password001', 'reinapata20@gmail.com', '123456789', NULL, '2025-03-06'),
-(2, 'Emilio', 'emilio', 'password002', 'emilio.esp99@gmail.com', '123456789', NULL, '2025-03-06'),
-(3, 'Rafael', 'rafael', 'password003', 'dekker.rafa@gmail.com', '123456789', NULL, '2025-03-06'),
-(4, 'Felix', 'felix', 'password004', 'felixsv26@gmail.com', '123456789', NULL, '2025-03-06'),
-(5, 'Raúl', 'raul', 'password005', 'raullebone@gmail.com', '123456789', NULL, '2025-03-06'),
-(6, 'Joker', 'joker', 'password006', 'jokerin.escuchame@gmail.com', '123456789', NULL, '2025-03-06'),
-(7, 'Lucas', 'lucas', 'password007', 'lmherencia2003@gmail.com', '123456789', NULL, '2025-03-06'),
-(8, 'Horacio', 'horacio', 'password008', 'geko.hor@gmail.com', '123456789', NULL, '2025-03-06'),
-(9, 'Simón', 'simon', 'password009', 'simoncgs03@gmail.com', '123456789', NULL, '2025-03-06'),
-(10, 'Javier', 'javies_pacheco', 'password010', 'pachecomarquezjavier@gmail.com', '123456789', NULL, '2025-03-06'),
-(11, 'Henrique', 'henrique', 'password011', 'henrique.rebolho@gmail.com', '123456789', NULL, '2025-03-06'),
-(12, 'Keegan', 'kaegan', 'password012', 'Kcullen3289@gmail.com', '123456789', NULL, '2025-03-06'),
-(13, 'Carlos', 'carlos', 'password013', 'carlosperezsanchez199@gmail.com', '123456789', NULL, '2025-03-06'),
-(14, 'Milagros', 'milagros', 'password014', 'milagros.huerta@gm.uca.es', '123456789', NULL, '2025-03-06'),
-(15, 'Patricia', 'patricia', 'password015', 'kaleta1979@gmail.com', '123456789', NULL, '2025-03-06'),
-(16,'Daniel', 'daniel', 'password016', 'megamagolas@gmail.com', '663522963', NULL, '2025-03-06'),
-(17,'Rafael', 'rafaelduque', 'password017', 'rafduqcol@alum.us.es', '722675760', NULL, '2025-03-06'),
-(18,'Rafael', 'rafaelcastillo', 'password018', 'rafaelcastillocebolla@gmail.com', '671168164', NULL, '2025-03-06'),
-(19,'Mohamed', 'mohamed', 'password019', 'mohmmedabourihhh@gmail.com', '602171961', NULL, '2025-03-06'),
-(20,'Enrique', 'enrique', 'password020', 'kiquegaraba@gmail.com', '600619217', NULL, '2025-03-06');
+(1,'client1', 'client1', 'client1', 'client1@gmail.com', '600619217', NULL, '2025-03-06'),
+(2, 'Jeenii', 'jeenni', 'reinapata20@gmail.com', 'reinapata20@gmail.com', '123456789', NULL, '2025-03-06'),
+(3, 'Emilio', 'emilio', 'emilio.esp99@gmail.com', 'emilio.esp99@gmail.com', '123456789', NULL, '2025-03-06'),
+(4, 'Rafael', 'rafael', 'dekker.rafa@gmail.com', 'dekker.rafa@gmail.com', '123456789', NULL, '2025-03-06'),
+(5, 'Felix', 'felix', 'felixsv26@gmail.com', 'felixsv26@gmail.com', '123456789', NULL, '2025-03-06'),
+(6, 'Raúl', 'raul', 'raullebone@gmail.com', 'raullebone@gmail.com', '123456789', NULL, '2025-03-06'),
+(7, 'Joker', 'joker', 'jokerin.escuchame@gmail.com', 'jokerin.escuchame@gmail.com', '123456789', NULL, '2025-03-06'),
+(8, 'Lucas', 'lucas', 'lmherencia2003@gmail.com', 'lmherencia2003@gmail.com', '123456789', NULL, '2025-03-06'),
+(9, 'Horacio', 'horacio', 'geko.hor@gmail.com', 'geko.hor@gmail.com', '123456789', NULL, '2025-03-06'),
+(10, 'Simón', 'simon', 'simoncgs03@gmail.com', 'simoncgs03@gmail.com', '123456789', NULL, '2025-03-06'),
+(11, 'Javier', 'javies_pacheco', 'pachecomarquezjavier@gmail.com', 'pachecomarquezjavier@gmail.com', '123456789', NULL, '2025-03-06'),
+(12, 'Henrique', 'henrique', 'henrique.rebolho@gmail.com', 'henrique.rebolho@gmail.com', '123456789', NULL, '2025-03-06'),
+(13, 'Keegan', 'kaegan', 'Kcullen3289@gmail.com', 'Kcullen3289@gmail.com', '123456789', NULL, '2025-03-06'),
+(14, 'Carlos', 'carlos', 'carlosperezsanchez199@gmail.com', 'carlosperezsanchez199@gmail.com', '123456789', NULL, '2025-03-06'),
+(15, 'Milagros', 'milagros', 'milagros.huerta@gm.uca.es', 'milagros.huerta@gm.uca.es', '123456789', NULL, '2025-03-06'),
+(16, 'Patricia', 'patricia', 'kaleta1979@gmail.com', 'kaleta1979@gmail.com', '123456789', NULL, '2025-03-06'),
+(17,'Daniel', 'daniel', 'megamagolas@gmail.com', 'megamagolas@gmail.com', '663522963', NULL, '2025-03-06'),
+(18,'Rafael', 'rafaelduque', 'rafduqcol@alum.us.es', 'rafduqcol@alum.us.es', '722675760', NULL, '2025-03-06'),
+(19,'Rafael', 'rafaelcastillo', 'rafaelcastillocebolla@gmail.com', 'rafaelcastillocebolla@gmail.com', '671168164', NULL, '2025-03-06'),
+(20,'Mohamed', 'mohamed', 'mohmmedabourihhh@gmail.com', 'mohmmedabourihhh@gmail.com', '602171961', NULL, '2025-03-06'),
+(21,'Enrique', 'enrique', 'kiquegaraba@gmail.com', 'kiquegaraba@gmail.com', '600619217', NULL, '2025-03-06');
+
 
 
 INSERT INTO artists (id, first_name, username, password, email, phone_number, image_profile, created_user, num_slots_of_work, table_commisions_price) VALUES
-(1,'Braulio', 'braulio', 'password021', 'braulioolmedo116@gmail.com', '1234567890', NULL, '2025-03-06', 0, NULL),
-(2,'Claudia', 'claudia', 'password022', 'xlaequis@gmail.com', '1234567890', NULL, '2025-03-06', 0, NULL),
-(3,'Miriam', 'miriam', 'password023', 'urownmailblik@gmail.com', '1234567890', NULL, '2025-03-06', 0, NULL),
-(4,'Paola', 'paola', 'password024', 'pao.saaval@gmail.com', '1234567890', NULL, '2025-03-06', 0, NULL),
-(5,'Victor', 'victor', 'password025', 'jsjxhwjifyhyyy@gmail.com', '1234567890', NULL, '2025-03-06', 0, NULL),
-(6,'Yellow', 'yellow', 'password026', 'yell0w.4rtist@gmail.com', '1234567890', NULL, '2025-03-06', 0, NULL),
-(7,'Alex', 'alex', 'password027', 'vsandoval.gd@gmail.com', '1234567890', NULL, '2025-03-06', 0, NULL),
-(8,'Patricia', 'peu', 'password028', 'linkaris95@gmail.com', '1234567890', NULL, '2025-03-06', 0, NULL),
-(9,'Izzy', 'izzy', 'password029', 'artofiz.comms@gmail.com', '1234567890', NULL, '2025-03-06', 0, NULL),
-(10,'Gabriela', 'gabriela', 'password030', 'meowm7512@gmail.com', '1234567890', NULL, '2025-03-06', 0, NULL),
-(11,'Alex', 'tesla', 'password031', 'soloparainformatica23@gmail.com', '1234567890', NULL, '2025-03-06', 0, NULL),
-(12,'Gurutze', 'churros', 'password032', 'gurutze.contact@gmail.com', '1234567890', NULL, '2025-03-06', 0, NULL),
-(13,'Damaris', 'damaris', 'password033', 'damaris.narvaezjimenez@gmail.com', '1234567890', NULL, '2025-03-06', 0, NULL),
-(14,'Sofia', 'rata', 'password034', 'already.dead.baby@gmail.com', '1234567890', NULL, '2025-03-06', 0, NULL),
-(15,'Daniel', 'daniel', 'password016', 'megamagolas@gmail.com', '663522963', NULL, '2025-03-06', 0, NULL),
-(16,'Rafael', 'rafaelduque', 'password017', 'rafduqcol@alum.us.es', '722675760', NULL, '2025-03-06', 0, NULL),
-(17,'Rafael', 'rafaelcastillo', 'password018', 'rafaelcastillocebolla@gmail.com', '671168164', NULL, '2025-03-06', 0, NULL),
-(18,'Mohamed', 'mohamed', 'password019', 'mohmmedabourihhh@gmail.com', '602171961', NULL, '2025-03-06', 0, NULL),
-(19,'Enrique', 'enrique', 'password020', 'kiquegaraba@gmail.com', '600619217', NULL, '2025-03-06', 0, NULL);
+(1,'artist1', 'artist1', 'artist1@gmail.com', 'artist1@gmail.com', '1234567890', NULL, '2025-03-06', 0, NULL),
+(2,'Braulio', 'braulio', 'braulioolmedo116@gmail.com', 'braulioolmedo116@gmail.com', '1234567890', NULL, '2025-03-06', 0, NULL),
+(3,'Claudia', 'claudia', 'xlaequis@gmail.com', 'xlaequis@gmail.com', '1234567890', NULL, '2025-03-06', 0, NULL),
+(4,'Miriam', 'miriam', 'urownmailblik@gmail.com', 'urownmailblik@gmail.com', '1234567890', NULL, '2025-03-06', 0, NULL),
+(5,'Paola', 'paola', 'pao.saaval@gmail.com', 'pao.saaval@gmail.com', '1234567890', NULL, '2025-03-06', 0, NULL),
+(6,'Victor', 'victor', 'jsjxhwjifyhyyy@gmail.com', 'jsjxhwjifyhyyy@gmail.com', '1234567890', NULL, '2025-03-06', 0, NULL),
+(7,'Yellow', 'yellow', 'yell0w.4rtist@gmail.com', 'yell0w.4rtist@gmail.com', '1234567890', NULL, '2025-03-06', 0, NULL),
+(8,'Alex', 'alex', 'vsandoval.gd@gmail.com', 'vsandoval.gd@gmail.com', '1234567890', NULL, '2025-03-06', 0, NULL),
+(9,'Patricia', 'peu', 'linkaris95@gmail.com', 'linkaris95@gmail.com', '1234567890', NULL, '2025-03-06', 0, NULL),
+(10,'Izzy', 'izzy', 'artofiz.comms@gmail.com', 'artofiz.comms@gmail.com', '1234567890', NULL, '2025-03-06', 0, NULL),
+(11,'Gabriela', 'gabriela', 'meowm7512@gmail.com', 'meowm7512@gmail.com', '1234567890', NULL, '2025-03-06', 0, NULL),
+(12,'Alex', 'tesla', 'soloparainformatica23@gmail.com', 'soloparainformatica23@gmail.com', '1234567890', NULL, '2025-03-06', 0, NULL),
+(13,'Gurutze', 'churros', 'gurutze.contact@gmail.com', 'gurutze.contact@gmail.com', '1234567890', NULL, '2025-03-06', 0, NULL),
+(14,'Damaris', 'damaris', 'damaris.narvaezjimenez@gmail.com', 'damaris.narvaezjimenez@gmail.com', '1234567890', NULL, '2025-03-06', 0, NULL),
+(15,'Sofia', 'rata', 'already.dead.baby@gmail.com', 'already.dead.baby@gmail.com', '1234567890', NULL, '2025-03-06', 0, NULL),
+(16,'Daniel', 'daniel', 'megamagolas@gmail.com', 'megamagolas@gmail.com', '663522963', NULL, '2025-03-06', 0, NULL),
+(17,'Rafael', 'rafaelduque', 'rafduqcol@alum.us.es', 'rafduqcol@alum.us.es', '722675760', NULL, '2025-03-06', 0, NULL),
+(18,'Rafael', 'rafaelcastillo', 'rafaelcastillocebolla@gmail.com', 'rafaelcastillocebolla@gmail.com', '671168164', NULL, '2025-03-06', 0, NULL),
+(19,'Mohamed', 'mohamed', 'mohmmedabourihhh@gmail.com', 'mohmmedabourihhh@gmail.com', '602171961', NULL, '2025-03-06', 0, NULL),
+(20,'Enrique', 'enrique', 'kiquegaraba@gmail.com', 'kiquegaraba@gmail.com', '600619217', NULL, '2025-03-06', 0, NULL);
 
 INSERT INTO categories (id, name, description) VALUES
 (1, 'Painting', 'Artworks created using paint on a surface'),
@@ -52,6 +55,7 @@ INSERT INTO categories (id, name, description) VALUES
 (6, 'Drawing', 'Artworks created using pencils, charcoal, or ink on paper'),
 (7, 'Textile Art', 'Artworks made using fabric, thread, or weaving techniques'),
 (8, 'Ceramics', 'Artworks made from clay and hardened by heat');
+
 
 INSERT INTO works (id, artist_id, name, description, price) VALUES 
 (1, 1, 'Sunset Painting', 'A beautiful sunset painting', 150.0),
@@ -116,3 +120,23 @@ INSERT INTO works_done (id, artist_id, image) VALUES
 (2, 1, NULL),
 (3, 1, NULL),
 (4, 1, NULL);
+
+INSERT INTO artist_category(id,artist_id,category_id) VALUES
+(1, 1, 1),
+(2,1,2),
+(3,1,3),
+(4, 2, 2),
+(5, 3, 3),
+(6, 4, 4),
+(7, 5, 5),
+(8, 6, 6),
+(9, 7, 7),
+(10, 8, 8);
+
+INSERT INTO work_category(id,category_id,work_id) VALUES
+(1, 1, 1),
+(2, 1, 2),
+(3, 2, 3),
+(4, 3, 4),
+(5, 4, 5);
+
