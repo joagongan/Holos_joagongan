@@ -6,11 +6,15 @@ import java.sql.Date;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import com.HolosINC.Holos.auth.Authorities;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Inheritance;
 import jakarta.persistence.InheritanceType;
+import jakarta.persistence.JoinColumn;
 import jakarta.persistence.Lob;
+import jakarta.persistence.ManyToOne;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -47,4 +51,22 @@ public class BaseUser extends BaseEntity {
     @Column(name = "created_user")
     @NotNull
     protected Date createdUser;
+
+    @NotNull
+	@ManyToOne(optional = false)
+	@JoinColumn(name = "authority")
+	Authorities authority;
+
+	public Boolean hasAuthority(String auth) {
+		return authority.getAuthority().equals(auth);
+	}
+
+	public Boolean hasAnyAuthority(String... authorities) {
+		Boolean cond = false;
+		for (String auth : authorities) {
+			if (auth.equals(authority.getAuthority()))
+				cond = true;
+		}
+		return cond;
+	}
 }

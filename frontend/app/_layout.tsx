@@ -17,6 +17,8 @@ import SearchIcon from "@/assets/svgs/SearchIcon";
 import KanbanIcon from "@/assets/svgs/KanbanIconProps";
 import RequestIcon from "@/assets/svgs/RequestIcon";
 import KanbanScreen from "./src/screens/KanbanScreen/KanbanScreen";
+import LoginScreen from "./src/screens/Authentication/LoginScreen";
+import AuthenticationContextProvider from "./context/AuthContext";
 
 const Drawer = createDrawerNavigator();
 const Stack = createStackNavigator();
@@ -31,46 +33,58 @@ export type RootDrawerParamList = {
 
 export default function RootLayout() {
   return (
-    <Drawer.Navigator
-      initialRouteName="Inicio"
-      screenOptions={{
-        headerShown: true,
-      }}
-    >
-      {/* Pantalla visible en el Drawer */}
-      <Drawer.Screen name="Inicio" component={HomeScreen} />
-      <Drawer.Screen
-        name="Perfil"
-        component={UserProfileStack}
-        options={{
-          drawerIcon: ({ color, size }) => (
-            <ProfileIcon size={size} />
-          ),
+    <AuthenticationContextProvider>
+      <Drawer.Navigator
+        initialRouteName="Inicio"
+        screenOptions={{
+          headerShown: true,
         }}
-      />
-      {/* Pantalla visible en el Drawer */}
-      <Drawer.Screen
-        name="Explorar"
-        component={ExploreStack}
-        options={{
-          drawerIcon: ({ size }) => <SearchIcon width={size} height={size} />,
-        }}
-      />
-      <Drawer.Screen
-        name="Panel de comisiones"
-        component={KanbanScreen}
-        options={{
-          drawerIcon: ({ size }) => <KanbanIcon width={size} height={size} />,
-        }}
-      />
-      <Drawer.Screen
-        name="Pedidos"
-        component={ArtistRequestOrders}
-        options={{
-          drawerIcon: ({ size }) => <RequestIcon width={size} height={size} />,
-        }}
-      />
-    </Drawer.Navigator>
+      >
+        {/* Pantalla visible en el Drawer */}
+        <Drawer.Screen name="Inicio" component={HomeScreen} />
+        <Drawer.Screen
+          name="sign-in"
+          component={LoginScreen}
+          options={{
+            title: 'Inicio de sesión',
+            drawerIcon: ({ color, size }) => (
+              <ProfileIcon size={size} />
+            ),
+          }}
+        />
+        <Drawer.Screen
+          name="Perfil"
+          component={UserProfileStack}
+          options={{
+            drawerIcon: ({ color, size }) => (
+              <ProfileIcon size={size} />
+            ),
+          }}
+        />
+        {/* Pantalla visible en el Drawer */}
+        <Drawer.Screen
+          name="Explorar"
+          component={ExploreStack}
+          options={{
+            drawerIcon: ({ size }) => <SearchIcon width={size} height={size} />,
+          }}
+        />
+        <Drawer.Screen
+          name="Panel de comisiones"
+          component={KanbanScreen}
+          options={{
+            drawerIcon: ({ size }) => <KanbanIcon width={size} height={size} />,
+          }}
+        />
+        <Drawer.Screen
+          name="Pedidos"
+          component={ArtistRequestOrders}
+          options={{
+            drawerIcon: ({ size }) => <RequestIcon width={size} height={size} />,
+          }}
+        />
+      </Drawer.Navigator>
+    </AuthenticationContextProvider>
   );
 }
 
