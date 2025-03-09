@@ -16,30 +16,30 @@ import org.springframework.web.cors.CorsConfiguration;
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
+    
+    @Bean
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        http
+        .cors(cors -> cors.configurationSource(request -> {
+            CorsConfiguration config = new CorsConfiguration();
+            config.setAllowedOrigins(List.of("http://localhost:8081"));
+            config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE"));
+            config.setAllowedHeaders(List.of("*"));
+            return config;
+        }))        
+        .csrf(AbstractHttpConfigurer::disable)        
+        .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))            
+        .headers((headers) -> headers.frameOptions((frameOptions) -> frameOptions.disable()))
+        .authorizeHttpRequests(auth -> auth
+        .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
+        .anyRequest().permitAll()
+        );
+        
+        return http.build();
+    }
 
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration authConfig) throws Exception {
         return authConfig.getAuthenticationManager();
-    }
-
-    @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http
-            .cors(cors -> cors.configurationSource(request -> {
-                CorsConfiguration config = new CorsConfiguration();
-                config.setAllowedOrigins(List.of("http://localhost:8081"));
-                config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE"));
-                config.setAllowedHeaders(List.of("*"));
-                return config;
-            }))        
-            .csrf(AbstractHttpConfigurer::disable)        
-            .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))            
-            .headers((headers) -> headers.frameOptions((frameOptions) -> frameOptions.disable()))
-            .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
-                .anyRequest().permitAll()
-            );
-
-        return http.build();
     }
 }

@@ -1,6 +1,8 @@
 package com.HolosINC.Holos.Category;
 
 import com.HolosINC.Holos.model.BaseEntity;
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
@@ -11,6 +13,7 @@ import lombok.EqualsAndHashCode;
 @Data
 @Entity
 @Table(name = "categories")
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 @EqualsAndHashCode(callSuper = true)
 public class Category extends BaseEntity{
 
