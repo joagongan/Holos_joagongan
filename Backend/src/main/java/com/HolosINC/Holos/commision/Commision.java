@@ -42,7 +42,4 @@ public class Commision extends Work{
     @ManyToOne(cascade = CascadeType.PERSIST)
     @JoinColumn(name = "client_id", referencedColumnName = "id", nullable = false)
     private Client client;
-    
-    // @OneToMany(mappedBy = "commision", cascade = CascadeType.ALL, orphanRemoval = true)
-    // private List<Milestones> milestones;
 }

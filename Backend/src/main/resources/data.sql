@@ -1,3 +1,7 @@
+INSERT INTO authorities (id, authority) VALUES
+(1, 'ADMIN'),
+(2, 'CLIENT'),
+(3, 'ARTIST');
 
 INSERT INTO clients (id, first_name, username, password, email, phone_number, image_profile, created_user) VALUES
 (1,'client1', 'client1', 'client1', 'client1@gmail.com', '600619217', NULL, '2025-03-06'),
@@ -65,7 +69,7 @@ INSERT INTO works (id, artist_id, name, description, price) VALUES
 (5, 1, 'Forest Path', 'A peaceful forest pathway', 120.0);
 
 
-INSERT INTO status_kanban_order (id, artist_id, name, order_client, description, color) VALUES 
+INSERT INTO status_kanban_order (id, artist_id, name, order_in_kanban, description, color) VALUES 
 (1, 1, 'To Do', 1, 'Tasks that need to be started', '#FF5733'),
 (2, 2, 'In Progress', 2, 'Tasks that are currently being worked on', '#33FF57'),
 (3, 3, 'Review', 3, 'Tasks that need to be reviewed before completion', '#3357FF'),
@@ -139,4 +143,3 @@ INSERT INTO work_category(id,category_id,work_id) VALUES
 (3, 2, 3),
 (4, 3, 4),
 (5, 4, 5);
-

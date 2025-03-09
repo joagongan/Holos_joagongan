@@ -14,24 +14,21 @@ import lombok.Data;
 
 import javax.validation.constraints.NotNull;
 
+import com.HolosINC.Holos.model.BaseEntity;
 import com.HolosINC.Holos.artist.Artist;
 
 @Data
 @Entity
-@Table(name = "status_kanban_order", uniqueConstraints = @UniqueConstraint(columnNames = { "artist_id", "order_client"}))
-public class StatusKanbanOrder {
-
-    @Id
-	@SequenceGenerator(name = "entity_seq", sequenceName = "entity_sequence", initialValue = 100)
-	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "entity_seq")
-	protected Long id;
+@Table(name = "status_kanban_order", uniqueConstraints = @UniqueConstraint(columnNames = { "artist_id", "order_in_kanban"}))
+public class StatusKanbanOrder extends BaseEntity {
 
     @NotNull
     @Column(nullable = false)
     private String name;
 
     @NotNull
-    private Integer order_client;
+    @Column(name = "order_in_kanban")
+    private Integer order;
 
     private String description;
 
