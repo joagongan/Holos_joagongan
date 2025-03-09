@@ -18,6 +18,7 @@ import { RootDrawerParamList } from "../../../_layout";
 import { DrawerNavigationProp } from "@react-navigation/drawer";
 import { getAllCategories } from "../../../services/categoryService";
 import { getAllWorksDone } from "../../../services/WorksDoneService";
+import { getArtistById } from "../../../services/ArtistService";
 
 interface Category {
   id: number;
@@ -25,11 +26,18 @@ interface Category {
   image: string;
 }
 
+interface Artist {
+  id: number;
+  name: string;
+  username: string;
+}
+
 interface Work {
   id: number;
   name: string;
   image: string;
   price?: number;
+  artist: Artist | number;
   artistName?: string;
 }
 
@@ -63,11 +71,34 @@ export default function ExploreScreen() {
     const fetchWorks = async () => {
       try {
         const data = await getAllWorksDone();
-        setWorks(data);
+
+        const worksWithArtist = await Promise.all(
+          data.map(async (work: Work) => {
+            if (
+              work.artist &&
+              typeof work.artist === "object" &&
+              typeof work.artist.id === "number"
+            ) {
+              return { ...work, artistName: work.artist.username };
+            } else if (typeof work.artist === "number") {
+              const artist = await getArtistById(work.artist);
+              return { ...work, artistName: artist.username };
+            } else {
+              console.error("No se encontró artista válido en la obra:", work);
+              return work;
+            }
+          })
+        );
+
+        setWorks(worksWithArtist);
+
+        console.log("Obras con nombre de artista agregado:", worksWithArtist);
+        setWorks(worksWithArtist);
       } catch (error) {
-        console.error("Error fetching works done: ", error);
+        console.error("Error fetching works done:", error);
       }
     };
+
     fetchWorks();
   }, []);
 
@@ -242,7 +273,7 @@ export default function ExploreScreen() {
                       style={styles.artistImage}
                     />
                   </View>
-                  <Text style={styles.artistTextBig}>{work.name}</Text>
+                  <Text style={styles.artistTextBig}>{work.artistName}</Text>
                 </View>
               </TouchableOpacity>
             );
@@ -277,7 +308,7 @@ export default function ExploreScreen() {
                       style={styles.artistImage}
                     />
                   </View>
-                  <Text style={styles.artistTextMobile}>{work.name}</Text>
+                  <Text style={styles.artistTextMobile}>{work.artistName}</Text>
                 </View>
               </TouchableOpacity>
             );
