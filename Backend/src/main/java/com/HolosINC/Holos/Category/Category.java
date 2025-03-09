@@ -1,10 +1,13 @@
 package com.HolosINC.Holos.Category;
 
+import java.sql.Blob;
+
 import com.HolosINC.Holos.model.BaseEntity;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.Lob;
 import jakarta.persistence.Table;
 
 import lombok.Data;
@@ -19,4 +22,7 @@ public class Category extends BaseEntity{
 
     private String name;
     private String description;
+
+    @Lob
+    private Blob image;
 }

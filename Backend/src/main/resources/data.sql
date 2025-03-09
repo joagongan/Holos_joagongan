@@ -11,10 +11,10 @@ VALUES
 INSERT INTO artists (id, first_name, username, password, email, phone_number, image_profile, created_user, num_slots_of_work, table_commisions_price, authority) VALUES
 (1,'Yellow', 'yellow_doe', '$2a$10$EpGdCKwySrqJfMzPR2dizO1BCZiQwmaum2G0AyYl0EgMgf80OCypK', 'yellow.doe@example.com', '1234567890', NULL, '2025-02-28', 3, NULL, 3);
 
-INSERT INTO categories (id, name, description) VALUES
-(1,'Painting', 'Artworks created using paint on a surface'),
-(2,'Digital Art', 'Artworks made using digital tools'),
-(3,'Sculpture', 'Three-dimensional art made by shaping materials');
+INSERT INTO categories (id, name, description, image) VALUES
+(1,'Painting', 'Artworks created using paint on a surface', NULL),
+(2,'Digital Art', 'Artworks made using digital tools', NULL),
+(3,'Sculpture', 'Three-dimensional art made by shaping materials', NULL);
 
 INSERT INTO works (id, artist_id, name, description, price) VALUES 
 (1, 1, 'Sunset Painting', 'A beautiful sunset painting', 150.0),
