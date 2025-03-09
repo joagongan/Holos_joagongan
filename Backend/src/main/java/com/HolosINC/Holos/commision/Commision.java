@@ -2,10 +2,11 @@ package com.HolosINC.Holos.commision;
 
 import java.util.Date;
 
-import com.HolosINC.Holos.client.Client;
 import com.HolosINC.Holos.Kanban.StatusKanbanOrder;
+import com.HolosINC.Holos.client.Client;
 import com.HolosINC.Holos.work.Work;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -34,11 +35,11 @@ public class Commision extends Work{
     @Enumerated(EnumType.STRING)
     private EnumPaymentArrangement paymentArrangement;
 
-    @ManyToOne
-    @JoinColumn(name = "status_kanban_order_id")
+    @ManyToOne(cascade = CascadeType.PERSIST)
+    @JoinColumn(name = "status_kanban_order_id", referencedColumnName = "id", nullable = false)
     private StatusKanbanOrder statusKanbanOrder;
 
-    @ManyToOne
-    @JoinColumn(name = "client_id", nullable = false)
+    @ManyToOne(cascade = CascadeType.PERSIST)
+    @JoinColumn(name = "client_id", referencedColumnName = "id", nullable = false)
     private Client client;
 }
