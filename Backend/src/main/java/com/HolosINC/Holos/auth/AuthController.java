@@ -56,7 +56,6 @@ public class AuthController {
 	@PostMapping("/signin")
 	public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
 		try{
-			System.out.println(encoder.encode(loginRequest.getPassword()));
 			Authentication userPassAuthToken = new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword());
 			Authentication authentication = authenticationManager.authenticate(userPassAuthToken);
 
