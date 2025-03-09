@@ -88,9 +88,9 @@ export default function WorkDetailScreen() {
   const [work, setWork] = useState<any>(null);
   const [loading, setLoading] = useState(true);
 
-  // Detectar tamaño de pantalla
+  // Para distinguir si es pantalla pequeña o grande
   const screenWidth = Dimensions.get("window").width;
-  // Decidimos que, si es >= 1024, lo tratamos como "pantalla grande"
+  const isMobile = screenWidth < 600;
   const isLargeScreen = screenWidth >= 1024;
 
   useEffect(() => {
@@ -102,7 +102,7 @@ export default function WorkDetailScreen() {
   if (loading) {
     return (
       <View style={styles.loaderContainer}>
-        <ActivityIndicator size="large" color="#173F8A" />
+        <ActivityIndicator size="large" color="#333" />
       </View>
     );
   }
@@ -256,16 +256,17 @@ export default function WorkDetailScreen() {
           {work?.image ? (
             <Image source={{ uri: work.image }} style={dynamicStyles.image} />
           ) : (
-            <View style={dynamicStyles.placeholder}>
+            // Si no hay imagen, un placeholder
+            <View style={styles.placeholder}>
               <Text style={{ color: "#aaa" }}>Sin imagen</Text>
             </View>
           )}
         </View>
 
-        {/* Información de la obra */}
-        <View style={dynamicStyles.infoContainer}>
-          <Text style={dynamicStyles.title}>
-            {work?.name?.toUpperCase() || "TÍTULO OBRA"}
+        {/* Info a la derecha (o debajo en móvil) */}
+        <View style={styles.infoContainer}>
+          <Text style={styles.title}>
+            {work.name?.toUpperCase() || "TÍTULO OBRA"}
           </Text>
 
           <Text style={dynamicStyles.label}>ARTISTA:</Text>
@@ -280,21 +281,26 @@ export default function WorkDetailScreen() {
             {work?.description || "Sin descripción disponible"}
           </Text>
 
-          <Text style={dynamicStyles.label}>PRECIO:</Text>
-          <Text style={dynamicStyles.price}>
-            {work?.price ? `${work.price} €` : "No disponible"}
+          <Text style={styles.label}>PRECIO:</Text>
+          <Text style={styles.price}>
+            {work.price ? `${work.price} €` : "No disponible"}
           </Text>
 
-          {/* Botones en columna */}
-          <View style={dynamicStyles.buttonColumn}>
-            <TouchableOpacity style={dynamicStyles.messageButton}>
-              <Text style={dynamicStyles.messageButtonText}>
-                MANDAR UN MENSAJE
-              </Text>
+          <View style={styles.buttonRow}>
+            <TouchableOpacity style={styles.messageButton}>
+              <Text style={styles.messageButtonText}>MANDAR UN MENSAJE</Text>
             </TouchableOpacity>
 
-            <TouchableOpacity style={dynamicStyles.buyButton}>
-              <Text style={dynamicStyles.buyButtonText}>COMPRAR</Text>
+            <TouchableOpacity
+              style={styles.buyButton}
+              onPress={() => {
+                navigation.navigate("Payment", {
+                  workId: work.id,
+                  price: work.price,
+                });
+              }}
+            >
+              <Text style={styles.buyButtonText}>COMPRAR</Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -303,15 +309,137 @@ export default function WorkDetailScreen() {
   );
 }
 
+
 const styles = StyleSheet.create({
+  // Contenedor principal
   container: {
     flex: 1,
-    width: "100%",
-    backgroundColor: "#F7F8FA", // Fondo claro para un look más limpio
+    
+    backgroundColor: "#FFF7F9", // Fondo pastel rosado muy suave
   },
+
+  // Loader
   loaderContainer: {
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
+    
+    backgroundColor: "#FFF7F9",
+  },
+
+  // Obra no encontrada
+  notFoundContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    
+    backgroundColor: "#FFF7F9",
+  },
+  notFoundText: {
+    fontSize: 18,
+    color: "#666",
+  },
+
+  // Encabezado
+  header: {
+    paddingHorizontal: 20,
+    paddingTop: 10,
+    paddingBottom: 10,
+    
+    backgroundColor: "#FFF7F9",
+  },
+  backText: {
+    fontSize: 16,
+    color: "#173F8A",
+    fontWeight: "600",
+  },
+
+  // Layout principal
+  contentContainer: {
+    flex: 1,
+    paddingHorizontal: 20,
+    paddingBottom: 30,
+    // Espacio entre la imagen y la info en "row"
+    alignItems: "flex-start",
+  },
+
+  // Imagen
+  imageContainer: {
+    width: "100%", // Para móvil
+    maxWidth: 400, // Límite en desktop
+    
+    marginBottom: 20,
+  },
+  image: {
+    width: "100%",
+    aspectRatio: 1.2, // Ajusta la proporción
+    resizeMode: "cover",
+    borderRadius: 8,
+  },
+  placeholder: {
+    backgroundColor: "#eee",
+    width: "100%",
+    aspectRatio: 1.2,
+    justifyContent: "center",
+    alignItems: "center",
+    borderRadius: 8,
+  },
+
+  // Info y texto
+  infoContainer: {
+    flex: 1,
+  },
+  title: {
+    fontSize: 20,
+    fontWeight: "700",
+    color: "#173F8A",
+    marginBottom: 10,
+  },
+  label: {
+    fontSize: 15,
+    fontWeight: "600",
+    color: "#173F8A",
+    marginTop: 14,
+    marginBottom: 4,
+  },
+  description: {
+    fontSize: 14,
+    color: "#4A4A4A",
+    lineHeight: 20,
+  },
+  price: {
+    fontSize: 16,
+    fontWeight: "600",
+    color: "#333",
+    marginTop: 6,
+  },
+
+  // Botones
+  buttonRow: {
+    flexDirection: "row",
+    marginTop: 20,
+  },
+  messageButton: {
+    backgroundColor: "#FFD5EB", 
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    borderRadius: 6,
+    marginRight: 12,
+  },
+  messageButtonText: {
+    color: "#173F8A",
+    fontSize: 14,
+    fontWeight: "600",
+  },
+  buyButton: {
+    backgroundColor: "#173F8A", 
+    paddingHorizontal: 20,
+    paddingVertical: 12,
+    borderRadius: 6,
+  },
+  buyButtonText: {
+    color: "#FFF",
+    fontSize: 14,
+    fontWeight: "600",
   },
 });
