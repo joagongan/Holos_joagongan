@@ -17,6 +17,7 @@ import styles from "./ExploreScreen.styles";
 import { RootDrawerParamList } from "../../../_layout";
 import { DrawerNavigationProp } from "@react-navigation/drawer";
 import { getAllCategories } from "../../../services/categoryService";
+import { getAllWorksDone } from "../../../services/WorksDoneService";
 
 interface Category {
   id: number;
@@ -36,14 +37,16 @@ export default function ExploreScreen() {
   type ExploreNavProp = DrawerNavigationProp<RootDrawerParamList, "Explorar">;
   const navigation = useNavigation<ExploreNavProp>();
 
+  // Definir la URL base del backend; esta variable puede ser reemplazada según el entorno
+  const BASE_URL = "http://localhost:8080";
+
   const [searchText, setSearchText] = useState<string>("");
   const [showAllCategories, setShowAllCategories] = useState<boolean>(false);
   const [containerWidth, setContainerWidth] = useState<number>(0);
 
-  // Estado para las categorías obtenidas del service
   const [categories, setCategories] = useState<Category[]>([]);
+  const [works, setWorks] = useState<Work[]>([]);
 
-  // Cargar las categorías al montar el componente
   useEffect(() => {
     const fetchCategories = async () => {
       try {
@@ -53,85 +56,30 @@ export default function ExploreScreen() {
         console.error("Error fetching categories: ", error);
       }
     };
-
     fetchCategories();
   }, []);
 
-  // Consideramos "big screen" cuando el contenedor >= 1024
-  const isBigScreen = containerWidth >= 1024;
+  useEffect(() => {
+    const fetchWorks = async () => {
+      try {
+        const data = await getAllWorksDone();
+        setWorks(data);
+      } catch (error) {
+        console.error("Error fetching works done: ", error);
+      }
+    };
+    fetchWorks();
+  }, []);
 
-  // Constantes para layout de escritorio
+  const isBigScreen = containerWidth >= 1024;
   const COLUMNS_BIG = 5;
   const GAP_BIG = 24;
   const HORIZONTAL_PADDING_BIG = 48;
-
-  // Cálculo del ancho de cada tarjeta
   const itemWidth = isBigScreen
     ? (containerWidth - HORIZONTAL_PADDING_BIG - GAP_BIG * (COLUMNS_BIG - 1)) /
       COLUMNS_BIG
     : 0;
 
-  // Obras (novedades)
-  const [works] = useState<Work[]>([
-    {
-      id: 1,
-      name: "Obra 1",
-      image: "https://images.unsplash.com/photo-1506157786151-b8491531f063", // Pintura abstracta
-      price: 100,
-      artistName: "John Doe",
-    },
-    {
-      id: 2,
-      name: "Obra 2",
-      image: "https://images.unsplash.com/photo-1555685812-4b943f1cb0eb", // Paisaje
-      price: 200,
-      artistName: "Alice",
-    },
-    {
-      id: 3,
-      name: "Obra 3",
-      image: "https://images.unsplash.com/photo-1545239351-ef35f43d514b", // Arte moderno
-      price: 300,
-      artistName: "Bob",
-    },
-    {
-      id: 4,
-      name: "Obra 4",
-      image: "https://images.unsplash.com/photo-1519074002996-a69e7ac46a42", // Retrato clásico
-      price: 400,
-      artistName: "Charlie",
-    },
-    {
-      id: 5,
-      name: "Obra 5",
-      image: "https://images.unsplash.com/photo-1521747116042-5a810fda9664", // Pintura al óleo
-      price: 250,
-      artistName: "Diana",
-    },
-    {
-      id: 6,
-      name: "Obra 6",
-      image: "https://images.unsplash.com/photo-1513682121497-80211f36a7d3", // Arte contemporáneo
-      price: 180,
-      artistName: "Eve",
-    },
-    {
-      id: 7,
-      name: "Obra 7",
-      image: "https://images.unsplash.com/photo-1528207776546-365bb710ee93", // Arte colorido
-      price: 350,
-      artistName: "Frank",
-    },
-    {
-      id: 8,
-      name: "Obra 8",
-      image: "https://images.unsplash.com/photo-1506748686214-e9df14d4d9d0", // Pintura minimalista
-      price: 120,
-      artistName: "Georgia",
-    },
-  ]);
-
-  // Para scroll horizontal en móvil (categorías)
   const scrollViewRef = useRef<ScrollView>(null);
   const [contentWidth, setContentWidth] = useState(0);
   const [viewWidth, setViewWidth] = useState(0);
@@ -157,22 +105,19 @@ export default function ExploreScreen() {
     setSearchText(text);
   };
 
-  // Filtrar categorías según búsqueda
   const filteredCategories = searchText
     ? categories.filter((cat) =>
         cat.name.toLowerCase().includes(searchText.toLowerCase())
       )
     : categories;
 
-  // Si no se está buscando y no has pulsado "ver más", mostramos solo 5
   let displayedCategories = filteredCategories;
   if (isBigScreen && !searchText && !showAllCategories) {
     displayedCategories = filteredCategories.slice(0, 5);
   }
 
-  // Filtrar obras
   const filteredWorks = works.filter((w) =>
-    w.name.toLowerCase().includes(searchText.toLowerCase())
+    (w.name ?? "").toLowerCase().includes(searchText.toLowerCase())
   );
 
   return (
@@ -187,7 +132,6 @@ export default function ExploreScreen() {
 
       <Text style={styles.title}>Categorías</Text>
 
-      {/* En escritorio, 5 columnas ajustadas de ancho */}
       {isBigScreen ? (
         <View style={styles.categoriesContainer}>
           {displayedCategories.map((category, index) => {
@@ -197,15 +141,13 @@ export default function ExploreScreen() {
                 key={category.id}
                 style={[
                   styles.categoryItemBig,
-                  {
-                    width: itemWidth,
-                    marginRight: isLastInRow ? 0 : GAP_BIG,
-                  },
+                  { width: itemWidth, marginRight: isLastInRow ? 0 : GAP_BIG },
                 ]}
               >
                 <View style={styles.categoryImageContainerBig}>
                   <Image
-                    source={{ uri: category.image }}
+                    // Se construye la URL completa concatenando BASE_URL y la ruta relativa almacenada en la base de datos
+                    source={{ uri: `${BASE_URL}${category.image}` }}
                     style={styles.categoryImage}
                   />
                 </View>
@@ -215,7 +157,6 @@ export default function ExploreScreen() {
           })}
         </View>
       ) : (
-        // En móvil: scroll horizontal
         <View style={{ position: "relative" }}>
           {showLeftArrow && (
             <TouchableOpacity
@@ -241,7 +182,7 @@ export default function ExploreScreen() {
               <View key={category.id} style={styles.categoryItemMobile}>
                 <View style={styles.categoryImageContainerMobile}>
                   <Image
-                    source={{ uri: category.image }}
+                    source={{ uri: `${BASE_URL}${category.image}` }}
                     style={styles.categoryImage}
                   />
                 </View>
@@ -260,7 +201,6 @@ export default function ExploreScreen() {
         </View>
       )}
 
-      {/* Botón "ver más" en escritorio */}
       {isBigScreen && categories.length > 5 && !searchText && (
         <TouchableOpacity
           style={styles.seeMoreButton}
@@ -298,7 +238,7 @@ export default function ExploreScreen() {
                 >
                   <View style={styles.artistImageContainerBig}>
                     <Image
-                      source={{ uri: work.image }}
+                      source={{ uri: `${BASE_URL}${work.image}` }}
                       style={styles.artistImage}
                     />
                   </View>
@@ -307,7 +247,7 @@ export default function ExploreScreen() {
               </TouchableOpacity>
             );
           } else {
-            const screenWidth = containerWidth - 32; // 32 = padding horizontal
+            const screenWidth = containerWidth - 32;
             const COLUMNS_MOBILE = 2;
             const GAP_MOBILE = 16;
             const mobileItemWidth =
@@ -333,7 +273,7 @@ export default function ExploreScreen() {
                 >
                   <View style={styles.artistImageContainerMobile}>
                     <Image
-                      source={{ uri: work.image }}
+                      source={{ uri: `${BASE_URL}${work.image}` }}
                       style={styles.artistImage}
                     />
                   </View>

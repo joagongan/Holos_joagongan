@@ -7,7 +7,6 @@ import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
 import jakarta.persistence.Entity;
-import jakarta.persistence.Lob;
 import jakarta.persistence.Table;
 
 import lombok.Data;
@@ -18,11 +17,10 @@ import lombok.EqualsAndHashCode;
 @Table(name = "categories")
 @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 @EqualsAndHashCode(callSuper = true)
-public class Category extends BaseEntity{
+public class Category extends BaseEntity {
 
     private String name;
     private String description;
 
-    @Lob
-    private Blob image;
+    private String image;
 }
