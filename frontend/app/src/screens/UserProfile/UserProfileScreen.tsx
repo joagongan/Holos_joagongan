@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import {
   View,
   Text,
@@ -13,6 +13,7 @@ import {
 import { useNavigation } from "@react-navigation/native";
 import { getArtistById } from "../../../services/ArtistService";
 import { getClientById } from "../../../services/ClientService";
+import { AuthenticationContext } from "../../../context/AuthContext"; // Ajusta la ruta según tu proyecto
 
 const isWeb = Platform.OS === "web";
 
@@ -57,23 +58,32 @@ type User = ClientUser | Artist;
 
 const UserProfileScreen = () => {
   const BASE_URL = "http://localhost:8080";
-
   const navigation = useNavigation<any>();
-
+  const { loggedInUser } = useContext(AuthenticationContext);
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchUser = async () => {
+      if (!loggedInUser || !loggedInUser.id) {
+        Alert.alert("Error", "No se encontró el usuario autenticado.");
+        setLoading(false);
+        return;
+      }
+
       try {
-        // Intentamos obtener el cliente con id 25
-        const client = await getClientById(25);
+        // Intentamos obtener el cliente usando el id del usuario autenticado
+        const client = await getClientById(loggedInUser.id);
         setUser(client);
+        console.log(loggedInUser.id);
       } catch (error) {
-        console.warn("No se encontró cliente, intentando con artista...");
+        console.warn(
+          "No se encontró cliente, intentando con artista...",
+          error
+        );
         try {
-          // Si no se obtiene cliente, se intenta obtener el artista con id 25
-          const artist = await getArtistById(25);
+          // Si no se obtiene cliente, se intenta obtener el artista usando el id
+          const artist = await getArtistById(loggedInUser.id);
           setUser(artist);
         } catch (err) {
           console.error("Error fetching user:", err);
@@ -83,8 +93,9 @@ const UserProfileScreen = () => {
         setLoading(false);
       }
     };
+
     fetchUser();
-  }, []);
+  }, [loggedInUser]);
 
   if (loading) {
     return <Text>Loading...</Text>;
