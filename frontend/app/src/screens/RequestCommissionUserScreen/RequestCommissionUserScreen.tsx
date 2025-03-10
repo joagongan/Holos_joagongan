@@ -12,18 +12,22 @@ import {
 } from "react-native";
 import Icon from "react-native-vector-icons/MaterialIcons";
 import * as ImagePicker from "expo-image-picker";
-import { getArtistById } from "../../../services/ArtistService"; // Ajusta la ruta según tu proyecto
+import { getArtistById } from "../../../services/ArtistService";
 
-// Definición de la interfaz para Artist
 export interface Artist {
   id: number;
   name: string;
-  image_profile?: string;
-  table_commisions_price?: string;
-  // Puedes agregar más campos según lo que retorne tu backend
+  username: string;
+  password: string;
+  email: string;
+  phoneNumber?: string;
+  imageProfile?: string | null;
+  createdUser: string;
+  numSlotsOfWork: number;
+  tableCommisionsPrice?: string | null;
 }
 
-const BASE_URL = "http://localhost:8080"; // Prefijo para las imágenes
+const BASE_URL = "http://localhost:8080";
 
 const cameraIcon = "photo-camera";
 const isLaptop = Platform.OS === "web";
@@ -41,6 +45,7 @@ export default function RequestCommissionUserScreen({ route }: any) {
       try {
         const data: Artist = await getArtistById(artistId);
         setArtist(data);
+        console.log(data);
       } catch (error) {
         console.error("Error fetching artist: ", error);
         Alert.alert("Error", "No se pudo cargar la información del artista");
@@ -104,9 +109,9 @@ export default function RequestCommissionUserScreen({ route }: any) {
         <View style={styles.artistSection}>
           <Text style={styles.labelArtist}>ARTISTA: {artist.name}</Text>
           <View style={styles.artistContainer}>
-            {artist.image_profile ? (
+            {artist.imageProfile ? (
               <Image
-                source={{ uri: `${BASE_URL}${artist.image_profile}` }}
+                source={{ uri: `${BASE_URL}${artist.imageProfile}` }}
                 style={styles.artistImage}
               />
             ) : (
@@ -115,9 +120,9 @@ export default function RequestCommissionUserScreen({ route }: any) {
           </View>
         </View>
         <View style={styles.commissionTable}>
-          {artist.table_commisions_price ? (
+          {artist.tableCommisionsPrice ? (
             <Image
-              source={{ uri: `${BASE_URL}${artist.table_commisions_price}` }}
+              source={{ uri: `${BASE_URL}${artist.tableCommisionsPrice}` }}
               style={styles.commissionImage}
             />
           ) : (
