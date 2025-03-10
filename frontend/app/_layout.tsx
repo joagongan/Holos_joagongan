@@ -5,13 +5,12 @@ import UserProfileScreen from "./src/screens/UserProfile/UserProfileScreen";
 import OrderHistoryScreen from "./src/screens/UserProfile/OrderHistoryScreen";
 import ArtworksScreen from "./src/screens/UserProfile/ArtworksScreen";
 import ProfileIcon from "@/assets/svgs/ProfileIcon";
-// RootLayout.tsx
 import React from "react";
 import ArtistRequestOrders from "./src/screens/ArtistRequestOrders/ArtistRequestOrders";
 import RequestCommissionUserScreen from "./src/screens/RequestCommissionUserScreen/RequestCommissionUserScreen";
 import ExploreScreen from "./src/screens/ExploreScreen/ExploreScreen";
 import ArtistDetailScreen from "./src/screens/ArtistDetailScreen/ArtistDetailScreen";
-import WorkDetailScreen from "./src/screens/WorkDetailScreen/WorkDetailScreen"; // <-- lo importamos
+import WorkDetailScreen from "./src/screens/WorkDetailScreen/WorkDetailScreen"; 
 import SearchIcon from "@/assets/svgs/SearchIcon";
 import PaymentScreen from "./src/screens/PaymentScreen/PaymentScreen";
 import KanbanIcon from "@/assets/svgs/KanbanIconProps";
@@ -30,6 +29,7 @@ export type RootDrawerParamList = {
   Payment: { workId: number; price: number };
   ArtistDetail: { artistId: number };
   RequestCommission: { artistId: number };
+  Pedidos: { artistId: number };
 };
 
 export default function RootLayout() {
@@ -74,6 +74,9 @@ export default function RootLayout() {
         <Drawer.Screen
           name="Pedidos"
           component={ArtistRequestOrders}
+          // Inicializamos con un artistId dinámico (en este ejemplo se usa 25 para prueba)
+          // En producción, obtén el id del artista logueado (por ejemplo, desde AuthContext)
+          initialParams={{ artistId: 25 }}
           options={{
             drawerIcon: ({ size }) => (
               <RequestIcon width={size} height={size} />
@@ -97,10 +100,7 @@ function UserProfileStack() {
   return (
     <Stack.Navigator>
       <Stack.Screen name="Perfil" component={UserProfileScreen} />
-      <Stack.Screen
-        name="Historial de Pedidos"
-        component={OrderHistoryScreen}
-      />
+      <Stack.Screen name="Historial de Pedidos" component={OrderHistoryScreen} />
       <Stack.Screen name="Obras Subidas" component={ArtworksScreen} />
     </Stack.Navigator>
   );
