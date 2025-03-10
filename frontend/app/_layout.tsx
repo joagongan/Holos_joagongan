@@ -1,19 +1,19 @@
 import { createDrawerNavigator } from "@react-navigation/drawer";
 import { createStackNavigator } from "@react-navigation/stack";
-import HomeScreen from "./src/screens/HomeScreen";
+import HomeScreen from "./src/screens/HomeScreen/HomeScreen";
 import UserProfileScreen from "./src/screens/UserProfile/UserProfileScreen";
 import OrderHistoryScreen from "./src/screens/UserProfile/OrderHistoryScreen";
 import ArtworksScreen from "./src/screens/UserProfile/ArtworksScreen";
 import ProfileIcon from "@/assets/svgs/ProfileIcon";
 // RootLayout.tsx
 import React from "react";
-import ArtistRequestOrders from "./src/screens/ArtistRequestOrders";
-import RequestCommissionUserScreen from "./src/screens/RequestCommissionUserScreen";
+import ArtistRequestOrders from "./src/screens/ArtistRequestOrders/ArtistRequestOrders";
+import RequestCommissionUserScreen from "./src/screens/RequestCommissionUserScreen/RequestCommissionUserScreen";
 import ExploreScreen from "./src/screens/ExploreScreen/ExploreScreen";
 import ArtistDetailScreen from "./src/screens/ArtistDetailScreen/ArtistDetailScreen";
 import WorkDetailScreen from "./src/screens/WorkDetailScreen/WorkDetailScreen"; // <-- lo importamos
 import SearchIcon from "@/assets/svgs/SearchIcon";
-import PaymentScreen from "./src/screens/PaymentScreen";
+import PaymentScreen from "./src/screens/PaymentScreen/PaymentScreen";
 import KanbanIcon from "@/assets/svgs/KanbanIconProps";
 import RequestIcon from "@/assets/svgs/RequestIcon";
 import KanbanScreen from "./src/screens/KanbanScreen/KanbanScreen";

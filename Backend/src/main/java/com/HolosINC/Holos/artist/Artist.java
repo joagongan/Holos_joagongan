@@ -21,12 +21,11 @@ import lombok.EqualsAndHashCode;
 @Table(name = "artists")
 @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 @EqualsAndHashCode(callSuper = true)
-public class Artist extends BaseUser{
+public class Artist extends BaseUser {
 
     @NotNull
     @Min(1)
     private Integer numSlotsOfWork;
-    
-    @Lob
-    private Blob tableCommisionsPrice;
+
+    private String tableCommisionsPrice;
 }
