@@ -13,5 +13,5 @@ public interface BaseUserRepository extends JpaRepository<BaseUser, Long> {
     Optional<BaseUser> login(String username, String password);
 
     @Query("SELECT u FROM BaseUser u WHERE u.username = :username")
-    Optional<BaseUser> existsUser(String username);
+    Optional<BaseUser> findUserByUsername(String username);
 }
