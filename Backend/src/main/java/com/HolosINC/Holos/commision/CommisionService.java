@@ -47,10 +47,9 @@ public class CommisionService {
         }
 
         if (accept) { 
-            if (artist.getNumSlotsOfWork() > 0) {
+            commision.setAcceptedDateByArtist(new Date());
+            if (artist.getNumSlotsOfWork() - commisionRepository.numSlotsCovered(artistId) > 0) {
                 commision.setStatus(StatusCommision.ACCEPTED);
-                commision.setAcceptedDateByArtist(new Date());
-                artist.setNumSlotsOfWork(artist.getNumSlotsOfWork() - 1); // Reducir el número de slots
             } else {
                 commision.setStatus(StatusCommision.IN_WAIT_LIST);
             }
