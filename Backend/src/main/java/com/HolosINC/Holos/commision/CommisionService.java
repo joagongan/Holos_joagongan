@@ -9,21 +9,39 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.HolosINC.Holos.artist.Artist;
 import com.HolosINC.Holos.artist.ArtistService;
+import com.HolosINC.Holos.client.Client;
+import com.HolosINC.Holos.client.ClientService;
+import com.HolosINC.Holos.commision.DTOs.CommisionDTO;
 import com.HolosINC.Holos.exceptions.ResourceNotFoundException;
+import com.HolosINC.Holos.model.BaseUser;
+import com.HolosINC.Holos.model.BaseUserService;
 
 @Service
 public class CommisionService {
     
     private final CommisionRepository commisionRepository;
     private final ArtistService artistService;
+    private final BaseUserService userService;
 
     @Autowired
-    public CommisionService(CommisionRepository commisionRepository, ArtistService artistService){
+    public CommisionService(CommisionRepository commisionRepository, ArtistService artistService, BaseUserService userService){
         this.commisionRepository = commisionRepository;
         this.artistService = artistService;
+        this.userService = userService;
     }
 
-    public Commision createCommision(Commision commision) {
+    public Commision createCommision(CommisionDTO commisionDTO, Long artistId) {
+        Commision commision = commisionDTO.createCommision();
+        Artist artist = artistService.findArtist(artistId);
+        BaseUser client = userService.findCurrentUser();
+
+        if (artist == null || !artist.hasAnyAuthority("ARTIST"))
+            throw new IllegalArgumentException("Envíe la solicitud de comisión a un artista válido");
+
+        commision.setArtist(artist);
+        commision.setClient((Client) client);
+        commision.setStatus(StatusCommision.REQUESTED);
+
         return commisionRepository.save(commision);
     }
 

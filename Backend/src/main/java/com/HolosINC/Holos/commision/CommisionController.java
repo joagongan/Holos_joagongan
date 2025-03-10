@@ -12,13 +12,18 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.HolosINC.Holos.commision.DTOs.CommisionDTO;
+
 import org.springframework.web.bind.annotation.RequestBody;
+
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/api/v1/commisions")
+@SecurityRequirement(name = "bearerAuth")
 @Tag(name = "Commision Controller", description = "API for managing Commisions")
-
 public class CommisionController {
 
     private final CommisionService commisionService;
@@ -28,10 +33,16 @@ public class CommisionController {
         this.commisionService = commisionService;
     }
 
-    @PostMapping
-    public ResponseEntity<Commision> createCommision(@RequestBody Commision commision) {
-        Commision createdCommision = commisionService.createCommision(commision);
-        return ResponseEntity.ok(createdCommision);
+    @PostMapping("/{artistId}")
+    public ResponseEntity<?> createCommision(@Valid @RequestBody CommisionDTO commision, @PathVariable Long artistId) {
+        try {
+            Commision createdCommision = commisionService.createCommision(commision, artistId);
+            return ResponseEntity.ok(createdCommision);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().body(e.getMessage());
+        }
     }
 
     @GetMapping
