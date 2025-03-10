@@ -14,7 +14,7 @@ import { RootDrawerParamList } from "@/app/_layout";
 import { getArtistById } from "../../../services/ArtistService";
 import { getWorksDoneByArtist } from "../../../services/WorksDoneService";
 
-export default function ArtistDetailScreen({ route }: any) {
+export default function ArtistDetailScreen({ route }) {
   const BASE_URL = "http://localhost:8080";
   const navigation = useNavigation<DrawerNavigationProp<RootDrawerParamList>>();
   const { artistId } = route.params;

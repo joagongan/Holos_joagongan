@@ -1,4 +1,3 @@
-// src/screens/ExploreScreen/ExploreScreen.tsx
 import React, { useState, useRef, useEffect } from "react";
 import {
   Text,
@@ -18,40 +17,42 @@ import { RootDrawerParamList } from "../../../_layout";
 import { DrawerNavigationProp } from "@react-navigation/drawer";
 import { getAllCategories } from "../../../services/categoryService";
 import { getAllWorksDone } from "../../../services/WorksDoneService";
-import { getArtistById } from "../../../services/ArtistService";
 
-interface Category {
-  id: number;
-  name: string;
-  image: string;
-}
-
-interface Artist {
+export interface Artist {
   id: number;
   name: string;
   username: string;
+  email: string;
+  phoneNumber?: string;
+  imageProfile?: string;
+  tableCommisionsPrice?: string;
 }
 
-interface Work {
+export interface Work {
   id: number;
   name: string;
+  description: string;
+  price: number;
+  artist: Artist;
   image: string;
-  price?: number;
-  artist: Artist | number;
-  artistName?: string;
+}
+
+export interface Category {
+  id: number;
+  name: string;
+  description: string;
+  image: string;
 }
 
 export default function ExploreScreen() {
   type ExploreNavProp = DrawerNavigationProp<RootDrawerParamList, "Explorar">;
   const navigation = useNavigation<ExploreNavProp>();
 
-  // Definir la URL base del backend; esta variable puede ser reemplazada según el entorno
   const BASE_URL = "http://localhost:8080";
 
-  const [searchText, setSearchText] = useState<string>("");
-  const [showAllCategories, setShowAllCategories] = useState<boolean>(false);
-  const [containerWidth, setContainerWidth] = useState<number>(0);
-
+  const [searchText, setSearchText] = useState("");
+  const [showAllCategories, setShowAllCategories] = useState(false);
+  const [containerWidth, setContainerWidth] = useState(0);
   const [categories, setCategories] = useState<Category[]>([]);
   const [works, setWorks] = useState<Work[]>([]);
 
@@ -70,30 +71,23 @@ export default function ExploreScreen() {
   useEffect(() => {
     const fetchWorks = async () => {
       try {
-        const data = await getAllWorksDone();
+        const data = (await getAllWorksDone()) as Work[];
 
-        const worksWithArtist = await Promise.all(
-          data.map(async (work: Work) => {
-            if (
-              work.artist &&
-              typeof work.artist === "object" &&
-              typeof work.artist.id === "number"
-            ) {
-              return { ...work, artistName: work.artist.username };
-            } else if (typeof work.artist === "number") {
-              const artist = await getArtistById(work.artist);
-              return { ...work, artistName: artist.username };
-            } else {
-              console.error("No se encontró artista válido en la obra:", work);
-              return work;
-            }
-          })
-        );
+        const artistMap: { [key: number]: Artist } = {};
+        data.forEach((work) => {
+          if (typeof work.artist === "object" && work.artist.id) {
+            artistMap[work.artist.id] = work.artist;
+          }
+        });
 
-        setWorks(worksWithArtist);
+        const updatedWorks = data.map((work) => {
+          if (typeof work.artist === "number" && artistMap[work.artist]) {
+            return { ...work, artist: artistMap[work.artist] };
+          }
+          return work;
+        });
 
-        console.log("Obras con nombre de artista agregado:", worksWithArtist);
-        setWorks(worksWithArtist);
+        setWorks(updatedWorks);
       } catch (error) {
         console.error("Error fetching works done:", error);
       }
@@ -177,7 +171,6 @@ export default function ExploreScreen() {
               >
                 <View style={styles.categoryImageContainerBig}>
                   <Image
-                    // Se construye la URL completa concatenando BASE_URL y la ruta relativa almacenada en la base de datos
                     source={{ uri: `${BASE_URL}${category.image}` }}
                     style={styles.categoryImage}
                   />
@@ -273,7 +266,11 @@ export default function ExploreScreen() {
                       style={styles.artistImage}
                     />
                   </View>
-                  <Text style={styles.artistTextBig}>{work.artistName}</Text>
+                  <Text style={styles.artistTextBig}>
+                    {work.artist && work.artist.username
+                      ? work.artist.username
+                      : "Artista desconocido"}
+                  </Text>
                 </View>
               </TouchableOpacity>
             );
@@ -308,7 +305,11 @@ export default function ExploreScreen() {
                       style={styles.artistImage}
                     />
                   </View>
-                  <Text style={styles.artistTextMobile}>{work.artistName}</Text>
+                  <Text style={styles.artistTextMobile}>
+                    {work.artist && work.artist.username
+                      ? work.artist.username
+                      : "Artista desconocido"}
+                  </Text>
                 </View>
               </TouchableOpacity>
             );
