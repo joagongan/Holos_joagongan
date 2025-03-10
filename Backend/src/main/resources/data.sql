@@ -30,8 +30,9 @@ INSERT INTO works_done (id, artist_id, image) VALUES
 (4, 1, "/images/abstract_art.jpg");
 
 INSERT INTO status_kanban_order (id, artist_id, name, kanban_order, description, color) VALUES 
-(1, 1, 'En progreso', 1, 'Tarea en proceso', 'blue'),
-(2, 1, 'Completado', 2, 'Tarea finalizada', 'green');
+(1, 1, 'ToDo', 1, 'Tarea en progreso', 'blue'),
+(2, 1, 'InProgress  ', 2, 'Tarea finalizada', 'green');
+
 
 INSERT INTO commisions (id, artist_id, client_id, name, description, price, status, num_milestones, accepted_date_by_artist, payment_arrangement, status_kanban_order_id) VALUES
 (1, 1, 2, 'Portrait Commission', 'Custom portrait painting', 250.0, 'REQUESTED', 3, NULL, 'FIFTYFIFTY', 1),
