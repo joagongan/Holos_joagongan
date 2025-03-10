@@ -65,10 +65,8 @@ INSERT INTO works_done(id, artist_id, name, description, price, image) VALUES
   (53, 25, 'Sunset Painting', 'A beautiful sunset painting', 150.0, "/images/sunset_painting.jpg"), 
   (54, 25, 'Ocean Waves', 'A calming ocean scene with waves', 200.0, "/images/ocean_waves.jpg"), 
   (55, 25, 'Starry Night Replica', 'Inspired by Van Gogh’s Starry Night', 300.0, "/images/starry_night_replica.jpg"), 
-  (56, 25, 'Abstract Art', 'A modern abstract composition', 180.0, "/images/abstract_art.jpg");
-
-INSERT INTO works(id, artist_id, name, description, price) VALUES 
-  (57, 25, 'Forest Path', 'A peaceful forest pathway', 120.0);
+  (56, 25, 'Abstract Art', 'A modern abstract composition', 180.0, "/images/abstract_art.jpg"),
+  (57, 25, 'Forest Path', 'A peaceful forest pathway', 120.0, "/images/abstract_art.jpg");
 
 
 INSERT INTO status_kanban_order (id, artist_id, name, order_in_kanban, description, color) VALUES 
