@@ -71,25 +71,10 @@ export default function ExploreScreen() {
   useEffect(() => {
     const fetchWorks = async () => {
       try {
-        const data = (await getAllWorksDone()) as Work[];
-
-        const artistMap: { [key: number]: Artist } = {};
-        data.forEach((work) => {
-          if (typeof work.artist === "object" && work.artist.id) {
-            artistMap[work.artist.id] = work.artist;
-          }
-        });
-
-        const updatedWorks = data.map((work) => {
-          if (typeof work.artist === "number" && artistMap[work.artist]) {
-            return { ...work, artist: artistMap[work.artist] };
-          }
-          return work;
-        });
-
-        setWorks(updatedWorks);
+        const data = await getAllWorksDone();
+        setWorks(data);
       } catch (error) {
-        console.error("Error fetching works done:", error);
+        console.error("Error fetching works: ", error);
       }
     };
 
