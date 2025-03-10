@@ -11,7 +11,7 @@ import ArtistRequestOrders from "./src/screens/ArtistRequestOrders";
 import RequestCommissionUserScreen from "./src/screens/RequestCommissionUserScreen";
 import ExploreScreen from "./src/screens/ExploreScreen/ExploreScreen";
 import ArtistDetailScreen from "./src/screens/ArtistDetailScreen/ArtistDetailScreen";
-import WorkDetailScreen from "./src/screens/WorkDetailScreen"; // <-- lo importamos
+import WorkDetailScreen from "./src/screens/WorkDetailScreen/WorkDetailScreen"; // <-- lo importamos
 import SearchIcon from "@/assets/svgs/SearchIcon";
 import PaymentScreen from "./src/screens/PaymentScreen";
 import KanbanIcon from "@/assets/svgs/KanbanIconProps";
@@ -75,7 +75,9 @@ export default function RootLayout() {
           name="Pedidos"
           component={ArtistRequestOrders}
           options={{
-            drawerIcon: ({ size }) => <RequestIcon width={size} height={size} />,
+            drawerIcon: ({ size }) => (
+              <RequestIcon width={size} height={size} />
+            ),
           }}
         />
         <Drawer.Screen
@@ -95,7 +97,10 @@ function UserProfileStack() {
   return (
     <Stack.Navigator>
       <Stack.Screen name="Perfil" component={UserProfileScreen} />
-      <Stack.Screen name="Historial de Pedidos" component={OrderHistoryScreen} />
+      <Stack.Screen
+        name="Historial de Pedidos"
+        component={OrderHistoryScreen}
+      />
       <Stack.Screen name="Obras Subidas" component={ArtworksScreen} />
     </Stack.Navigator>
   );
