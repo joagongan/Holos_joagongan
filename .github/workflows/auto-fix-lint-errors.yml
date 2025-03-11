@@ -1,4 +1,3 @@
-
 name: Auto Fix and Lint Workflow
 
 on:
@@ -27,15 +26,22 @@ jobs:
           black . --check || black .
           isort . --check-only || isort .
 
+      - name: Show Git Status (Debugging)
+        run: git status
+
       - name: Commit and push changes
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
-          git add .
-          git commit -m "Auto-fix lint errors [bot]" || echo "No changes to commit"
           
-          # Detectar la rama actual y hacer push
-          BRANCH=$(git rev-parse --abbrev-ref HEAD)
-          git push origin $BRANCH
+          git add .
+          
+          # Verifica si hay cambios en staging antes de hacer commit
+          if ! git diff --cached --exit-code; then
+            git commit -m "Auto-fix lint errors [bot]"
+            git push origin HEAD
+          else
+            echo "No changes to commit"
+          fi
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
