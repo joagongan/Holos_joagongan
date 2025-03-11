@@ -1,28 +1,43 @@
-import React,  { useEffect, useState } from "react";
-import { View, Text, Image, StyleSheet, TextInput, TouchableOpacity, Alert, Platform, useWindowDimensions, ActivityIndicator } from "react-native";
+import React, { useEffect, useState } from "react";
+import {
+  View,
+  Text,
+  Image,
+  ActivityIndicator,
+  ScrollView,
+} from "react-native";
 import { styles } from "./RequestCommissionUserScreen.styles";
-import { ScrollView } from "react-native-gesture-handler";
 import UserPanel from "./UserPanel";
 import RequestForm from "./form/RequestForm";
 import { getArtistById } from "@/app/services/ArtistService";
+import { Artist } from "./CommissionTypes";
 
-const avatarArtist = "https://static.vecteezy.com/system/resources/previews/013/659/054/non_2x/human-avatar-user-ui-account-round-clip-art-icon-vector.jpg";
 const commissionTablePrice = "../../../../assets/images/image.png";
 
-export default function RequestCommissionUserScreen ({ route }: any) {
-  const BASE_URL = "http://localhost:8080";
+export default function RequestCommissionUserScreen({ route }: any) {
   const { artistId } = route.params as { artistId: number };
-  const [artist, setArtist] = useState<any>(null);
+  const [artist, setArtist] = useState<Artist | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-      const fetchData = async () => {
-        const artistData = await getArtistById(artistId);
+    if (!artistId) {
+      console.error("Artist ID is undefined!");
+      return;
+    }
+
+    const fetchData = async () => {
+      try {
+        const artistData: Artist = await getArtistById(artistId);
         setArtist(artistData);
+      } catch (error) {
+        console.error("Error fetching artist:", error);
+      } finally {
         setLoading(false);
-      };
-      fetchData();
-    }, [artistId]);
+      }
+    };
+
+    fetchData();
+  }, [artistId]);
 
   if (loading) {
     return (
@@ -34,18 +49,14 @@ export default function RequestCommissionUserScreen ({ route }: any) {
 
   return (
     <ScrollView contentContainerStyle={styles.scrollContainer}>
-      
-      <UserPanel artist={artist} />
-      
+      {artist && <UserPanel artist={artist} />}
+
       <View style={styles.commissionContainer}>
         <Text style={styles.commissionTitle}>Commission Prices</Text>
         <Image source={require(commissionTablePrice)} resizeMode="contain" />
       </View>
-      
-      <RequestForm artist={artist} />
 
+      {artist && <RequestForm artist={artist} />}
     </ScrollView>
   );
-    
-};
-
+}

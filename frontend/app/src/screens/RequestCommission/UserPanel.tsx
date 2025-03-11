@@ -1,6 +1,15 @@
 import { View, Text, Image } from "react-native";
+import { Artist } from "./CommissionTypes";
 
-export default function UserPanel({ artist }: { artist: any }) {
+interface UserPanelProps {
+  artist: Artist;
+}
+
+export default function UserPanel({ artist }: UserPanelProps) {
+  if (!artist) {
+    return <Text>Loading...</Text>;
+  }
+
   return (
     <View
       style={{
@@ -16,15 +25,20 @@ export default function UserPanel({ artist }: { artist: any }) {
         width: 250,
       }}
     >
-      <Image
-        source={{ uri: artist.image }}
-        style={{ width: 80, height: 80, borderRadius: 40, marginBottom: 10 }}
-      />
-      <Text style={{ fontSize: 18, fontWeight: "bold", color: "#333" }}>{artist.name}</Text>
-      <Text style={{ fontSize: 14, color: "#333" }}>@{artist.username}</Text>
-      <Text style={{ fontSize: 14, color: "#333" }}>{artist.id}</Text>
+      {artist.imageProfile ? (
+        <Image
+          source={{uri:"http://localhost:8080"+artist.imageProfile}}
+          style={{ width: 80, height: 80, borderRadius: 40, marginBottom: 10 }}
+        />
+      ) : (
+        <Text>No profile image</Text> // Show a fallback text if image is missing
+      )}
+
+      <Text style={{ fontSize: 18, fontWeight: "bold", color: "#333" }}>{artist.name || "Unknown Artist"}</Text>
+      <Text style={{ fontSize: 14, color: "#333" }}>@{artist.username || "No Username"}</Text>
+      <Text style={{ fontSize: 14, color: "#333" }}>{artist.id || "No ID"}</Text>
       <Text style={{ fontSize: 14, textAlign: "center", color: "#666", marginTop: 5 }}>
-        {artist.description}
+        {artist.description || "No description available"}
       </Text>
     </View>
   );

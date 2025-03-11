@@ -1,63 +1,34 @@
-import { View, TextInput, Image, Text, TouchableOpacity, Alert, Platform, Button } from "react-native";
+import { View, TextInput, Image, Text, TouchableOpacity, Button, Alert } from "react-native";
 import Icon from "react-native-vector-icons/MaterialIcons";
 import { styles } from "../RequestCommissionUserScreen.styles";
 import * as ImagePicker from "expo-image-picker";
 import { useContext, useState } from "react";
-import tokenService from "../../../../services/token.service";
-import useFetchData from "../../../../util/useFetchData";
-import { jwtDecode } from 'jwt-decode';
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import { handleSubmit } from "./formHandlers";
+import { createCommission } from "./formHandlers";
 import { AuthenticationContext } from "@/app/context/AuthContext";
+import { Commission, Artist } from "../CommissionTypes";
 
 const cameraIcon = "photo-camera";
-
-interface Artist {
-  id: number;
-  name: string;
-  profileImage?: string;
-}
 
 interface RequestFormProps {
   artist: Artist;
 }
 
-type Commission = {
-  id: number | null;
-  name: string;
-  description: string;
-  price: string;
-  status: "REQUESTED" | "APPROVED" | "COMPLETED"; // Adjust as needed
-  numMilestones: string;
-  acceptedDateByArtist: Date | null;
-  artist: string;
-  paymentArrangement: "INITIAL" | "FULL" | "PARTIAL"; // Adjust as needed
-  statusKanbanOrder: number | null;
-  client: string | null;
-};
-
 export default function RequestForm({ artist }: RequestFormProps) {
-
   const emptyItem: Partial<Commission> = {
-    id: null,
     name: "",
     description: "",
-    price: "",
-    status: "REQUESTED",
-    numMilestones: "",
-    acceptedDateByArtist: null,
-    artist: "",
+    price: 0,
+    numMilestones: 0,
     paymentArrangement: "INITIAL",
-    statusKanbanOrder: null,
-    client: null,
   };
-  
-  const { loggedInUser } = useContext(AuthenticationContext);
 
+  const { loggedInUser } = useContext(AuthenticationContext);
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
-  const [commission, setCommission] = useState(emptyItem);
-  const artists = useFetchData(`/api/v1/artists`, loggedInUser.token);
-  
+  const [commission, setCommission] = useState<Partial<Commission>>(emptyItem);
+
+  console.log("Logged In User:", loggedInUser);
+  console.log("Authorization Token:", loggedInUser?.token);
+
   const pickImage = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
@@ -69,16 +40,30 @@ export default function RequestForm({ artist }: RequestFormProps) {
     if (!result.canceled) {
       setSelectedImage(result.assets[0].uri);
     }
-  }
+  };
 
-  const handleChange = (name: string, value: string | number) => {
+  const handleChange = (name: keyof Commission, value: string | number | Artist | null) => {
     setCommission((prev) => ({ ...prev, [name]: value }));
-    if (name === "artist") {
-      const artist = artists.find((artist: { id: number; }) => artist.id === Number(value));
-      setCommission({ ...commission, artist: artist });
-    }
-  }
+  };
+
+  const handleSubmit = async () => {
+    try {
+
+      const commissionData = {
+        name: commission.name,
+        description: commission.description,
+        price: Number(commission.price),
+        numMilestones: Number(commission.numMilestones),
+        paymentArrangement: "INITIAL"
+      };
   
+      const createdCommission = await createCommission(artist.id, commissionData, loggedInUser.token);
+        Alert.alert("Success", "Commission request sent!");
+    } catch (error) {
+      Alert.alert("Error", "Failed to create commission.");
+    }
+  };
+
   return (
     <View style={styles.formContainer}>
       <TextInput
@@ -89,33 +74,31 @@ export default function RequestForm({ artist }: RequestFormProps) {
       />
       <TextInput
         style={styles.input}
-        placeholder="Describa su solicitud..."
+        placeholder="Describe your request..."
         multiline
         value={commission.description}
         onChangeText={(text) => handleChange("description", text)}
       />
-
       <TextInput
         style={styles.title}
-        placeholder="Ingrese el precio"
+        placeholder="Enter the price"
         keyboardType="numeric"
-        value={commission.price}
-        onChangeText={(text) => handleChange("price", text)}
+        value={commission.price?.toString()}
+        onChangeText={(text) => handleChange("price", Number(text))}
       />
-
       <TextInput
         style={styles.title}
-        placeholder="Ingrese el número de milestones"
+        placeholder="Enter the number of milestones"
         keyboardType="numeric"
-        value={commission.numMilestones}
-        onChangeText={(text) => handleChange("numMilestones", text)}
+        value={commission.numMilestones?.toString()}
+        onChangeText={(text) => handleChange("numMilestones", Number(text))}
       />
 
       <View style={styles.previewContainer}>
         {selectedImage ? (
           <Image source={{ uri: selectedImage }} style={styles.previewImage} />
         ) : (
-          <Text style={styles.placeholderText}>No hay imagen seleccionada</Text>
+          <Text style={styles.placeholderText}>No image selected</Text>
         )}
       </View>
 
@@ -123,8 +106,7 @@ export default function RequestForm({ artist }: RequestFormProps) {
         <TouchableOpacity style={styles.imageButton} onPress={pickImage}>
           <Icon name={cameraIcon} size={24} />
         </TouchableOpacity>
-
-        <Button title="Submit" onPress={() => handleSubmit({ commission })} />
+        <Button title="Submit" onPress={() => handleSubmit()} />
       </View>
     </View>
   );
