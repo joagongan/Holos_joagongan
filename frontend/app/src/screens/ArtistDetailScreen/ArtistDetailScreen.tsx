@@ -14,20 +14,42 @@ import { RootDrawerParamList } from "@/app/_layout";
 import { getArtistById } from "../../../services/ArtistService";
 import { getWorksDoneByArtist } from "../../../services/WorksDoneService";
 
-export default function ArtistDetailScreen({ route }) {
+interface Artwork {
+  id: number;
+  name: string;
+  image: string;
+}
+
+interface Artist {
+  id: number;
+  username: string;
+  image: string;
+  description: string;
+  artworks: Artwork[];
+}
+
+interface ArtistDetailScreenProps {
+  route: {
+    params: {
+      artistId: number;
+    };
+  };
+}
+
+export default function ArtistDetailScreen({ route }: ArtistDetailScreenProps) {
   const BASE_URL = "http://localhost:8080";
   const navigation = useNavigation<DrawerNavigationProp<RootDrawerParamList>>();
   const { artistId } = route.params;
 
-  const [artist, setArtist] = useState<any>(null);
-  const [works, setWorks] = useState<any[]>([]);
+  const [artist, setArtist] = useState<Artist | null>(null);
+  const [works, setWorks] = useState<Artwork[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {
     const fetchData = async () => {
-      const artistData = await getArtistById(artistId);
+      const artistData: Artist = await getArtistById(artistId);
       setArtist(artistData);
-      const worksData = await getWorksDoneByArtist(artistId);
+      const worksData: Artwork[] = await getWorksDoneByArtist(artistId);
       setWorks(worksData);
       setLoading(false);
     };
@@ -61,7 +83,7 @@ export default function ArtistDetailScreen({ route }) {
         <TouchableOpacity
           style={styles.button}
           onPress={() =>
-            navigation.navigate("RequestCommission", { artistId: artist?.id })
+            navigation.navigate("RequestCommission", { artistId: artist!.id })
           }
         >
           <Text style={styles.buttonText}>Solicitar trabajo</Text>
@@ -76,7 +98,7 @@ export default function ArtistDetailScreen({ route }) {
       <View style={styles.artworksContainer}>
         <Text style={styles.artworksTitle}>Obras del artista</Text>
         <View style={styles.artworksList}>
-          {works?.map((work: any) => (
+          {works.map((work: Artwork) => (
             <View key={work.id} style={styles.artworkItem}>
               <Image
                 source={{ uri: `${BASE_URL}${work.image}` }}

@@ -1,109 +1,183 @@
-import React from "react";
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Image, Dimensions } from "react-native";
+import React, { useEffect, useState } from "react";
+import {
+  View,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+  ScrollView,
+  Image,
+  Dimensions,
+  ActivityIndicator,
+  Alert,
+} from "react-native";
 import { Ionicons } from "@expo/vector-icons";
+import { getAllCommisions, updateCommisionStatus } from "../../../services/CommisionService";
 
+// 1. Define la interfaz (o type) que describe tu modelo de Commission:
+interface Commission {
+  id: number;
+  description: string;
+  status: string; // PENDING, ACCEPTED, REJECTED, etc.
+  client?: {
+    id: number;
+    username: string;
+    imageProfile?: string;
+  };
+  artist?: {
+    id: number;
+    username: string;
+  };
+}
+
+// 2. Ajusta la pantalla
 const { width } = Dimensions.get("window");
 const isBigScreen = width >= 1024;
-
 const MOBILE_PROFILE_ICON_SIZE = 40;
 const MOBILE_CARD_PADDING = 12;
 
-export default function ArtistRequestOrders({}) {
+export default function ArtistRequestOrders({ route }: any) {
+  const { artistId } = route.params;
+
+  // 3. Tipar el estado como arreglo de Commission
+  const [commissions, setCommissions] = useState<Commission[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  const fetchCommissions = async () => {
+    try {
+      const data: Commission[] = await getAllCommisions();
+      const filteredData = data.filter((comm) => comm.artist?.id === artistId);
+      setCommissions(filteredData);
+    } catch (error) {
+      Alert.alert("Error", "Error al obtener las comisiones.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchCommissions();
+  }, []);
+
+  const handleUpdateStatus = async (commissionId: number, accept: boolean) => {
+    try {
+      await updateCommisionStatus(commissionId, artistId, accept);
+      Alert.alert("Éxito", `Solicitud ${accept ? "aceptada" : "denegada"}.`);
+      fetchCommissions();
+    } catch (error) {
+      Alert.alert("Error", "No se pudo actualizar el estado de la comisión.");
+    }
+  };
+
+  // Filtra según estado
+  // Considera REQUESTED como "nueva solicitud"
+const newRequests = commissions.filter(
+  (comm) => comm.status === "REQUESTED"
+);
+
+// Considera como "respondidas" todo lo que NO sea REQUESTED
+const respondedRequests = commissions.filter(
+  (comm) => comm.status !== "REQUESTED"
+);
+
+
+  if (loading) {
+    return (
+      <View style={styles.loadingContainer}>
+        <ActivityIndicator size="large" color="#000" />
+      </View>
+    );
+  }
+
   return (
     <View style={styles.container}>
-      {/* Título de la página */}
       <View style={styles.banner}>
         <Text style={styles.bannerText}>BANDEJA DE ENTRADA</Text>
       </View>
 
       <ScrollView style={styles.content}>
-        {/* Nueva Solicitudes */}
         <Text style={styles.sectionTitle}>NUEVAS SOLICITUDES</Text>
-        <View style={styles.card}>
-          <Image source={{ uri: 'https://picsum.photos/200/300?grayscale' }} style={styles.profileIcon} />          
-          <View style={styles.textContainer}>
-            <Text style={styles.text}>Solicitud de nuevo usuario 1</Text>
-            <Text style={styles.text}>Descripción: Paisaje hecho con aerografía</Text>
-          </View>
-          
-          <View style={styles.actions}>
-            <TouchableOpacity style={styles.acceptButton}>
-              <Ionicons name="checkmark" size={24} color="#183771" />
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.rejectButton}>
-              <Ionicons name="close" size={24} color="#183771" />
-            </TouchableOpacity>
-          </View>
-        </View>
-
-        <View style={styles.card}>
-          <Image source={{ uri: 'https://picsum.photos/seed/picsum/200/300' }} style={styles.profileIcon} />          
-          <View style={styles.textContainer}>
-            <Text style={styles.text}>Solicitud de nuevo usuario 2</Text>
-            <Text style={styles.text}>Descripción: Retrato expresivo en óleo sobre lienzo</Text>
-          </View>
-          
-          <View style={styles.actions}>
-            <TouchableOpacity style={styles.acceptButton}>
-              <Ionicons name="checkmark" size={24} color="#183771" />
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.rejectButton}>
-              <Ionicons name="close" size={24} color="#183771" />
-            </TouchableOpacity>
-          </View>
-        </View>
-        <View style={styles.card}>
-          <Image source={{ uri: 'https://picsum.photos/id/16/200/300' }} style={styles.profileIcon} />          
-          <View style={styles.textContainer}>
-            <Text style={styles.text}>Solicitud de nuevo usuario 3</Text>
-            <Text style={styles.text}>Descripción: Cuadro abstracto con pintura acrílica</Text>
-          </View>
-          
-          <View style={styles.actions}>
-            <TouchableOpacity style={styles.acceptButton}>
-              <Ionicons name="checkmark" size={24} color="#183771" />
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.rejectButton}>
-              <Ionicons name="close" size={24} color="#183771" />
-            </TouchableOpacity>
-          </View>
-        </View>
+        {newRequests.length === 0 ? (
+          <Text style={styles.noRequestsText}>No hay nuevas solicitudes.</Text>
+        ) : (
+          newRequests.map((comm) => (
+            <View key={comm.id} style={styles.card}>
+              <Image
+                source={{
+                  uri:
+                    comm.client?.imageProfile ||
+                    "https://via.placeholder.com/60",
+                }}
+                style={styles.profileIcon}
+              />
+              <View style={styles.textContainer}>
+                <Text style={styles.text}>
+                  {comm.client?.username || "Usuario desconocido"}
+                </Text>
+                <Text style={styles.text}>Descripción: {comm.description}</Text>
+              </View>
+              <View style={styles.actions}>
+                <TouchableOpacity
+                  style={styles.acceptButton}
+                  onPress={() => handleUpdateStatus(comm.id, true)}
+                >
+                  <Ionicons name="checkmark" size={24} color="#183771" />
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={styles.rejectButton}
+                  onPress={() => handleUpdateStatus(comm.id, false)}
+                >
+                  <Ionicons name="close" size={24} color="#183771" />
+                </TouchableOpacity>
+              </View>
+            </View>
+          ))
+        )}
 
         <Text style={styles.sectionTitle}>SOLICITUDES ACEPTADAS/DENEGADAS</Text>
-
-        <View style={styles.card}>
-          <Image source={{ uri: 'https://picsum.photos/id/17/200/300' }} style={styles.profileIcon} />          
-          <View style={styles.textContainer}>
-            <Text style={styles.text}>usuario19239</Text>
-            <Text style={styles.text}>Descripción: Paisaje con acuarela</Text>
-          </View>
-          
-          <View style={styles.actions}>
-            <Text> Solicitud aceptada</Text>
-          </View>
-        </View>
-
-        <View style={styles.card}>
-          <Image source={{ uri: 'https://picsum.photos/id/50/200/300' }} style={styles.profileIcon} />          
-          <View style={styles.textContainer}>
-            <Text style={styles.text}>jdb2496</Text>
-            <Text style={styles.text}>Descripción: Impresionismo con tinta china</Text>
-          </View>
-          
-          <View style={styles.actions}>
-            <Text> Solicitud denegada</Text>
-          </View>
-        </View>
+        {respondedRequests.length === 0 ? (
+          <Text style={styles.noRequestsText}>No hay solicitudes respondidas.</Text>
+        ) : (
+          respondedRequests.map((comm) => (
+            <View key={comm.id} style={styles.card}>
+              <Image
+                source={{
+                  uri:
+                    comm.client?.imageProfile ||
+                    "https://via.placeholder.com/60",
+                }}
+                style={styles.profileIcon}
+              />
+              <View style={styles.textContainer}>
+                <Text style={styles.text}>
+                  {comm.client?.username || "Usuario desconocido"}
+                </Text>
+                <Text style={styles.text}>Descripción: {comm.description}</Text>
+              </View>
+              <View style={styles.actions}>
+                <Text style={styles.responseText}>
+                  {comm.status === "ACCEPTED"
+                    ? "Solicitud aceptada"
+                    : "Solicitud denegada"}
+                </Text>
+              </View>
+            </View>
+          ))
+        )}
       </ScrollView>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
+  loadingContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
   container: {
     flex: 1,
     backgroundColor: "#F0F0F0",
-    padding: isBigScreen? 40: 0,
+    padding: isBigScreen ? 40 : 0,
   },
   banner: {
     backgroundColor: "#183771",
@@ -122,6 +196,11 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 16,
     fontWeight: "bold",
+    marginBottom: 10,
+  },
+  noRequestsText: {
+    fontSize: 14,
+    color: "#666",
     marginBottom: 10,
   },
   card: {
@@ -153,6 +232,7 @@ const styles = StyleSheet.create({
   },
   actions: {
     flexDirection: "row",
+    alignItems: "center",
   },
   acceptButton: {
     backgroundColor: "#FECEF1",
@@ -164,5 +244,10 @@ const styles = StyleSheet.create({
     backgroundColor: "#F05A7E",
     borderRadius: 20,
     padding: 8,
+  },
+  responseText: {
+    fontSize: 14,
+    color: "#183771",
+    fontWeight: "bold",
   },
 });
