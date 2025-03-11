@@ -33,11 +33,8 @@ jobs:
           git add .
           git commit -m "Auto-fix lint errors [bot]" || echo "No changes to commit"
           
-          # Determine the push behavior based on the event type
-          if [ "${{ github.event_name }}" == "push" ]; then
-            git push origin main
-          elif [ "${{ github.event_name }}" == "pull_request" ]; then
-            git push origin HEAD:${{ github.head_ref }}
-          fi
+          # Detectar la rama actual y hacer push
+          BRANCH=$(git rev-parse --abbrev-ref HEAD)
+          git push origin $BRANCH
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
