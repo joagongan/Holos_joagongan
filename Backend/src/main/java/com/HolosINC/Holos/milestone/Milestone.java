@@ -1,6 +1,6 @@
 package com.HolosINC.Holos.milestone;
 
-import java.sql.Date;
+import java.util.Date;
 
 import com.HolosINC.Holos.commision.Commision;
 import com.HolosINC.Holos.model.BaseEntity;

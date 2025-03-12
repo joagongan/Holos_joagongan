@@ -1,7 +1,7 @@
 import React from "react";
-import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
+import { View, Text, StyleSheet } from "react-native";
 
-export default function HomeScreen({ navigation }) {
+export default function HomeScreen({ }) {
   return (
     <View style={styles.container}>
       <Text style={styles.text}>Bienvenido a la pantalla principal</Text>

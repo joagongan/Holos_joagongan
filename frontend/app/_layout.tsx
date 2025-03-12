@@ -1,19 +1,19 @@
 import { createDrawerNavigator } from "@react-navigation/drawer";
 import { createStackNavigator } from "@react-navigation/stack";
-import HomeScreen from "./src/screens/HomeScreen";
+import HomeScreen from "./src/screens/HomeScreen/HomeScreen";
 import UserProfileScreen from "./src/screens/UserProfile/UserProfileScreen";
 import OrderHistoryScreen from "./src/screens/UserProfile/OrderHistoryScreen";
 import ArtworksScreen from "./src/screens/UserProfile/ArtworksScreen";
 import ProfileIcon from "@/assets/svgs/ProfileIcon";
-// RootLayout.tsx
 import React from "react";
-import ArtistRequestOrders from "./src/screens/ArtistRequestOrders";
-import RequestCommissionUserScreen from "./src/screens/RequestCommissionUserScreen";
+import ArtistRequestOrders from "./src/screens/ArtistRequestOrders/ArtistRequestOrders";
+import RequestCommissionUserScreen from "./src/screens/RequestCommission/RequestCommissionUserScreen";
+// import LoginScreen from "./src/screens/LoginScreen";
 import ExploreScreen from "./src/screens/ExploreScreen/ExploreScreen";
 import ArtistDetailScreen from "./src/screens/ArtistDetailScreen/ArtistDetailScreen";
-import WorkDetailScreen from "./src/screens/WorkDetailScreen"; // <-- lo importamos
+import WorkDetailScreen from "./src/screens/WorkDetailScreen/WorkDetailScreen"; 
 import SearchIcon from "@/assets/svgs/SearchIcon";
-import PaymentScreen from "./src/screens/PaymentScreen";
+import PaymentScreen from "./src/screens/PaymentScreen/PaymentScreen";
 import KanbanIcon from "@/assets/svgs/KanbanIconProps";
 import RequestIcon from "@/assets/svgs/RequestIcon";
 import KanbanScreen from "./src/screens/KanbanScreen/KanbanScreen";
@@ -30,6 +30,7 @@ export type RootDrawerParamList = {
   Payment: { workId: number; price: number };
   ArtistDetail: { artistId: number };
   RequestCommission: { artistId: number };
+  Pedidos: { artistId: number };
 };
 
 export default function RootLayout() {
@@ -74,8 +75,13 @@ export default function RootLayout() {
         <Drawer.Screen
           name="Pedidos"
           component={ArtistRequestOrders}
+          // Inicializamos con un artistId dinámico (en este ejemplo se usa 25 para prueba)
+          // En producción, obtén el id del artista logueado (por ejemplo, desde AuthContext)
+          initialParams={{ artistId: 25 }}
           options={{
-            drawerIcon: ({ size }) => <RequestIcon width={size} height={size} />,
+            drawerIcon: ({ size }) => (
+              <RequestIcon width={size} height={size} />
+            ),
           }}
         />
         <Drawer.Screen

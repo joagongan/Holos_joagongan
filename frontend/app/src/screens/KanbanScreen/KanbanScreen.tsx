@@ -1,142 +1,111 @@
-import React, { useState } from 'react';
-import { Text, View, TouchableOpacity, Dimensions, ScrollView, StyleSheet, Alert, Platform } from 'react-native';
+import React, { useState, useEffect } from "react";
+import { Text, View, TouchableOpacity, Dimensions, ScrollView, StyleSheet } from "react-native";
+import { getAllTasks, updateStatusKanbanOrder } from "../../../services/kanbanService"; // Importar servicio de tareas
 
-// Tipo para una tarea
-interface Task {
-  id: number;
-  name: string;
-}
-
-// Props para el componente TaskCard
-interface TaskCardProps {
-  task: Task;
-  moveTask: (taskId: number, fromColumn: string) => void;
-  column: string;
-}
-
-// Componente para una tarjeta
-const TaskCard: React.FC<TaskCardProps> = ({ task, moveTask, column }) => {
-  const buttonText = column === 'done' ? 'Archivar comisión' : 'Mover';
-  return (
-    <View style={styles.taskCard}>
-      <Text style={styles.taskText}>{task.name}</Text>
-      <TouchableOpacity onPress={() => moveTask(task.id, column)} style={styles.moveButton}>
-        <Text style={{ color: 'white' }}>{buttonText}</Text>
-      </TouchableOpacity>
-    </View>
-  );
-};
-
-// Props para el componente KanbanColumn
-interface KanbanColumnProps {
-  title: string;
-  tasks: Task[];
-  moveTask: (taskId: number, fromColumn: string) => void;
-  columnName: string;
-}
-
-// Componente para cada columna
-const KanbanColumn: React.FC<KanbanColumnProps> = ({ title, tasks, moveTask, columnName }) => {
-  return (
-    <View style={styles.kanbanColumn}>
-      <View style={styles.banner}>
-        <Text style={styles.bannerText}>{title}</Text>
-      </View>
-      {tasks.map((task) => (
-        <TaskCard key={task.id} task={task} moveTask={moveTask} column={columnName} />
-      ))}
-    </View>
-  );
-};
-
-// Estructura del estado de las tareas en el tablero
-interface KanbanBoardState {
-  todo: Task[];
-  inProgress: Task[];
-  done: Task[];
-}
-
-// Componente principal del tablero Kanban
 const KanbanBoard: React.FC = () => {
-  const [tasks, setTasks] = useState<KanbanBoardState>({
-    todo: [
-      { id: 1, name: 'Tarea 1' },
-      { id: 2, name: 'Tarea 2' },
-      { id: 5, name: 'Tarea 5' }
-    ],
-    inProgress: [
-      { id: 3, name: 'Tarea 3' }
-    ],
-    done: [
-      { id: 4, name: 'Tarea 4' }
-    ]
+  const [tasks, setTasks] = useState<{ [key: string]: any[] }>({
+    todo: [],
+    inProgress: [],
+    done: [],
   });
 
-  const moveTask = (taskId: number, fromColumn: string) => {
-    const confirmationMessage = "Esta acción no se puede deshacer. ¿Está seguro de continuar?";
-  
-    const onConfirm = () => {
-      const taskToMove = Object.values(tasks)
-        .flat()
-        .find((task) => task.id === taskId);
-  
-      const newTasks = { ...tasks };
-  
-      // Eliminar la tarea de su columna actual
-      for (let column in newTasks) {
-        newTasks[column as keyof KanbanBoardState] = newTasks[column as keyof KanbanBoardState].filter(
-          (task) => task.id !== taskId
-        );
+  // Cargar tareas desde el backend
+  useEffect(() => {
+    const fetchTasks = async () => {
+      try {
+        const fetchedTasks = await getAllTasks();
+        const categorizedTasks = {
+          todo: fetchedTasks.filter((task: any) => task.order === 1),
+          inProgress: fetchedTasks.filter((task: any) => task.order === 2),
+          done: fetchedTasks.filter((task: any) => task.order === 3),
+        };
+        setTasks(categorizedTasks);
+      } catch (error) {
+        console.error("Error al cargar tareas", error);
       }
-  
-      // Si la tarea está en "done", simplemente la eliminamos
-      if (fromColumn === "done") {
-        setTasks(newTasks);
-        return;
-      }
-  
-      // Determinar la columna destino y mover la tarea
-      if (taskToMove) {
-        switch (fromColumn) {
-          case "todo":
-            newTasks["inProgress"].push(taskToMove);
-            break;
-          case "inProgress":
-            newTasks["done"].push(taskToMove);
-            break;
-        }
-      }
-  
-      setTasks(newTasks);
     };
-  
-    // **Mostrar alerta dependiendo de la plataforma**
-    if (Platform.OS === "web") {
-      if (window.confirm(confirmationMessage)) {
-        onConfirm();
-      }
-    } else {
-      Alert.alert("Confirmación", confirmationMessage, [
-        { text: "Cancelar", style: "cancel" },
-        { text: "Sí, continuar", onPress: onConfirm }
-      ]);
+    fetchTasks();
+  }, []);
+
+  // Función para obtener el siguiente orden y la columna correspondiente
+  const getNextOrder = (task: any) => {
+    let newOrder = task.order;
+    let targetColumn = "";
+
+    if (task.order === 1) {
+      newOrder = 2;
+      targetColumn = "inProgress";
+    } else if (task.order === 2) {
+      newOrder = 3;
+      targetColumn = "done";
+    } else if (task.order === 3) {
+      newOrder = 3;
+      targetColumn = "done";
+    }
+
+    return { newOrder, targetColumn };
+  };
+
+  // Función para mover la tarea entre columnas sin duplicaciones
+  const moveTask = async (taskId: number, targetColumn: string, newOrder: number) => {
+    try {
+      await updateStatusKanbanOrder(taskId, newOrder);
+
+      setTasks(prevTasks => {
+        const updatedTasks = { ...prevTasks };
+        let taskToMove;
+
+        // Eliminar la tarea de su columna actual
+        for (const column in updatedTasks) {
+          const index = updatedTasks[column].findIndex(task => task.id === taskId);
+          if (index !== -1) {
+            taskToMove = updatedTasks[column].splice(index, 1)[0];
+            break;
+          }
+        }
+
+        if (taskToMove) {
+          taskToMove.order = newOrder;
+          updatedTasks[targetColumn].push(taskToMove);
+        }
+
+        return updatedTasks;
+      });
+    } catch (error) {
+      console.error("Error al mover la tarea", error);
     }
   };
-  
 
   return (
     <ScrollView>
       <View style={styles.container}>
-        {/* Título de la página */}
         <View style={styles.banner}>
           <Text style={styles.bannerText}>PROYECTOS PERSONALIZADOS</Text>
         </View>
-
-        {/* Scroll horizontal para las columnas en móvil */}
         <ScrollView horizontal contentContainerStyle={styles.kanbanBoard}>
-          <KanbanColumn title="Pendiente" tasks={tasks.todo} moveTask={moveTask} columnName="todo" />
-          <KanbanColumn title="En progreso" tasks={tasks.inProgress} moveTask={moveTask} columnName="inProgress" />
-          <KanbanColumn title="Completado" tasks={tasks.done} moveTask={moveTask} columnName="done" />
+          {Object.entries(tasks).map(([columnName, columnTasks]) => (
+            <View key={columnName} style={styles.kanbanColumn}>
+              <View style={styles.banner}>
+                <Text style={styles.bannerText}>{columnName.toUpperCase()}</Text>
+              </View>
+              {columnTasks.map(task => (
+                <View key={task.id} style={styles.taskCard}>
+                  <Text style={styles.taskText}>{task.artist_id}</Text>
+                  <TouchableOpacity 
+                    onPress={() => {
+                      const { newOrder, targetColumn } = getNextOrder(task);
+                      moveTask(task.id, targetColumn, newOrder);
+                    }} 
+                    style={styles.moveButton}
+                  >
+                    <Text style={{ color: "white" }}>
+                      {task.order === 3 ? "Archivar" : "Mover"}
+                    </Text>
+                  </TouchableOpacity>
+                </View>
+              ))}
+            </View>
+          ))}
         </ScrollView>
       </View>
     </ScrollView>
@@ -163,7 +132,7 @@ const styles = StyleSheet.create({
     borderRadius: 5,
   },
   taskText: {
-    fontSize: isMobile ? 14 : 16, // Texto más pequeño en móvil
+    fontSize: isMobile ? 14 : 16,
   },
   bannerText: {
     color: "#FFFFFF",
@@ -171,16 +140,16 @@ const styles = StyleSheet.create({
     fontSize: isBigScreen ? 24 : 18,
   },
   kanbanBoard: {
-    flexDirection: isBigScreen ? "row" : "row", // En móvil y PC las columnas van en fila
+    flexDirection: "row",
     justifyContent: isBigScreen ? "space-between" : "flex-start",
     marginTop: 20,
     paddingHorizontal: isMobile ? 10 : 0,
   },
   kanbanColumn: {
-    flex: isBigScreen ? 1 : 0, // En PC usa flex para que ocupe el mismo espacio, en móvil no
+    flex: isBigScreen ? 1 : 0,
     margin: isMobile ? 5 : 10,
     padding: isMobile ? 5 : 15,
-    width: isMobile ? 300 : 400, // Tamaño fijo en móvil, en PC más grande
+    width: isMobile ? 300 : 400,
   },
   taskCard: {
     backgroundColor: "#FFFFFF",
