@@ -1,5 +1,7 @@
 package com.HolosINC.Holos.worksdone;
 
+import java.sql.Blob;
+
 import com.HolosINC.Holos.work.Work;
 
 import jakarta.persistence.Entity;

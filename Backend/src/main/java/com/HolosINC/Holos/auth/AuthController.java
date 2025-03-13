@@ -41,7 +41,6 @@ public class AuthController {
 	private final BaseUserService baseUserService;
 	private final JwtUtils jwtUtils;
 	private final AuthoritiesService authService;
-	@SuppressWarnings("unused")
 	private final PasswordEncoder encoder;
 
 	@Autowired
