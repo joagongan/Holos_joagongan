@@ -1,6 +1,5 @@
 package com.HolosINC.Holos.model;
 
-import java.sql.Blob;
 import java.util.Date;
 
 import javax.validation.constraints.NotNull;
@@ -13,7 +12,6 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.Inheritance;
 import jakarta.persistence.InheritanceType;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.Lob;
 import jakarta.persistence.ManyToOne;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
