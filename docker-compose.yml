@@ -1,0 +1,23 @@
+services:
+  app:
+    build: .
+    ports:
+      - "8080:8080"
+    volumes:
+      - app-data:/app/database
+    depends_on:
+      - db
+
+  db:
+    image: mariadb:latest
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: holos_db
+      MYSQL_USER: H0l0s_DB
+      MYSQL_PASSWORD: 'H0l0s1$PP'
+    volumes:
+      - db-data:/var/lib/mysql
+
+volumes:
+  app-data:
+  db-data:
