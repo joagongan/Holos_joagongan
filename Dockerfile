@@ -24,4 +24,4 @@ COPY --from=build /app/target/Holos-0.0.1-SNAPSHOT.jar .
 EXPOSE 8080
 
 # Run the application
-ENTRYPOINT ["java", "-jar", "/app/Holos-0.0.1-SNAPSHOT.jar"]
+ENTRYPOINT ["java", "-jar", "/app/Holos-0.0.1-SNAPSHOT.jar",  "--spring.profiles.active=docker"]

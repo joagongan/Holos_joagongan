@@ -1,25 +1,32 @@
 services:
-  app:
-    build: .
-    ports:
-      - "8080:8080"
-    volumes:
-      - app-data:/app/database
-    depends_on:
-      - db
-
-  db:
-    image: mariadb:latest
+  mariadb:
+    image: mariadb:11.4
+    container_name: mariadb
+    restart: always
     environment:
       MYSQL_ROOT_PASSWORD: rootpassword
       MYSQL_DATABASE: holos_db
       MYSQL_USER: H0l0s_DB
-      MYSQL_PASSWORD: 'H0l0s1$PP'
+      MYSQL_PASSWORD: H0l0s1$PP
     ports:
       - "3306:3306"
     volumes:
-      - db-data:/var/lib/mysql
+      - mariadb_data:/var/lib/mysql
+
+  backend:
+    build: .
+    container_name: backend
+    restart: always
+    depends_on:
+      - mariadb
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mariadb://mariadb:3306/holos_db
+      SPRING_DATASOURCE_USERNAME: H0l0s_DB
+      SPRING_DATASOURCE_PASSWORD: H0l0s1$PP
+      SPRING_JPA_DATABASE_PLATFORM: org.hibernate.dialect.MariaDBDialect
+    entrypoint: ["java", "-jar", "/app/Holos-0.0.1-SNAPSHOT.jar", "--spring.profiles.active=docker"]
+    ports:
+      - "8080:8080"
 
 volumes:
-  app-data:
-  db-data:
+  mariadb_data:
