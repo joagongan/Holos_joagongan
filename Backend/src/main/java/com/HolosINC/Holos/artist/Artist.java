@@ -1,10 +1,7 @@
 package com.HolosINC.Holos.artist;
 
 import jakarta.persistence.Entity;
-import jakarta.persistence.Lob;
 import jakarta.persistence.Table;
-
-import java.sql.Blob;
 
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;

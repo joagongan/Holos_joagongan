@@ -10,7 +10,6 @@ import org.springframework.transaction.annotation.Transactional;
 import com.HolosINC.Holos.artist.Artist;
 import com.HolosINC.Holos.artist.ArtistService;
 import com.HolosINC.Holos.client.Client;
-import com.HolosINC.Holos.client.ClientService;
 import com.HolosINC.Holos.commision.DTOs.CommisionDTO;
 import com.HolosINC.Holos.exceptions.ResourceNotFoundException;
 import com.HolosINC.Holos.model.BaseUser;
