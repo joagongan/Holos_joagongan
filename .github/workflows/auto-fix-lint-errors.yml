@@ -37,7 +37,7 @@ jobs:
           
           # Verifica si hay cambios en staging antes de hacer commit
           if ! git diff --cached --exit-code; then
-            git commit -m "Auto-fix lint errors [bot]"
+            git commit -m "fix: aplicar formato automático [bot]"
             git push origin HEAD
           else
             echo "No changes to commit"
