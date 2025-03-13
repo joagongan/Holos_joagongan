@@ -15,6 +15,8 @@ services:
       MYSQL_DATABASE: holos_db
       MYSQL_USER: H0l0s_DB
       MYSQL_PASSWORD: 'H0l0s1$PP'
+    ports:
+      - "3306:3306"
     volumes:
       - db-data:/var/lib/mysql
 
