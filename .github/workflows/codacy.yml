@@ -17,10 +17,11 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Set up JDK 17 
+      - name: Set up JDK 17
         uses: actions/setup-java@v4
         with:
-          java-version: '17'
+          java-version: 17
+          distribution: 'zulu' # Alternative distribution options are available.
 
       - name: Install Codacy Coverage Reporter
         run: |
