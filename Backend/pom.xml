@@ -30,6 +30,8 @@
 		<java.version>17</java.version>
 		<spring-ai.version>1.0.0-M5</spring-ai.version>
 		<lombok.version>1.18.26</lombok.version>
+		<sonar.organization>joagongan</sonar.organization>
+  		<sonar.host.url>https://sonarcloud.io</sonar.host.url>
 	</properties>
 	<dependencies>
 
@@ -234,6 +236,19 @@
 						</exclude>
 					</excludes>
 				</configuration>
+			</plugin>
+			<plugin>
+			<groupId>org.jacoco</groupId>
+			<artifactId>jacoco-maven-plugin</artifactId>
+			<version>0.8.7</version> <!-- Verifica si hay una nueva versión -->
+			<executions>
+				<execution>
+				<goals>
+					<goal>prepare-agent</goal>  <!-- Prepara el agente de JaCoCo -->
+					<goal>report</goal>  <!-- Genera el informe -->
+				</goals>
+				</execution>
+			</executions>
 			</plugin>
 		</plugins>
 	</build>
