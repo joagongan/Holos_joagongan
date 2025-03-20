@@ -238,19 +238,25 @@
 					</excludes>
 				</configuration>
 			</plugin>
-			<plugin>
-				<groupId>org.jacoco</groupId>
-				<artifactId>jacoco-maven-plugin</artifactId>
-				<version>0.8.7</version>
-				<executions>
-					<execution>
-						<goals>
-							<goal>prepare-agent</goal> <!-- Prepara el agente de cobertura -->
-							<goal>report</goal> <!-- Genera el reporte de cobertura -->
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
+    <plugin>
+      <groupId>org.jacoco</groupId>
+      <artifactId>jacoco-maven-plugin</artifactId>
+      <version>0.8.7</version> <!-- Usa una versión reciente de JaCoCo -->
+      <executions>
+        <execution>
+          <goals>
+            <goal>prepare-agent</goal>
+            <goal>report</goal>
+          </goals>
+          <configuration>
+            <outputDirectory>${project.build.directory}/jacoco</outputDirectory>
+            <dataFile>${project.build.directory}/jacoco.exec</dataFile>
+            <reportFormat>XML</reportFormat> <!-- Asegúrate de usar XML -->
+            <reportPath>${project.build.directory}/jacoco/jacoco.xml</reportPath> <!-- Ruta del informe XML -->
+          </configuration>
+        </execution>
+      </executions>
+    </plugin>
 		</plugins>
 		<!-- JaCoCo plugin para generar reportes de cobertura -->
 	</build>
