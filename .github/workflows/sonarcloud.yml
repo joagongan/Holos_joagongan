@@ -1,37 +1,65 @@
 name: SonarQube
+
 on:
   push:
     branches:
       - main
   pull_request:
     types: [opened, synchronize, reopened]
+
 jobs:
   build:
     name: Build and analyze
     runs-on: ubuntu-latest
     steps:
+      # Paso 1: Checkout del código
       - uses: actions/checkout@v4
         with:
-          fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
+          fetch-depth: 0  # No hacer un clon superficial para análisis más relevante
+
+      # Paso 2: Configurar JDK 17 para el análisis del backend
       - name: Set up JDK 17
         uses: actions/setup-java@v4
         with:
           java-version: 17
-          distribution: 'zulu' # Alternative distribution options are available.
+          distribution: 'zulu'
+
+      # Paso 3: Caché de los paquetes de SonarQube
       - name: Cache SonarQube packages
         uses: actions/cache@v4
         with:
           path: ~/.sonar/cache
           key: ${{ runner.os }}-sonar
           restore-keys: ${{ runner.os }}-sonar
+
+      # Paso 4: Caché de las dependencias de Maven
       - name: Cache Maven packages
         uses: actions/cache@v4
         with:
           path: ~/.m2
           key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
           restore-keys: ${{ runner.os }}-m2
-      - name: Build and analyze without tests
+
+      # Paso 5: Análisis del backend con Maven (sin ejecutar tests)
+      - name: Build and analyze backend
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: mvn -B clean verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -f ./Backend/pom.xml -Dsonar.projectKey=joagongan_Holos_joagongan
-        
+
+      # Paso 6: Configurar Node.js para el análisis del frontend
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '16'  # Asegúrate de usar la versión adecuada de Node.js
+
+      # Paso 7: Instalar dependencias del frontend
+      - name: Install frontend dependencies
+        run: |
+          cd ./Frontend
+          npm install
+
+      # Paso 8: Ejecutar el análisis de SonarCloud en el frontend
+      - name: Run frontend analysis with SonarCloud
+        run: |
+          cd ./Frontend
+          npx sonar-scanner -Dsonar.projectKey=joagongan_Holos_joagongan -Dsonar.sources=src -Dsonar.host.url=https://sonarcloud.io -Dsonar.login=${{ secrets.SONAR_TOKEN }}
