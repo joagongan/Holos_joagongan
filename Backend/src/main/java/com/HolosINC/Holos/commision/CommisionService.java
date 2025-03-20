@@ -34,8 +34,6 @@ public class CommisionService {
         Artist artist = artistService.findArtist(artistId);
         BaseUser client = userService.findCurrentUser();
 
-        if (artist == null || !artist.hasAnyAuthority("ARTIST"))
-            throw new IllegalArgumentException("Envíe la solicitud de comisión a un artista válido");
 
         commision.setArtist(artist);
         commision.setClient((Client) client);

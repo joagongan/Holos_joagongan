@@ -47,13 +47,18 @@ public class StatusKanbanOrderService {
     
     @Transactional
     public StatusKanbanOrder updateStatusKanbanOrder(StatusKanbanOrder statusKanbanOrder) {
+        String color="";
+        String description="";
+        String nombre="";
+        statusKanbanOrder.setColor(color);
+        statusKanbanOrder.setDescription(description);
+        statusKanbanOrder.setName(nombre);
         return statusKanbanOrderRepository.save(statusKanbanOrder);
     }
 
     @Transactional
     public StatusKanbanOrder updateKanban(int id, String color, String description, String nombre) {
-        StatusKanbanOrder sk = statusKanbanOrderRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("StatusKanbanOrder", "id", id));
+        StatusKanbanOrder sk = statusKanbanOrderRepository.findById(id).get();
         sk.setColor(color);
         sk.setDescription(description);
         sk.setName(nombre);
@@ -92,8 +97,7 @@ public class StatusKanbanOrderService {
 
     @Transactional(readOnly = true)
 	public StatusKanbanOrder findStatusKanbanOrder(Integer statusKanbanOrderId) {
-		return statusKanbanOrderRepository.findById(statusKanbanOrderId)
-				.orElseThrow(() -> new ResourceNotFoundException("StatusKanbanOrder", "id", statusKanbanOrderId));
+		return statusKanbanOrderRepository.findById(statusKanbanOrderId).get();
 	}
 
     @Transactional(readOnly = true)
@@ -108,11 +112,17 @@ public class StatusKanbanOrderService {
 
     @Transactional
 public void deleteStatusKanbanOrder(Integer id) {
-    StatusKanbanOrder statusToDelete = statusKanbanOrderRepository.findById(id)
-            .orElseThrow(() -> new ResourceNotFoundException("StatusKanbanOrder", "id", id));
+    StatusKanbanOrder statusToDelete = statusKanbanOrderRepository.findById(id).get();
 
     Integer artistId = statusToDelete.getArtist().getId().intValue();
     Integer orderDeleted = statusToDelete.getOrder();
+
+    String color="";
+    String description="";
+    String nombre="";
+    statusToDelete.setColor(color);
+    statusToDelete.setDescription(description);
+    statusToDelete.setName(nombre);
 
     statusKanbanOrderRepository.deleteById(id);
 
