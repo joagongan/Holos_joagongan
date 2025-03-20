@@ -237,32 +237,6 @@
 					</excludes>
 				</configuration>
 			</plugin>
-			<plugin>
-			<groupId>org.jacoco</groupId>
-			<artifactId>jacoco-maven-plugin</artifactId>
-			<version>0.8.7</version> <!-- Verifica si hay una nueva versión -->
-			<executions>
-				<execution>
-				<goals>
-					<goal>prepare-agent</goal>  <!-- Prepara el agente de JaCoCo -->
-					<goal>report</goal>  <!-- Genera el informe -->
-				</goals>
-				</execution>
-			</executions>
-			</plugin>
-			<!-- Plugin de sonarcloud-->
-			<plugin>
-  				<groupId>org.sonarsource.scanner.maven</groupId>
-				<artifactId>sonar-maven-plugin</artifactId>
-				<version>3.9.1.2184</version>
-			</plugin>
-			<!-- Surefire para sonarcloud-->
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-surefire-plugin</artifactId>
-				<version>3.0.0-M7</version>
-			</plugin>
-
 		</plugins>
 	</build>
 
