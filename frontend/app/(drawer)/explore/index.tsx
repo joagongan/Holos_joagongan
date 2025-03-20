@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
-import { Text, ScrollView, View, TextInput, Image, TouchableOpacity, LayoutChangeEvent, NativeSyntheticEvent, NativeScrollEvent } from "react-native";
+import { Text, ScrollView, View, TextInput, Image, TouchableOpacity, LayoutChangeEvent, NativeSyntheticEvent, NativeScrollEvent, TouchableWithoutFeedback   } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 import styles from "@/src/styles/ExploreScreen.styles";
@@ -8,6 +8,7 @@ import { DrawerNavigationProp } from "@react-navigation/drawer";
 import { getAllCategories } from "@/src/services/categoryService";
 import { getAllWorksDone } from "@/src/services/WorksDoneService";
 import { useRouter } from "expo-router";
+import ReportDropdown from "@/src/components/report/ReportDropDown";
 
 export interface Artist {
   id: number;
@@ -47,6 +48,7 @@ export default function ExploreScreen() {
   const [containerWidth, setContainerWidth] = useState(0);
   const [categories, setCategories] = useState<Category[]>([]);
   const [works, setWorks] = useState<Work[]>([]);
+  const [menuVisibleId, setMenuVisibleId] = useState<number | null>(null);
 
   useEffect(() => {
     const fetchCategories = async () => {
@@ -123,6 +125,13 @@ export default function ExploreScreen() {
   );
 
   return (
+ 
+    <TouchableWithoutFeedback onPress={() => {
+      if (menuVisibleId !== null) {
+        setMenuVisibleId(null); // Cierra el menú al tocar fuera
+      }
+    }}>
+
     <ScrollView style={styles.container} onLayout={handleLayout}>
       <TextInput
         style={styles.searchBar}
@@ -220,10 +229,15 @@ export default function ExploreScreen() {
       <View style={styles.artistsContainer}>
         {filteredWorks.map((work, index) => {
           if (isBigScreen) {
-            const isLastInRow = index % COLUMNS_BIG === COLUMNS_BIG - 1;
-            return (
+            const isLastInRow = index % COLUMNS_BIG === COLUMNS_BIG - 3;
+            return ( 
+              <>
+              <ReportDropdown workId={work.id} menuVisibleId={menuVisibleId} setMenuVisibleId={setMenuVisibleId} isBigScreen={isBigScreen} />
+
               <TouchableOpacity key={work.id} 
                 onPress={() => router.push({ pathname: "/work/[workId]", params: { workId: String(work.id) } })}>
+              <View >
+
                 <View
                   style={[
                     styles.artistItemBig,
@@ -232,20 +246,26 @@ export default function ExploreScreen() {
                       marginRight: isLastInRow ? 0 : GAP_BIG,
                     },
                   ]}
-                >
+                > 
+               
                   <View style={styles.artistImageContainerBig}>
+              
                     <Image
                       source={{ uri: `${BASE_URL}${work.image}` }}
                       style={styles.artistImage}
                     />
                   </View>
+
                   <Text style={styles.artistTextBig}>
                     {work.artist && work.artist.username
                       ? work.artist.username
                       : "Artista desconocido"}
                   </Text>
+                
+                </View>
                 </View>
               </TouchableOpacity>
+              </>
             );
           } else {
             const screenWidth = containerWidth - 32;
@@ -257,8 +277,11 @@ export default function ExploreScreen() {
             const isLastInRow = index % COLUMNS_MOBILE === COLUMNS_MOBILE - 1;
 
             return (
+              <>
+              <ReportDropdown workId={work.id} menuVisibleId={menuVisibleId} setMenuVisibleId={setMenuVisibleId} isBigScreen={isBigScreen} />
+
               <TouchableOpacity key={work.id} 
-                onPress={() => router.push({ pathname: "/work/[workId]", params: { workId: String(work.id) } })}>
+                onPress={() => router.push({ pathname: "/work/[workId]", params: { workId: String(work.id) } })}>  
                 <View
                   style={[
                     styles.artistItemMobile,
@@ -268,12 +291,16 @@ export default function ExploreScreen() {
                     },
                   ]}
                 >
+                  
                   <View style={styles.artistImageContainerMobile}>
+
                     <Image
                       source={{ uri: `${BASE_URL}${work.image}` }}
                       style={styles.artistImage}
                     />
                   </View>
+
+                  
                   <Text style={styles.artistTextMobile}>
                     {work.artist && work.artist.username
                       ? work.artist.username
@@ -281,10 +308,12 @@ export default function ExploreScreen() {
                   </Text>
                 </View>
               </TouchableOpacity>
+              </>
             );
           }
         })}
       </View>
     </ScrollView>
+    </TouchableWithoutFeedback>
   );
 }
