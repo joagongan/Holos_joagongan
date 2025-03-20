@@ -55,11 +55,11 @@ jobs:
       # Paso 7: Instalar dependencias del frontend
       - name: Install frontend dependencies
         run: |
-          cd ./Frontend
+          cd ./frontend
           npm install
 
       # Paso 8: Ejecutar el análisis de SonarCloud en el frontend
       - name: Run frontend analysis with SonarCloud
         run: |
-          cd ./Frontend
+          cd ./frontend
           npx sonar-scanner -Dsonar.projectKey=joagongan_Holos_joagongan -Dsonar.sources=src -Dsonar.host.url=https://sonarcloud.io -Dsonar.login=${{ secrets.SONAR_TOKEN }}
