@@ -32,6 +32,7 @@
 		<lombok.version>1.18.26</lombok.version>
 		<sonar.organization>joagongan</sonar.organization>
   		<sonar.host.url>https://sonarcloud.io</sonar.host.url>
+		<sonar.jacoco.reportPaths>target/site/jacoco/jacoco.xml</sonar.jacoco.reportPaths>
 	</properties>
 	<dependencies>
 
@@ -237,7 +238,21 @@
 					</excludes>
 				</configuration>
 			</plugin>
+			<plugin>
+				<groupId>org.jacoco</groupId>
+				<artifactId>jacoco-maven-plugin</artifactId>
+				<version>0.8.7</version>
+				<executions>
+					<execution>
+						<goals>
+							<goal>prepare-agent</goal> <!-- Prepara el agente de cobertura -->
+							<goal>report</goal> <!-- Genera el reporte de cobertura -->
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
 		</plugins>
+		<!-- JaCoCo plugin para generar reportes de cobertura -->
 	</build>
 
 </project>
