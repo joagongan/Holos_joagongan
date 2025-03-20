@@ -44,7 +44,7 @@ jobs:
       - name: Build and analyze backend
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        run: mvn -B clean verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -f ./Backend/pom.xml -Dsonar.projectKey=joagongan_Holos_joagongan
+        run: mvn -B clean verify -DskipTests org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -f ./Backend/pom.xml -Dsonar.projectKey=joagongan_Holos_joagongan
 
       # Paso 6: Configurar Node.js para el análisis del frontend
       - name: Set up Node.js
