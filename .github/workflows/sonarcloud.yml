@@ -62,4 +62,4 @@ jobs:
       - name: Run frontend analysis with SonarCloud
         run: |
           cd ./frontend
-          npx sonar-scanner -Dsonar.organization=Joaquín González Ganfornina -Dsonar.projectKey=joagongan_Holos_joagongan_frontend -Dsonar.sources=app -Dsonar.host.url=https://sonarcloud.io -Dsonar.login=${{ secrets.SONAR_TOKEN }}
+          npx sonar-scanner -Dsonar.projectKey=joagongan_Holos_joagongan_frontend -Dsonar.sources=app -Dsonar.host.url=https://sonarcloud.io -Dsonar.login=${{ secrets.SONAR_TOKEN }}
