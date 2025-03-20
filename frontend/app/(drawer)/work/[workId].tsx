@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from "react";
-import { View, Text, ActivityIndicator, Image, ScrollView, Dimensions, TouchableOpacity } from "react-native";
+import { View, Text, ActivityIndicator, Image, ScrollView, Dimensions, TouchableOpacity, TouchableWithoutFeedback } from "react-native";
 import { getWorksDoneById } from "@/src/services/WorksDoneService";
 import staticStyles, { createDynamicStyles } from "@/src/styles/WorkDetail.styles";
 import { useNavigation, useLocalSearchParams, useRouter } from "expo-router";
+import ReportDropdown from "@/src/components/report/ReportDropDown";
+import { StringSchema } from "yup";
 
 export interface Artist {
   id: number;
@@ -16,11 +18,11 @@ export interface Artist {
 
 export interface Work {
   id: number;
-  name: string | null;
+  name: string;
   description: string | null;
   price: number | null;
-  artist: Artist | null;
-  image: string | null;
+  artist: Artist;
+  image: string;
 }
 
 export default function WorkDetailScreen() {
@@ -37,6 +39,9 @@ export default function WorkDetailScreen() {
   const isLargeScreen = screenWidth >= 1024;
 
   const dynamicStyles = createDynamicStyles(isLargeScreen);
+  
+  const [menuVisibleId, setMenuVisibleId] = useState<number| null>(null);
+  
 
   useEffect(() => {
     const fetchWork = async () => {
@@ -75,17 +80,26 @@ export default function WorkDetailScreen() {
   }
 
   return (
+    <TouchableWithoutFeedback onPress={() => {
+          if (menuVisibleId !== null) {
+            setMenuVisibleId(null); // Cierra el menú al tocar fuera
+          }
+        }}>
+
     <ScrollView
       style={staticStyles.container}
       contentContainerStyle={dynamicStyles.scrollContent}
     >
       <View style={dynamicStyles.contentContainer}>
-        <View style={dynamicStyles.imageContainer}>
+
+
+      <View style={[dynamicStyles.imageContainer, { position: "relative" }]}>
+
           {work.image ? (
             <Image
               source={{ uri: `${BASE_URL}${work.image}` }}
               style={dynamicStyles.image}
-            />
+            />       
           ) : (
             <View style={staticStyles.placeholder}>
               <Text style={{ color: "#aaa" }}>Sin imagen</Text>
@@ -93,9 +107,13 @@ export default function WorkDetailScreen() {
           )}
         </View>
         <View style={staticStyles.infoContainer}>
+          <View>
+        <ReportDropdown workId={work.id} menuVisibleId={menuVisibleId} setMenuVisibleId={setMenuVisibleId} isBigScreen={null} />
+        </View>
           <Text style={staticStyles.title}>
             {work.name ? work.name.toUpperCase() : "TÍTULO OBRA"}
           </Text>
+
           <Text style={dynamicStyles.label}>ARTISTA:</Text>
           <TouchableOpacity
             onPress={() => {
@@ -138,5 +156,6 @@ export default function WorkDetailScreen() {
         </View>
       </View>
     </ScrollView>
+    </TouchableWithoutFeedback>
   );
 }
