@@ -15,8 +15,10 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -96,6 +98,21 @@ public class AuthController {
 		}
 		authService.createUser(signUpRequest);
 		return ResponseEntity.ok(new MessageResponse("User registered successfully!"));
+	}
+
+	@PutMapping("/update")
+	public ResponseEntity<MessageResponse> updateUser(@Valid @RequestBody SignupRequest signUpRequest) {
+		if (baseUserService.existsUser(signUpRequest.getUsername()).equals(false)) {
+			return ResponseEntity.badRequest().body(new MessageResponse("Error: Username does not exist!"));
+		}
+		authService.updateUser(signUpRequest);
+		return ResponseEntity.ok(new MessageResponse("User updated successfully!"));
+	}
+
+	@DeleteMapping("/delete/{id}")
+	public ResponseEntity<MessageResponse> deleteUser(@RequestParam Long id) {
+		authService.deleteUser(id);
+		return ResponseEntity.ok(new MessageResponse("User deleted successfully!"));
 	}
 
 }

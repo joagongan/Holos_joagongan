@@ -49,11 +49,20 @@ public class BaseUser{
     @Column(name = "phone_number")
     protected String phoneNumber;
 
-    private String imageProfile;
+    private byte[] imageProfile;
 
     @Column(name = "created_user")
     @NotNull
     protected Date createdUser;
+
+    @Column(name = "updated_user")
+    protected Date updatedUser;
+
+    @Column(name = "ban_user")
+    protected Date bannedUser;
+
+    @Column(name = "ban_time")
+    protected Integer banTime;
 
     @NotNull
     @ManyToOne(optional = false)
