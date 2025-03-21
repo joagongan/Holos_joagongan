@@ -12,6 +12,8 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public class StatusKanbanWithCommisionsDTO {
+
+    private Long id;
     
     private String name;
     

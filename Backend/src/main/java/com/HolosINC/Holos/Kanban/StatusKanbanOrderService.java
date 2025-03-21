@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -15,6 +16,11 @@ import org.springframework.transaction.annotation.Transactional;
 import com.HolosINC.Holos.Kanban.DTOs.StatusKanbanDTO;
 import com.HolosINC.Holos.Kanban.DTOs.StatusKanbanWithCommisionsDTO;
 import com.HolosINC.Holos.artist.ArtistService;
+import com.HolosINC.Holos.commision.Commision;
+import com.HolosINC.Holos.commision.CommisionRepository;
+import com.HolosINC.Holos.commision.StatusCommision;
+import com.HolosINC.Holos.commision.DTOs.CommisionDTO;
+import com.HolosINC.Holos.exceptions.AccessDeniedException;
 import com.HolosINC.Holos.exceptions.ResourceNotFoundException;
 import com.HolosINC.Holos.model.BaseUserService;
 
@@ -22,14 +28,16 @@ import com.HolosINC.Holos.model.BaseUserService;
 public class StatusKanbanOrderService {
 
     private final StatusKanbanOrderRepository statusKanbanOrderRepository;
+    private final CommisionRepository commisionRepository;
     private final ArtistService artistService;
     private final BaseUserService userService;
 
     @Autowired
-    public StatusKanbanOrderService(StatusKanbanOrderRepository statusKanbanOrderRepository, ArtistService artistService, BaseUserService userService) {
+    public StatusKanbanOrderService(StatusKanbanOrderRepository statusKanbanOrderRepository, ArtistService artistService, BaseUserService userService, CommisionRepository commisionRepository) {
         this.statusKanbanOrderRepository = statusKanbanOrderRepository;
         this.artistService = artistService;
         this.userService = userService;
+        this.commisionRepository = commisionRepository;
     }
 
     @Transactional
@@ -148,7 +156,32 @@ public void deleteStatusKanbanOrder(Integer id) {
             List<StatusKanbanDTO> statuses =  statusKanbanOrderRepository.getAllStatusOrdererOfArtist(artistId);
             List<StatusKanbanWithCommisionsDTO> commisions = statusKanbanOrderRepository.getAllCommisionsAcceptedOfArtist(artistId);
             return Pair.of(statuses, commisions);
+        } catch (ResourceNotFoundException e) {
+            throw e;
+        } catch (Exception e) {
+            throw e;
+        }
+    }
 
+    @Transactional
+    public Commision nextStatusOfCommision(Long id) {
+        try {
+            Long artistId = userService.findCurrentUser().getId();
+            Commision c = commisionRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Comisión no encontrada"));
+            if (artistId.equals(c.getArtist().getId()))
+                throw new AccessDeniedException("No tienes permisos para cambiar esta comisión");
+
+            StatusKanbanOrder thisStatus = statusKanbanOrderRepository.actualStatusKanban(id);
+            Optional<StatusKanbanOrder> nextStatus = statusKanbanOrderRepository.nextStatusKanban(thisStatus.getArtist().getId(),
+                                                                                                     thisStatus.getOrder() + 1);
+            if (nextStatus.isEmpty()) {
+                c.setStatusKanbanOrder(null);
+                c.setStatus(StatusCommision.ENDED);
+            } else 
+                c.setStatusKanbanOrder(nextStatus.get());
+
+            commisionRepository.save(c);
+            return c;
         } catch (ResourceNotFoundException e) {
             throw e;
         } catch (Exception e) {
