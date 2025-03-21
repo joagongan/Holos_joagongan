@@ -1,5 +1,6 @@
 package com.HolosINC.Holos.reports;
 
+import com.HolosINC.Holos.artist.Artist;
 import com.HolosINC.Holos.model.BaseUser;
 import com.HolosINC.Holos.work.Work;
 
@@ -14,10 +15,12 @@ import jakarta.persistence.Table;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
+import lombok.Builder;
 import lombok.Data;
 
 @Data
 @Entity
+@Builder
 @Table(name = "reports")
 public class Report {
     
@@ -45,7 +48,7 @@ public class Report {
     @OneToOne(optional = true)
     @Valid
     @NotNull
-    private BaseUser reportedUser;
+    private Artist reportedUser;
 
     @ManyToOne(optional = true)
     @Valid

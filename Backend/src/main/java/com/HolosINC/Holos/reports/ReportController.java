@@ -3,7 +3,6 @@ package com.HolosINC.Holos.reports;
 import java.util.List;
 
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -11,6 +10,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import com.HolosINC.Holos.work.WorkService;
 
 import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -22,9 +23,11 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 @Tag(name = "Report Controller", description = "API for managing Reports")
 public class ReportController {
     private ReportService reportService;
+    private WorkService workService;
 
-    public ReportController(ReportService reportService) {
+    public ReportController(ReportService reportService, WorkService workService) {
         this.reportService = reportService;
+        this.workService = workService;
     }
 
     // Para el administrador
@@ -41,10 +44,17 @@ public class ReportController {
     }
 
     @PostMapping
-    public ResponseEntity<?> addReport(@RequestBody Report report) {
+    public ResponseEntity<?> addReport(@RequestBody ReportDTO reportDTO) {
         try {
-            Report newReport = reportService.addReport(report);
-            return ResponseEntity.ok(newReport);
+            Report newReport = Report.builder()
+                    .name(reportDTO.getName())
+                    .description(reportDTO.getDescription())
+                    .status(ReportStatus.PENDING)
+                    .work(workService.getWorkById(reportDTO.getWorkId()))
+                    .reportType(reportService.getReportTypeByType(reportDTO.getReportType()))
+                    .build();
+            Report report = reportService.addReport(newReport);
+            return ResponseEntity.ok(report);
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         } catch (Exception e) {
