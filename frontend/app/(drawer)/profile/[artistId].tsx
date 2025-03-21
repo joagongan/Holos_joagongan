@@ -112,12 +112,15 @@ export default function ArtistDetailScreen() {
         <View style={styles.artworksList}>
           {works.map((work: Artwork) => (
             <>
-            <ReportDropdown workId={work.id} menuVisibleId={menuVisibleId} setMenuVisibleId={setMenuVisibleId} isBigScreen={false} />
 
             <View key={work.id} style={styles.artworkItem}>
+
               <Image source={{ uri: `${BASE_URL}${work.image}` }} style={styles.artworkImage} />
               <Text style={styles.artworkTitle}>{work.name}</Text>
+
             </View>
+            <ReportDropdown workId={work.id} menuVisibleId={menuVisibleId} setMenuVisibleId={setMenuVisibleId} isBigScreen={false} />
+
             </>
           ))}
         </View>

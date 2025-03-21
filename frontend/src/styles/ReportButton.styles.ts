@@ -3,21 +3,25 @@ import { StyleSheet } from "react-native";
 
 export default StyleSheet.create({
     menuButton: {
-        right:10, // Espacio entre la imagen y los tres puntos
-        padding: 8,
+        right:-5, 
+        padding: 10,
         backgroundColor:"rgba(229, 194, 194, 0.83)",
         borderRadius: 20,
         position: "absolute",
+        alignItems: "flex-end",
         zIndex: 12, 
     },
   menuButtonOneImage: {
-    position: "absolute",
-    right: -20, 
-    zIndex: 12, 
-    padding: 8,
-    backgroundColor: "rgba(255, 255, 255, 0.7)",
+    right:4, 
+    padding: 10,
+    top:2,
+    backgroundColor:"rgba(229, 194, 194, 0.83)",
     borderRadius: 20,
+    position: "absolute",
+    zIndex: 23, 
+    marginRight:29
   },
+
   menu: {
     position: "absolute",
     top: 42, 
@@ -40,6 +44,6 @@ export default StyleSheet.create({
   menuItemText: {
     fontSize: 14,
     color: "#333",
-    zIndex: 200, 
+  
   },
 });

@@ -1,10 +1,10 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState  } from "react";
+import { Platform } from "react-native";
 import { View, Text, ActivityIndicator, Image, ScrollView, Dimensions, TouchableOpacity, TouchableWithoutFeedback } from "react-native";
 import { getWorksDoneById } from "@/src/services/WorksDoneService";
 import staticStyles, { createDynamicStyles } from "@/src/styles/WorkDetail.styles";
 import { useNavigation, useLocalSearchParams, useRouter } from "expo-router";
 import ReportDropdown from "@/src/components/report/ReportDropDown";
-import { StringSchema } from "yup";
 
 export interface Artist {
   id: number;
@@ -26,6 +26,8 @@ export interface Work {
 }
 
 export default function WorkDetailScreen() {
+  const isWeb = Platform.OS === "web";
+
   const BASE_URL = "http://localhost:8080";
 
   const router = useRouter();
@@ -90,8 +92,9 @@ export default function WorkDetailScreen() {
       style={staticStyles.container}
       contentContainerStyle={dynamicStyles.scrollContent}
     >
-      <View style={dynamicStyles.contentContainer}>
 
+
+      <View style={dynamicStyles.contentContainer}>
 
       <View style={[dynamicStyles.imageContainer, { position: "relative" }]}>
 
@@ -106,10 +109,10 @@ export default function WorkDetailScreen() {
             </View>
           )}
         </View>
+      
+        {isWeb && ( <ReportDropdown  workId={work.id}  menuVisibleId={menuVisibleId}  setMenuVisibleId={setMenuVisibleId}  isBigScreen={null} />)}
+       
         <View style={staticStyles.infoContainer}>
-          <View>
-        <ReportDropdown workId={work.id} menuVisibleId={menuVisibleId} setMenuVisibleId={setMenuVisibleId} isBigScreen={null} />
-        </View>
           <Text style={staticStyles.title}>
             {work.name ? work.name.toUpperCase() : "TÍTULO OBRA"}
           </Text>
@@ -151,10 +154,10 @@ export default function WorkDetailScreen() {
                 COMPRAR
               </Text>
             </TouchableOpacity>
-
           </View>
         </View>
       </View>
+
     </ScrollView>
     </TouchableWithoutFeedback>
   );

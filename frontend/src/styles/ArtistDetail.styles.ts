@@ -69,6 +69,7 @@ export default StyleSheet.create({
       width: "100%",
       height: 120,
       borderRadius: 8,
+   
     },
     artworkTitle: {
       textAlign: "center",

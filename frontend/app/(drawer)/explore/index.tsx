@@ -231,9 +231,7 @@ export default function ExploreScreen() {
           if (isBigScreen) {
             const isLastInRow = index % COLUMNS_BIG === COLUMNS_BIG - 3;
             return ( 
-              <>
-              <ReportDropdown workId={work.id} menuVisibleId={menuVisibleId} setMenuVisibleId={setMenuVisibleId} isBigScreen={isBigScreen} />
-
+              < >
               <TouchableOpacity key={work.id} 
                 onPress={() => router.push({ pathname: "/work/[workId]", params: { workId: String(work.id) } })}>
               <View >
@@ -265,6 +263,8 @@ export default function ExploreScreen() {
                 </View>
                 </View>
               </TouchableOpacity>
+              <ReportDropdown workId={work.id} menuVisibleId={menuVisibleId} setMenuVisibleId={setMenuVisibleId} isBigScreen={isBigScreen} />
+
               </>
             );
           } else {
@@ -278,7 +278,6 @@ export default function ExploreScreen() {
 
             return (
               <>
-              <ReportDropdown workId={work.id} menuVisibleId={menuVisibleId} setMenuVisibleId={setMenuVisibleId} isBigScreen={isBigScreen} />
 
               <TouchableOpacity key={work.id} 
                 onPress={() => router.push({ pathname: "/work/[workId]", params: { workId: String(work.id) } })}>  
@@ -308,6 +307,8 @@ export default function ExploreScreen() {
                   </Text>
                 </View>
               </TouchableOpacity>
+              <ReportDropdown workId={work.id} menuVisibleId={menuVisibleId} setMenuVisibleId={setMenuVisibleId} isBigScreen={isBigScreen} />
+
               </>
             );
           }

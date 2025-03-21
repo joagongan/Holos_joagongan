@@ -22,12 +22,11 @@ const ReportDropdown: React.FC<ReportDropdownProps> = ({ workId, menuVisibleId, 
   
     return (
          <View>
-        
                       <TouchableOpacity onPress={(e) => {
                         e.stopPropagation(); // Evita que el toque cierre el menú
                         showDropDownReport(workId); 
                       }}
-                        style={ isBigScreen === null
+                        style={ isBigScreen === true
                             ? stylesReport.menuButtonOneImage
                             :  stylesReport.menuButton } >
     
