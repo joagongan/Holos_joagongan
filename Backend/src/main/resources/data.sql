@@ -69,27 +69,27 @@ INSERT INTO clients (id, base_user_id) VALUES
 (21, 21),
 (22, 22);
 
-INSERT INTO artists (id, first_name, username, email, num_slots_of_work, table_commisions_price, base_user_id) VALUES 
-(1, 'artist1', 'artist1', 'artist1@gmail.com', 7, '/images/tableCommisionsPrice.png', 23),
-(2, 'Braulio', 'braulio', 'braulioolmedo116@gmail.com', 7, '/images/tableCommisionsPrice.png', 24),
-(3, 'Claudia', 'claudia', 'xlaequis@gmail.com', 7, '/images/tableCommisionsPrice.png', 25),
-(4, 'Miriam', 'miriam', 'urownmailblik@gmail.com', 7, '/images/tableCommisionsPrice.png', 26),
-(5, 'Paola', 'paola', 'pao.saaval@gmail.com', 7, '/images/tableCommisionsPrice.png', 27),
-(6, 'Victor', 'victor', 'jsjxhwjifyhyyy@gmail.com', 7, '/images/tableCommisionsPrice.png', 28),
-(7, 'Yellow', 'yellow', 'yell0w.4rtist@gmail.com', 7, '/images/tableCommisionsPrice.png', 29),
-(8, 'Alex', 'alex', 'vsandoval.gd@gmail.com', 7, '/images/tableCommisionsPrice.png', 30),
-(9, 'Patricia', 'peu', 'linkaris95@gmail.com', 7, '/images/tableCommisionsPrice.png', 31),
-(10, 'Izzy', 'izzy', 'artofiz.comms@gmail.com', 7, '/images/tableCommisionsPrice.png', 32),
-(11, 'Gabriela', 'gabriela', 'meowm7512@gmail.com', 7, '/images/tableCommisionsPrice.png', 33),
-(12, 'Alex', 'tesla', 'soloparainformatica23@gmail.com', 7, '/images/tableCommisionsPrice.png', 34),
-(13, 'Gurutze', 'churros', 'gurutze.contact@gmail.com', 7, '/images/tableCommisionsPrice.png', 35),
-(14, 'Damaris', 'damaris', 'damaris.narvaezjimenez@gmail.com', 7, '/images/tableCommisionsPrice.png', 36),
-(15, 'Sofia', 'rata', 'already.dead.baby@gmail.com', 7, '/images/tableCommisionsPrice.png', 37),
-(16, 'Daniel', 'daniel_artist', 'megamagolas@gmail.com', 7, '/images/tableCommisionsPrice.png', 38),
-(17, 'Rafael', 'rafaelduque_artist', 'rafduqcol@alum.us.es', 7, '/images/tableCommisionsPrice.png', 39),
-(18, 'Rafael', 'rafaelcastillo_artist', 'rafaelcastillocebolla@gmail.com', 7, '/images/tableCommisionsPrice.png', 40),
-(19, 'Mohamed', 'mohamed_artist', 'mohmmedabourihhh@gmail.com', 7, '/images/tableCommisionsPrice.png', 41),
-(20, 'Enrique', 'enrique_artist', 'kiquegaraba@gmail.com', 7, '/images/tableCommisionsPrice.png', 42);
+INSERT INTO artists (id, num_slots_of_work, table_commisions_price, base_user_id) VALUES 
+(1, 7, '/images/tableCommisionsPrice.png', 23),
+(2, 7, '/images/tableCommisionsPrice.png', 24),
+(3, 7, '/images/tableCommisionsPrice.png', 25),
+(4, 7, '/images/tableCommisionsPrice.png', 26),
+(5, 7, '/images/tableCommisionsPrice.png', 27),
+(6, 7, '/images/tableCommisionsPrice.png', 28),
+(7, 7, '/images/tableCommisionsPrice.png', 29),
+(8, 7, '/images/tableCommisionsPrice.png', 30),
+(9, 7, '/images/tableCommisionsPrice.png', 31),
+(10, 7, '/images/tableCommisionsPrice.png', 32),
+(11, 7, '/images/tableCommisionsPrice.png', 33),
+(12, 7, '/images/tableCommisionsPrice.png', 34),
+(13, 7, '/images/tableCommisionsPrice.png', 35),
+(14, 7, '/images/tableCommisionsPrice.png', 36),
+(15, 7, '/images/tableCommisionsPrice.png', 37),
+(16, 7, '/images/tableCommisionsPrice.png', 38),
+(17, 7, '/images/tableCommisionsPrice.png', 39),
+(18, 7, '/images/tableCommisionsPrice.png', 40),
+(19, 7, '/images/tableCommisionsPrice.png', 41),
+(20, 7, '/images/tableCommisionsPrice.png', 42);
 
 INSERT INTO categories (id, name, description, image) VALUES
 (1, 'Painting', 'Artworks created using paint on a surface', '/images/painting_category.jpg'),

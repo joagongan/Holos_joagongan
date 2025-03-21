@@ -73,9 +73,6 @@ public class AuthoritiesService {
 			baseUserService.save(user);
 			Artist artist = new Artist();
 			artist.setBaseUser(user);
-			artist.setName(request.getFirstName());
-			artist.setUsername(request.getUsername());
-			artist.setEmail(request.getEmail());
 			artistService.saveArtist(artist);
 		} else if (strRoles == "CLIENT") {
 			Client client = new Client();
@@ -93,7 +90,7 @@ public class AuthoritiesService {
 		BaseUser user = baseUserService.findCurrentUser();
 		user.setUsername(request.getUsername());
 		user.setName(request.getFirstName());
-		user.setCreatedUser(Date.from(Instant.now()));
+		user.setUpdatedUser(Date.from(Instant.now()));
 		user.setPassword(encoder.encode(request.getPassword()));
 		user.setEmail(request.getEmail());
 		user.setPhoneNumber(request.getPhoneNumber());
@@ -102,9 +99,6 @@ public class AuthoritiesService {
 		if (request.getAuthority().toUpperCase() == "ARTIST") {
 			Artist artist = artistService.findArtist(user.getId());
 			artist.setBaseUser(user);
-			artist.setName(request.getFirstName());
-			artist.setUsername(request.getUsername());
-			artist.setEmail(request.getEmail());
 			artistService.saveArtist(artist);
 		} else if (request.getAuthority().toUpperCase() == "CLIENT") {
 			Client client = clientService.findClient(user.getId());

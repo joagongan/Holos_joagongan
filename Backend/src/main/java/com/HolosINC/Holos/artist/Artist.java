@@ -1,6 +1,5 @@
 package com.HolosINC.Holos.artist;
 
-import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -11,7 +10,6 @@ import jakarta.persistence.Table;
 
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 
 import com.HolosINC.Holos.model.BaseUser;
 
@@ -35,19 +33,4 @@ public class Artist{
 
     @OneToOne(optional = true)
     private BaseUser baseUser;
-
-    // Derivate properties
-    @Size(min = 2, max = 255)
-    @Column(name = "first_name")
-    @NotNull
-    private String name;
-
-    @Size(min = 2, max = 255)
-    //@Column(unique = true)
-    private String username;
-
-    @Size(max = 255)
-    //@Column(unique = true)
-    @NotNull
-    private  String email;
 }
