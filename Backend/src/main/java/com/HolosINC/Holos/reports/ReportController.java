@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.HolosINC.Holos.artist.ArtistService;
+import com.HolosINC.Holos.model.BaseUserService;
 import com.HolosINC.Holos.work.WorkService;
 
 import io.swagger.v3.oas.annotations.parameters.RequestBody;
@@ -24,10 +26,12 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 public class ReportController {
     private ReportService reportService;
     private WorkService workService;
+    private BaseUserService baseUserService;
 
-    public ReportController(ReportService reportService, WorkService workService) {
+    public ReportController(ReportService reportService, WorkService workService, BaseUserService baseUserService) {
         this.reportService = reportService;
         this.workService = workService;
+        this.baseUserService = baseUserService;
     }
 
     // Para el administrador
@@ -50,6 +54,8 @@ public class ReportController {
                     .name(reportDTO.getName())
                     .description(reportDTO.getDescription())
                     .status(ReportStatus.PENDING)
+                    .madeBy(baseUserService.findCurrentUser())
+                    .reportedUser(workService.getWorkById(reportDTO.getWorkId()).getArtist())
                     .work(workService.getWorkById(reportDTO.getWorkId()))
                     .reportType(reportService.getReportTypeByType(reportDTO.getReportType()))
                     .build();
