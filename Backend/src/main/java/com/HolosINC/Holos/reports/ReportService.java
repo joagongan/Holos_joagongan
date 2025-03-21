@@ -65,4 +65,9 @@ public class ReportService {
         report.setStatus(ReportStatus.REJECTED);
         return reportRepository.save(report);
     }
+
+    public ReportType getReportTypeByType(String type) {
+        return reportTypeRepository.findByType(type)
+                .orElseThrow(() -> new ResourceNotFoundException("Report type not found"));
+    }
 }
