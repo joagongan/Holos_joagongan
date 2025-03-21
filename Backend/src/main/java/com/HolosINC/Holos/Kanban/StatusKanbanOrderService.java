@@ -1,25 +1,35 @@
 package com.HolosINC.Holos.Kanban;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.HolosINC.Holos.Kanban.DTOs.StatusKanbanDTO;
+import com.HolosINC.Holos.Kanban.DTOs.StatusKanbanWithCommisionsDTO;
 import com.HolosINC.Holos.artist.ArtistService;
 import com.HolosINC.Holos.exceptions.ResourceNotFoundException;
+import com.HolosINC.Holos.model.BaseUserService;
 
 @Service
 public class StatusKanbanOrderService {
 
-
-    private StatusKanbanOrderRepository statusKanbanOrderRepository;
-    private ArtistService artistService;
-
+    private final StatusKanbanOrderRepository statusKanbanOrderRepository;
+    private final ArtistService artistService;
+    private final BaseUserService userService;
 
     @Autowired
-    public StatusKanbanOrderService(StatusKanbanOrderRepository statusKanbanOrderRepository, ArtistService artistService) {
+    public StatusKanbanOrderService(StatusKanbanOrderRepository statusKanbanOrderRepository, ArtistService artistService, BaseUserService userService) {
         this.statusKanbanOrderRepository = statusKanbanOrderRepository;
         this.artistService = artistService;
+        this.userService = userService;
     }
 
     @Transactional
@@ -129,5 +139,20 @@ public void deleteStatusKanbanOrder(Integer id) {
     @Transactional
     public StatusKanbanOrder updateOrder(StatusKanbanOrder statusKanbanOrder) {
         return statusKanbanOrderRepository.save(statusKanbanOrder);
+    }
+
+    @Transactional
+    public Pair<List<StatusKanbanDTO>, List<StatusKanbanWithCommisionsDTO>> getAllStatusFromArtist() {
+        try {
+            Long artistId = userService.findCurrentUser().getId();
+            List<StatusKanbanDTO> statuses =  statusKanbanOrderRepository.getAllStatusOrdererOfArtist(artistId);
+            List<StatusKanbanWithCommisionsDTO> commisions = statusKanbanOrderRepository.getAllCommisionsAcceptedOfArtist(artistId);
+            return Pair.of(statuses, commisions);
+
+        } catch (ResourceNotFoundException e) {
+            throw e;
+        } catch (Exception e) {
+            throw e;
+        }
     }
 }

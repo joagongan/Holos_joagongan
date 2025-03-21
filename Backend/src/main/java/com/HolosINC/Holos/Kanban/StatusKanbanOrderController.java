@@ -1,11 +1,17 @@
 package com.HolosINC.Holos.Kanban;
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.util.Pair;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import com.HolosINC.Holos.Kanban.DTOs.StatusKanbanDTO;
+import com.HolosINC.Holos.Kanban.DTOs.StatusKanbanWithCommisionsDTO;
+import com.HolosINC.Holos.exceptions.ResourceNotFoundException;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
 
@@ -64,8 +70,15 @@ public class StatusKanbanOrderController {
     }
 
     @GetMapping
-    public List<StatusKanbanOrder> getAllStatusKanbanOrder() {
-        return statusKanbanOrderService.findAllStatusKanbanOrder();
+    public ResponseEntity<?> getAllStatusKanbanOrder() {
+        try {
+            Pair<List<StatusKanbanDTO>,List<StatusKanbanWithCommisionsDTO>> allStatus = statusKanbanOrderService.getAllStatusFromArtist();
+            return ResponseEntity.ok().body(allStatus);
+        } catch (ResourceNotFoundException e) {
+            return ResponseEntity.badRequest().body(e);
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().body("Something weird happend. See the following:\n" + e.getMessage());
+        }
     }
 
     @GetMapping("/{id}")
