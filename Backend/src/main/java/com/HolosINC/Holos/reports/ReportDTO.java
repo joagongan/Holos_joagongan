@@ -17,10 +17,7 @@ public class ReportDTO {
 
     @NotNull
     private ReportStatus status;
-
-    @NotNull
-    private Long madeByUserId;
-
+    
     @NotNull
     private Long workId;
 
