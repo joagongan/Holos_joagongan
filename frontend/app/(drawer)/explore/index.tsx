@@ -11,8 +11,19 @@ import {
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import { getAllWorksDone } from "@/src/services/WorksDoneApi";
-import { BASE_URL, API_URL } from "@/src/constants/api";
+import { BASE_URL } from "@/src/constants/api";
 import { useFonts } from "expo-font";
+
+export interface BaseUser {
+  id: number;
+  name: string;
+  username: string;
+  password: string;
+  email: string;
+  phoneNumber?: string;
+  imageProfile?: string;
+  createdUser: Date;
+}
 
 export interface Artist {
   id: number;
@@ -22,6 +33,8 @@ export interface Artist {
   phoneNumber?: string;
   imageProfile?: string;
   tableCommisionsPrice?: string;
+  numSlotsOfWork: number;
+  baseUser?: BaseUser;
 }
 
 export interface Work {
@@ -41,7 +54,6 @@ export default function ThreeRowsScreen() {
     "Merriweather-BoldItalic": require("../../../assets/fonts/Merriweather_24pt-BoldItalic.ttf"),
   });
 
-  // 2) useState, useEffect, useMemo, useWindowDimensions, etc.
   const [works, setWorks] = useState<Work[]>([]);
   const router = useRouter();
   const { width } = useWindowDimensions();
@@ -52,7 +64,17 @@ export default function ThreeRowsScreen() {
     const fetchWorks = async () => {
       try {
         const data = await getAllWorksDone();
-        setWorks(data);
+        const transformedData = data.map((work) => ({
+          ...work,
+          artist: {
+            ...work.artist,
+            baseUser: {
+              ...work.artist.baseUser,
+              createdUser: new Date(work.artist.baseUser.createdUser),
+            },
+          },
+        }));
+        setWorks(transformedData);
       } catch (error) {
         console.error("Error fetching works: ", error);
       }
@@ -70,9 +92,7 @@ export default function ThreeRowsScreen() {
     return Array.from(uniqueArtistsMap.values()).slice(0, 3);
   }, [works]);
 
-  // 3) Al final, compruebas si las fuentes están cargadas
   if (!fontsLoaded) {
-    // Muestra un spinner o nada mientras cargan las fuentes
     return null;
   }
 
@@ -91,8 +111,6 @@ export default function ThreeRowsScreen() {
             />
           </View>
         </View>
-
-        {/* Sección intermedia: Obras */}
         <View style={styles.middleSection}>
           <ScrollView
             horizontal
@@ -126,18 +144,16 @@ export default function ThreeRowsScreen() {
           </ScrollView>
         </View>
 
-        {/* Sección inferior: Artistas en 2 columnas de 2 */}
         <View style={styles.bottomSection}>
           <View style={styles.bottomSectionHeader}>
             <Text style={styles.bottomSectionHeaderText}>ARTISTAS</Text>
           </View>
-          {/* En lugar de Scroll horizontal, usamos una vista con flexWrap para 2x2 */}
           <View style={styles.artistsContainer}>
             {firstFourArtists.map((artist) => (
               <TouchableOpacity key={artist.id} style={styles.artistCard}>
                 <Image
                   source={{
-                    uri: `${BASE_URL}/${artist.imageProfile}`,
+                    uri: `${BASE_URL}${artist.baseUser?.imageProfile}`,
                   }}
                   style={styles.artistImage}
                 />
@@ -164,7 +180,8 @@ const mobileStyles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "space-between",
     paddingHorizontal: 16,
-    paddingTop: 45,
+    paddingTop: 20,
+    marginBottom: 10,
   },
   topSectionText: {
     fontSize: 22,
@@ -191,7 +208,7 @@ const mobileStyles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "flex-start",
     paddingHorizontal: 16,
-    marginTop: 10,
+    marginTop: 18,
   },
   workItem: {
     width: 260,
@@ -199,7 +216,7 @@ const mobileStyles = StyleSheet.create({
   },
   workImage: {
     width: "100%",
-    height: 250,
+    height: 200,
     resizeMode: "contain",
     marginBottom: 20,
   },
@@ -228,10 +245,9 @@ const mobileStyles = StyleSheet.create({
     color: "#777",
   },
 
-  // Artistas
   bottomSection: {
     paddingTop: 20,
-    paddingBottom: 40, // más hueco abajo
+    paddingBottom: 40,
     backgroundColor: "#F4F4F2",
   },
   bottomSectionHeader: {
@@ -301,14 +317,14 @@ const desktopStyles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    paddingHorizontal: 40,
-    borderBottomWidth: 1,
-    borderBottomColor: "#E6E6E6",
+    paddingHorizontal: 250,
+    marginTop: 50,
   },
   topSectionText: {
     fontSize: 28,
     fontWeight: "600",
     color: "#333",
+    fontFamily: "Merriweather",
   },
   topSectionSecondText: {
     fontFamily: "Merriweather-Italic",
@@ -319,10 +335,9 @@ const desktopStyles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
   },
-  // Row 2 (Sección intermedia) - Scroll horizontal
   middleSection: {
-    height: "70%",
-    paddingVertical: 20,
+    height: "80%",
+    marginTop: 45,
   },
   worksScrollContainer: {
     alignItems: "center",
@@ -331,7 +346,7 @@ const desktopStyles = StyleSheet.create({
   workItem: {
     width: 220,
     height: "100%",
-    marginRight: 120,
+    marginRight: 90,
     backgroundColor: "#FFF",
     overflow: "hidden",
   },
@@ -340,18 +355,14 @@ const desktopStyles = StyleSheet.create({
     height: "80%",
     padding: 10,
     resizeMode: "contain",
-    shadowColor: "#000",
-    shadowOffset: { width: 5, height: 5 },
-    shadowOpacity: 0.5,
-    shadowRadius: 3,
-    elevation: 10, // Para Android
   },
   workTextContainer: {
-    paddingVertical: 10,
+    marginBottom: 60,
   },
   workTitle: {
     fontSize: 16,
     fontWeight: "700",
+    fontFamily: "Merriweather-Bold",
     color: "#222",
     marginBottom: 4,
     paddingHorizontal: 4,
@@ -359,6 +370,7 @@ const desktopStyles = StyleSheet.create({
   workArtist: {
     fontSize: 14,
     fontWeight: "500",
+    fontFamily: "Merriweather",
     color: "#555",
     marginBottom: 2,
     paddingHorizontal: 4,
@@ -370,11 +382,11 @@ const desktopStyles = StyleSheet.create({
     paddingHorizontal: 4,
   },
 
-  // Row 3 (Sección inferior)
   bottomSection: {
-    backgroundColor: "#FFFFFF",
-    paddingVertical: 20,
+    backgroundColor: "#F4F4F2",
+    paddingVertical: 10,
     alignItems: "center",
+    margin: 10,
   },
   bottomSectionHeader: {
     flexDirection: "row",
@@ -384,9 +396,13 @@ const desktopStyles = StyleSheet.create({
     marginBottom: 16,
   },
   bottomSectionHeaderText: {
-    fontSize: 20,
+    marginLeft: 245,
+    marginTop: 20,
+    marginBottom: 10,
+    fontSize: 13,
     fontWeight: "600",
     color: "#333",
+    fontFamily: "Merriweather-Regular",
   },
   artistsScrollContainer: {
     flexDirection: "row",
@@ -396,25 +412,20 @@ const desktopStyles = StyleSheet.create({
   },
   artistCard: {
     width: 280,
-    height: 80,
+    height: 70,
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: "#FAFAFA",
-    borderRadius: 8,
-    padding: 12,
-    shadowColor: "#000",
-    shadowOffset: { width: 2, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3, // Para Android
+    backgroundColor: "#F4F4F2",
+    marginBottom: 25,
+    borderWidth: 2,
+    borderColor: "#E0E0E0",
     marginHorizontal: 10,
   },
   artistImage: {
-    width: 60,
-    height: 60,
-    borderRadius: 8,
-    marginRight: 12,
+    width: 70,
+    height: 70,
     resizeMode: "cover",
+    marginRight: 16,
     backgroundColor: "#DDD",
   },
   artistTextContainer: {
@@ -426,7 +437,7 @@ const desktopStyles = StyleSheet.create({
     color: "#333",
   },
   artistLocation: {
-    fontSize: 14,
+    fontSize: 12,
     fontStyle: "italic",
     color: "#666",
   },
