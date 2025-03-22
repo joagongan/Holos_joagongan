@@ -87,9 +87,6 @@ public class CommisionService {
                 commision.setStatus(StatusCommision.IN_WAIT_LIST);
             }
         } else {
-            if (!commision.getStatus().equals(StatusCommision.REQUESTED)) {
-                throw new IllegalStateException("Solo se pueden rechazar comisiones en estado 'REQUESTED'.");
-            }
             commision.setStatus(StatusCommision.REJECTED);
         }
 
