@@ -31,7 +31,18 @@ public class ArtistService {
 	}
 
 	@Transactional(readOnly = true)
+	public Artist findArtistByUserId(Long userId) {
+		return artistRepository.findArtistByUser(userId)
+				.orElseThrow(() -> new ResourceNotFoundException("Artist", "userId", userId));
+	}
+
+	@Transactional(readOnly = true)
 	public Iterable<Artist> findAll() {
 		return artistRepository.findAll();
+	}
+
+	@Transactional
+	public void deleteArtist(Long artistId) {
+		artistRepository.deleteById(artistId);
 	}
 }

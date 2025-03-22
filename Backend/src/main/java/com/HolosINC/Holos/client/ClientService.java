@@ -31,7 +31,18 @@ public class ClientService {
 	}
 
 	@Transactional(readOnly = true)
+	public Client findClientByUserId(Long userId) {
+		return clientRepository.getClientByUser(userId)
+				.orElseThrow(() -> new ResourceNotFoundException("Client", "userId", userId));
+	}
+
+	@Transactional(readOnly = true)
 	public Iterable<Client> findAll() {
 		return clientRepository.findAll();
+	}
+
+	@Transactional
+	public void deleteClient(Long clientId) {
+		clientRepository.deleteById(clientId);
 	}
 }
