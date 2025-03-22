@@ -6,18 +6,25 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.HolosINC.Holos.exceptions.ResourceNotFoundException;
+import com.HolosINC.Holos.model.BaseUser;
+import com.HolosINC.Holos.model.BaseUserService;
+import com.HolosINC.Holos.work.Work;
+import com.HolosINC.Holos.work.WorkService;
 
 @Service
 public class ReportService {
     
-    private ReportRepository reportRepository;
-
-    private ReportTypeRepository reportTypeRepository;
+    private final ReportRepository reportRepository;
+    private final ReportTypeRepository reportTypeRepository;
+    private final WorkService worskService;
+    private final BaseUserService baseUserService;
 
     @Autowired
-    public ReportService(ReportRepository reportRepository, ReportTypeRepository reportTypeRepository) {
+    public ReportService(ReportRepository reportRepository, ReportTypeRepository reportTypeRepository, WorkService worskService, BaseUserService baseUserService) {
         this.reportRepository = reportRepository;
         this.reportTypeRepository = reportTypeRepository;
+        this.worskService = worskService;
+        this.baseUserService = baseUserService;
     }
 
     public List<ReportType> getReportTypes() {
@@ -28,7 +35,20 @@ public class ReportService {
         return reportRepository.findAll();
     }
 
-    public Report addReport(Report report) {
+    public Report createReport(ReportDTO reportDTO) {
+        Work work = worskService.getWorkById(reportDTO.getWorkId());
+        ReportType reportType = reportTypeRepository
+            .findByType(reportDTO.getReportType())
+            .orElseThrow(() -> new RuntimeException("Invalid report type"));
+
+        Report report = reportDTO.createReport(work, reportType);
+        BaseUser baseUser = baseUserService.findCurrentUser();
+
+        report.setStatus(ReportStatus.PENDING);
+        report.setMadeBy(baseUser);
+        report.setReportedUser(work.getArtist());
+        report.setWork(work);
+    
         return reportRepository.save(report);
     }
 

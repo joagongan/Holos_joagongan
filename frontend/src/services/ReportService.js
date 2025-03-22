@@ -14,9 +14,14 @@ export const getReportTypes = async () => {
 };
 
 
-export const postReportWork = async (report) => {
+export const postReportWork = async (report, token) => {
     try {
-        const response = await axios.post(API_URL, report);
+        const response = await axios.post(API_URL, report, {
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${token}`,
+          }
+        });
         return response.data;
       } catch (error) {
         console.error("Error al enviar el reporte:", error);

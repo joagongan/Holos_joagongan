@@ -15,13 +15,11 @@ import jakarta.persistence.Table;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
-import lombok.Builder;
 import lombok.Data;
 
-@Data
 @Entity
-@Builder
 @Table(name = "reports")
+@Data
 public class Report {
     
     @Id

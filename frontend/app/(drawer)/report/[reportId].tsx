@@ -122,7 +122,7 @@ export default function ReportScreen() {
 
     try {
       console.log(ReportDTO)
-      await postReportWork(ReportDTO);
+      await postReportWork(ReportDTO, loggedInUser.token);
       Alert.alert("Éxito", "Reporte enviado correctamente");
       setReportTitle(""); 
       setReport("");
