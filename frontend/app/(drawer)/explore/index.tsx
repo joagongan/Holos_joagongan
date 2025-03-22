@@ -82,7 +82,7 @@ export default function ThreeRowsScreen() {
     fetchWorks();
   }, []);
 
-  const firstFourArtists = useMemo(() => {
+  const firstThreeArtists = useMemo(() => {
     const uniqueArtistsMap = new Map<number, Artist>();
     works.forEach((work) => {
       if (work.artist && !uniqueArtistsMap.has(work.artist.id)) {
@@ -149,8 +149,17 @@ export default function ThreeRowsScreen() {
             <Text style={styles.bottomSectionHeaderText}>ARTISTAS</Text>
           </View>
           <View style={styles.artistsContainer}>
-            {firstFourArtists.map((artist) => (
-              <TouchableOpacity key={artist.id} style={styles.artistCard}>
+            {firstThreeArtists.map((artist) => (
+              <TouchableOpacity
+                key={artist.id}
+                style={styles.artistCard}
+                onPress={() =>
+                  router.push({
+                    pathname: "/profile/[artistId]",
+                    params: { artistId: String(artist.id) },
+                  })
+                }
+              >
                 <Image
                   source={{
                     uri: `${BASE_URL}${artist.baseUser?.imageProfile}`,
