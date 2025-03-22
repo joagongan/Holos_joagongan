@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, Button, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, TextInput, Button, StyleSheet, TouchableOpacity, Alert } from 'react-native';
 import { useNavigation, useRouter } from 'expo-router';
 import { API_URL } from "@/src/constants/api";
 import { DrawerNavigationProp } from '@react-navigation/drawer';
@@ -23,6 +23,9 @@ export default function SignupScreen() {
   const navigation = useNavigation<SignupScreenNavigationProp>();
 
   const handleSignup = async () => {
+    console.log("Botón Crear cuenta pulsado");
+    Alert.alert("Debug", "Se ha pulsado el botón de registro");
+    
     try {
       const requestBody = {
         username,
@@ -30,6 +33,7 @@ export default function SignupScreen() {
         firstName,
         authority: role,
       };
+      console.log("Enviando request a", `${API_URL}/auth/signup`, requestBody);
 
       const response = await fetch(`${API_URL}/auth/signup`, {
         method: 'POST',
@@ -37,14 +41,22 @@ export default function SignupScreen() {
         body: JSON.stringify(requestBody),
       });
 
+      console.log("Respuesta HTTP status:", response.status);
+
       if (!response.ok) {
         const errorData = await response.json();
         console.error('Error en el registro:', errorData);
+        Alert.alert("Error", JSON.stringify(errorData));
         return;
       }
+
+      console.log("Respuesta OK, navegando a Inicio");
+      Alert.alert("Registro exitoso", "Usuario registrado correctamente");
       navigation.navigate("Inicio");
+
     } catch (error) {
       console.error('Error en la petición:', error);
+      Alert.alert("Error", String(error));
     }
   };
 
@@ -133,15 +145,16 @@ export default function SignupScreen() {
             />
           </View>
 
-          {/* Añade tablero de comisiones */}
-          <View style={styles.inputGroup}>
-            <Text style={styles.label}>Añade tablero de comisiones</Text>
-            <TextInput
-              style={styles.input}
-              placeholder="URL/imagen"
-            />
-          </View>
-        </View>
+          {role === 'artist' && (
+    <View style={styles.inputGroup}>
+      <Text style={styles.label}>Añade tablero de comisiones</Text>
+      <TextInput
+        style={styles.input}
+        placeholder="URL/imagen"
+      />
+    </View>
+  )}
+</View>
 
         {/* Rol actual (client, artist) + Botones de rol */}
         <View style={styles.roleContainer}>
@@ -164,15 +177,6 @@ export default function SignupScreen() {
               onPress={() => setRole('artist')}
             >
               <Text style={styles.roleButtonText}>ARTIST</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={[
-                styles.roleButton,
-                role === 'admin' && styles.roleButtonActive
-              ]}
-              onPress={() => setRole('admin')}
-            >
-              <Text style={styles.roleButtonText}>ADMIN</Text>
             </TouchableOpacity>
           </View>
         </View>
