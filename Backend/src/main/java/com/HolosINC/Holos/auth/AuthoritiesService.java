@@ -30,11 +30,13 @@ public class AuthoritiesService {
 	private final ArtistService artistService;
 	private final ClientService clientService;
 	private final AuthoritiesRepository authoritiesRepository;
-	
+
+	@Autowired
 	private ImageHandler imageHandler;
 
 	@Autowired
-	public AuthoritiesService(PasswordEncoder encoder, BaseUserService baseUserService, ArtistService artistService, ClientService clientService, AuthoritiesRepository authoritiesRepository) {
+	public AuthoritiesService(PasswordEncoder encoder, BaseUserService baseUserService, ArtistService artistService,
+			ClientService clientService, AuthoritiesRepository authoritiesRepository) {
 		this.encoder = encoder;
 		this.baseUserService = baseUserService;
 		this.artistService = artistService;
@@ -53,9 +55,6 @@ public class AuthoritiesService {
 
 	@Transactional
 	public void createUser(@Valid SignupRequest request) {
-		if (baseUserService.findCurrentUser() == null) {
-			throw new AccessDeniedException("No puedes crear un usuario si estas logeado");
-		}
 
 		BaseUser user = new BaseUser();
 		user.setUsername(request.getUsername());
@@ -84,7 +83,7 @@ public class AuthoritiesService {
 			baseUserService.save(user);
 		}
 	}
-	
+
 	@Transactional
 	public void updateUser(@Valid SignupRequest request) {
 		BaseUser user = baseUserService.findCurrentUser();
