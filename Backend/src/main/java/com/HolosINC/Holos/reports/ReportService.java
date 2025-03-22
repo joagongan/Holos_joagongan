@@ -54,7 +54,7 @@ public class ReportService {
 
         report.setStatus(ReportStatus.PENDING);
         report.setMadeBy(baseUser);
-        report.setReportedUser(work.getArtist());
+        report.setReportedUser(work.getArtist().getBaseUser());
         report.setWork(work);
     
         return reportRepository.save(report);

@@ -1,6 +1,5 @@
 package com.HolosINC.Holos.reports;
 
-import com.HolosINC.Holos.artist.Artist;
 import com.HolosINC.Holos.model.BaseUser;
 import com.HolosINC.Holos.work.Work;
 
@@ -9,7 +8,6 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToOne;
 import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
 import jakarta.validation.Valid;
@@ -38,15 +36,15 @@ public class Report {
     @NotNull
     private ReportStatus status;
 
-    @OneToOne(optional = false)
+    @ManyToOne(optional = false)
     @Valid
     @NotNull
     private BaseUser madeBy;
 
-    @OneToOne(optional = true)
+    @ManyToOne(optional = true)
     @Valid
     @NotNull
-    private Artist reportedUser;
+    private BaseUser reportedUser;
 
     @ManyToOne(optional = true)
     @Valid
