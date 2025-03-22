@@ -5,11 +5,13 @@ import { Formik } from "formik";
 import { AuthenticationContext } from "@/src/contexts/AuthContext";
 import { showMessage } from 'react-native-flash-message';
 import { useRouter } from 'expo-router';
+import { useLocalSearchParams } from "expo-router";
 
 export default function LoginScreen ({ navigation }:any) {
     const router = useRouter();
     const { signIn } = useContext(AuthenticationContext)
     const [backendErrors, setBackendErrors] = useState([])
+     const { reportId } = useLocalSearchParams();
 
     const loginValidationSchema = yup.object().shape({
         username: yup
@@ -29,17 +31,30 @@ export default function LoginScreen ({ navigation }:any) {
 
     const handleLogin = (data:any) => {
         setBackendErrors([])
-        signIn(data,
+          signIn(data,
+
             (loginUser:any) => {
-                showMessage({
-                    message: `Welcome back ${loginUser.username}`,
-                    type: 'success'
-                })
-                router.replace('/')
+                if (!reportId) {
+                    showMessage({
+                      message: `Welcome back ${loginUser.username}`,
+                      type: 'success'
+                    })
+                    
+                    router.replace('/')
+                    console.log("asdfasdf")
+                  } else {
+                    router.push({
+                        pathname: "/report/[reportId]",
+                        params: { reportId: String(reportId) },
+                      });
+                  }
+               
             },
             (errors:any) => {
                 setBackendErrors(errors)
             })
+        
+
     };
 
     return (
