@@ -7,16 +7,17 @@ import org.springframework.data.util.Pair;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 import com.HolosINC.Holos.Kanban.DTOs.StatusKanbanDTO;
 import com.HolosINC.Holos.Kanban.DTOs.StatusKanbanWithCommisionsDTO;
 import com.HolosINC.Holos.commision.Commision;
 import com.HolosINC.Holos.exceptions.ResourceNotFoundException;
 
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
 @RestController
 @RequestMapping("/api/v1/status-kanban-order")
+@SecurityRequirement(name = "bearerAuth")
 @Tag(name = "Status Kanban", description = "API for controlling the usage of the kanban")
 public class StatusKanbanOrderController {
 
