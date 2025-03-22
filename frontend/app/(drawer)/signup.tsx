@@ -1,13 +1,16 @@
-import React, { useState } from 'react';
-import { View, Text, TextInput, Button, StyleSheet, TouchableOpacity, Alert } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { 
+  View, Text, TextInput, TouchableOpacity, 
+  Alert, StyleSheet, Image 
+} from 'react-native';
 import { useNavigation, useRouter } from 'expo-router';
 import { API_URL } from "@/src/constants/api";
 import { DrawerNavigationProp } from '@react-navigation/drawer';
 import { RootDrawerParamList } from '../_layout';
 import { RouteProp } from '@react-navigation/native';
 
-type SignupScreenNavigationProp = DrawerNavigationProp<RootDrawerParamList, "Singup">;
-type SignupScreenRouteProp = RouteProp<RootDrawerParamList, "Singup">;
+type SignupScreenNavigationProp = DrawerNavigationProp<RootDrawerParamList, "Signup">;
+type SignupScreenRouteProp = RouteProp<RootDrawerParamList, "Signup">;
 
 type SignupScreenProps = {
   navigation: SignupScreenNavigationProp;
@@ -15,24 +18,61 @@ type SignupScreenProps = {
 };
 
 export default function SignupScreen() {
+  // Estados compartidos
   const [username, setUsername] = useState('');
-  const [firstName, setFirstName] = useState('');
+  const [firstName, setFirstName] = useState(''); 
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [role, setRole] = useState('client'); 
-  const router = useRouter(); 
+  const [confirmPassword, setConfirmPassword] = useState(''); // Estado para confirmar contraseña
+  const [passwordError, setPasswordError] = useState('');     // Estado para mensaje de error
+  const [imageProfile, setImageProfile] = useState('');
+  const [role, setRole] = useState('client');
+
+  // Estados específicos para artistas
+  const [numSlotsOfWork, setNumSlotsOfWork] = useState('');
+  const [tableCommisionsPrice, setTableCommisionsPrice] = useState('');
+
+  const router = useRouter();
   const navigation = useNavigation<SignupScreenNavigationProp>();
+
+  // Validación en tiempo real: cuando cambie password o confirmPassword
+  useEffect(() => {
+    if (confirmPassword.length > 0 && password !== confirmPassword) {
+      setPasswordError('Las contraseñas no coinciden');
+    } else {
+      setPasswordError('');
+    }
+  }, [password, confirmPassword]);
 
   const handleSignup = async () => {
     console.log("Botón Crear cuenta pulsado");
-    Alert.alert("Debug", "Se ha pulsado el botón de registro");
-    
+
+    // Verifica si hay error de contraseña
+    if (passwordError) {
+      Alert.alert("Error", "Por favor, corrige el error en la confirmación de la contraseña");
+      return;
+    }
+
+    if (!password || !confirmPassword) {
+      Alert.alert("Error", "Ingresa la contraseña y su confirmación");
+      return;
+    }
+
     try {
-      const requestBody = {
-        username,
-        password,
+      const requestBody: any = {
         firstName,
+        username,
+        email,
+        password,
+        imageProfile,
         authority: role,
       };
+
+      if (role === 'artist') {
+        requestBody.numSlotsOfWork = parseInt(numSlotsOfWork, 10);
+        requestBody.tableCommisionsPrice = tableCommisionsPrice;
+      }
+
       console.log("Enviando request a", `${API_URL}/auth/signup`, requestBody);
 
       const response = await fetch(`${API_URL}/auth/signup`, {
@@ -50,9 +90,9 @@ export default function SignupScreen() {
         return;
       }
 
-      console.log("Respuesta OK, navegando a Inicio");
+      console.log("Registro exitoso, navegando a Inicio");
       Alert.alert("Registro exitoso", "Usuario registrado correctamente");
-      navigation.navigate("Inicio");
+      router.push(`/(drawer)/explore`);
 
     } catch (error) {
       console.error('Error en la petición:', error);
@@ -62,11 +102,15 @@ export default function SignupScreen() {
 
   return (
     <View style={styles.screenBackground}>
+      <Image
+        source={require('../(drawer)/logo/logo.png')} // Ajusta la ruta según tu estructura
+        style={styles.logo}
+      />
+
       <Text style={styles.pageTitle}>Nuevo {role}</Text>
-      
-      {/* "Card" contenedor con borde morado */}
+
       <View style={styles.cardContainer}>
-        
+
         <View style={styles.formRow}>
           {/* Nombre */}
           <View style={styles.inputGroup}>
@@ -78,7 +122,6 @@ export default function SignupScreen() {
               onChangeText={setFirstName}
             />
           </View>
-
           {/* Apellidos */}
           <View style={styles.inputGroup}>
             <Text style={styles.label}>Apellidos</Text>
@@ -96,9 +139,11 @@ export default function SignupScreen() {
             <TextInput
               style={styles.input}
               placeholder="correo@ejemplo.com"
+              value={email}
+              onChangeText={setEmail}
+              keyboardType="email-address"
             />
           </View>
-
           {/* Nombre de usuario */}
           <View style={styles.inputGroup}>
             <Text style={styles.label}>Nombre de usuario</Text>
@@ -123,7 +168,6 @@ export default function SignupScreen() {
               onChangeText={setPassword}
             />
           </View>
-
           {/* Confirmar contraseña */}
           <View style={styles.inputGroup}>
             <Text style={styles.label}>Confirma contraseña</Text>
@@ -131,32 +175,55 @@ export default function SignupScreen() {
               style={styles.input}
               placeholder="********"
               secureTextEntry
+              value={confirmPassword}
+              onChangeText={setConfirmPassword}
             />
+            {passwordError ? (
+              <Text style={styles.errorText}>{passwordError}</Text>
+            ) : null}
           </View>
         </View>
 
         <View style={styles.formRow}>
           {/* Foto de perfil */}
           <View style={styles.inputGroup}>
-            <Text style={styles.label}>Foto de perfil</Text>
+            <Text style={styles.label}>Foto de perfil (URL)</Text>
             <TextInput
               style={styles.input}
-              placeholder="URL/imagen"
+              placeholder="URL de la imagen"
+              value={imageProfile}
+              onChangeText={setImageProfile}
             />
           </View>
+        </View>
 
-          {role === 'artist' && (
-    <View style={styles.inputGroup}>
-      <Text style={styles.label}>Añade tablero de comisiones</Text>
-      <TextInput
-        style={styles.input}
-        placeholder="URL/imagen"
-      />
-    </View>
-  )}
-</View>
+        {role === 'artist' && (
+          <>
+            <View style={styles.formRow}>
+              {/* Slots de trabajo */}
+              <View style={styles.inputGroup}>
+                <Text style={styles.label}>Slots de trabajo (1-8)</Text>
+                <TextInput
+                  style={styles.input}
+                  placeholder="Número entre 1 y 8"
+                  value={numSlotsOfWork}
+                  onChangeText={setNumSlotsOfWork}
+                  keyboardType="numeric"
+                />
+              </View>
+              {/* Precio del tablero */}
+              <View style={styles.inputGroup}>
+                <Text style={styles.label}>Precio del tablero de comisiones</Text>
+                <TextInput
+                  style={styles.input}
+                  value={tableCommisionsPrice}
+                  onChangeText={setTableCommisionsPrice}
+                />
+              </View>
+            </View>
+          </>
+        )}
 
-        {/* Rol actual (client, artist) + Botones de rol */}
         <View style={styles.roleContainer}>
           <Text style={styles.label}>Rol actual: {role}</Text>
           <View style={styles.roleButtonsRow}>
@@ -181,7 +248,6 @@ export default function SignupScreen() {
           </View>
         </View>
 
-        {/* Botón crear cuenta */}
         <TouchableOpacity style={styles.createButton} onPress={handleSignup}>
           <Text style={styles.createButtonText}>Crear cuenta</Text>
         </TouchableOpacity>
@@ -194,24 +260,30 @@ export default function SignupScreen() {
 const styles = StyleSheet.create({
   screenBackground: {
     flex: 1,
-    backgroundColor: '#f5f5f5',
+    backgroundColor: '#FAE8F0',
     paddingHorizontal: 16,
     paddingTop: 40,
+  },
+  logo: {
+    width: 200,
+    height: 200,
+    resizeMode: 'contain',
+    alignSelf: 'center',
+    marginBottom: 16,
   },
   pageTitle: {
     fontSize: 24,
     fontWeight: '600',
     marginBottom: 20,
     color: '#403568',
-    alignSelf: 'flex-start',
+    alignSelf: 'center',
   },
   cardContainer: {
-    backgroundColor: '#fff',
+    backgroundColor: '#FFFFFF',
     borderWidth: 2,
-    borderColor: '#403568', // Borde morado
+    borderColor: '#C68FA2',
     borderRadius: 10,
     padding: 16,
-    // Sombra suave (iOS/Android)
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
@@ -231,16 +303,21 @@ const styles = StyleSheet.create({
     fontWeight: '500',
     fontSize: 14,
     marginBottom: 4,
-    color: '#333',
+    color: '#403568',
   },
   input: {
     borderWidth: 1,
-    borderColor: '#ccc',
+    borderColor: '#E9C2CF',
     paddingHorizontal: 8,
     paddingVertical: 6,
     borderRadius: 4,
     fontSize: 14,
-    backgroundColor: '#fafafa',
+    backgroundColor: '#FFFFFF',
+  },
+  errorText: {
+    color: 'red',
+    fontSize: 12,
+    marginTop: 4,
   },
   roleContainer: {
     marginTop: 8,
@@ -251,28 +328,28 @@ const styles = StyleSheet.create({
     marginTop: 8,
   },
   roleButton: {
-    backgroundColor: '#e0e0e0',
+    backgroundColor: '#E9C2CF',
     paddingHorizontal: 12,
     paddingVertical: 8,
     borderRadius: 6,
     marginRight: 8,
   },
   roleButtonActive: {
-    backgroundColor: '#403568',
+    backgroundColor: '#C68FA2',
   },
   roleButtonText: {
-    color: '#fff',
+    color: '#FFFFFF',
     fontWeight: 'bold',
   },
   createButton: {
-    backgroundColor: '#403568',
+    backgroundColor: '#C68FA2',
     borderRadius: 8,
     paddingVertical: 12,
     marginTop: 12,
     alignItems: 'center',
   },
   createButtonText: {
-    color: '#fff',
+    color: '#FFFFFF',
     fontSize: 16,
     fontWeight: '600',
   },

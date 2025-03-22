@@ -9,7 +9,7 @@ import LoadingScreen from "@/src/components/LoadingScreen";
 export type RootDrawerParamList = {
   Inicio: undefined;
   Explorar: undefined;
-  Singup: undefined; 
+  Signup: undefined; 
   WorkDetail: { workId: number };
   Payment: { workId: number; price: number };
   ArtistDetail: { artistId: number };
