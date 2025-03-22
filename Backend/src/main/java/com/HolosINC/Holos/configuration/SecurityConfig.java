@@ -36,7 +36,7 @@ public class SecurityConfig {
         .headers((headers) -> headers.frameOptions((frameOptions) -> frameOptions.disable()))
         .authorizeHttpRequests(auth -> auth
             .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
-            .requestMatchers("**/admin/**").hasRole("ADMIN")
+            .requestMatchers("/api/v1/admin/**").hasRole("ADMIN")
             .anyRequest().permitAll()
         )
         .addFilterBefore(authTokenFilter, org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter.class); // 🔥 Register Filter
