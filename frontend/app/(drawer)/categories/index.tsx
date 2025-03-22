@@ -17,6 +17,7 @@ const { width } = Dimensions.get("window");
 const isBigScreen = width >= 1024;
 const MOBILE_PROFILE_ICON_SIZE = 40;
 const MOBILE_CARD_PADDING = 12;
+const BASE_URL = "http://localhost:8080";
 
 export default function AdminCategories() {
   const { loggedInUser } = useContext(AuthenticationContext);
@@ -68,42 +69,51 @@ export default function AdminCategories() {
         </View>
   
         <ScrollView style={styles.content}>
-          <Text style={styles.sectionTitle}>LISTA DE CATEGORÍAS</Text>
-          {loading ? (
-            <ActivityIndicator size="large" color="#183771" />
-          ) : categories.length === 0 ? (
-            <Text style={styles.noCategoriesText}>No hay categorías disponibles.</Text>
-          ) : (
-            categories.map((cat) => (
-              <View key={cat.id} style={styles.card}>
-                <Image
-                  source={{ uri: cat.image || "https://via.placeholder.com/60" }}
-                  style={styles.categoryImage}
-                />
-                <View style={styles.textContainer}>
-                  <Text style={styles.text}>{cat.name}</Text>
-                  <Text style={styles.text}>{cat.description}</Text>
-                </View>
-                <View style={styles.actions}>
-                  <TouchableOpacity
-                    style={styles.editButton}
-                    onPress={() => {
-                      setEditingCategory(cat);
-                      setNewCategory({
-                        name: cat.name,
-                        description: cat.description,
-                        image: cat.image,
-                      });
-                      setModalVisible(true);
-                    }}
-                  >
-                    <Ionicons name="pencil" size={24} color="#183771" />
-                  </TouchableOpacity>
-                </View>
-              </View>
-            ))
-          )}
-        </ScrollView>
+  <Text style={styles.sectionTitle}>LISTA DE CATEGORÍAS</Text>
+  {loading ? (
+    <ActivityIndicator size="large" color="#183771" />
+  ) : categories.length === 0 ? (
+    <Text style={styles.noCategoriesText}>No hay categorías disponibles.</Text>
+  ) : (
+    <View style={styles.categoriesContainer}>
+      {categories.map((cat) => (
+        <View key={cat.id} style={styles.card}>
+          <View style={styles.categoryImageContainer}>
+            <Image
+              source={
+                cat.image.startsWith("http")
+                  ? { uri: cat.image }
+                  : { uri: `${BASE_URL}${cat.image}` }
+              }
+              style={styles.categoryImage}
+            />
+          </View>
+          <View style={styles.textContainer}>
+            <Text style={styles.text}>{cat.name}</Text>
+            <Text style={styles.text}>{cat.description}</Text>
+          </View>
+          <View style={styles.actions}>
+            <TouchableOpacity
+              style={styles.editButton}
+              onPress={() => {
+                setEditingCategory(cat);
+                setNewCategory({
+                  name: cat.name,
+                  description: cat.description,
+                  image: cat.image,
+                });
+                setModalVisible(true);
+              }}
+            >
+              <Ionicons name="pencil" size={24} color="#183771" />
+            </TouchableOpacity>
+          </View>
+        </View>
+      ))}
+    </View>
+  )}
+</ScrollView>
+
   
         <TouchableOpacity
           style={styles.addButton}
@@ -159,6 +169,17 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
+  },categoriesContainer: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    justifyContent: "center",
+    gap: 16,
+  },
+  categoryImageContainer: {
+    width: 80,
+    height: 80,
+    borderRadius: 10,
+    overflow: "hidden",
   },
   container: {
     flex: 1,
