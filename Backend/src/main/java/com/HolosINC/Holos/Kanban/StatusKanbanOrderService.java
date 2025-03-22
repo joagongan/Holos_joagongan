@@ -2,6 +2,7 @@ package com.HolosINC.Holos.Kanban;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.util.Pair;
@@ -10,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.HolosINC.Holos.Kanban.DTOs.StatusKanbanDTO;
 import com.HolosINC.Holos.Kanban.DTOs.StatusKanbanWithCommisionsDTO;
+import com.HolosINC.Holos.artist.Artist;
 import com.HolosINC.Holos.artist.ArtistService;
 import com.HolosINC.Holos.commision.Commision;
 import com.HolosINC.Holos.commision.CommisionRepository;
@@ -74,33 +76,33 @@ public class StatusKanbanOrderService {
     }
 
     @Transactional
-    public StatusKanbanOrder updateOrder(int id, Integer order) {
-        StatusKanbanOrder sk = statusKanbanOrderRepository.findById(id)
+    public StatusKanbanOrder updateOrder(Long id, Integer order) {
+        StatusKanbanOrder statusKanban = statusKanbanOrderRepository.findById(id.intValue())
                 .orElseThrow(() -> new ResourceNotFoundException("StatusKanbanOrder", "id", id));
-        if(sk.getOrder()==order){
-            return statusKanbanOrderRepository.save(sk);
-        }else{
-            List<StatusKanbanOrder> list = statusKanbanOrderRepository.findByArtist(sk.getArtist().getId().intValue());
-            //Recorro los statuskanban order de cada artista para recolocarlos
-            for (StatusKanbanOrder sk2 : list) {
-                    if(sk.getOrder()>order){
-                        //Si el orden es mayor que el nuevo orden, tengo que bajar el resto sumándoles 1, hasta que lleguen a la posición del orden antiguo
-                        if(sk2.getOrder()>=order && sk2.getOrder()<sk.getOrder()){
-                            sk2.setOrder(sk2.getOrder()+1);
-                            statusKanbanOrderRepository.save(sk2);
-                        }
-                    }else{
-                        //Si el orden es menor que el nuevo orden, tengo que subir el resto restándoles 1, hasta que lleguen a la posición del orden antiguo
-                        //No pueden ser iguales porque fuera he descartado ese caso
-                        if(sk2.getOrder()<=order && sk2.getOrder()>sk.getOrder()){
-                            sk2.setOrder(sk2.getOrder()-1);
-                            statusKanbanOrderRepository.save(sk2);
-                        }
-                    }
-                    
-                }
-                sk.setOrder(order);
-        }return statusKanbanOrderRepository.save(sk);
+        
+        Artist artist = artistService.findArtist(userService.findCurrentUser().getId());
+        List<StatusKanbanOrder> kanban = statusKanbanOrderRepository.findByArtistIdOrderByOrderAsc(artist.getId());
+
+        if (order <= 0 || kanban.size() < order)
+            throw new IllegalArgumentException("El orden proporcionado no es válido. Debe estar entre 1 y " + kanban.size());
+
+        kanban.remove(statusKanban);
+        kanban.add(order - 1, statusKanban);
+
+        // Añadir un order negativo para evitar problemas de unicidad
+        for(int i=1; i<=kanban.size(); i++) {
+            kanban.get(i - 1).setOrder(-i);
+        }
+        statusKanbanOrderRepository.saveAll(kanban);
+        statusKanbanOrderRepository.flush();
+
+        // Establecer el orden bien
+        for(int i=1; i<=kanban.size(); i++) {
+            kanban.get(i - 1).setOrder(i);
+        }
+        statusKanbanOrderRepository.saveAll(kanban);
+
+        return kanban.get(order-1);
     }
 
     @Transactional(readOnly = true)
@@ -114,30 +116,25 @@ public class StatusKanbanOrderService {
 		return statusKanbanOrderRepository.findAll();
 	}
 
-    @Transactional(readOnly = true)
-	public List<StatusKanbanOrder> findAllStatusKanbanOrderByArtist(Integer artistId) {
-		return statusKanbanOrderRepository.findByArtist(artistId);
-	}
-
     @Transactional
-public void deleteStatusKanbanOrder(Integer id) {
-    StatusKanbanOrder statusToDelete = statusKanbanOrderRepository.findById(id)
-            .orElseThrow(() -> new ResourceNotFoundException("StatusKanbanOrder", "id", id));
+    public void deleteStatusKanbanOrder(Integer id) {
+        StatusKanbanOrder statusToDelete = statusKanbanOrderRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("StatusKanbanOrder", "id", id));
 
-    Integer artistId = statusToDelete.getArtist().getId().intValue();
-    Integer orderDeleted = statusToDelete.getOrder();
+        Integer artistId = statusToDelete.getArtist().getId().intValue();
+        Integer orderDeleted = statusToDelete.getOrder();
 
-    statusKanbanOrderRepository.deleteById(id);
+        statusKanbanOrderRepository.deleteById(id);
 
-    List<StatusKanbanOrder> statusList = statusKanbanOrderRepository.findByArtist(artistId);
+        List<StatusKanbanOrder> statusList = statusKanbanOrderRepository.findByArtist(artistId);
 
-    for (StatusKanbanOrder status : statusList) {
-        if (status.getOrder() > orderDeleted) {
-            status.setOrder(status.getOrder() - 1);
-            statusKanbanOrderRepository.save(status);
+        for (StatusKanbanOrder status : statusList) {
+            if (status.getOrder() > orderDeleted) {
+                status.setOrder(status.getOrder() - 1);
+                statusKanbanOrderRepository.save(status);
+            }
         }
     }
-}
 
     @Transactional
     public StatusKanbanOrder updateOrder(StatusKanbanOrder statusKanbanOrder) {

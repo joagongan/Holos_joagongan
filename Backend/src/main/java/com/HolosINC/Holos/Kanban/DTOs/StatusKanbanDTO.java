@@ -8,6 +8,8 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public class StatusKanbanDTO {
+
+    private Long id;
     
     private String name;
 

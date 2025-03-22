@@ -26,4 +26,6 @@ public class StatusKanbanWithCommisionsDTO {
     private EnumPaymentArrangement paymentArrangement;
 
     private String statusKanbanName;
+
+    private String clientUsername;
 }

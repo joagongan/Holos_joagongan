@@ -52,9 +52,7 @@ public class StatusKanbanOrderController {
     }
 
     @PutMapping("/{id}/updateKanbanOrder")
-    public ResponseEntity<StatusKanbanOrder> updateOrder(@RequestBody StatusKanbanOrder sk) {
-        Integer id = sk.getId().intValue();
-        Integer order = sk.getOrder();
+    public ResponseEntity<StatusKanbanOrder> updateOrder(@PathVariable Long id, @RequestBody Integer order) {
         StatusKanbanOrder sk2 = statusKanbanOrderService.updateOrder(id, order);
         return new ResponseEntity<>(sk2, HttpStatus.OK);
     }
@@ -62,11 +60,6 @@ public class StatusKanbanOrderController {
     @DeleteMapping("/{id}")
     public void deleteStatusKanbanOrder(@PathVariable Integer id) {
         statusKanbanOrderService.deleteStatusKanbanOrder(id);
-    }
-
-    @GetMapping("/artist/{artistId}")
-    public List<StatusKanbanOrder> getStatusKanbanOrderByArtist(@PathVariable Integer artistId) {
-        return statusKanbanOrderService.findAllStatusKanbanOrderByArtist(artistId);
     }
 
     @GetMapping
@@ -106,7 +99,13 @@ public class StatusKanbanOrderController {
     }
 
     @GetMapping("/{id}")
-    public StatusKanbanOrder getStatusKanbanOrder(@PathVariable Integer id) {
-        return statusKanbanOrderService.findStatusKanbanOrder(id);
+    public ResponseEntity<?> getStatusKanbanOrder(@PathVariable Integer id) {
+        try {
+            return ResponseEntity.ok().body(statusKanbanOrderService.findStatusKanbanOrder(id));
+        } catch (ResourceNotFoundException e) {
+            return ResponseEntity.badRequest().body(e);
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().body("Something weird happend. See the following:\n" + e.getMessage());
+        }
     }
 }
