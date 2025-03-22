@@ -1,10 +1,12 @@
+
 import React, { useEffect, useState  } from "react";
-import { Platform } from "react-native";
 import { View, Text, ActivityIndicator, Image, ScrollView, Dimensions, TouchableOpacity, TouchableWithoutFeedback } from "react-native";
-import { getWorksDoneById } from "@/src/services/WorksDoneService";
+import { getWorksDoneById } from "@/src/services/WorksDoneApi";
 import staticStyles, { createDynamicStyles } from "@/src/styles/WorkDetail.styles";
 import { useNavigation, useLocalSearchParams, useRouter } from "expo-router";
 import ReportDropdown from "@/src/components/report/ReportDropDown";
+import { API_URL } from "@/src/constants/api";
+
 
 export interface Artist {
   id: number;
@@ -27,8 +29,6 @@ export interface Work {
 
 export default function WorkDetailScreen() {
 
-  const BASE_URL = "http://localhost:8080";
-
   const router = useRouter();
   const navigation = useNavigation();
   const { workId } = useLocalSearchParams();
@@ -47,7 +47,7 @@ export default function WorkDetailScreen() {
   useEffect(() => {
     const fetchWork = async () => {
       try {
-        const data = (await getWorksDoneById(workId)) as Work;
+        const data = (await getWorksDoneById(Number(workId))) as Work;
         setWork(data);
       } catch (error) {
         console.error("Error fetching work details:", error);
@@ -100,7 +100,7 @@ export default function WorkDetailScreen() {
           {work.image ? (
 
             <Image
-              source={{ uri: `${BASE_URL}${work.image}` }}
+              source={{ uri: `${API_URL}${work.image}` }}
               style={dynamicStyles.image}
             />       
           ) : (

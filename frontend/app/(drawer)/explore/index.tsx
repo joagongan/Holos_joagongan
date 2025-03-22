@@ -5,10 +5,12 @@ import { useNavigation } from "@react-navigation/native";
 import styles from "@/src/styles/ExploreScreen.styles";
 import { RootDrawerParamList } from "@/app/_layout";
 import { DrawerNavigationProp } from "@react-navigation/drawer";
-import { getAllCategories } from "@/src/services/categoryService";
-import { getAllWorksDone } from "@/src/services/WorksDoneService";
+import { getAllCategories } from "@/src/services/categoryApi";
+import { getAllWorksDone } from "@/src/services/WorksDoneApi";
 import { useRouter } from "expo-router";
 import ReportDropdown from "@/src/components/report/ReportDropDown";
+import { API_URL } from "@/src/constants/api";
+import { Category } from "@/src/constants/CommissionTypes";
 
 export interface Artist {
   id: number;
@@ -29,19 +31,10 @@ export interface Work {
   image: string;
 }
 
-export interface Category {
-  id: number;
-  name: string;
-  description: string;
-  image: string;
-}
-
 export default function ExploreScreen() {
   type ExploreNavProp = DrawerNavigationProp<RootDrawerParamList, "Explorar">;
   const navigation = useNavigation<ExploreNavProp>();
   const router = useRouter();
-
-  const BASE_URL = "http://localhost:8080";
 
   const [searchText, setSearchText] = useState("");
   const [showAllCategories, setShowAllCategories] = useState(false);
@@ -157,7 +150,7 @@ export default function ExploreScreen() {
               >
                 <View style={styles.categoryImageContainerBig}>
                   <Image
-                    source={{ uri: `${BASE_URL}${category.image}` }}
+                    source={{ uri: `${API_URL}${category.image}` }} // TODO Get actual pic
                     style={styles.categoryImage}
                   />
                 </View>
@@ -192,7 +185,7 @@ export default function ExploreScreen() {
               <View key={category.id} style={styles.categoryItemMobile}>
                 <View style={styles.categoryImageContainerMobile}>
                   <Image
-                    source={{ uri: `${BASE_URL}${category.image}` }}
+                    source={{ uri: `${API_URL}${category.image}` }}
                     style={styles.categoryImage}
                   />
                 </View>
@@ -249,7 +242,7 @@ export default function ExploreScreen() {
                   <View style={styles.artistImageContainerBig}>
               
                     <Image
-                      source={{ uri: `${BASE_URL}${work.image}` }}
+                      source={{ uri: `${API_URL}${work.image}` }}
                       style={styles.artistImage}
                     />
                   </View>
@@ -294,7 +287,7 @@ export default function ExploreScreen() {
                   <View style={styles.artistImageContainerMobile}>
 
                     <Image
-                      source={{ uri: `${BASE_URL}${work.image}` }}
+                      source={{ uri: `${API_URL}${work.image}` }}
                       style={styles.artistImage}
                     />
                   </View>

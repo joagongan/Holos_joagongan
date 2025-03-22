@@ -3,11 +3,12 @@ import { View, Text, Image, ScrollView, TouchableOpacity, ActivityIndicator, Tou
 import { useNavigation } from "@react-navigation/native";
 import { DrawerNavigationProp } from "@react-navigation/drawer";
 import { RootDrawerParamList } from "@/app/_layout";
-import { getArtistById } from "@/src/services/ArtistService";
-import { getWorksDoneByArtist } from "@/src/services/WorksDoneService";
+import { getArtistById } from "@/src/services/artistApi";
+import { getWorksDoneByArtist } from "@/src/services/WorksDoneApi";
 import styles from "@/src/styles/ArtistDetail.styles";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import ReportDropdown from "@/src/components/report/ReportDropDown";
+import { API_URL } from "@/src/constants/api";
 
 interface Artwork {
   id: number;
@@ -32,7 +33,6 @@ interface ArtistDetailScreenProps {
 }
 
 export default function ArtistDetailScreen() {
-  const BASE_URL = "http://localhost:8080";
   const router = useRouter();
   const navigation = useNavigation();
   const { artistId } = useLocalSearchParams<{ artistId: string }>();
@@ -46,9 +46,9 @@ export default function ArtistDetailScreen() {
   useEffect(() => {
     const fetchData = async () => {
       console.log(artistId);
-      const artistData: Artist = await getArtistById(artistId);
+      const artistData: Artist = await getArtistById(Number(artistId));
       setArtist(artistData);
-      const worksData: Artwork[] = await getWorksDoneByArtist(artistId);
+      const worksData: Artwork[] = await getWorksDoneByArtist(Number(artistId));
       setWorks(worksData);
       setLoading(false);
     };
@@ -76,7 +76,7 @@ export default function ArtistDetailScreen() {
       {/* Información del artista */}
       <View style={styles.header}>
         <Image
-          source={{ uri: `${BASE_URL}${artist?.image}` }}
+          source={{ uri: `${API_URL}${artist?.image}` }} // TODO Conseguir de imagenes estáticas
           style={styles.artistImage}
         />
         <View style={styles.artistDetails}>
@@ -113,9 +113,8 @@ export default function ArtistDetailScreen() {
             <>
 
             <View key={work.id} style={styles.artworkItem}>
-              
-              <Image source={{ uri: `${BASE_URL}${work.image}` }} style={styles.artworkImage} />
 
+              <Image source={{ uri: `https://holos-s2.onrender.com/${work.image}` }} style={styles.artworkImage} />
               <Text style={styles.artworkTitle}>{work.name}</Text>
               <View  style={ styles.reportDropDownContainer}>
               <ReportDropdown workId={work.id} menuVisibleId={menuVisibleId} setMenuVisibleId={setMenuVisibleId} isBigScreen={false} />

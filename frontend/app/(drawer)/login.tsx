@@ -10,8 +10,8 @@ import { useLocalSearchParams } from "expo-router";
 export default function LoginScreen ({ navigation }:any) {
     const router = useRouter();
     const { signIn } = useContext(AuthenticationContext)
-    const [backendErrors, setBackendErrors] = useState([])
-     const { reportId } = useLocalSearchParams();
+    const { reportId } = useLocalSearchParams();
+    const [backendErrors, setBackendErrors] = useState<string[]>([]);
 
     const loginValidationSchema = yup.object().shape({
         username: yup
@@ -29,11 +29,14 @@ export default function LoginScreen ({ navigation }:any) {
             // .min(8, ({ min }) => `La contraseña debe tener al menos ${min} caracteres`)
     });
 
-    const handleLogin = (data:any) => {
-        setBackendErrors([])
-          signIn(data,
 
-            (loginUser:any) => {
+    const handleLogin = (data: any) => {
+        
+        setBackendErrors([]); 
+    
+        signIn(
+            data,
+            (loginUser: any) => {
                 if (!reportId) {
                     showMessage({
                       message: `Welcome back ${loginUser.username}`,
@@ -48,47 +51,67 @@ export default function LoginScreen ({ navigation }:any) {
                         params: { reportId: String(reportId) },
                       });
                   }
-               
             },
-            (errors:any) => {
-                setBackendErrors(errors)
-            })
-        
-
+            (errors: any) => {
+                const errorMessage = errors.response?.data || "Credenciales incorrectas, intenta de nuevo.";
+    
+                setBackendErrors([errorMessage]);
+    
+                showMessage({
+                    message: "Error al iniciar sesión",
+                    description: errorMessage,
+                    type: "danger",
+                });
+            }
+        );
     };
+
 
     return (
         <Formik
             validationSchema={loginValidationSchema}
-            initialValues={{username: '', password: ''}}
-            onSubmit={handleLogin}>
-                {({ handleChange, handleBlur, handleSubmit, values, errors, touched, isValid, }) => (
-                    <View style={styles.container}>
-                        <Text style={styles.title}>Iniciar Sesión</Text>
-                        <TextInput
-                            onChangeText={handleChange('username')}
-                            onBlur={handleBlur('username')}
-                            value={values.username}
-                            placeholder="Nombre de usuario"
-                            style={styles.input}
-                        />
-                        {errors.username && touched.username &&
-                            <Text style={styles.errorInput}>{errors.username}</Text>}
-                        <TextInput
-                            onChangeText={handleChange('password')}
-                            onBlur={handleBlur('password')}
-                            value={values.password}
-                            placeholder="Contraseña"
-                            style={styles.input}
-                            secureTextEntry
-                        />
-                        {errors.password && touched.password &&
-                            <Text style={styles.errorInput}>{errors.password}</Text>}
-                        <Button onPress={() => handleSubmit()} title='Entrar' disabled={!isValid}/>
-                    </View>
-                )}
+            initialValues={{ username: '', password: '' }}
+            onSubmit={handleLogin}
+        >
+            {({ handleChange, handleBlur, handleSubmit, values, errors, touched, isValid }) => (
+                <View style={styles.container}>
+                    <Text style={styles.title}>Iniciar Sesión</Text>
+    
+                    <TextInput
+                        onChangeText={handleChange('username')}
+                        onBlur={handleBlur('username')}
+                        value={values.username}
+                        placeholder="Nombre de usuario"
+                        style={styles.input}
+                    />
+                    {errors.username && touched.username && (
+                        <Text style={styles.errorInput}>{errors.username}</Text>
+                    )}
+    
+                    <TextInput
+                        onChangeText={handleChange('password')}
+                        onBlur={handleBlur('password')}
+                        value={values.password}
+                        placeholder="Contraseña"
+                        style={styles.input}
+                        secureTextEntry
+                    />
+                    {errors.password && touched.password && (
+                        <Text style={styles.errorInput}>{errors.password}</Text>
+                    )}
+    
+                    {backendErrors.length > 0 && (
+                        <Text style={{ color: 'red', textAlign: 'center', marginBottom: 10 }}>
+                            {backendErrors[backendErrors.length - 1]}
+                        </Text>
+                    )}
+    
+                    <Button onPress={() => handleSubmit()} title="Entrar" disabled={!isValid} />
+                </View>
+            )}
         </Formik>
-    );
+    );    
+
 };
 
 const styles = StyleSheet.create({
