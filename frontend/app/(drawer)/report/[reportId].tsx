@@ -4,10 +4,11 @@ import DropDownPicker from "react-native-dropdown-picker";
 import { getWorksDoneById } from "@/src/services/WorksDoneService";
 import { getReportTypes, postReportWork } from "@/src/services/ReportService";
 import { useLocalSearchParams } from "expo-router";
-//import styles from "@/src/styles/ReportScreen.styles";
+import { Button} from "react-native-paper";
 import { AuthenticationContext } from "@/src/contexts/AuthContext";
-
-
+import { useRouter, useNavigation } from "expo-router";
+import styles from "@/src/styles/ReportScreen.styles";
+import  popUpMovilWindows  from "@/src/components/PopUpAlertMovilWindows";
 
 export interface ReportDTO {
   name: string;
@@ -45,8 +46,9 @@ export default function ReportScreen() {
   const BASE_URL = "http://localhost:8080";
   const { reportId } = useLocalSearchParams();
   const numberWorkId = Number(reportId);
+  
 
-  const { loggedInUser } = useContext(AuthenticationContext);
+  const { loggedInUser, isAuthenticated } = useContext(AuthenticationContext);
   const [reportTitle, setReportTitle] = useState<string>(""); 
   const [report, setReport] = useState("");
   const [work, setWork] = useState<Work | null>(null);
@@ -54,6 +56,8 @@ export default function ReportScreen() {
   const [reportTypes, setReportTypes] = useState<{ label: string; value: number }[]>([]);
   const [selectedReportType, setSelectedReportType] = useState<number | null>(null);
   const [dropdownOpen, setDropdownOpen] = useState(false);
+  const router = useRouter();
+  const navigation = useNavigation();
 
 
   useEffect(() => {
@@ -78,11 +82,6 @@ export default function ReportScreen() {
     };
     fetchReportTypes();
    
-
-  }, [numberWorkId]);
-
-
-  useEffect(() => {
     const fetchWork = async () => {
       if (!reportId) return;
       try {
@@ -96,51 +95,85 @@ export default function ReportScreen() {
       }
     };
     fetchWork();
+
+    
   }, [numberWorkId]);
+
+
+   useEffect(() => {
+      navigation.setOptions({ title: `${work?.name}` });
+    }, [navigation, work]);
 
   const handleSubmit = async () => {
 
-    if (!selectedReportType || !report.trim()) {
-      Alert.alert("Error", "Por favor, selecciona un tipo de reporte y escribe una descripción.");
+    if (!work) {
+      popUpMovilWindows("Error", "No se puede reportar esta obra porque falta información.");
       return;
     }
 
-  
-    if (!work || !work.artist) {
-      Alert.alert("Error", "No se puede reportar esta obra porque falta información.");
+    if (!reportTitle && !selectedReportType && !report.trim() ) {
+      popUpMovilWindows("Error", "Por favor, rellene el reporte antes de poder enviarlo");
       return;
     }
-   
+
+
+    if (!reportTitle ) {
+      popUpMovilWindows("Error", "Por favor, escriba un titulo descriptivo del reporte ");
+      return;
+    }
+
+    if (!selectedReportType ) {
+      popUpMovilWindows("Error", "Por favor, selecciona un tipo de reporte ");
+      return;
+    }
+
+    if(!report.trim()){
+      popUpMovilWindows("Error", "Por favor,  escribe una descripción.");
+      return;
+    }
 
     const  ReportDTO = {
       name: reportTitle,
       description: report, 
       workId: work.id,
-      reportType: reportTypes.find((type) => type.value === selectedReportType)?.label || "Desconocido",
+      reportType: reportTypes.find((type) => type.value === selectedReportType)?.label,
     };
+
   
 
     try {
-      console.log(ReportDTO)
       await postReportWork(ReportDTO, loggedInUser.token);
-      Alert.alert("Éxito", "Reporte enviado correctamente");
+      popUpMovilWindows("Éxito", "Reporte enviado correctamente");
       setReportTitle(""); 
       setReport("");
       setSelectedReportType(null);
+      router.push({ pathname: "/explore"});
     } catch (error) {
       console.error("Error al enviar el reporte:", error);
-      Alert.alert("Error", "No se pudo enviar el reporte");
+      popUpMovilWindows("Error", "No se pudo enviar el reporte");
     }
   };
 
+  const handleSingIn = () => {   
+    router.push({ pathname: "/login", params: { reportId: reportId },
+    });
+    
+};
+
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Reportar obra del {work?.artist?.name || "Desconocido"}</Text>
-
-      {loading ? (
+      
+      {isAuthenticated ? (
+        
+      loading ? (
+        <>
+        <Text style={styles.title}>Reportar obra del artista: {work?.artist.name }</Text>
         <Text style={styles.loading}>Cargando detalles de la obra...</Text>
+        </>
       ) : work ? (
         <>
+          <Text style={styles.title}>Reportar obra del artista: {work?.artist.name }</Text>
+
           <View style={{ position: "relative" }}>
             {work.image ? (
               <Image source={{ uri: `${BASE_URL}${work.image}` }} style={styles.artworkImage} />
@@ -166,7 +199,7 @@ export default function ReportScreen() {
             value={reportTitle}
             onChangeText={setReportTitle}
           />
-  <Text>Seleccione el tipo de reporte:</Text>
+        <Text>Seleccione el tipo de reporte:</Text>
 
           {/* Dropdown de tipos de reporte */}
           <DropDownPicker
@@ -199,99 +232,21 @@ export default function ReportScreen() {
         </>
       ) : (
         <Text style={styles.errorText}>No se encontró la obra</Text>
+      )
+      ):(    
+        <>
+        <View style={styles.containerNotRegister}>
+          <View style={styles.containerContentNotRegister}>
+             <Text style={styles.textContainerNotRegister}>Debe registrarse para poder reportar una obra</Text>
+            <Button mode="contained" onPress={handleSingIn} style={styles.singInButton}>
+                Abrir Sesión
+            </Button>
+            </View>
+            </View>
+         
+        </>
+
       )}
     </View>
   );
 }
-
-
-
-
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    padding: 20,
-    backgroundColor: "#f8f8f8",
-  },
-  title: {
-    fontSize: 20,
-    fontWeight: "bold",
-    marginBottom: 10,
-    textAlign: "center",
-  },
-  artworkImage: {
-    width: 150,
-    height: 150,
-    borderRadius: 10,
-    alignSelf: "center",
-    marginBottom: 10,
-  },
-  placeholder: {
-    width: 150,
-    height: 150,
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "#ddd",
-    borderRadius: 10,
-    alignSelf: "center",
-  },
-  artworkTitle: {
-    fontSize: 18,
-    fontWeight: "bold",
-    textAlign: "center",
-    marginBottom: 5,
-  },
-  artistName: {
-    fontSize: 16,
-    color: "#555",
-    textAlign: "center",
-    marginBottom: 10,
-  },
-  dropdown: {
-    backgroundColor: "#ffffff",
-    borderColor: "#ccc",
-    borderWidth: 1,
-    borderRadius: 8,
-    paddingHorizontal: 10,
-    marginBottom: 15,
-    zIndex: 1000, // Evita que el dropdown se oculte debajo de otros elementos
-  },
-  dropDownContainerStyle: {
-    borderColor: "#ccc",
-    zIndex: 1000,
-  },
-  input: {
-    height: 50,
-    borderColor: "#ccc",
-    borderWidth: 1,
-    borderRadius: 8,
-    paddingHorizontal: 10,
-    marginBottom: 15,
-    backgroundColor: "#fff",
-  },
-  button: {
-    backgroundColor: "#007bff",
-    paddingVertical: 15,
-    borderRadius: 8,
-    alignItems: "center",
-  },
-  buttonText: {
-    color: "#fff",
-    fontSize: 16,
-    fontWeight: "bold",
-  },
-  errorText: {
-    fontSize: 14,
-    color: "red",
-    textAlign: "center",
-    marginTop: 10,
-  },
-  loading: {
-    fontSize: 16,
-    textAlign: "center",
-    marginVertical: 20,
-    color: "#555",
-  },
-});
-

@@ -26,7 +26,6 @@ export interface Work {
 }
 
 export default function WorkDetailScreen() {
-  const isWeb = Platform.OS === "web";
 
   const BASE_URL = "http://localhost:8080";
 
@@ -93,12 +92,13 @@ export default function WorkDetailScreen() {
       contentContainerStyle={dynamicStyles.scrollContent}
     >
 
-
+ 
       <View style={dynamicStyles.contentContainer}>
-
+     
       <View style={[dynamicStyles.imageContainer, { position: "relative" }]}>
 
           {work.image ? (
+
             <Image
               source={{ uri: `${BASE_URL}${work.image}` }}
               style={dynamicStyles.image}
@@ -108,10 +108,14 @@ export default function WorkDetailScreen() {
               <Text style={{ color: "#aaa" }}>Sin imagen</Text>
             </View>
           )}
+           { work.image && (
+        <View style={staticStyles.reportDropdownContatiner}>
+            <ReportDropdown  workId={work.id}  menuVisibleId={menuVisibleId}  setMenuVisibleId={setMenuVisibleId}  isBigScreen={false} />
+            </View>
+        )}
+          
         </View>
-      
-        {isWeb && ( <ReportDropdown  workId={work.id}  menuVisibleId={menuVisibleId}  setMenuVisibleId={setMenuVisibleId}  isBigScreen={null} />)}
-       
+     
         <View style={staticStyles.infoContainer}>
           <Text style={staticStyles.title}>
             {work.name ? work.name.toUpperCase() : "TÍTULO OBRA"}

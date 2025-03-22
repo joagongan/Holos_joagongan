@@ -69,10 +69,9 @@ export default function ArtistDetailScreen() {
 
   return (
       <TouchableWithoutFeedback onPress={() => {
-              if (menuVisibleId !== null) {
-                setMenuVisibleId(null); // Cierra el menú al tocar fuera
-              }
-            }}>
+        if (menuVisibleId !== null) {
+         setMenuVisibleId(null);} // Cierra el menú al tocar fuera
+        }}>
     <ScrollView contentContainerStyle={styles.container}>
       {/* Información del artista */}
       <View style={styles.header}>
@@ -114,12 +113,14 @@ export default function ArtistDetailScreen() {
             <>
 
             <View key={work.id} style={styles.artworkItem}>
-
+              
               <Image source={{ uri: `${BASE_URL}${work.image}` }} style={styles.artworkImage} />
-              <Text style={styles.artworkTitle}>{work.name}</Text>
 
+              <Text style={styles.artworkTitle}>{work.name}</Text>
+              <View  style={ styles.reportDropDownContainer}>
+              <ReportDropdown workId={work.id} menuVisibleId={menuVisibleId} setMenuVisibleId={setMenuVisibleId} isBigScreen={false} />
+              </View>
             </View>
-            <ReportDropdown workId={work.id} menuVisibleId={menuVisibleId} setMenuVisibleId={setMenuVisibleId} isBigScreen={false} />
 
             </>
           ))}

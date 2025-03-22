@@ -64,6 +64,7 @@ export default StyleSheet.create({
     artworkItem: {
       width: "48%",
       marginBottom: 20,
+      
     },
     artworkImage: {
       width: "100%",
@@ -76,5 +77,11 @@ export default StyleSheet.create({
       marginTop: 8,
       fontSize: 14,
     },
+
+    reportDropDownContainer: {
+      paddingRight: 25,
+      right:-20,
+      position:"absolute"
+    }
   });
   
