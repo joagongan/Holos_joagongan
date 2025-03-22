@@ -32,7 +32,7 @@ public interface StatusKanbanOrderRepository extends JpaRepository<StatusKanbanO
     @Query("SELECT c.statusKanbanOrder FROM Commision c WHERE c.id = :commisionId")
     StatusKanbanOrder actualStatusKanban(Long commisionId);
 
-    @Query("SELECT c.statusKanbanOrder FROM Commision c WHERE c.artist.id = :id AND c.statusKanbanOrder.order = :nextOrder")
+    @Query("SELECT s FROM StatusKanbanOrder s WHERE s.artist.id = :id AND s.order = :nextOrder")
     Optional<StatusKanbanOrder> nextStatusKanban(Long id, int nextOrder);
 }
 

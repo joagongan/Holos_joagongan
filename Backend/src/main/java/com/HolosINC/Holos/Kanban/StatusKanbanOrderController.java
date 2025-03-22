@@ -1,7 +1,6 @@
 package com.HolosINC.Holos.Kanban;
 
 import java.util.List;
-import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.util.Pair;
@@ -12,7 +11,6 @@ import org.springframework.web.bind.annotation.*;
 import com.HolosINC.Holos.Kanban.DTOs.StatusKanbanDTO;
 import com.HolosINC.Holos.Kanban.DTOs.StatusKanbanWithCommisionsDTO;
 import com.HolosINC.Holos.commision.Commision;
-import com.HolosINC.Holos.commision.DTOs.CommisionDTO;
 import com.HolosINC.Holos.exceptions.ResourceNotFoundException;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -87,6 +85,18 @@ public class StatusKanbanOrderController {
     public ResponseEntity<?> updateToNextStatusTheCommision(@PathVariable Long id) {
         try {
             Commision c = statusKanbanOrderService.nextStatusOfCommision(id);
+            return ResponseEntity.ok().body(c);
+        } catch (ResourceNotFoundException e) {
+            return ResponseEntity.badRequest().body(e);
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().body("Something weird happend. See the following:\n" + e.getMessage());
+        }
+    }
+
+    @PutMapping("/{id}/previous")
+    public ResponseEntity<?> updateToPreviousStatusTheCommision(@PathVariable Long id) {
+        try {
+            Commision c = statusKanbanOrderService.previousStatusOfCommision(id);
             return ResponseEntity.ok().body(c);
         } catch (ResourceNotFoundException e) {
             return ResponseEntity.badRequest().body(e);

@@ -1,12 +1,7 @@
 package com.HolosINC.Holos.Kanban;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.util.Pair;
@@ -19,9 +14,9 @@ import com.HolosINC.Holos.artist.ArtistService;
 import com.HolosINC.Holos.commision.Commision;
 import com.HolosINC.Holos.commision.CommisionRepository;
 import com.HolosINC.Holos.commision.StatusCommision;
-import com.HolosINC.Holos.commision.DTOs.CommisionDTO;
 import com.HolosINC.Holos.exceptions.AccessDeniedException;
 import com.HolosINC.Holos.exceptions.ResourceNotFoundException;
+import com.HolosINC.Holos.exceptions.ResourceNotOwnedException;
 import com.HolosINC.Holos.model.BaseUserService;
 
 @Service
@@ -179,6 +174,31 @@ public void deleteStatusKanbanOrder(Integer id) {
                 c.setStatus(StatusCommision.ENDED);
             } else 
                 c.setStatusKanbanOrder(nextStatus.get());
+
+            commisionRepository.save(c);
+            return c;
+        } catch (ResourceNotFoundException e) {
+            throw e;
+        } catch (Exception e) {
+            throw e;
+        }
+    }
+
+    @Transactional
+    public Commision previousStatusOfCommision(Long id) throws Exception {
+        try {
+            Long artistId = userService.findCurrentUser().getId();
+            Commision c = commisionRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Comisión no encontrada"));
+            if (artistId.equals(c.getArtist().getId()))
+                throw new ResourceNotOwnedException("No tienes permisos para cambiar esta comisión");
+
+            StatusKanbanOrder thisStatus = statusKanbanOrderRepository.actualStatusKanban(id);
+            Optional<StatusKanbanOrder> previousStatus = statusKanbanOrderRepository.nextStatusKanban(thisStatus.getArtist().getId(),
+                                                                                                     thisStatus.getOrder() - 1);
+            if (previousStatus.isEmpty()) {
+                throw new Exception("No tienes un estado anterior para esta comisión");
+            } else 
+                c.setStatusKanbanOrder(previousStatus.get());
 
             commisionRepository.save(c);
             return c;
