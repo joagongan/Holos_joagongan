@@ -3,7 +3,9 @@ package com.HolosINC.Holos.reports;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import com.HolosINC.Holos.exceptions.ResourceNotFoundException;
 import com.HolosINC.Holos.model.BaseUser;
@@ -40,9 +42,15 @@ public class ReportService {
         ReportType reportType = reportTypeRepository
             .findByType(reportDTO.getReportType())
             .orElseThrow(() -> new RuntimeException("Invalid report type"));
+        BaseUser baseUser = baseUserService.findCurrentUser();
+
+        boolean alreadyReported = reportRepository.existsByMadeByIdAndWorkIdAndReportTypeId(baseUser.getId(), work.getId(), reportType.getId());
+
+        if (alreadyReported) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "¡Ya has reportado esta obra!");
+        }
 
         Report report = reportDTO.createReport(work, reportType);
-        BaseUser baseUser = baseUserService.findCurrentUser();
 
         report.setStatus(ReportStatus.PENDING);
         report.setMadeBy(baseUser);

@@ -148,9 +148,13 @@ export default function ReportScreen() {
       setReport("");
       setSelectedReportType(null);
       router.push({ pathname: "/explore"});
-    } catch (error) {
-      console.error("Error al enviar el reporte:", error);
-      popUpMovilWindows("Error", "No se pudo enviar el reporte");
+    } catch (error:any) {
+      // console.error("Error al enviar el reporte:", error); Por esto te enseñaba dos veces el error :)
+      if (error.response?.status === 409) {
+        popUpMovilWindows("¡Ya reportaste esta obra!", "No puedes enviar el mismo reporte dos veces 😵‍💫");
+      } else {
+        popUpMovilWindows("Error", "No se pudo enviar el reporte");
+      }
     }
   };
 
