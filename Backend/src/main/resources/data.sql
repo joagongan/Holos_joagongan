@@ -120,17 +120,17 @@ INSERT INTO status_kanban_order (id, artist_id, name, order_in_kanban, descripti
 (9, 9, 'Final Touches', 9, 'Adding final adjustments before completion', '#33FFA8'),
 (10, 10, 'Published', 10, 'The artwork is completed and shared', '#FF338A');
 
-INSERT INTO commisions (id, artist_id, name, description, price, client_id, status, num_milestones, accepted_date_by_artist, payment_arrangement, status_kanban_order_id, milestone_date) VALUES 
-(6, 1,'Sunset Painting', 'A beautiful sunset painting', 150.0, 1, 'REQUESTED', 3, '2025-03-01', 'INITIAL', 1, "2025-05-23"),
-(7, 2, 'Ocean Waves', 'A calming ocean scene with waves', 200.0, 2, 'ACCEPTED', 4, '2025-03-02', 'FINAL', 2, "2025-05-23"),
-(8, 3, 'Starry Night Replica', 'Inspired by Van Gogh`s Starry Night', 300.0, 3, 'REQUESTED', 5, '2025-03-03', 'FIFTYFIFTY', 3, "2025-05-23"),
-(9, 4, 'Abstract Art', 'A modern abstract composition', 180.0, 4, 'IN_WAIT_LIST', 2, '2025-03-04', 'MODERATOR', 4, "2025-05-23"),
-(10, 5, 'Forest Path', 'A peaceful forest pathway', 120.0, 5, 'ENDED', 6, '2025-03-05', 'INITIAL', 5, "2025-05-23"),
-(11, 6, 'Sunset Horizon', 'A stunning view of the horizon at sunset', 250.0, 6, 'REJECTED', 1, '2025-03-06', 'FIFTYFIFTY', 6, "2025-05-23"),
-(12, 7, 'Mountain Landscape', 'A beautiful mountain landscape painting', 350.0, 7, 'CANCELED', 4, '2025-03-07', 'FINAL', 7, "2025-05-23"),
-(13, 8, 'Spring Flowers', 'A vibrant painting of spring flowers', 160.0, 8, 'ENDED', 3, '2025-03-08', 'INITIAL', 8, "2025-05-23"),
-(14, 9, 'Cityscape', 'A modern cityscape in digital format', 400.0, 9, 'ACCEPTED', 5, '2025-03-09', 'FINAL', 9, "2025-05-23"),
-(15, 10, 'Autumn Leaves', 'A peaceful autumn scene with falling leaves', 220.0, 10, 'REQUESTED', 2, '2025-03-10', 'MODERATOR', 10, "2025-05-23");
+INSERT INTO commisions (id, artist_id, name, description, price, client_id, status,accepted_date_by_artist, payment_arrangement, status_kanban_order_id, milestone_date) VALUES 
+(6, 1,'Sunset Painting', 'A beautiful sunset painting', 150.0, 1, 'REQUESTED','2025-03-01', 'INITIAL', 1, "2025-05-23"),
+(7, 2, 'Ocean Waves', 'A calming ocean scene with waves', 200.0, 2, 'ACCEPTED','2025-03-02', 'FINAL', 2, "2025-05-23"),
+(8, 3, 'Starry Night Replica', 'Inspired by Van Gogh`s Starry Night', 300.0, 3, 'REQUESTED','2025-03-03', 'FIFTYFIFTY', 3, "2025-05-23"),
+(9, 4, 'Abstract Art', 'A modern abstract composition', 180.0, 4, 'IN_WAIT_LIST','2025-03-04', 'MODERATOR', 4, "2025-05-23"),
+(10, 5, 'Forest Path', 'A peaceful forest pathway', 120.0, 5, 'ENDED','2025-03-05', 'INITIAL', 5, "2025-05-23"),
+(11, 6, 'Sunset Horizon', 'A stunning view of the horizon at sunset', 250.0, 6, 'REJECTED','2025-03-06', 'FIFTYFIFTY', 6, "2025-05-23"),
+(12, 7, 'Mountain Landscape', 'A beautiful mountain landscape painting', 350.0, 7, 'CANCELED','2025-03-07', 'FINAL', 7, "2025-05-23"),
+(13, 8, 'Spring Flowers', 'A vibrant painting of spring flowers', 160.0, 8, 'ENDED','2025-03-08', 'INITIAL', 8, "2025-05-23"),
+(14, 9, 'Cityscape', 'A modern cityscape in digital format', 400.0, 9, 'ACCEPTED','2025-03-09', 'FINAL', 9, "2025-05-23"),
+(15, 10, 'Autumn Leaves', 'A peaceful autumn scene with falling leaves', 220.0, 10, 'REQUESTED','2025-03-10', 'MODERATOR', 10, "2025-05-23");
 
 INSERT INTO milestones (id, name, accepted, commision_id) VALUES 
 (1, 'Initial Sketch', TRUE, 6),

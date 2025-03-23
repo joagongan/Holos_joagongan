@@ -21,7 +21,7 @@ public class StatusKanbanWithCommisionsDTO {
     
     private Double price;
     
-    private Integer numMilestones;
+    // private Integer numMilestones;
     
     private EnumPaymentArrangement paymentArrangement;
 
