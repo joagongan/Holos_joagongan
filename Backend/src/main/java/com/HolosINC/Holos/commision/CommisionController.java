@@ -8,13 +8,12 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.HolosINC.Holos.commision.DTOs.CommisionDTO;
-
-import org.springframework.web.bind.annotation.RequestBody;
 
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -48,6 +47,12 @@ public class CommisionController {
     @GetMapping
     public ResponseEntity<List<Commision>> getAllCommisions() {
         List<Commision> commisions = commisionService.getAllCommisions();
+        return ResponseEntity.ok(commisions);
+    }
+
+    @GetMapping("/requested")
+    public ResponseEntity<List<Commision>> getAllRequestedCommisions() {
+        List<Commision> commisions = commisionService.getAllRequestedCommisions();
         return ResponseEntity.ok(commisions);
     }
 

@@ -1,36 +1,28 @@
-package com.HolosINC.Holos.artist;
+package com.HolosINC.Holos.reports;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.OneToOne;
 import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
-
-import javax.validation.constraints.Min;
-import javax.validation.constraints.NotNull;
-
-import com.HolosINC.Holos.model.BaseUser;
-
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.Data;
 
 @Data
 @Entity
-@Table(name = "artists")
-public class Artist{
-
+@Table(name = "report_types")
+public class ReportType {
+  
     @Id
 	@SequenceGenerator(name = "entity_seq", sequenceName = "entity_sequence", initialValue = 500)
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "entity_seq")
     protected Long id;
-
+    
+    @Size(max = 50)
     @NotNull
-    @Min(1)
-    private Integer numSlotsOfWork;
-
-    private String tableCommisionsPrice;
-
-    @OneToOne(optional = true)
-    private BaseUser baseUser;
+    @Column(unique=true)
+    private String type;
 }
