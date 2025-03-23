@@ -441,6 +441,32 @@ INSERT INTO commisions (id, artist_id, name, description, price, client_id, stat
 (175, 18, 'Golden Wheat', 'A field of golden wheat under the setting sun', 240.0, 9, 'ENDED', 9, '2025-08-04', 'FIFTYFIFTY', NULL),
 (176, 18, 'Ocean Breeze', 'A peaceful ocean breeze with gentle waves', 210.0, 10, 'REJECTED', 10, '2025-08-05', 'INITIAL', NULL);
 
+-- Comisiones para el Artista 19 (ID 19)
+INSERT INTO commisions (id, artist_id, name, description, price, client_id, status, num_milestones, accepted_date_by_artist, payment_arrangement, status_kanban_order_id) VALUES
+(177, 19, 'Mountain Lake', 'A serene lake surrounded by mountains', 260.0, 1, 'REQUESTED', 4, '2025-08-06', 'FINAL', NULL),
+(178, 19, 'Sunset Painting', 'A beautiful sunset painting', 150.0, 2, 'ACCEPTED', 3, '2025-03-01', 'INITIAL', 79),
+(179, 19, 'Ocean Waves', 'A calming ocean scene with waves', 200.0, 3, 'ACCEPTED', 3, '2025-03-02', 'FINAL', 80),
+(180, 19, 'Forest Path', 'A peaceful path through a forest', 220.0, 4, 'REQUESTED', 2, '2025-08-07', 'INITIAL', NULL),
+(181, 19, 'Desert Mirage', 'A mirage in the desert', 240.0, 5, 'CANCELED', 5, '2025-08-08', 'FIFTYFIFTY', NULL),
+(182, 19, 'Autumn Leaves', 'Colorful autumn leaves falling', 230.0, 6, 'IN_WAIT_LIST', 6, '2025-08-09', 'FIFTYFIFTY', NULL),
+(183, 19, 'Starry Night', 'A starry night sky over a calm lake', 250.0, 7, 'IN_WAIT_LIST', 7, '2025-08-10', 'MODERATOR', NULL),
+(184, 19, 'Golden Field', 'A field of golden wheat under the sun', 240.0, 8, 'ENDED', 8, '2025-08-11', 'FINAL', NULL),
+(185, 19, 'Tropical Beach', 'A tropical beach with clear waters', 220.0, 9, 'ENDED', 9, '2025-08-12', 'FIFTYFIFTY', NULL),
+(186, 19, 'Mountain View', 'A breathtaking view of the mountains', 210.0, 10, 'REJECTED', 10, '2025-08-13', 'INITIAL', NULL);
+
+-- Comisiones para el Artista 20 (ID 20)
+INSERT INTO commisions (id, artist_id, name, description, price, client_id, status, num_milestones, accepted_date_by_artist, payment_arrangement, status_kanban_order_id) VALUES
+(187, 20, 'Sunset Over Hills', 'A beautiful sunset over rolling hills', 250.0, 1, 'REQUESTED', 4, '2025-08-14', 'FINAL', NULL),
+(188, 20, 'Autumn Forest', 'A forest with colorful autumn leaves', 230.0, 2, 'REQUESTED', 3, '2025-08-15', 'INITIAL', NULL),
+(189, 20, 'Sunset Painting', 'A beautiful sunset painting', 150.0, 3, 'ACCEPTED', 3, '2025-03-01', 'INITIAL', 83),
+(190, 20, 'Ocean Waves', 'A calming ocean scene with waves', 200.0, 4, 'ACCEPTED', 3, '2025-03-02', 'FINAL', 84),
+(191, 20, 'Mountain Peak', 'A snow-covered mountain peak under the sun', 300.0, 5, 'CANCELED', 5, '2025-08-16', 'FIFTYFIFTY', NULL),
+(192, 20, 'Desert Night', 'A starry night in the desert', 270.0, 6, 'IN_WAIT_LIST', 6, '2025-08-17', 'FIFTYFIFTY', NULL),
+(193, 20, 'Tropical Paradise', 'A tropical beach with turquoise waters', 220.0, 7, 'IN_WAIT_LIST', 7, '2025-08-18', 'MODERATOR', NULL),
+(194, 20, 'River Sunset', 'A beautiful sunset over a calm river', 230.0, 8, 'ENDED', 8, '2025-08-19', 'FINAL', NULL),
+(195, 20, 'Golden Wheat', 'A field of golden wheat under the setting sun', 240.0, 9, 'ENDED', 9, '2025-08-20', 'FIFTYFIFTY', NULL),
+(196, 20, 'Ocean Breeze', 'A peaceful ocean breeze with gentle waves', 210.0, 10, 'REJECTED', 10, '2025-08-21', 'INITIAL', NULL);
+
 INSERT INTO milestones (id, name, accepted, milestone_date, commision_id) VALUES 
 (1, 'Initial Sketch', TRUE, '2025-03-02', 6),
 (2, 'Line Art', FALSE, '2025-03-05', 6),
