@@ -33,9 +33,6 @@ public class Milestone{
     
     @NotNull
     private Boolean accepted;
-    
-    @NotNull
-    private Date milestoneDate;
 
     @ManyToOne
     @JoinColumn(name = "commision_id")

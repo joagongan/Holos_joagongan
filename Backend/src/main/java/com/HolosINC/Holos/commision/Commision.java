@@ -35,6 +35,8 @@ public class Commision extends Work{
     @Enumerated(EnumType.STRING)
     private EnumPaymentArrangement paymentArrangement;
 
+    private Date milestoneDate;
+
     @ManyToOne(cascade = CascadeType.PERSIST)
     @JoinColumn(name = "status_kanban_order_id", referencedColumnName = "id")
     private StatusKanbanOrder statusKanbanOrder;

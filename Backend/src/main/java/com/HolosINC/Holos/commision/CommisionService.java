@@ -15,6 +15,7 @@ import com.HolosINC.Holos.client.Client;
 import com.HolosINC.Holos.client.ClientRepository;
 import com.HolosINC.Holos.commision.DTOs.CommisionDTO;
 import com.HolosINC.Holos.exceptions.ResourceNotFoundException;
+import com.HolosINC.Holos.model.BaseUser;
 import com.HolosINC.Holos.model.BaseUserService;
 
 @Service
@@ -58,8 +59,15 @@ public class CommisionService {
     @Transactional(readOnly=true)
     public List<Commision> getAllRequestedCommisions() {
         try {
-            Long id = userService.findCurrentUser().getId();
-            return commisionRepository.findAllPendingCommisionsByArtistId(id);
+            BaseUser user = userService.findCurrentUser();
+            List<Commision> commisions = null;
+
+            if (user.hasAuthority("ARTIST"))
+                commisions = commisionRepository.findAllPendingCommisionsByArtistId(user.getId());
+            if (user.hasAuthority("CLIENT"))
+                commisions = commisionRepository.findAllPendingCommisionsByClientId(user.getId());
+            
+            return commisions;
         } catch (Exception e) {
             throw e;
         }

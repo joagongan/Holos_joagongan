@@ -120,41 +120,39 @@ INSERT INTO status_kanban_order (id, artist_id, name, order_in_kanban, descripti
 (9, 9, 'Final Touches', 9, 'Adding final adjustments before completion', '#33FFA8'),
 (10, 10, 'Published', 10, 'The artwork is completed and shared', '#FF338A');
 
-INSERT INTO commisions (id, artist_id, name, description, price, client_id, status, num_milestones, accepted_date_by_artist, payment_arrangement, status_kanban_order_id) VALUES 
-(6, 1,'Sunset Painting', 'A beautiful sunset painting', 150.0, 1, 'REQUESTED', 3, '2025-03-01', 'INITIAL', 1),
-(7, 2, 'Ocean Waves', 'A calming ocean scene with waves', 200.0, 2, 'ACCEPTED', 4, '2025-03-02', 'FINAL', 2),
-(8, 3, 'Starry Night Replica', 'Inspired by Van Gogh`s Starry Night', 300.0, 3, 'REQUESTED', 5, '2025-03-03', 'FIFTYFIFTY', 3),
-(9, 4, 'Abstract Art', 'A modern abstract composition', 180.0, 4, 'IN_WAIT_LIST', 2, '2025-03-04', 'MODERATOR', 4),
-(10, 5, 'Forest Path', 'A peaceful forest pathway', 120.0, 5, 'ENDED', 6, '2025-03-05', 'INITIAL', 5),
-(11, 6, 'Sunset Horizon', 'A stunning view of the horizon at sunset', 250.0, 6, 'REJECTED', 1, '2025-03-06', 'FIFTYFIFTY', 6),
-(12, 7, 'Mountain Landscape', 'A beautiful mountain landscape painting', 350.0, 7, 'CANCELED', 4, '2025-03-07', 'FINAL', 7),
-(13, 8, 'Spring Flowers', 'A vibrant painting of spring flowers', 160.0, 8, 'ENDED', 3, '2025-03-08', 'INITIAL', 8),
-(14, 9, 'Cityscape', 'A modern cityscape in digital format', 400.0, 9, 'ACCEPTED', 5, '2025-03-09', 'FINAL', 9),
-(15, 10, 'Autumn Leaves', 'A peaceful autumn scene with falling leaves', 220.0, 10, 'REQUESTED', 2, '2025-03-10', 'MODERATOR', 10);
+INSERT INTO commisions (id, artist_id, name, description, price, client_id, status, num_milestones, accepted_date_by_artist, payment_arrangement, status_kanban_order_id, milestone_date) VALUES 
+(6, 1,'Sunset Painting', 'A beautiful sunset painting', 150.0, 1, 'REQUESTED', 3, '2025-03-01', 'INITIAL', 1, "2025-05-23"),
+(7, 2, 'Ocean Waves', 'A calming ocean scene with waves', 200.0, 2, 'ACCEPTED', 4, '2025-03-02', 'FINAL', 2, "2025-05-23"),
+(8, 3, 'Starry Night Replica', 'Inspired by Van Gogh`s Starry Night', 300.0, 3, 'REQUESTED', 5, '2025-03-03', 'FIFTYFIFTY', 3, "2025-05-23"),
+(9, 4, 'Abstract Art', 'A modern abstract composition', 180.0, 4, 'IN_WAIT_LIST', 2, '2025-03-04', 'MODERATOR', 4, "2025-05-23"),
+(10, 5, 'Forest Path', 'A peaceful forest pathway', 120.0, 5, 'ENDED', 6, '2025-03-05', 'INITIAL', 5, "2025-05-23"),
+(11, 6, 'Sunset Horizon', 'A stunning view of the horizon at sunset', 250.0, 6, 'REJECTED', 1, '2025-03-06', 'FIFTYFIFTY', 6, "2025-05-23"),
+(12, 7, 'Mountain Landscape', 'A beautiful mountain landscape painting', 350.0, 7, 'CANCELED', 4, '2025-03-07', 'FINAL', 7, "2025-05-23"),
+(13, 8, 'Spring Flowers', 'A vibrant painting of spring flowers', 160.0, 8, 'ENDED', 3, '2025-03-08', 'INITIAL', 8, "2025-05-23"),
+(14, 9, 'Cityscape', 'A modern cityscape in digital format', 400.0, 9, 'ACCEPTED', 5, '2025-03-09', 'FINAL', 9, "2025-05-23"),
+(15, 10, 'Autumn Leaves', 'A peaceful autumn scene with falling leaves', 220.0, 10, 'REQUESTED', 2, '2025-03-10', 'MODERATOR', 10, "2025-05-23");
 
-INSERT INTO milestones (id, name, accepted, milestone_date, commision_id) VALUES 
-(1, 'Initial Sketch', TRUE, '2025-03-02', 6),
-(2, 'Line Art', FALSE, '2025-03-05', 6),
-(3, 'Coloring Phase 1', TRUE, '2025-03-10', 7),
-(4, 'Final Touches', FALSE, '2025-03-15', 7),
-(5, '3D Model Base', TRUE, '2025-03-01', 8),
-(6, 'Texture Painting', FALSE, '2025-03-08', 8),
-(7, 'Concept Art Approval', TRUE, '2025-02-28', 9),
-(8, 'First Revision', FALSE, '2025-03-07', 9),
-(9, 'Final Rendering', TRUE, '2025-03-12', 10),
-(10, 'Lighting Adjustments', FALSE, '2025-03-18', 10),
-(11, 'Sketch Approval', TRUE, '2025-03-04', 11),
-(12, 'Base Colors', FALSE, '2025-03-09', 11),
-(13, 'Initial Composition', TRUE, '2025-02-27', 12),
-(14, 'Details Refinement', FALSE, '2025-03-06', 12),
-(15, 'Pose Approval', TRUE, '2025-03-03', 13),
-(16, 'Shading Process', FALSE, '2025-03-11', 13),
-(17, 'Sculpt Base Form', TRUE, '2025-03-02', 14),
-(18, 'Final Texture Mapping', FALSE, '2025-03-10', 14),
-(19, 'Animation Draft', TRUE, '2025-03-05', 15),
-(20, 'Final Review', FALSE, '2025-03-14', 15);
-
-
+INSERT INTO milestones (id, name, accepted, commision_id) VALUES 
+(1, 'Initial Sketch', TRUE, 6),
+(2, 'Line Art', FALSE, 6),
+(3, 'Coloring Phase 1', TRUE, 7),
+(4, 'Final Touches', FALSE, 7),
+(5, '3D Model Base', TRUE, 8),
+(6, 'Texture Painting', FALSE, 8),
+(7, 'Concept Art Approval', TRUE, 9),
+(8, 'First Revision', FALSE, 9),
+(9, 'Final Rendering', TRUE, 10),
+(10, 'Lighting Adjustments', FALSE, 10),
+(11, 'Sketch Approval', TRUE, 11),
+(12, 'Base Colors', FALSE, 11),
+(13, 'Initial Composition', TRUE, 12),
+(14, 'Details Refinement', FALSE, 12),
+(15, 'Pose Approval', TRUE, 13),
+(16, 'Shading Process', FALSE, 13),
+(17, 'Sculpt Base Form', TRUE, 14),
+(18, 'Final Texture Mapping', FALSE, 14),
+(19, 'Animation Draft', TRUE, 15),
+(20, 'Final Review', FALSE, 15);
 
 INSERT INTO artist_category(id,artist_id,category_id) VALUES
 (1, 1, 1),
