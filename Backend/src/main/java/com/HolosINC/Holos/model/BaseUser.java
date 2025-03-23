@@ -1,46 +1,47 @@
 package com.HolosINC.Holos.model;
 
-import java.sql.Blob;
-import java.sql.Date;
+import java.util.Date;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+
+import com.HolosINC.Holos.auth.Authorities;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.Inheritance;
-import jakarta.persistence.InheritanceType;
-import jakarta.persistence.Lob;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.SequenceGenerator;
+import jakarta.persistence.Table;
 import lombok.Data;
 
 @Data
 @Entity
-@Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
-public class BaseUser {
-
+@Table(name = "base_user")
+public class BaseUser{
+    
     @Id
-	@SequenceGenerator(name = "entity_seq", sequenceName = "entity_sequence", initialValue = 100)
+	@SequenceGenerator(name = "entity_seq", sequenceName = "entity_sequence", initialValue = 500)
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "entity_seq")
 	protected Long id;
 
     @Size(min = 2, max = 255)
     @Column(name = "first_name")
-	@NotNull
-	protected String name;
-    
-    @Size(min = 2, max = 255)
-    @Column(unique = true)
-	protected String username;
+    @NotNull
+    protected String name;
 
     @Size(min = 2, max = 255)
-	protected String password;
+    //@Column(unique = true)
+    protected String username;
+
+    @Size(min = 2, max = 255)
+    protected String password;
 
     @Size(max = 255)
-    @Column(unique = true)
+    //@Column(unique = true)
     @NotNull
     protected String email;
 
@@ -48,10 +49,27 @@ public class BaseUser {
     @Column(name = "phone_number")
     protected String phoneNumber;
 
-    @Lob
-    private Blob imageProfile;
+    private String imageProfile;
 
     @Column(name = "created_user")
     @NotNull
     protected Date createdUser;
+
+    @NotNull
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "authority")
+    Authorities authority;
+
+    public Boolean hasAuthority(String auth) {
+        return authority.getAuthority().equals(auth);
+    }
+
+    public Boolean hasAnyAuthority(String... authorities) {
+        Boolean cond = false;
+        for (String auth : authorities) {
+            if (auth.equals(authority.getAuthority()))
+                cond = true;
+        }
+        return cond;
+    }
 }

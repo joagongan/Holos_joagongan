@@ -1,35 +1,53 @@
 package com.HolosINC.Holos.artist;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.Lob;
-import jakarta.persistence.OneToMany;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.OneToOne;
+import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
-
-import java.sql.Blob;
-import java.util.Set;
 
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
-import com.HolosINC.Holos.Category.ArtistCategory;
 import com.HolosINC.Holos.model.BaseUser;
 
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 
 @Data
 @Entity
 @Table(name = "artists")
-@EqualsAndHashCode(callSuper = true)
-public class Artist extends BaseUser{
+public class Artist{
+
+    @Id
+	@SequenceGenerator(name = "entity_seq", sequenceName = "entity_sequence", initialValue = 500)
+	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "entity_seq")
+    protected Long id;
 
     @NotNull
     @Min(1)
     private Integer numSlotsOfWork;
-    
-    @Lob
-    private Blob tableCommisionsPrice;
-    
-    @OneToMany(mappedBy = "artist")
-    private Set<ArtistCategory> artistCategories;
+
+    private String tableCommisionsPrice;
+
+    @OneToOne(optional = true)
+    private BaseUser baseUser;
+
+    // Derivate properties
+    @Size(min = 2, max = 255)
+    @Column(name = "first_name")
+    @NotNull
+    private String name;
+
+    @Size(min = 2, max = 255)
+    //@Column(unique = true)
+    private String username;
+
+    @Size(max = 255)
+    //@Column(unique = true)
+    @NotNull
+    private  String email;
 }
