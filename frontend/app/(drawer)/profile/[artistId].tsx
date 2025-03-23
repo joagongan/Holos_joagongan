@@ -8,7 +8,7 @@ import { getWorksDoneByArtist } from "@/src/services/WorksDoneApi";
 import styles from "@/src/styles/ArtistDetail.styles";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import ReportDropdown from "@/src/components/report/ReportDropDown";
-import { API_URL } from "@/src/constants/api";
+import { API_URL, BASE_URL } from "@/src/constants/api";
 
 interface Artwork {
   id: number;
@@ -99,10 +99,6 @@ export default function ArtistDetailScreen() {
         >
           <Text style={styles.buttonText}>Solicitar trabajo</Text>
         </TouchableOpacity>
-
-        <TouchableOpacity style={styles.button}>
-          <Text style={styles.buttonText}>Añadir a favoritos</Text>
-        </TouchableOpacity>
       </View>
 
       {/* Obras del artista */}
@@ -114,7 +110,7 @@ export default function ArtistDetailScreen() {
 
             <View key={work.id} style={styles.artworkItem}>
 
-              <Image source={{ uri: `https://holos-s2.onrender.com/${work.image}` }} style={styles.artworkImage} />
+              <Image source={{ uri: `${BASE_URL}/${work.image}` }} style={styles.artworkImage} />
               <Text style={styles.artworkTitle}>{work.name}</Text>
               <View  style={ styles.reportDropDownContainer}>
               <ReportDropdown workId={work.id} menuVisibleId={menuVisibleId} setMenuVisibleId={setMenuVisibleId} isBigScreen={false} />

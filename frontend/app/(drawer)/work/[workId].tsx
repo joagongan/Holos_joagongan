@@ -6,26 +6,9 @@ import staticStyles, { createDynamicStyles } from "@/src/styles/WorkDetail.style
 import { useNavigation, useLocalSearchParams, useRouter } from "expo-router";
 import ReportDropdown from "@/src/components/report/ReportDropDown";
 import { API_URL } from "@/src/constants/api";
+import { BaseUser } from "@/src/constants/ExploreTypes";
+import { WorksDone } from "@/src/constants/CommissionTypes";
 
-
-export interface Artist {
-  id: number;
-  name: string;
-  username: string;
-  email: string;
-  phoneNumber?: string;
-  imageProfile?: string;
-  tableCommisionsPrice?: string;
-}
-
-export interface Work {
-  id: number;
-  name: string;
-  description: string | null;
-  price: number | null;
-  artist: Artist;
-  image: string;
-}
 
 export default function WorkDetailScreen() {
 
@@ -33,7 +16,7 @@ export default function WorkDetailScreen() {
   const navigation = useNavigation();
   const { workId } = useLocalSearchParams();
 
-  const [work, setWork] = useState<Work | null>(null);
+  const [work, setWork] = useState<WorksDone | null>(null);
   const [loading, setLoading] = useState(true);
 
   const screenWidth = Dimensions.get("window").width;
@@ -47,7 +30,7 @@ export default function WorkDetailScreen() {
   useEffect(() => {
     const fetchWork = async () => {
       try {
-        const data = (await getWorksDoneById(Number(workId))) as Work;
+        const data = (await getWorksDoneById(Number(workId))) as WorksDone;
         setWork(data);
       } catch (error) {
         console.error("Error fetching work details:", error);
@@ -132,7 +115,7 @@ export default function WorkDetailScreen() {
             }}
           >
             <Text style={dynamicStyles.artistName}>
-              {work.artist?.username || "Artista desconocido"}
+              {work.artist?.baseUser?.username || "Artista desconocido"}
             </Text>
           </TouchableOpacity>
           <Text style={dynamicStyles.label}>DESCRIPCIÓN:</Text>
@@ -144,21 +127,6 @@ export default function WorkDetailScreen() {
           <Text style={staticStyles.price}>
             {work.price ? `${work.price} €` : "No disponible"}
           </Text>
-
-          <View style={staticStyles.buttonRow}>
-            
-            <TouchableOpacity style={staticStyles.messageButton}>
-              <Text style={staticStyles.messageButtonText}>
-                MANDAR UN MENSAJE
-              </Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity style={staticStyles.buyButton} onPress={() => navigation.navigate("Payment", { workId: work.id, price: work.price ?? 0 }) } > {/*TODO Change navigation*/}
-              <Text style={staticStyles.buyButtonText}>
-                COMPRAR
-              </Text>
-            </TouchableOpacity>
-          </View>
         </View>
       </View>
 
