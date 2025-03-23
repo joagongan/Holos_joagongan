@@ -144,25 +144,27 @@ export default function ReportScreen() {
     try {
       await postReportWork(ReportDTO, loggedInUser.token);
       popUpMovilWindows("Éxito", "Reporte enviado correctamente");
-      setReportTitle(""); 
-      setReport("");
-      setSelectedReportType(null);
-      router.push({ pathname: "/explore"});
+      cleanStatus();
     } catch (error:any) {
-      // console.error("Error al enviar el reporte:", error); Por esto te enseñaba dos veces el error :)
       if (error.response?.status === 409) {
         popUpMovilWindows("¡Ya reportaste esta obra!", "No puedes enviar el mismo reporte dos veces 😵‍💫");
+        cleanStatus();
       } else {
         popUpMovilWindows("Error", "No se pudo enviar el reporte");
       }
     }
   };
 
+  const cleanStatus = () => {   
+    setReportTitle(""); 
+    setReport("");
+    setSelectedReportType(null);
+    router.push({ pathname: "/explore"});
+    };
+
   const handleSingIn = () => {   
-    router.push({ pathname: "/login", params: { reportId: reportId },
-    });
-    
-};
+    router.push({ pathname: "/login", params: { reportId: reportId }});
+    };
 
   return (
     <View style={styles.container}>
