@@ -15,6 +15,7 @@ import {
   fetchWorksAndTransform,
   getFirstThreeArtists,
 } from "../../../src/services/ExploreWorkHelpers";
+import WorkCard from "@/src/components/explore/WorkCard";
 
 export default function ExploreScreen() {
   const [works, setWorks] = useState<Work[]>([]);
@@ -59,64 +60,32 @@ export default function ExploreScreen() {
     }}>
 
    
-    <ScrollView style={{ flex: 1, backgroundColor: "#fff" }}>
+    <ScrollView
+      style={{ flex: 1, backgroundColor: "#fff" }}
+      contentContainerStyle={{ flexGrow: 1 }}
+    >
       <View style={styles.container}>
+
         {/* Sección superior */}
         <View style={styles.topSection}>
           <Text style={styles.topSectionText}>Obras</Text>
-          <View style={styles.topSectionRight}>
-            <Text style={styles.topSectionSecondText}>Desliza</Text>
-            <Ionicons
-              name="arrow-forward"
-              size={20}
-              color="#666"
-              style={{ marginLeft: 4 }}
-            />
-          </View>
         </View>
 
         {/* Sección del medio: Obras */}
-
         <View style={styles.middleSection}>
           <ScrollView
             horizontal
             showsHorizontalScrollIndicator={false}
-            contentContainerStyle={styles.worksScrollContainer}
           >
             {works.map((work) => (
-              <>
-
-              <TouchableOpacity
+              <WorkCard
                 key={work.id}
-                style={styles.workItem}
-                onPress={() =>
-                  router.push({
-                    pathname: "/work/[workId]",
-                    params: { workId: String(work.id) },
-                  })
-                }
-              >
-                <Image
-                  source={{ uri: `${BASE_URL}${work.image}` }}
-                  style={styles.workImage}
-                />
-
-                <View style={styles.workTextContainer}>
-                  <Text style={styles.workTitle}>{work.name}</Text>
-                  <Text style={styles.workArtist}>
-                    {work.artist?.username ?? "Artista desconocido"}
-                  </Text>
-                  <Text style={styles.workSubtitle}>{work.description}</Text>
-                </View>
-              </TouchableOpacity>
-              <ReportDropdown workId={work.id} menuVisibleId={menuVisibleId} setMenuVisibleId={setMenuVisibleId} isBigScreen={true} />
-
-
-            </>
+                work={work}
+                menuVisibleId={menuVisibleId}
+                setMenuVisibleId={setMenuVisibleId}
+              />
             ))}
-
           </ScrollView>
-
         </View>
 
         {/* Sección inferior: Artistas */}
@@ -125,31 +94,22 @@ export default function ExploreScreen() {
             <Text style={styles.bottomSectionHeaderText}>ARTISTAS</Text>
           </View>
           <View style={styles.artistsContainer}>
-            {firstThreeArtists.map((artist) => (
-              <>
+          {firstThreeArtists.map((artist) => (
+            <View key={artist.id}>
               <TouchableOpacity
-                key={artist.id}
                 style={styles.artistCard}
-                onPress={() =>
-                  router.push({
-                    pathname: "/profile/[artistId]",
-                    params: { artistId: String(artist.id) },
-                  })
-                }
+                onPress={() => router.push({ pathname: "/profile/[artistId]", params: { artistId: String(artist.id) }})}
               >
                 <Image
-                  source={{
-                    uri: `${BASE_URL}${artist.baseUser?.imageProfile}`,
-                  }}
+                  source={{ uri: `${BASE_URL}${artist.baseUser?.imageProfile}`}}
                   style={styles.artistImage}
                 />
                 <View style={styles.artistTextContainer}>
                   <Text style={styles.artistName}>{artist.username}</Text>
-                  <Text style={styles.artistLocation}>Painter, Amsterdam</Text>
                 </View>
               </TouchableOpacity>
-              </>
-            ))}
+            </View>
+          ))}
           </View>
         </View>
       </View>
