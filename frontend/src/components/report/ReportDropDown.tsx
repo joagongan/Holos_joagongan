@@ -25,7 +25,7 @@ const ReportDropdown: React.FC<ReportDropdownProps> = ({ workId, menuVisibleId, 
             <TouchableOpacity onPress={(e) => {
             e.stopPropagation(); // Evita que el toque cierre el menú
             showDropDownReport(workId);}}
-            style={ isBigScreen === true ? stylesReport.menuButtonOneImage:  stylesReport.menuButton } >
+            style={ isBigScreen === true ? stylesReport.menuButtonBigScreen:  stylesReport.menuButton } >
               <Ionicons name="ellipsis-vertical" size={24} color="gray" />
    
                       </TouchableOpacity>

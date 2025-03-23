@@ -11,7 +11,7 @@ export default StyleSheet.create({
         alignItems: "flex-end",
         zIndex: 12, 
     },
-  menuButtonOneImage: {
+  menuButtonBigScreen: {
     right:4, 
     padding: 10,
     top:2,
