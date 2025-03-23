@@ -49,8 +49,6 @@ public class CommisionService {
             if (artist == null || !artist.getBaseUser().hasAnyAuthority("ARTIST"))
                 throw new IllegalArgumentException("Envíe la solicitud de comisión a un artista válido");
     
-            SimpleDateFormat parserFecha = new SimpleDateFormat("yyyy-MM-dd");
-            commision.setMilestoneDate(parserFecha.parse(commisionDTO.getMilestoneDate()));
             commision.setArtist(artist);
             commision.setClient(client.get());
             commision.setStatus(StatusCommision.REQUESTED);

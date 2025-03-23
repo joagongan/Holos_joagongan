@@ -24,7 +24,6 @@ public class CommisionDTO {
 
     public Date milestoneDate;
 
-
     public Commision createCommision() {
         Commision commision = new Commision();
         commision.setName(this.getName());

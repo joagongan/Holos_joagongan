@@ -34,6 +34,7 @@ public class Commision extends Work{
     @Enumerated(EnumType.STRING)
     private EnumPaymentArrangement paymentArrangement;
 
+    @Temporal(TemporalType.DATE)
     private Date milestoneDate;
 
     @ManyToOne(cascade = CascadeType.PERSIST)
