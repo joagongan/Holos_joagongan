@@ -1,5 +1,6 @@
 package com.HolosINC.Holos.commision;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -36,22 +37,28 @@ public class CommisionService {
         this.clientRepository = clientRepository;
     }
 
-    public Commision createCommision(CommisionRequestDTO commisionDTO, Long artistId) {
-        Commision commision = commisionDTO.createCommision();
-        Artist artist = artistService.findArtist(artistId);
-        Optional<Client> client = clientRepository.findById(userService.findCurrentUser().getId());
-        if (client.isEmpty()) {
-            throw new ResourceNotFoundException("Client", "id", userService.findCurrentUser().getId());
+    public Commision createCommision(CommisionRequestDTO commisionDTO, Long artistId) throws Exception {
+        try {
+            Commision commision = commisionDTO.createCommision();
+            Artist artist = artistService.findArtist(artistId);
+            Optional<Client> client = clientRepository.findById(userService.findCurrentUser().getId());
+            if (client.isEmpty()) {
+                throw new ResourceNotFoundException("Client", "id", userService.findCurrentUser().getId());
+            }
+    
+            if (artist == null || !artist.getBaseUser().hasAnyAuthority("ARTIST"))
+                throw new IllegalArgumentException("Envíe la solicitud de comisión a un artista válido");
+    
+            SimpleDateFormat parserFecha = new SimpleDateFormat("yyyy-MM-dd");
+            commision.setMilestoneDate(parserFecha.parse(commisionDTO.getMilestoneDate()));
+            commision.setArtist(artist);
+            commision.setClient(client.get());
+            commision.setStatus(StatusCommision.REQUESTED);
+    
+            return commisionRepository.save(commision);
+        } catch (Exception e) {
+            throw e;
         }
-
-        if (artist == null || !artist.getBaseUser().hasAnyAuthority("ARTIST"))
-            throw new IllegalArgumentException("Envíe la solicitud de comisión a un artista válido");
-
-        commision.setArtist(artist);
-        commision.setClient(client.get());
-        commision.setStatus(StatusCommision.REQUESTED);
-
-        return commisionRepository.save(commision);
     }
 
     @Transactional

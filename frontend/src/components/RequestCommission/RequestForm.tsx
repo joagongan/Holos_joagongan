@@ -22,7 +22,7 @@ type FormValues = {
   description: string;
   price: number;
   image: string;
-  dateMilestone: Date | null;
+  milestoneDate: Date | null;
 };
 
 export default function RequestForm({ artist }: RequestFormProps) {
@@ -35,7 +35,7 @@ export default function RequestForm({ artist }: RequestFormProps) {
     description: string().required("Description is required"),
     price: number().required('Price is required').positive('Must be positive'),
     image: string(),
-    dateMilestone: date().nullable().min(new Date(new Date().setDate(new Date().getDate() + 1)), "Date must be after today!"),
+    milestoneDate: date().nullable().min(new Date(new Date().setDate(new Date().getDate() + 1)), "Date must be after today!"),
   });
 
   const pickImage = async (setFieldValue: (field: string, value: any) => void) => {
@@ -61,7 +61,7 @@ export default function RequestForm({ artist }: RequestFormProps) {
         price: values.price,
         paymentArrangement: PaymentArrangement.INITIAL,
         image: values.image,
-        dateMilestone: values.dateMilestone,
+        milestoneDate: values.milestoneDate?.toISOString().slice(0, 10),
       };
 
       await createCommission( artist.id, commissionData, loggedInUser.token );
@@ -74,7 +74,7 @@ export default function RequestForm({ artist }: RequestFormProps) {
 
   return (
     <Formik<FormValues>
-      initialValues={{name: "",description: "",price: 0,image: "",dateMilestone: null}}
+      initialValues={{name: "",description: "",price: 0,image: "",milestoneDate: null}}
       validationSchema={commissionValidationSchema}
       onSubmit={handleFormSubmit}
     >
@@ -123,28 +123,28 @@ export default function RequestForm({ artist }: RequestFormProps) {
           {/* Date Picker Trigger */}
           <TouchableOpacity onPress={() => setShowDatePicker(true)} style={styles.dateButton}>
             <Text style={styles.dateButtonText}>
-              {values.dateMilestone
-                ? `Selected: ${values.dateMilestone.toLocaleDateString()}`
+              {values.milestoneDate
+                ? `Selected: ${values.milestoneDate.toLocaleDateString()}`
                 : "Select a delivery date"}
             </Text>
           </TouchableOpacity>
-          {errors.dateMilestone && touched.dateMilestone && (
-            <Text style={styles.errorText}>{errors.dateMilestone}</Text>
+          {errors.milestoneDate && touched.milestoneDate && (
+            <Text style={styles.errorText}>{errors.milestoneDate}</Text>
           )}
 
           {Platform.OS === "web" ? (
             <input
               type="date"
-              onChange={(e) => { const date = new Date(e.target.value); setFieldValue("dateMilestone", date);}}
+              onChange={(e) => { const date = new Date(e.target.value); setFieldValue("milestoneDate", date);}}
               style={{ padding: 10, borderRadius: 6 }}
             />
           ) : (
             showDatePicker && (
               <DateTimePicker
-                value={values.dateMilestone || new Date()}
+                value={values.milestoneDate || new Date()}
                 mode="date"
                 display="default"
-                onChange={(event, selectedDate) => { setShowDatePicker(false); if (selectedDate) { setFieldValue("dateMilestone", selectedDate);}}}
+                onChange={(event, selectedDate) => { setShowDatePicker(false); if (selectedDate) { setFieldValue("milestoneDate", selectedDate);}}}
               />
             )
           )}

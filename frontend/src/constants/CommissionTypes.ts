@@ -68,7 +68,7 @@ export interface StatusKanbanOrder {
 
 export interface Commission extends Work {
     status: StatusCommission;
-    milestoneDate: Date;
+    milestoneDate: String;
     acceptedDateByArtist: string; // Stored as ISO date string
     paymentArrangement: PaymentArrangement;
     statusKanbanOrder: StatusKanbanOrder;
