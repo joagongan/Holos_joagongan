@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { 
-  View, Text, TextInput, TouchableOpacity, 
-  Alert, StyleSheet, Image 
+import {
+  View, Text, TextInput, TouchableOpacity,
+  Alert, StyleSheet, Image
 } from 'react-native';
 import { useNavigation, useRouter } from 'expo-router';
 import { API_URL } from "@/src/constants/api";
@@ -9,6 +9,8 @@ import { DrawerNavigationProp } from '@react-navigation/drawer';
 import { RootDrawerParamList } from '../_layout';
 import { RouteProp } from '@react-navigation/native';
 import { ScrollView } from 'react-native-gesture-handler';
+import * as ImagePicker from 'expo-image-picker'
+import { Platform } from 'react-native';
 
 type SignupScreenNavigationProp = DrawerNavigationProp<RootDrawerParamList, "Signup">;
 type SignupScreenRouteProp = RouteProp<RootDrawerParamList, "Signup">;
@@ -21,12 +23,13 @@ type SignupScreenProps = {
 export default function SignupScreen() {
   // Estados compartidos
   const [username, setUsername] = useState('');
-  const [firstName, setFirstName] = useState(''); 
+  const [firstName, setFirstName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState(''); // Estado para confirmar contraseña
   const [passwordError, setPasswordError] = useState('');     // Estado para mensaje de error
   const [imageProfile, setImageProfile] = useState('');
+  const [selectedImage, setSelectedImage] = useState('');
   const [role, setRole] = useState('client');
 
   // Estados específicos para artistas
@@ -45,61 +48,94 @@ export default function SignupScreen() {
     }
   }, [password, confirmPassword]);
 
-  const handleSignup = async () => {
-    console.log("Botón Crear cuenta pulsado");
 
-    // Verifica si hay error de contraseña
+  const handleSignup = async () => {
     if (passwordError) {
-      Alert.alert("Error", "Por favor, corrige el error en la confirmación de la contraseña");
+      Alert.alert("Error", "Las contraseñas no coinciden");
       return;
     }
 
     if (!password || !confirmPassword) {
-      Alert.alert("Error", "Ingresa la contraseña y su confirmación");
+      Alert.alert("Error", "Debes ingresar y confirmar la contraseña");
       return;
     }
 
+    if (!selectedImage) {
+      Alert.alert("Falta imagen", "Selecciona una foto de perfil");
+      return;
+    }
+
+    const userPayload = {
+      firstName,
+      username,
+      email,
+      password,
+      authority: role.toUpperCase(),
+      phoneNumber: "123456789"
+    };
+
+    const formData = new FormData();
+    formData.append("user", JSON.stringify(userPayload));
+
+    const uriParts = selectedImage.split("/");
+    const fileName = uriParts[uriParts.length - 1];
+    const fileExtension = fileName?.split(".").pop() || "jpg";
+    const mimeType = `image/${fileExtension}`;
+
+    if (Platform.OS === "web") {
+      const response = await fetch(selectedImage);
+      const blob = await response.blob();
+      const file = new File([blob], fileName, { type: mimeType });
+      formData.append("imageProfile", file);
+    } else {
+      formData.append("imageProfile", {
+        uri: selectedImage,
+        name: fileName,
+        type: mimeType,
+      } as any);
+    }
+
     try {
-      const requestBody: any = {
-        firstName,
-        username,
-        email,
-        password,
-        imageProfile,
-        authority: role,
-      };
-
-      if (role === 'artist') {
-        requestBody.numSlotsOfWork = parseInt(numSlotsOfWork, 10);
-        requestBody.tableCommisionsPrice = tableCommisionsPrice;
-      }
-
-      console.log("Enviando request a", `${API_URL}/auth/signup`, requestBody);
-
       const response = await fetch(`${API_URL}/auth/signup`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(requestBody),
+        method: "POST",
+        headers: {
+          Accept: "application/json",
+        },
+        body: formData,
       });
 
-      console.log("Respuesta HTTP status:", response.status);
+      const result = await response.json();
 
       if (!response.ok) {
-        const errorData = await response.json();
-        console.error('Error en el registro:', errorData);
-        Alert.alert("Error", JSON.stringify(errorData));
+        console.error("Error en el registro:", result);
+        Alert.alert("Error", result.message || "Registro fallido");
         return;
       }
 
-      console.log("Registro exitoso, navegando a Inicio");
       Alert.alert("Registro exitoso", "Usuario registrado correctamente");
       router.push(`/(drawer)/explore`);
-
     } catch (error) {
-      console.error('Error en la petición:', error);
+      console.error("Error en la petición:", error);
       Alert.alert("Error", String(error));
     }
   };
+
+
+  const pickImage = async () => {
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: true,
+      aspect: [1, 1],
+      quality: 1,
+    });
+
+    if (!result.canceled) {
+      const uri = result.assets[0].uri;
+      setSelectedImage(uri);
+      setImageProfile(uri);
+    }
+  };
+
 
   return (
     <ScrollView style={styles.screenBackground}>
@@ -188,14 +224,24 @@ export default function SignupScreen() {
         <View style={styles.formRow}>
           {/* Foto de perfil */}
           <View style={styles.inputGroup}>
-            <Text style={styles.label}>Foto de perfil (URL)</Text>
-            <TextInput
-              style={styles.input}
-              placeholder="URL de la imagen"
-              value={imageProfile}
-              onChangeText={setImageProfile}
-            />
+            <Text style={styles.label}>Foto de perfil</Text>
+            <TouchableOpacity
+              onPress={pickImage}
+              style={[styles.input, { justifyContent: 'center', alignItems: 'center' }]}
+            >
+              <Text style={{ color: '#888' }}>
+                {selectedImage ? "Imagen seleccionada" : "Seleccionar imagen"}
+              </Text>
+            </TouchableOpacity>
+
+            {selectedImage && (
+              <Image
+                source={{ uri: selectedImage }}
+                style={{ width: 100, height: 100, marginTop: 10, borderRadius: 8 }}
+              />
+            )}
           </View>
+
         </View>
 
         {role === 'artist' && (
