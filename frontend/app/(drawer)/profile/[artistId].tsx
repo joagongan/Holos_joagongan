@@ -1,12 +1,14 @@
 import React, { useEffect, useState } from "react";
-import { View, Text, Image, ScrollView, TouchableOpacity, ActivityIndicator } from "react-native";
+import { View, Text, Image, ScrollView, TouchableOpacity, ActivityIndicator, TouchableWithoutFeedback } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { DrawerNavigationProp } from "@react-navigation/drawer";
 import { RootDrawerParamList } from "@/app/_layout";
-import { getArtistById } from "@/src/services/ArtistService";
-import { getWorksDoneByArtist } from "@/src/services/WorksDoneService";
+import { getArtistById } from "@/src/services/artistApi";
+import { getWorksDoneByArtist } from "@/src/services/WorksDoneApi";
 import styles from "@/src/styles/ArtistDetail.styles";
 import { useLocalSearchParams, useRouter } from "expo-router";
+import ReportDropdown from "@/src/components/report/ReportDropDown";
+import { API_URL, BASE_URL } from "@/src/constants/api";
 
 interface Artwork {
   id: number;
@@ -31,7 +33,6 @@ interface ArtistDetailScreenProps {
 }
 
 export default function ArtistDetailScreen() {
-  const BASE_URL = "http://localhost:8080";
   const router = useRouter();
   const navigation = useNavigation();
   const { artistId } = useLocalSearchParams<{ artistId: string }>();
@@ -39,13 +40,15 @@ export default function ArtistDetailScreen() {
   const [artist, setArtist] = useState<Artist | null>(null);
   const [works, setWorks] = useState<Artwork[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
+  const [menuVisibleId, setMenuVisibleId] = useState<number| null>(null);
+  
 
   useEffect(() => {
     const fetchData = async () => {
       console.log(artistId);
-      const artistData: Artist = await getArtistById(artistId);
+      const artistData: Artist = await getArtistById(Number(artistId));
       setArtist(artistData);
-      const worksData: Artwork[] = await getWorksDoneByArtist(artistId);
+      const worksData: Artwork[] = await getWorksDoneByArtist(Number(artistId));
       setWorks(worksData);
       setLoading(false);
     };
@@ -65,11 +68,15 @@ export default function ArtistDetailScreen() {
   }
 
   return (
+      <TouchableWithoutFeedback onPress={() => {
+        if (menuVisibleId !== null) {
+         setMenuVisibleId(null);} // Cierra el menú al tocar fuera
+        }}>
     <ScrollView contentContainerStyle={styles.container}>
       {/* Información del artista */}
       <View style={styles.header}>
         <Image
-          source={{ uri: `${BASE_URL}${artist?.image}` }}
+          source={{ uri: `${API_URL}${artist?.image}` }} // TODO Conseguir de imagenes estáticas
           style={styles.artistImage}
         />
         <View style={styles.artistDetails}>
@@ -92,10 +99,6 @@ export default function ArtistDetailScreen() {
         >
           <Text style={styles.buttonText}>Solicitar trabajo</Text>
         </TouchableOpacity>
-
-        <TouchableOpacity style={styles.button}>
-          <Text style={styles.buttonText}>Añadir a favoritos</Text>
-        </TouchableOpacity>
       </View>
 
       {/* Obras del artista */}
@@ -103,13 +106,22 @@ export default function ArtistDetailScreen() {
         <Text style={styles.artworksTitle}>Obras del artista</Text>
         <View style={styles.artworksList}>
           {works.map((work: Artwork) => (
+            <>
+
             <View key={work.id} style={styles.artworkItem}>
-              <Image source={{ uri: `${BASE_URL}${work.image}` }} style={styles.artworkImage} />
+
+              <Image source={{ uri: `${BASE_URL}/${work.image}` }} style={styles.artworkImage} />
               <Text style={styles.artworkTitle}>{work.name}</Text>
+              <View  style={ styles.reportDropDownContainer}>
+              <ReportDropdown workId={work.id} menuVisibleId={menuVisibleId} setMenuVisibleId={setMenuVisibleId} isBigScreen={false} />
+              </View>
             </View>
+
+            </>
           ))}
         </View>
       </View>
     </ScrollView>
+    </TouchableWithoutFeedback>
   );
 }

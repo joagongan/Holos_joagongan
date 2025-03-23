@@ -1,25 +1,10 @@
 import React, { useContext, useEffect, useState } from "react";
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Image, Dimensions, ActivityIndicator, Alert } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import { getAllCommisions, updateCommisionStatus } from "@/src/services/CommisionService";
 import { AuthenticationContext } from "@/src/contexts/AuthContext";
 import ProtectedRoute from "@/src/components/ProtectedRoute";
-
-// 1. Define la interfaz (o type) que describe tu modelo de Commission:
-interface Commission {
-  id: number;
-  description: string;
-  status: string; // PENDING, ACCEPTED, REJECTED, etc.
-  client?: {
-    id: number;
-    username: string;
-    imageProfile?: string;
-  };
-  artist?: {
-    id: number;
-    username: string;
-  };
-}
+import { getAllRequestedCommisions, updateCommisionStatus } from "@/src/services/commisionApi";
+import { Commission } from "@/src/constants/CommissionTypes";
 
 // 2. Ajusta la pantalla
 const { width } = Dimensions.get("window");
@@ -36,9 +21,8 @@ export default function ArtistRequestOrders({ route }: any) {
 
   const fetchCommissions = async () => {
     try {
-      const data: Commission[] = await getAllCommisions();
-      const filteredData = data.filter((comm) => comm.artist?.id === loggedInUser.id);
-      setCommissions(filteredData);
+      const data: Commission[] = await getAllRequestedCommisions(loggedInUser.token);
+      setCommissions(data);
     } catch (error) {
       Alert.alert("Error", "Error al obtener las comisiones.");
     } finally {
@@ -52,7 +36,7 @@ export default function ArtistRequestOrders({ route }: any) {
 
   const handleUpdateStatus = async (commissionId: number, accept: boolean) => {
     try {
-      await updateCommisionStatus(commissionId, loggedInUser.id, accept);
+      await updateCommisionStatus(commissionId, loggedInUser.id, accept, loggedInUser.token);
       Alert.alert("Éxito", `Solicitud ${accept ? "aceptada" : "denegada"}.`);
       fetchCommissions();
     } catch (error) {
@@ -97,14 +81,14 @@ const respondedRequests = commissions.filter(
                 <Image
                   source={{
                     uri:
-                      comm.client?.imageProfile ||
+                      comm.client?.baseUser.imageProfile ||
                       "https://via.placeholder.com/60",
                   }}
                   style={styles.profileIcon}
                 />
                 <View style={styles.textContainer}>
                   <Text style={styles.text}>
-                    {comm.client?.username || "Usuario desconocido"}
+                    {comm.client?.baseUser.username || "Usuario desconocido"}
                   </Text>
                   <Text style={styles.text}>Descripción: {comm.description}</Text>
                 </View>
@@ -135,14 +119,14 @@ const respondedRequests = commissions.filter(
                 <Image
                   source={{
                     uri:
-                      comm.client?.imageProfile ||
+                      comm.client?.baseUser.imageProfile ||
                       "https://via.placeholder.com/60",
                   }}
                   style={styles.profileIcon}
                 />
                 <View style={styles.textContainer}>
                   <Text style={styles.text}>
-                    {comm.client?.username || "Usuario desconocido"}
+                    {comm.client?.baseUser.username || "Usuario desconocido"}
                   </Text>
                   <Text style={styles.text}>Descripción: {comm.description}</Text>
                 </View>

@@ -2,6 +2,7 @@ import { useEffect, useState } from "react"; // Se agrega useState para manejar 
 import { useRouter } from "expo-router";
 import { View, Text, ActivityIndicator } from "react-native";
 import { useAuth } from "@/src/hooks/useAuth";
+import LoadingScreen from "./LoadingScreen";
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
@@ -9,11 +10,13 @@ interface ProtectedRouteProps {
 }
 
 export default function ProtectedRoute({ children, allowedRoles = [] }: ProtectedRouteProps) {
-  const { isAuthenticated, isArtist, isAdmin } = useAuth();
+  const { isAuthenticated, isArtist, isAdmin, loading } = useAuth();
   const router = useRouter();
   const [isMounted, setIsMounted] = useState(false); // Nuevo estado para controlar el montaje
 
   const userRole = isAdmin ? "ADMIN" : isArtist ? "ARTIST" : "CLIENT";
+
+  if (loading) return <LoadingScreen />;
 
   useEffect(() => {
     setIsMounted(true); // Se marca como montado al renderizar por primera vez
