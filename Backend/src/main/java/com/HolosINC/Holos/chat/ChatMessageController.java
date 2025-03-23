@@ -35,12 +35,12 @@ public class ChatMessageController {
         service.deleteMessage(id);
     }
 
-    @GetMapping("/chat/{fromUserId}/{toUserId}")
-    public List<ChatMessage> getConversation(@PathVariable Long fromUserId, @PathVariable Long toUserId) {
-        return service.findConversation(fromUserId, toUserId);
+    @GetMapping("/chat/{toUserId}")
+    public List<ChatMessage> getConversation(@PathVariable Long toUserId) {
+        return service.findConversation(toUserId);
     }
 
-    @GetMapping
+    @GetMapping("/admin")
     public List<ChatMessage> getAllChatMessages() {
         return service.findAllChatMessages();
     }

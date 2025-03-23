@@ -108,11 +108,6 @@ INSERT INTO works_done(id, artist_id, name, description, price, image) VALUES
 (4, 1, 'Abstract Art', 'A modern abstract composition', 180.0, '/images/abstract_art.jpg'),
 (5, 1, 'Forest Path', 'A peaceful forest pathway', 120.0, '/images/abstract_art.jpg');
 
-INSERT INTO works_done (id, artist_id, image) VALUES 
-(1, 1, NULL),
-(2, 1, NULL),
-(3, 1, NULL),
-(4, 1, NULL);
 INSERT INTO status_kanban_order (id, artist_id, name, order_in_kanban, description, color) VALUES 
 (1, 1, 'To Do', 1, 'Tasks that need to be started', '#FF5733'),
 (2, 2, 'In Progress', 2, 'Tasks that are currently being worked on', '#33FF57'),

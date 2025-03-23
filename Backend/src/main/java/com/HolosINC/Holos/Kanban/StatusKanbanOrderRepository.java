@@ -10,7 +10,6 @@ import org.springframework.stereotype.Repository;
 
 import com.HolosINC.Holos.Kanban.DTOs.StatusKanbanDTO;
 import com.HolosINC.Holos.Kanban.DTOs.StatusKanbanWithCommisionsDTO;
-import com.HolosINC.Holos.commision.Commision;
 
 @Repository
 public interface StatusKanbanOrderRepository extends JpaRepository<StatusKanbanOrder, Integer> {

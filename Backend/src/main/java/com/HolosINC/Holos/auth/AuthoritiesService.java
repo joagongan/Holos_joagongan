@@ -58,8 +58,6 @@ public class AuthoritiesService {
 		Authorities role = findByAuthority(strRoles);
 		user.setAuthority(role);
 
-		// TODO: improve client signup
-
 		switch (strRoles.toLowerCase()) {
 		case "admin":;
 			baseUserService.save(user);
