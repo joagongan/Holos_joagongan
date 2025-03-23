@@ -4,50 +4,26 @@ import {
   Text,
   Image,
   ScrollView,
-  StyleSheet,
   TouchableOpacity,
   useWindowDimensions,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
-import { getAllWorksDone } from "@/src/services/WorksDoneApi";
-import { BASE_URL } from "@/src/constants/api";
 import { useFonts } from "expo-font";
+
 import { desktopStyles, mobileStyles } from "@/src/styles/Explore.styles";
+import { BASE_URL } from "@/src/constants/api";
+import { Work } from "./types";
 
-export interface BaseUser {
-  id: number;
-  name: string;
-  username: string;
-  password: string;
-  email: string;
-  phoneNumber?: string;
-  imageProfile?: string;
-  createdUser: Date;
-}
+import { fetchWorksAndTransform, getFirstThreeArtists } from "./workHelpers";
 
-export interface Artist {
-  id: number;
-  name: string;
-  username: string;
-  email: string;
-  phoneNumber?: string;
-  imageProfile?: string;
-  tableCommisionsPrice?: string;
-  numSlotsOfWork: number;
-  baseUser?: BaseUser;
-}
+export default function ExploreScreen() {
+  const [works, setWorks] = useState<Work[]>([]);
+  const router = useRouter();
+  const { width } = useWindowDimensions();
+  const isDesktop = width > 768;
+  const styles = isDesktop ? desktopStyles : mobileStyles;
 
-export interface Work {
-  id: number;
-  name: string;
-  description: string;
-  price: number;
-  artist: Artist;
-  image: string;
-}
-
-export default function ThreeRowsScreen() {
   const [fontsLoaded] = useFonts({
     "Merriweather-Regular": require("../../../assets/fonts/Merriweather_24pt-Regular.ttf"),
     "Merriweather-Italic": require("../../../assets/fonts/Merriweather_24pt-Italic.ttf"),
@@ -55,43 +31,20 @@ export default function ThreeRowsScreen() {
     "Merriweather-BoldItalic": require("../../../assets/fonts/Merriweather_24pt-BoldItalic.ttf"),
   });
 
-  const [works, setWorks] = useState<Work[]>([]);
-  const router = useRouter();
-  const { width } = useWindowDimensions();
-  const isDesktop = width > 768;
-  const styles = isDesktop ? desktopStyles : mobileStyles;
-
   useEffect(() => {
-    const fetchWorks = async () => {
+    const fetchData = async () => {
       try {
-        const data = await getAllWorksDone();
-        const transformedData = data.map((work) => ({
-          ...work,
-          artist: {
-            ...work.artist,
-            baseUser: {
-              ...work.artist.baseUser,
-              createdUser: new Date(work.artist.baseUser.createdUser),
-            },
-          },
-        }));
-        setWorks(transformedData);
+        const data = await fetchWorksAndTransform();
+        setWorks(data);
       } catch (error) {
-        console.error("Error fetching works: ", error);
+        console.error("Error fetching works:", error);
       }
     };
-    fetchWorks();
+
+    fetchData();
   }, []);
 
-  const firstThreeArtists = useMemo(() => {
-    const uniqueArtistsMap = new Map<number, Artist>();
-    works.forEach((work) => {
-      if (work.artist && !uniqueArtistsMap.has(work.artist.id)) {
-        uniqueArtistsMap.set(work.artist.id, work.artist);
-      }
-    });
-    return Array.from(uniqueArtistsMap.values()).slice(0, 3);
-  }, [works]);
+  const firstThreeArtists = useMemo(() => getFirstThreeArtists(works), [works]);
 
   if (!fontsLoaded) {
     return null;
@@ -100,6 +53,7 @@ export default function ThreeRowsScreen() {
   return (
     <ScrollView style={{ flex: 1, backgroundColor: "#fff" }}>
       <View style={styles.container}>
+        {/* Sección superior */}
         <View style={styles.topSection}>
           <Text style={styles.topSectionText}>Obras</Text>
           <View style={styles.topSectionRight}>
@@ -112,6 +66,8 @@ export default function ThreeRowsScreen() {
             />
           </View>
         </View>
+
+        {/* Sección del medio: Obras */}
         <View style={styles.middleSection}>
           <ScrollView
             horizontal
@@ -145,6 +101,7 @@ export default function ThreeRowsScreen() {
           </ScrollView>
         </View>
 
+        {/* Sección inferior: Artistas */}
         <View style={styles.bottomSection}>
           <View style={styles.bottomSectionHeader}>
             <Text style={styles.bottomSectionHeaderText}>ARTISTAS</Text>
