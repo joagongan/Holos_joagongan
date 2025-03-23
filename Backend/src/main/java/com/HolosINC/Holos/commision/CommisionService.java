@@ -4,6 +4,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -14,6 +15,7 @@ import com.HolosINC.Holos.artist.ArtistService;
 import com.HolosINC.Holos.client.Client;
 import com.HolosINC.Holos.client.ClientRepository;
 import com.HolosINC.Holos.commision.DTOs.CommisionDTO;
+import com.HolosINC.Holos.commision.DTOs.CommisionRequestDTO;
 import com.HolosINC.Holos.exceptions.ResourceNotFoundException;
 import com.HolosINC.Holos.model.BaseUser;
 import com.HolosINC.Holos.model.BaseUserService;
@@ -34,10 +36,10 @@ public class CommisionService {
         this.clientRepository = clientRepository;
     }
 
-    public Commision createCommision(CommisionDTO commisionDTO, Long artistId) {
+    public Commision createCommision(CommisionRequestDTO commisionDTO, Long artistId) {
         Commision commision = commisionDTO.createCommision();
         Artist artist = artistService.findArtist(artistId);
-        Optional<Client> client = clientRepository.getClientByUser(userService.findCurrentUser().getId());
+        Optional<Client> client = clientRepository.findById(userService.findCurrentUser().getId());
         if (client.isEmpty()) {
             throw new ResourceNotFoundException("Client", "id", userService.findCurrentUser().getId());
         }
@@ -50,6 +52,35 @@ public class CommisionService {
         commision.setStatus(StatusCommision.REQUESTED);
 
         return commisionRepository.save(commision);
+    }
+
+    @Transactional
+    public Commision requestChangesCommision(CommisionDTO commisionDTO, Long commisionId) throws Exception {
+        try {
+            BaseUser user = userService.findCurrentUser();
+            Commision commisionUpdated = commisionDTO.createCommision();
+            Commision commisionInBDD = commisionRepository.findById(commisionId)
+                .orElseThrow(() -> new ResourceNotFoundException("No existe la comisión que se quiere cambiar"));
+            
+            if (!(user.getId().equals(commisionInBDD.getClient().getBaseUser().getId()) || 
+                  user.getId().equals(commisionInBDD.getArtist().getBaseUser().getId())))
+                  throw new IllegalArgumentException("No puedes editar una comisión que no te pertenece");
+
+            if (user.hasAuthority("ARTIST"))
+                commisionUpdated.setStatus(StatusCommision.WAITING_CLIENT);
+            if (user.hasAuthority("CLIENT"))
+                commisionUpdated.setStatus(StatusCommision.WAITING_ARTIST);
+
+            BeanUtils.copyProperties(commisionUpdated, commisionInBDD);
+
+            return commisionRepository.save(commisionInBDD);
+        } catch (ResourceNotFoundException e) {
+            throw e;
+        } catch (IllegalArgumentException e) {
+            throw e;
+        } catch (Exception e) {
+            throw e;
+        }
     }
 
     public List<Commision> getAllCommisions() {

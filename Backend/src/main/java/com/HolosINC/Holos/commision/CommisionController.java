@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.HolosINC.Holos.commision.DTOs.CommisionDTO;
+import com.HolosINC.Holos.commision.DTOs.CommisionRequestDTO;
 
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -33,9 +34,21 @@ public class CommisionController {
     }
 
     @PostMapping("/{artistId}")
-    public ResponseEntity<?> createCommision(@Valid @RequestBody CommisionDTO commision, @PathVariable Long artistId) {
+    public ResponseEntity<?> createCommision(@Valid @RequestBody CommisionRequestDTO commision, @PathVariable Long artistId) {
         try {
             Commision createdCommision = commisionService.createCommision(commision, artistId);
+            return ResponseEntity.ok(createdCommision);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().body(e.getMessage());
+        }
+    }
+
+    @PutMapping("/{commisionId}/requestChanges")
+    public ResponseEntity<?> changeRequestedCommision(@Valid @RequestBody CommisionDTO commision, @PathVariable Long commisionId) {
+        try {
+            Commision createdCommision = commisionService.requestChangesCommision(commision, commisionId);
             return ResponseEntity.ok(createdCommision);
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().body(e.getMessage());

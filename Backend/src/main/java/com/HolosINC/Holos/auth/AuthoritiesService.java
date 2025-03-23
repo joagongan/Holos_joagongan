@@ -117,7 +117,7 @@ public class AuthoritiesService {
 			throw new AccessDeniedException("No puedes eliminar un usuario administrador");
 		}
 		if (user.getAuthority().getAuthority().equals("ARTIST")) {
-			Artist artist = artistService.findArtistByUserId(id);
+			Artist artist = artistService.findArtist(id);
 			artistService.deleteArtist(artist.getId());
 		} else if (user.getAuthority().getAuthority().equals("CLIENT")) {
 			Client client = clientService.findClientByUserId(id);

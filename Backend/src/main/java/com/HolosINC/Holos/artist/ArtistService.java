@@ -23,22 +23,10 @@ public class ArtistService {
 		return artist;
 	}
 
-
 	@Transactional(readOnly = true)
 	public Artist findArtist(Long artistId) {
-		return artistRepository.findArtistByUser(artistId)
+		return artistRepository.findById(artistId)
 				.orElseThrow(() -> new ResourceNotFoundException("Artist", "id", artistId));
-	}
-
-	@Transactional(readOnly = true)
-	public Artist findArtistByUserId(Long userId) {
-		return artistRepository.findArtistByUser(userId)
-				.orElseThrow(() -> new ResourceNotFoundException("Artist", "userId", userId));
-	}
-
-	@Transactional(readOnly = true)
-	public Iterable<Artist> findAll() {
-		return artistRepository.findAll();
 	}
 
 	@Transactional
