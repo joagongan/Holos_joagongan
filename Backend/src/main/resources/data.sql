@@ -103,9 +103,9 @@ INSERT INTO categories (id, name, description, image) VALUES
 
 INSERT INTO works_done(id, artist_id, name, description, price, image) VALUES 
 (1, 1, 'Sunset Painting', 'A beautiful sunset painting', 150.0, '/images/sunset_painting.jpg'), 
-(2, 2, 'Ocean Waves', 'A calming ocean scene with waves', 200.0, '/images/ocean_waves.jpg'), 
-(3, 3, 'Starry Night Replica', 'Inspired by Van Gogh’s Starry Night', 300.0, '/images/starry_night_replica.jpg'), 
-(4, 2, 'Abstract Art', 'A modern abstract composition', 180.0, '/images/abstract_art.jpg'),
+(2, 1, 'Ocean Waves', 'A calming ocean scene with waves', 200.0, '/images/ocean_waves.jpg'), 
+(3, 1, 'Starry Night Replica', 'Inspired by Van Gogh’s Starry Night', 300.0, '/images/starry_night_replica.jpg'), 
+(4, 1, 'Abstract Art', 'A modern abstract composition', 180.0, '/images/abstract_art.jpg'),
 (5, 1, 'Forest Path', 'A peaceful forest pathway', 120.0, '/images/abstract_art.jpg');
 
 INSERT INTO status_kanban_order (id, artist_id, name, order_in_kanban, description, color) VALUES 
