@@ -79,7 +79,6 @@ public class AuthoritiesService {
 			client.setBaseUser(user);
 			clientService.saveClient(client);
 		} else {
-			// TODO: Agregar caso del admin
 			baseUserService.save(user);
 		}
 	}
@@ -103,7 +102,6 @@ public class AuthoritiesService {
 			Client client = clientService.findClient(user.getId());
 			client.setBaseUser(user);
 		} else {
-			// TODO: Agregar el caso de admin
 			baseUserService.save(user);
 		}
 	}
