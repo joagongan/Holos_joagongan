@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from "react";
-import { View, Text, TextInput, TouchableOpacity, Alert, StyleSheet, Image } from "react-native";
+import { View, Text, TextInput, TouchableOpacity, Image } from "react-native";
 import DropDownPicker from "react-native-dropdown-picker";
 import { getWorksDoneById } from "@/src/services/WorksDoneApi";
 import { getReportTypes, postReportWork } from "@/src/services/ReportService";
@@ -9,6 +9,7 @@ import { AuthenticationContext } from "@/src/contexts/AuthContext";
 import { useRouter, useNavigation } from "expo-router";
 import styles from "@/src/styles/ReportScreen.styles";
 import  popUpMovilWindows  from "@/src/components/PopUpAlertMovilWindows";
+import { API_URL } from "@/src/constants/api";
 
 export interface ReportDTO {
   name: string;
@@ -43,7 +44,6 @@ export interface Artist {
 
 
 export default function ReportScreen() {
-  const BASE_URL = "http://localhost:8080";
   const { reportId } = useLocalSearchParams();
   const numberWorkId = Number(reportId);
   
@@ -182,7 +182,7 @@ export default function ReportScreen() {
 
           <View style={{ position: "relative" }}>
             {work.image ? (
-              <Image source={{ uri: `${BASE_URL}${work.image}` }} style={styles.artworkImage} />
+              <Image source={{ uri: `${API_URL}${work.image}` }} style={styles.artworkImage} />
             ) : (
               <View style={styles.placeholder}>
                 <Text style={{ color: "#aaa" }}>Sin imagen</Text>
