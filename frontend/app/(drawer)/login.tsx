@@ -44,7 +44,6 @@ export default function LoginScreen ({ navigation }:any) {
                     })
                     
                     router.replace('/')
-                    console.log("asdfasdf")
                   } else {
                     router.push({
                         pathname: "/report/[reportId]",

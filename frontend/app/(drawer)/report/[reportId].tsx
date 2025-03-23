@@ -3,10 +3,9 @@ import { View, Text, TextInput, TouchableOpacity, Image } from "react-native";
 import DropDownPicker from "react-native-dropdown-picker";
 import { getWorksDoneById } from "@/src/services/WorksDoneApi";
 import { getReportTypes, postReportWork } from "@/src/services/ReportService";
-import { useLocalSearchParams } from "expo-router";
 import { Button} from "react-native-paper";
 import { AuthenticationContext } from "@/src/contexts/AuthContext";
-import { useRouter, useNavigation } from "expo-router";
+import { useRouter, useNavigation, useLocalSearchParams } from "expo-router";
 import styles from "@/src/styles/ReportScreen.styles";
 import  popUpMovilWindows  from "@/src/components/PopUpAlertMovilWindows";
 import { API_URL } from "@/src/constants/api";
@@ -166,93 +165,102 @@ export default function ReportScreen() {
     router.push({ pathname: "/login", params: { reportId: reportId }});
     };
 
+
+
+  const userRegister  = () => { 
+    
+  return(
+    loading ? (
+      <>
+      <Text style={styles.title}>Reportar obra del artista: {work?.artist.name }</Text>
+      <Text style={styles.loading}>Cargando detalles de la obra...</Text>
+      </>
+    ) : work ? (
+      <>
+        <Text style={styles.title}>Reportar obra del artista: {work?.artist.name }</Text>
+
+        <View style={{ position: "relative" }}>
+          {work.image ? (
+            <Image source={{ uri: `${API_URL}${work.image}` }} style={styles.artworkImage} />
+          ) : (
+            <View style={styles.placeholder}>
+              <Text style={{ color: "#aaa" }}>Sin imagen</Text>
+            </View>
+          )}
+        </View>
+
+        {/* Nombre de la obra */}
+        <Text style={styles.artworkTitle}>{work.name}</Text>
+
+        {/* Nombre del artista */}
+        <Text style={styles.artistName}>Artista: {work.artist.name}</Text>
+
+
+              {/* Campo de texto para el título del reporte */}
+              <Text>Escriba el título de su reporte:</Text>
+        <TextInput
+          style={styles.input}
+          placeholder="Escribe un título para el reporte..."
+          value={reportTitle}
+          onChangeText={setReportTitle}
+        />
+      <Text>Seleccione el tipo de reporte:</Text>
+
+        {/* Dropdown de tipos de reporte */}
+        <DropDownPicker
+          open={dropdownOpen}
+          value={selectedReportType}
+          items={reportTypes}
+          setOpen={setDropdownOpen}
+          setValue={setSelectedReportType}
+          setItems={setReportTypes}
+          placeholder="Selecciona un tipo de reporte"
+          style={styles.dropdown}
+          dropDownContainerStyle={{ borderColor: "#ccc" }}
+        />
+
+      <Text>Describa el motivo de su reporte:</Text>
+
+        {/* Campo de texto para el reporte */}
+        <TextInput
+          style={styles.input}
+          placeholder="Escribe el motivo del reporte..."
+          value={report}
+          onChangeText={setReport}
+          multiline
+        />
+
+        {/* Botón de enviar */}
+        <TouchableOpacity style={styles.button} onPress={handleSubmit}>
+          <Text style={styles.buttonText}>Enviar Reporte</Text>
+        </TouchableOpacity>
+      </>
+    ) : (
+      <Text style={styles.errorText}>No se encontró la obra</Text>
+    )
+  
+  );
+  }
+
+  const userNotRegister  = () => { 
+    return (
+      <>
+      <View style={styles.containerNotRegister}>
+        <View style={styles.containerContentNotRegister}>
+           <Text style={styles.textContainerNotRegister}>Debe registrarse para poder reportar una obra</Text>
+          <Button mode="contained" onPress={handleSingIn} style={styles.singInButton}>
+              Abrir Sesión
+          </Button>
+          </View>
+          </View>
+       
+      </>
+    );
+  }
+
   return (
     <View style={styles.container}>
-      
-      {isAuthenticated ? (
-        
-      loading ? (
-        <>
-        <Text style={styles.title}>Reportar obra del artista: {work?.artist.name }</Text>
-        <Text style={styles.loading}>Cargando detalles de la obra...</Text>
-        </>
-      ) : work ? (
-        <>
-          <Text style={styles.title}>Reportar obra del artista: {work?.artist.name }</Text>
-
-          <View style={{ position: "relative" }}>
-            {work.image ? (
-              <Image source={{ uri: `${API_URL}${work.image}` }} style={styles.artworkImage} />
-            ) : (
-              <View style={styles.placeholder}>
-                <Text style={{ color: "#aaa" }}>Sin imagen</Text>
-              </View>
-            )}
-          </View>
-
-          {/* Nombre de la obra */}
-          <Text style={styles.artworkTitle}>{work.name}</Text>
-
-          {/* Nombre del artista */}
-          <Text style={styles.artistName}>Artista: {work.artist.name}</Text>
-
-
-                {/* Campo de texto para el título del reporte */}
-                <Text>Escriba el título de su reporte:</Text>
-          <TextInput
-            style={styles.input}
-            placeholder="Escribe un título para el reporte..."
-            value={reportTitle}
-            onChangeText={setReportTitle}
-          />
-        <Text>Seleccione el tipo de reporte:</Text>
-
-          {/* Dropdown de tipos de reporte */}
-          <DropDownPicker
-            open={dropdownOpen}
-            value={selectedReportType}
-            items={reportTypes}
-            setOpen={setDropdownOpen}
-            setValue={setSelectedReportType}
-            setItems={setReportTypes}
-            placeholder="Selecciona un tipo de reporte"
-            style={styles.dropdown}
-            dropDownContainerStyle={{ borderColor: "#ccc" }}
-          />
-
-        <Text>Describa el motivo de su reporte:</Text>
-
-          {/* Campo de texto para el reporte */}
-          <TextInput
-            style={styles.input}
-            placeholder="Escribe el motivo del reporte..."
-            value={report}
-            onChangeText={setReport}
-            multiline
-          />
-
-          {/* Botón de enviar */}
-          <TouchableOpacity style={styles.button} onPress={handleSubmit}>
-            <Text style={styles.buttonText}>Enviar Reporte</Text>
-          </TouchableOpacity>
-        </>
-      ) : (
-        <Text style={styles.errorText}>No se encontró la obra</Text>
-      )
-      ):(    
-        <>
-        <View style={styles.containerNotRegister}>
-          <View style={styles.containerContentNotRegister}>
-             <Text style={styles.textContainerNotRegister}>Debe registrarse para poder reportar una obra</Text>
-            <Button mode="contained" onPress={handleSingIn} style={styles.singInButton}>
-                Abrir Sesión
-            </Button>
-            </View>
-            </View>
-         
-        </>
-
-      )}
+      {isAuthenticated ? (userRegister() ):( userNotRegister())}
     </View>
   );
 }
