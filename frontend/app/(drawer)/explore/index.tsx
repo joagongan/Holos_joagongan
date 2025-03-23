@@ -13,9 +13,12 @@ import { useFonts } from "expo-font";
 
 import { desktopStyles, mobileStyles } from "@/src/styles/Explore.styles";
 import { BASE_URL } from "@/src/constants/api";
-import { Work } from "./types";
+import { Work } from "../../../src/constants/ExploreTypes";
 
-import { fetchWorksAndTransform, getFirstThreeArtists } from "./workHelpers";
+import {
+  fetchWorksAndTransform,
+  getFirstThreeArtists,
+} from "../../../src/services/ExploreWorkHelpers";
 
 export default function ExploreScreen() {
   const [works, setWorks] = useState<Work[]>([]);

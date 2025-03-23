@@ -1,5 +1,5 @@
 import { getAllWorksDone } from "@/src/services/WorksDoneApi";
-import { Work, Artist } from "./types";
+import { Work, Artist } from "../constants/ExploreTypes";
 
 export async function fetchWorksAndTransform(): Promise<Work[]> {
   try {
