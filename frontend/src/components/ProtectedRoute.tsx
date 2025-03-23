@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react"; // Se agrega useState para manejar isMounted
+import { useEffect } from "react";
 import { useRouter } from "expo-router";
 import { View, Text, ActivityIndicator } from "react-native";
 import { useAuth } from "@/src/hooks/useAuth";
@@ -12,25 +12,18 @@ interface ProtectedRouteProps {
 export default function ProtectedRoute({ children, allowedRoles = [] }: ProtectedRouteProps) {
   const { isAuthenticated, isArtist, isAdmin, loading } = useAuth();
   const router = useRouter();
-  const [isMounted, setIsMounted] = useState(false); // Nuevo estado para controlar el montaje
 
   const userRole = isAdmin ? "ADMIN" : isArtist ? "ARTIST" : "CLIENT";
 
   if (loading) return <LoadingScreen />;
 
   useEffect(() => {
-    setIsMounted(true); // Se marca como montado al renderizar por primera vez
-  }, []);
-
-  useEffect(() => {
-    if (!isMounted) return; // Se espera hasta que el componente esté montado
-
     if (!isAuthenticated || (allowedRoles.length > 0 && !allowedRoles.includes(userRole))) {
-      router.replace("/"); // Se ejecuta la redirección solo cuando isMounted es true
+      router.replace("/");
     }
-  }, [isMounted, isAuthenticated, userRole]); // Se agrega isMounted como dependencia
+  }, [isAuthenticated, userRole]);
 
-  if (!isMounted || !isAuthenticated || (allowedRoles.length > 0 && !allowedRoles.includes(userRole))) {
+  if (!isAuthenticated || (allowedRoles.length > 0 && !allowedRoles.includes(userRole))) {
     return (
       <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
         <ActivityIndicator size="large" color="blue" />
