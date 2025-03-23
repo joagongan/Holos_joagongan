@@ -55,6 +55,16 @@ public class CommisionService {
         return commisionRepository.findAll();
     }
 
+    @Transactional(readOnly=true)
+    public List<Commision> getAllRequestedCommisions() {
+        try {
+            Long id = userService.findCurrentUser().getId();
+            return commisionRepository.findAllPendingCommisionsByArtistId(id);
+        } catch (Exception e) {
+            throw e;
+        }
+    }
+
     public Commision getCommisionById(Long id) {
         return commisionRepository.findById(id).orElse(null);
     }

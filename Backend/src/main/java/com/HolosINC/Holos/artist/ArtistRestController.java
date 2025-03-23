@@ -25,7 +25,7 @@ class ArtistRestController {
 		this.artistService = artistService;
 	}
 
-	@GetMapping(value = "{id}")
+	@GetMapping(value = "/{id}")
 	@Operation(summary = "Get artist", description = "Retrieve a list of all artists")
 	public ResponseEntity<Artist> findById(@PathVariable("id") Long id) {
 		return new ResponseEntity<>(artistService.findArtist(id), HttpStatus.OK);
