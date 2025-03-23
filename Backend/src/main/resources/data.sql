@@ -175,3 +175,10 @@ INSERT INTO work_category(id,category_id,work_id) VALUES
 (3, 3, 3),
 (4, 4, 4),
 (5, 5, 5);
+
+INSERT INTO report_types(id ,type) VALUES
+(1, 'SPAM'),
+(2, 'INAPPROPRIATE_CONTENT'),
+(3, 'COPYRIGHT_VIOLATION'),
+(4, 'AI_GENERATED'),
+(5, 'OTHER');

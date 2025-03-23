@@ -1,15 +1,11 @@
+
 import React, { useState, useEffect, useMemo } from "react";
-import {
-  View,
-  Text,
-  Image,
-  ScrollView,
-  TouchableOpacity,
-  useWindowDimensions,
-} from "react-native";
+import { Text, ScrollView, View, TextInput, Image, TouchableOpacity, LayoutChangeEvent, NativeSyntheticEvent, NativeScrollEvent, TouchableWithoutFeedback, useWindowDimensions   } from "react-native";
+
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
-import { useFonts } from "expo-font";
+import ReportDropdown from "@/src/components/report/ReportDropDown";
+import { useFonts } from "expo-font";6
 
 import { desktopStyles, mobileStyles } from "@/src/styles/Explore.styles";
 import { BASE_URL } from "@/src/constants/api";
@@ -22,6 +18,7 @@ import {
 
 export default function ExploreScreen() {
   const [works, setWorks] = useState<Work[]>([]);
+  const [menuVisibleId, setMenuVisibleId] = useState<number | null>(null);
   const router = useRouter();
   const { width } = useWindowDimensions();
   const isDesktop = width > 768;
@@ -54,6 +51,14 @@ export default function ExploreScreen() {
   }
 
   return (
+
+    <TouchableWithoutFeedback onPress={() => {
+      if (menuVisibleId !== null) {
+        setMenuVisibleId(null); // Cierra el menú al tocar fuera
+      }
+    }}>
+
+   
     <ScrollView style={{ flex: 1, backgroundColor: "#fff" }}>
       <View style={styles.container}>
         {/* Sección superior */}
@@ -71,6 +76,7 @@ export default function ExploreScreen() {
         </View>
 
         {/* Sección del medio: Obras */}
+
         <View style={styles.middleSection}>
           <ScrollView
             horizontal
@@ -78,6 +84,8 @@ export default function ExploreScreen() {
             contentContainerStyle={styles.worksScrollContainer}
           >
             {works.map((work) => (
+              <>
+
               <TouchableOpacity
                 key={work.id}
                 style={styles.workItem}
@@ -92,6 +100,7 @@ export default function ExploreScreen() {
                   source={{ uri: `${BASE_URL}${work.image}` }}
                   style={styles.workImage}
                 />
+
                 <View style={styles.workTextContainer}>
                   <Text style={styles.workTitle}>{work.name}</Text>
                   <Text style={styles.workArtist}>
@@ -100,8 +109,14 @@ export default function ExploreScreen() {
                   <Text style={styles.workSubtitle}>{work.description}</Text>
                 </View>
               </TouchableOpacity>
+              <ReportDropdown workId={work.id} menuVisibleId={menuVisibleId} setMenuVisibleId={setMenuVisibleId} isBigScreen={true} />
+
+
+            </>
             ))}
+
           </ScrollView>
+
         </View>
 
         {/* Sección inferior: Artistas */}
@@ -111,6 +126,7 @@ export default function ExploreScreen() {
           </View>
           <View style={styles.artistsContainer}>
             {firstThreeArtists.map((artist) => (
+              <>
               <TouchableOpacity
                 key={artist.id}
                 style={styles.artistCard}
@@ -132,10 +148,12 @@ export default function ExploreScreen() {
                   <Text style={styles.artistLocation}>Painter, Amsterdam</Text>
                 </View>
               </TouchableOpacity>
+              </>
             ))}
           </View>
         </View>
       </View>
     </ScrollView>
+    </TouchableWithoutFeedback>
   );
 }
