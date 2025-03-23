@@ -8,6 +8,7 @@ import { API_URL } from "@/src/constants/api";
 import { DrawerNavigationProp } from '@react-navigation/drawer';
 import { RootDrawerParamList } from '../_layout';
 import { RouteProp } from '@react-navigation/native';
+import { ScrollView } from 'react-native-gesture-handler';
 
 type SignupScreenNavigationProp = DrawerNavigationProp<RootDrawerParamList, "Signup">;
 type SignupScreenRouteProp = RouteProp<RootDrawerParamList, "Signup">;
@@ -101,7 +102,7 @@ export default function SignupScreen() {
   };
 
   return (
-    <View style={styles.screenBackground}>
+    <ScrollView style={styles.screenBackground}>
       <Image
         source={require('../(drawer)/logo/logo.png')} // Ajusta la ruta según tu estructura
         style={styles.logo}
@@ -253,7 +254,7 @@ export default function SignupScreen() {
         </TouchableOpacity>
 
       </View>
-    </View>
+    </ScrollView>
   );
 }
 
