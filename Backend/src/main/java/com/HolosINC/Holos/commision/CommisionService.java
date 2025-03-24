@@ -113,7 +113,6 @@ public class CommisionService {
         return commisionRepository.findById(id).orElse(null);
     }
 
-    // TODO - Permitir que el artista pueda cancelar el pedido en el futuro
     @Transactional
     public Commision updateCommisionStatus(Long commisionId, boolean accept) {
         Commision commision = commisionRepository.findById(commisionId)
@@ -147,7 +146,6 @@ public class CommisionService {
         return commisionRepository.save(commision);
     }
 
-    // TODO - Revisar lógica de negocio para ver la posibilidad de que el artista o cliente cancele a mitad de pedido
     @Transactional
     public void cancelCommision(Long commisionId, Long clientId) {
         Commision commision = commisionRepository.findById(commisionId)
