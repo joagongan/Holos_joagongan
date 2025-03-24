@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.HolosINC.Holos.commision.DTOs.ClientCommissionDTO;
 import com.HolosINC.Holos.commision.DTOs.CommisionDTO;
 
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -54,6 +55,12 @@ public class CommisionController {
     public ResponseEntity<List<Commision>> getAllRequestedCommisions() {
         List<Commision> commisions = commisionService.getAllRequestedCommisions();
         return ResponseEntity.ok(commisions);
+    }
+
+    @GetMapping("/clientRequested")
+    public ResponseEntity<List<ClientCommissionDTO>> getClientCommissions() {
+        List<ClientCommissionDTO> commissions = commisionService.getClientCommissions();
+        return ResponseEntity.ok(commissions);
     }
 
     @GetMapping("/{id}")

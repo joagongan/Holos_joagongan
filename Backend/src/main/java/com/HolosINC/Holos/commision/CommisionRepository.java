@@ -9,6 +9,8 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import com.HolosINC.Holos.Kanban.StatusKanbanOrder;
+import com.HolosINC.Holos.client.Client;
+import com.HolosINC.Holos.commision.DTOs.ClientCommissionDTO;
 
 @Repository
 public interface CommisionRepository extends JpaRepository<Commision, Long>{
@@ -21,4 +23,8 @@ public interface CommisionRepository extends JpaRepository<Commision, Long>{
 
     @Query("SELECT c FROM Commision c WHERE c.artist.baseUser.id = :artistId AND c.status = 'REQUESTED'")
     List<Commision> findAllPendingCommisionsByArtistId(@Param("artistId") Long artistId);
+
+    @Query(" SELECT new com.HolosINC.Holos.commision.DTOs.ClientCommissionDTO(c.image, c.name, c.artist.baseUser.username, c.statusKanbanOrder.order,0)"+
+        "FROM Commision c WHERE c.client = :client") // Obliga a que el orden sea serializado
+    List<ClientCommissionDTO> findAllForClient(Client client);
 }

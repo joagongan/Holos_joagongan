@@ -1,7 +1,6 @@
 package com.HolosINC.Holos.Kanban.DTOs;
 
 import com.HolosINC.Holos.commision.EnumPaymentArrangement;
-
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 

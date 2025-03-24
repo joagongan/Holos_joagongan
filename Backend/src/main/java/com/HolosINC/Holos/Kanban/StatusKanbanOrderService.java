@@ -155,6 +155,15 @@ public class StatusKanbanOrderService {
     }
 
     @Transactional
+    public Integer countByArtistUsername(String username) {
+        try {
+            return statusKanbanOrderRepository.countByArtistUsername(username);
+        } catch (Exception e) {
+            throw e;
+        }
+    }
+
+    @Transactional
     public Commision nextStatusOfCommision(Long id) {
         try {
             Long artistId = userService.findCurrentUser().getId();
