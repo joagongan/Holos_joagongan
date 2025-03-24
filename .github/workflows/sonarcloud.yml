@@ -40,7 +40,7 @@ jobs:
       - name: Build and analyze backend
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        run: mvn -B clean verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -f ./Backend/pom.xml -Dsonar.projectKey=joagongan_Holos_joagongan
+        run: mvn clean verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -f ./Backend/pom.xml -Dsonar.projectKey=joagongan_Holos_joagongan || { echo 'Maven build failed'; exit 1; }
 
       - name: Set up Node.js
         uses: actions/setup-node@v3
