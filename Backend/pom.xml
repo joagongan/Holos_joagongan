@@ -202,6 +202,31 @@
 
 	<build>
 		<plugins>
+		        <!-- Plugin para ejecutar pruebas y generar informes de cobertura -->
+        <plugin>
+            <groupId>org.jacoco</groupId>
+            <artifactId>jacoco-maven-plugin</artifactId>
+            <version>0.8.8</version>
+            <executions>
+                <execution>
+                    <goals>
+                        <goal>prepare-agent</goal> <!-- Prepara el agente para generar el informe de cobertura -->
+                    </goals>
+                </execution>
+                <execution>
+                    <goals>
+                        <goal>report</goal> <!-- Genera el informe de cobertura después de ejecutar las pruebas -->
+                    </goals>
+                </execution>
+            </executions>
+        </plugin>
+
+        <!-- Plugin para sonar: este plugin se encarga de enviar el informe de cobertura a SonarCloud -->
+        <plugin>
+            <groupId>org.sonarsource</groupId>
+            <artifactId>sonar-maven-plugin</artifactId>
+            <version>3.9.1.2184</version>
+        </plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
@@ -253,7 +278,7 @@
 				</configuration>
 			</plugin>
 		</plugins>
-		<testSourceDirectory>test/java/com/HolosINC/Holos</testSourceDirectory>
+		
 	</build>
 
 </project>
