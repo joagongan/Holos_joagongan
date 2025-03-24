@@ -9,10 +9,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.HolosINC.Holos.Kanban.StatusKanbanOrder;
+import com.HolosINC.Holos.Kanban.StatusKanbanOrderService;
 import com.HolosINC.Holos.artist.Artist;
 import com.HolosINC.Holos.artist.ArtistService;
 import com.HolosINC.Holos.client.Client;
 import com.HolosINC.Holos.client.ClientRepository;
+import com.HolosINC.Holos.client.ClientService;
+import com.HolosINC.Holos.commision.DTOs.ClientCommissionDTO;
 import com.HolosINC.Holos.commision.DTOs.CommisionDTO;
 import com.HolosINC.Holos.exceptions.ResourceNotFoundException;
 import com.HolosINC.Holos.model.BaseUserService;
@@ -24,13 +27,17 @@ public class CommisionService {
     private final ClientRepository clientRepository;
     private final ArtistService artistService;
     private final BaseUserService userService;
+    private final ClientService clientService;
+    private final StatusKanbanOrderService statusKanbanOrderService;
 
     @Autowired
-    public CommisionService(CommisionRepository commisionRepository, ArtistService artistService, BaseUserService userService, ClientRepository clientRepository) {
+    public CommisionService(CommisionRepository commisionRepository, ArtistService artistService, BaseUserService userService, ClientRepository clientRepository, ClientService clientService, StatusKanbanOrderService statusKanbanOrderService) {
         this.commisionRepository = commisionRepository;
         this.artistService = artistService;
         this.userService = userService;
         this.clientRepository = clientRepository;
+        this.clientService = clientService;
+        this.statusKanbanOrderService = statusKanbanOrderService;
     }
 
     public Commision createCommision(CommisionDTO commisionDTO, Long artistId) {
@@ -121,4 +128,26 @@ public class CommisionService {
         commisionRepository.save(commision);
     }
 
+    @Transactional
+    public List<ClientCommissionDTO> getClientCommissions() {
+        Long userId = userService.findCurrentUser().getId();
+
+        Client currentClient = clientService.findClientByUserId(userId);
+        if (currentClient == null) {
+            throw new ResourceNotFoundException("Client not found for user ID: " + userId);
+        }
+
+        List<ClientCommissionDTO> commissions = commisionRepository.findAllForClient(currentClient);
+
+        if (commissions == null || commissions.isEmpty()) {
+            throw new IllegalStateException("No commissions found for this client!");
+        }
+
+        for (ClientCommissionDTO commission : commissions) {
+            Integer totalSteps = statusKanbanOrderService.countByArtistUsername(commission.getArtistUsername());
+            commission.setTotalSteps(totalSteps);
+        }
+
+        return commissions;
+    }
 }
