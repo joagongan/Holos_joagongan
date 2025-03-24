@@ -84,7 +84,7 @@ public class StatusKanbanOrderService {
 
     @Transactional
     public StatusKanbanOrder updateOrder(Long id, Integer order) {
-        StatusKanbanOrder statusKanban = statusKanbanOrderRepository.findById(id.intValue())
+        StatusKanbanOrder sk = statusKanbanOrderRepository.findById(id.intValue())
                 .orElseThrow(() -> new ResourceNotFoundException("StatusKanbanOrder", "id", id));
         if(sk.getOrder()==order){
             return statusKanbanOrderRepository.save(sk);
