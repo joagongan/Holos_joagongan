@@ -253,6 +253,7 @@
 				</configuration>
 			</plugin>
 		</plugins>
+		<testSourceDirectory>test/java/com/HolosINC/Holos</testSourceDirectory>
 	</build>
 
 </project>
