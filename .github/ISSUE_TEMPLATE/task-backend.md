@@ -1,18 +1,18 @@
 ---
 name: Task Backend
 about: Tareas de Backend
-title: Task N - Nombre tarea
+title: ''
 labels: ''
 assignees: ''
 
 ---
 
-**Roles:**
+# **Roles:**
 - Alguien - Eq. Desarrollo
-- Juan Antonio - Coord. Backend & Eq. Tester & QA
-- José María - Project Manager y Eq. Tester & QA
+- Juan Antonio - Coord. Backend & Eq. QA
+- José María - Project Manager
 
-**Descripción tarea:**
+# **Descripción tarea:**
 Realizar las siguientes tareas de cara a cumplir el objetivo:
 1. Crear entidades según el UML, ...
 2. Añadir el repositorio, con los métodos necesarios.

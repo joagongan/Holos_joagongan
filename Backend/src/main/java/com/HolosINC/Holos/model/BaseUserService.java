@@ -46,8 +46,16 @@ public class BaseUserService {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         if (auth == null)
             throw new ResourceNotFoundException("No estás logeado");
-        
+
         return baseUserRepository.findUserByUsername(auth.getName())
-            .orElseThrow(() -> new ResourceNotFoundException("User", "username", auth.getName()));
+                .orElseThrow(() -> new ResourceNotFoundException("User", "username", auth.getName()));
+    }
+    
+    @Transactional
+    public BaseUser delete(Long id) {
+        BaseUser user = baseUserRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("User", "id", id));
+        baseUserRepository.delete(user);
+        return user;
     }
 }
