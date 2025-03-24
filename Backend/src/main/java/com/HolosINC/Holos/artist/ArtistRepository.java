@@ -34,7 +34,8 @@ public interface ArtistRepository extends JpaRepository<Artist, Long> {
        "(SELECT COUNT(wd) FROM WorksDone wd WHERE wd.artist = a) >= :minWorksDone)")
     Page<Artist> searchByNameAndWorksDone(String query, Integer minWorksDone, Pageable pageable);
 
-   @Query("SELECT a FROM Artist a WHERE a.id = :id")
-   Optional<Artist> findArtistByUser(Long id);
+    @Query("SELECT a FROM Artist a WHERE a.baseUser.id = :id")
+    Optional<Artist> findByUserId(Long id);
+    
 }
 

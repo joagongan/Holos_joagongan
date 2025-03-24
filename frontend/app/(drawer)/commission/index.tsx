@@ -78,14 +78,6 @@ const respondedRequests = commissions.filter(
           ) : (
             newRequests.map((comm) => (
               <View key={comm.id} style={styles.card}>
-                <Image
-                  source={{
-                    uri:
-                      comm.client?.baseUser.imageProfile ||
-                      "https://via.placeholder.com/60",
-                  }}
-                  style={styles.profileIcon}
-                />
                 <View style={styles.textContainer}>
                   <Text style={styles.text}>
                     {comm.client?.baseUser.username || "Usuario desconocido"}
@@ -116,14 +108,6 @@ const respondedRequests = commissions.filter(
           ) : (
             respondedRequests.map((comm) => (
               <View key={comm.id} style={styles.card}>
-                <Image
-                  source={{
-                    uri:
-                      comm.client?.baseUser.imageProfile ||
-                      "https://via.placeholder.com/60",
-                  }}
-                  style={styles.profileIcon}
-                />
                 <View style={styles.textContainer}>
                   <Text style={styles.text}>
                     {comm.client?.baseUser.username || "Usuario desconocido"}
