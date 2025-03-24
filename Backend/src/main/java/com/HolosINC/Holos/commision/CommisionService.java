@@ -124,7 +124,7 @@ public class CommisionService {
         Commision commision = commisionRepository.findById(commisionId)
                 .orElseThrow(() -> new ResourceNotFoundException("Commision", "id", commisionId));
 
-        Artist artist = artistService.findArtist(userService.findCurrentUser().getId());
+        Artist artist = artistService.findArtistByUserId(userService.findCurrentUser().getId());
 
         if (!commision.getArtist().getId().equals(artist.getId())) {
             throw new IllegalArgumentException("El artista no tiene permisos para modificar esta comisión.");
