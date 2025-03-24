@@ -5,10 +5,11 @@ import { getClientCommissions } from "@/src/services/commisionApi";
 import { AuthenticationContext } from "@/src/contexts/AuthContext";
 import ProtectedRoute from "@/src/components/ProtectedRoute";
 import LoadingScreen from "@/src/components/LoadingScreen";
+import { indexStyles } from "@/src/styles/RequestedCommissions.styles";
 
 type ClientCommission = {
     name: string;
-    image: string; // base64
+    image: string;
     artistUsername: string;
     totalSteps: number;
     currentStep: number;
@@ -35,10 +36,10 @@ export default function ClientCommissionsScreen() {
 
   return (
     <ProtectedRoute allowedRoles={['CLIENT']}>
-        <ScrollView contentContainerStyle={styles.container}>
-            <View style={styles.cardGrid}>
+        <ScrollView contentContainerStyle={indexStyles.container}>
+            <View style={indexStyles.cardGrid}>
                 {commissions.length === 0 ? (
-                    <Text style={styles.emptyText}>¡Aún no hiciste ningún encargo! 😿</Text>
+                    <Text style={indexStyles.emptyText}>¡Aún no hiciste ningún encargo! 😿</Text>
                 ) : (
                     commissions.map((commission, index) => (
                     <CommissionCard
@@ -56,22 +57,3 @@ export default function ClientCommissionsScreen() {
     </ProtectedRoute>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    padding: 16,
-    gap: 16,
-  },
-  emptyText: {
-    textAlign: "center",
-    marginTop: 50,
-    fontSize: 16,
-    color: "#999",
-  },
-  cardGrid: {
-    flexDirection: "row",
-    flexWrap: "wrap",
-    justifyContent: "center",
-    gap: 16,
-  },
-});
