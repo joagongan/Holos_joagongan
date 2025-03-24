@@ -35,6 +35,12 @@ export const getCommisionById = async (id: number): Promise<Commission> => {
   }
 };
 
+export async function getClientCommissions(token:string) {
+  const response = await api.get(`${COMMISION_URL}/clientRequested`,{ headers: { Authorization: `Bearer ${token}`}});
+  console.log(response.data)
+  return response.data;
+}
+
 export const createCommision = async (
   commisionData: Partial<Commission>,
   artistId: number
