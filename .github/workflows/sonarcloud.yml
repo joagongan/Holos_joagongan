@@ -12,6 +12,17 @@ jobs:
   build:
     name: Build and analyze
     runs-on: ubuntu-latest
+
+    services:
+      mariadb:
+        image: mariadb:latest
+        env:
+          MYSQL_ROOT_PASSWORD: yourpassword
+          MYSQL_DATABASE: holos_db
+        ports:
+          - 3306:3306
+        options: --health-cmd="mysqladmin ping --host=localhost --user=root --password=yourpassword" --health-interval=10s --health-timeout=5s --health-retries=5
+
     steps:
       - uses: actions/checkout@v4
         with:
@@ -39,7 +50,6 @@ jobs:
 
       - name: Build and run tests with Maven (Debug)
         run: mvn clean test -f ./Backend/pom.xml -X
-        
 
       - name: Build and analyze backend
         env:
