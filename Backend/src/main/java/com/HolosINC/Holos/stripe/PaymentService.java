@@ -1,4 +1,4 @@
-package com.HolosINC.Holos.payment;
+package com.HolosINC.Holos.stripe;
 
 
 import com.stripe.Stripe;
@@ -10,7 +10,7 @@ import com.stripe.param.PaymentIntentCreateParams;
 import com.stripe.param.PaymentIntentListParams;
 
 import org.springframework.stereotype.Service;
-
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.beans.factory.annotation.Value;
 
 
@@ -20,6 +20,7 @@ public class PaymentService {
     @Value("${stripe.key.secret}") // Inyecta el valor de la variable de entorno
     private String secretKey;
     private String returnUrl = "http://localhost:8080/api/v1";
+    private Double commisionPercentage = 0.06;
 
     public PaymentIntent getById(String paymentIntentId) throws StripeException{
         Stripe.apiKey = secretKey;
@@ -27,6 +28,7 @@ public class PaymentService {
         return paymentIntent;
     }
 
+    @Transactional
     public PaymentIntentCollection getAll() throws StripeException {
         Stripe.apiKey = secretKey;
         PaymentIntentListParams params = PaymentIntentListParams.builder()
@@ -34,17 +36,26 @@ public class PaymentService {
         return PaymentIntent.list(params);
     }
 
-    public PaymentIntent createPayment(PaymentDTO paymentDTO) throws StripeException {
-        Stripe.apiKey = secretKey;
-        long amount = paymentDTO.getAmount();
-        String currency = paymentDTO.getCurrency();
-        return PaymentIntent.create(
-            PaymentIntentCreateParams.builder()
-                    .setAmount(amount)
-                    .setCurrency(currency)
-                    .build());
-    }
+    @Transactional
+    public String createPayment(PaymentDTO paymentDTO, String sellerAccountId) throws StripeException {
+        long commissionAmount = Math.round(paymentDTO.getAmount() * commisionPercentage);
 
+        PaymentIntentCreateParams params = PaymentIntentCreateParams.builder()
+            .setAmount(paymentDTO.getAmount()) 
+            .setCurrency(paymentDTO.getCurrency())
+            .setApplicationFeeAmount(commissionAmount) //Comisión de nuestra aplicación
+            .setTransferData(
+                        PaymentIntentCreateParams.TransferData.builder()
+                            .setDestination(sellerAccountId) // Enviar dinero al vendedor
+                            .build())
+            .build();
+        PaymentIntent paymentIntent = PaymentIntent.create(params);
+        
+        return paymentIntent.getClientSecret();
+    }
+    
+
+    @Transactional
     public PaymentIntent confirmPayment(String paymentIntentId, String paymentMethod) throws StripeException {
         Stripe.apiKey = secretKey;
         PaymentIntent paymentIntent = PaymentIntent.retrieve(paymentIntentId);
@@ -55,6 +66,7 @@ public class PaymentService {
         return paymentIntent.confirm(params);
     }
 
+    @Transactional
     public PaymentIntent cancelPayment(String paymentIntentId) throws StripeException {
         Stripe.apiKey = secretKey;
         PaymentIntent paymentIntent = PaymentIntent.retrieve(paymentIntentId);

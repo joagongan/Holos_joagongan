@@ -1,4 +1,4 @@
-package com.HolosINC.Holos.payment;
+package com.HolosINC.Holos.stripe;
 
 import com.stripe.exception.StripeException;
 import com.stripe.model.PaymentIntent;
@@ -41,10 +41,9 @@ public class PaymentController {
     }
 
     @PostMapping("/create")
-    public ResponseEntity<String> createPayment(@RequestBody PaymentDTO paymentDTO) throws StripeException {
-        PaymentIntent paymentIntent = paymentService.createPayment(paymentDTO);
-        String paymentStr = paymentIntent.toJson();
-        return new ResponseEntity<String>(paymentStr, HttpStatus.OK);
+    public ResponseEntity<String> createPayment(@RequestBody PaymentDTO paymentDTO, String sellerAccountId) throws StripeException {
+        String paymentIntent = paymentService.createPayment(paymentDTO, sellerAccountId);
+        return new ResponseEntity<String>(paymentIntent, HttpStatus.OK);
     }
 
     @PostMapping("/confirm")

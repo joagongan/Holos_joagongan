@@ -1,4 +1,4 @@
-package com.HolosINC.Holos.payment;
+package com.HolosINC.Holos.stripe;
 
 import lombok.Data;
 
