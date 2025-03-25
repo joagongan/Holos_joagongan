@@ -32,7 +32,7 @@ public class ReportController {
     }
 
     // Para el administrador
-    @PostMapping("/admin")
+    @GetMapping("/admin")
     public ResponseEntity<?> getAllReports() {
         try {
             List<Report> reports = reportService.getReports();
