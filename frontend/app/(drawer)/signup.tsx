@@ -51,29 +51,30 @@ export default function SignupScreen() {
 
 
   const handleSignup = async () => {
-    if (!acceptTerms) {
-      Alert.alert("Error", "Debes aceptar los Términos y Condiciones");
-      return;
+    {if (!acceptTerms) {
+      console.log("Error: Términos y condiciones no aceptados");
+      alert("Debes aceptar los Términos y Condiciones");
+      
     }
 
     if (passwordError) {
-      Alert.alert("Error", "Las contraseñas no coinciden");
-      return;
+      alert("Las contraseñas no coinciden");
+      
     }
 
     if (!password || !confirmPassword) {
-      Alert.alert("Error", "Debes ingresar y confirmar la contraseña");
-      return;
+      alert("Debes ingresar y confirmar la contraseña");
+      
     }
 
     if (!selectedImage) {
-      Alert.alert("Falta imagen", "Selecciona una foto de perfil");
-      return;
-    }
+      alert("Selecciona una foto de perfil");
+      
+    }}
 
     if (role === 'artist' && !tableCommissionsPrice) {
-      Alert.alert("Falta imagen", "Selecciona una imagen para el precio del tablero de comisiones");
-      return;
+      alert("Selecciona una imagen para el precio del tablero de comisiones");
+      
     }
 
     const userPayload = {
