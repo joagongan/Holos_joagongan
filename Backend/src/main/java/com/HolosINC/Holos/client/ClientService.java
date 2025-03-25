@@ -26,13 +26,13 @@ public class ClientService {
 
 	@Transactional(readOnly = true)
 	public Client findClient(Long clientId) {
-		return clientRepository.getClientByUser(clientId)
+		return clientRepository.findById(clientId)
 				.orElseThrow(() -> new ResourceNotFoundException("Client", "id", clientId));
 	}
 
 	@Transactional(readOnly = true)
 	public Client findClientByUserId(Long userId) {
-		return clientRepository.getClientByUser(userId)
+		return clientRepository.findById(userId)
 				.orElseThrow(() -> new ResourceNotFoundException("Client", "userId", userId));
 	}
 
