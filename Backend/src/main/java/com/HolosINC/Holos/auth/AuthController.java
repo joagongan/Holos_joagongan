@@ -99,7 +99,7 @@ public class AuthController {
 	}
 
 	@PostMapping(value = "/signup", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-	public ResponseEntity<MessageResponse> registerUser(
+	public ResponseEntity<?> registerUser(
 			@RequestPart("user") String signupRequestJson,
 			@RequestPart(value = "imageProfile", required = false) MultipartFile imageProfile,
 			@RequestPart(value = "tableCommissionsPrice", required = false) MultipartFile tableCommissionsPrice) {
@@ -123,6 +123,8 @@ public class AuthController {
 			authService.createUser(signupRequest);
 			return ResponseEntity.ok(new MessageResponse("User registered successfully!"));
 
+		} catch (IllegalArgumentException e) {
+			return ResponseEntity.badRequest().body(e.getMessage());
 		} catch (Exception e) {
 			e.printStackTrace(); // Para ver el error en consola
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
