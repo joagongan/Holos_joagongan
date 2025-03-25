@@ -32,7 +32,6 @@ export default function SignupScreen() {
   const [selectedImage, setSelectedImage] = useState('');
   const [role, setRole] = useState('client');
   const [acceptTerms, setAcceptTerms] = useState(false);
-  const [acceptPrivacy, setAcceptPrivacy] = useState(false);
 
   // Estados específicos para artistas
   const [numSlotsOfWork, setNumSlotsOfWork] = useState('');
@@ -52,8 +51,8 @@ export default function SignupScreen() {
 
 
   const handleSignup = async () => {
-    if (!acceptTerms || !acceptPrivacy) {
-      Alert.alert("Error", "Debes aceptar los Términos y Condiciones y la Política de Privacidad");
+    if (!acceptTerms) {
+      Alert.alert("Error", "Debes aceptar los Términos y Condiciones");
       return;
     }
 
@@ -358,25 +357,6 @@ export default function SignupScreen() {
                 }}
               >
                 Términos y Condiciones
-              </Text>
-            </Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            style={styles.checkboxRow}
-            onPress={() => setAcceptPrivacy(!acceptPrivacy)}
-          >
-            <View style={[styles.checkbox, acceptPrivacy && styles.checkboxChecked]} />
-            <Text style={styles.checkboxLabel}>
-              Acepto la{" "}
-              <Text
-                style={styles.link}
-                onPress={() => {
-                  // Abrir la URL de la política de privacidad
-                  Linking.openURL("https://holos-doc.vercel.app/docs/Documentacion/S2/Terminos%20y%20Condiciones");
-                }}
-              >
-                Política de Privacidad
               </Text>
             </Text>
           </TouchableOpacity>
