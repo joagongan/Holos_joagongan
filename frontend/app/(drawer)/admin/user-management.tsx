@@ -18,6 +18,7 @@ import { deleteClient } from "@/src/services/clientApi";
 import { deleteArtist } from "@/src/services/artistApi";
 import ProtectedRoute from "@/src/components/ProtectedRoute";
 import { AuthenticationContext } from "@/src/contexts/AuthContext";
+import * as yup from "yup";
 
 
 interface Authority {
@@ -43,8 +44,34 @@ export default function UserManagement() {
   const [selectedUser, setSelectedUser] = useState<BaseUser | null>(null);
   const [modalVisible, setModalVisible] = useState(false);
   const { loggedInUser } = useContext(AuthenticationContext);
+  const [editErrorMessage, setEditErrorMessage] = useState<string | null>(null);
+  const [deleteErrorMessage, setDeleteErrorMessage] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
   const usersPerPage = 6;
+
+  const editUserValidationSchema = yup.object().shape({
+    name: yup
+      .string()
+      .required("El nombre es obligatorio")
+      .min(3, "El nombre debe tener al menos 3 caracteres")
+      .max(50, "El nombre no puede superar los 50 caracteres"),
+  
+    username: yup
+      .string()
+      .required("El nombre de usuario es obligatorio")
+      .min(5, "El nombre de usuario debe tener al menos 5 caracteres")
+      .max(20, "El nombre de usuario no puede superar los 20 caracteres"),
+  
+    email: yup
+      .string()
+      .email("Ingrese un correo válido")
+      .required("El correo es obligatorio"),
+  
+    phoneNumber: yup
+      .string()
+      .matches(/^\d{9}$/, "El teléfono debe contener 9 dígitos")
+      .notRequired(), // No es obligatorio, pero si se ingresa, debe cumplir la regla
+  });
 
   // Obtener usuarios al cargar la pantalla
   useEffect(() => {
@@ -68,54 +95,49 @@ export default function UserManagement() {
 
   const saveChanges = async () => {
     if (!selectedUser) return;
+  
     try {
-      const updatedUser = await updateUser(selectedUser.id, selectedUser, loggedInUser.token); // Llamada a la API para actualizar el usuario
+      await editUserValidationSchema.validate(selectedUser, { abortEarly: false });
+  
+      const updatedUser = await updateUser(selectedUser.id, selectedUser, loggedInUser.token);
       setUsers(users.map((user) => (user.id === updatedUser.id ? updatedUser : user)));
       setModalVisible(false);
+      setEditErrorMessage(null); // Limpiar error si es exitoso
     } catch (error) {
+      if (error instanceof yup.ValidationError) {
+        setEditErrorMessage(error.errors.join("\n"));
+      } else {
+        setEditErrorMessage("Error al guardar los cambios. Inténtalo de nuevo.");
+      }
       console.error("Error al guardar los cambios", error);
     }
   };
+  
 
   const handleDelete = async (id: number, authority: string) => {
     if (!id) {
-      console.log("Error: ID de usuario inválido.");
+      setDeleteErrorMessage("ID de usuario inválido.");
       return;
     }
   
-    console.log("Eliminando usuario con ID:", id);
-  
     try {
-      console.log("Iniciando eliminación...");
-  
       if (authority === "CLIENT") {
-        await deleteClient(id,loggedInUser.token); // Llamada a la API para eliminar un cliente
+        await deleteClient(id, loggedInUser.token);
       } else if (authority === "ARTIST") {
-        await deleteArtist(id,loggedInUser.token); // Llamada a la API para eliminar un artista
+        await deleteArtist(id, loggedInUser.token);
       } else {
-        console.log("Autoridad no válida:", authority);
+        setDeleteErrorMessage("Tipo de usuario no válido.");
         return;
       }
   
-      setUsers((prevUsers) =>
-        prevUsers.filter((user) => user.id !== id)
-      );
-  
-      console.log("Usuario eliminado con éxito.");
+      setUsers((prevUsers) => prevUsers.filter((user) => user.id !== id));
+      setDeleteErrorMessage(null); // Limpiar error si la eliminación es exitosa
     } catch (error: any) {
-      if (error.response) {
-        // La solicitud fue realizada y el servidor respondió con un código de error
-        console.error("Error al eliminar el usuario:", error.response.data);
-        console.error("Detalles del error:", error.response.status);
-      } else if (error.request) {
-        // La solicitud fue realizada pero no se recibió respuesta
-        console.error("No se recibió respuesta del servidor", error.request);
-      } else {
-        // Algo ocurrió al configurar la solicitud
-        console.error("Error en la configuración de la solicitud:", error.message);
-      }
+      setDeleteErrorMessage("Error al eliminar el usuario. Inténtalo de nuevo.");
+      console.error("Error al eliminar el usuario:", error);
     }
   };
+  
 
   // Paginación
   const indexOfLastUser = currentPage * usersPerPage;
@@ -139,6 +161,8 @@ export default function UserManagement() {
     <ProtectedRoute allowedRoles={["ADMIN"]}>
       <View style={styles.container}>
         <Text style={styles.title}>Gestión de Usuarios</Text>
+        
+        <Text style={styles.errorText}>{deleteErrorMessage}</Text>
 
         <TextInput
           style={styles.searchInput}
@@ -201,6 +225,8 @@ export default function UserManagement() {
           <View style={styles.modalBackground}>
             <View style={styles.modalContainer}>
               <Text style={styles.modalTitle}>Editar Usuario</Text>
+              
+              <Text style={styles.errorText}>{editErrorMessage}</Text>
 
               <TextInput
                 style={styles.input}
