@@ -41,8 +41,9 @@ public class PaymentController {
     }
 
     @PostMapping("/create")
-    public ResponseEntity<String> createPayment(@RequestBody PaymentDTO paymentDTO, String sellerAccountId) throws StripeException {
-        String paymentIntent = paymentService.createPayment(paymentDTO, sellerAccountId);
+    public ResponseEntity<String> createPayment(@RequestBody PaymentDTO paymentDTO, long commisionId, String email) throws StripeException {
+        //El email debería ser el email del cliente, que debe obtenerse con findCurrentUser()
+        String paymentIntent = paymentService.createPayment(paymentDTO, commisionId, email);
         return new ResponseEntity<String>(paymentIntent, HttpStatus.OK);
     }
 

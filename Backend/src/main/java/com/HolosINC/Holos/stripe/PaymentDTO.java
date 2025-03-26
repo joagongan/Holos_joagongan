@@ -6,7 +6,4 @@ import lombok.Data;
 public class PaymentDTO {
     Long amount;
     String description;
-    String currency;
-
-
 }

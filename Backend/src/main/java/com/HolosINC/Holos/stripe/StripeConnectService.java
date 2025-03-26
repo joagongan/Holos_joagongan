@@ -26,8 +26,8 @@ public class StripeConnectService {
 
     @Value("${stripe.key.secret}") 
     private String secretKey;
-    private String returnUrl = "http://localhost:8080/api/v1";
-    private String refreshUrl = "http://localhost:8080/api/v1"; //Esta página habría que cambiarla, aquí se reedirige al usuario si no ha podido generar el enlace correctamente
+    private String returnUrl = "http://localhost:8081";
+    private String refreshUrl = "http://localhost:8081"; //Esta página habría que cambiarla, aquí se reedirige al usuario si no ha podido generar el enlace correctamente
 
     private final BaseUserService userService;
     private final ArtistService artistService;
@@ -79,7 +79,8 @@ public class StripeConnectService {
     }
 
     @Transactional
-    public String createAccountLink(String sellerAccountId) throws StripeException {
+    public String createAccountLink(String sellerAccountId) throws StripeException { 
+        //Código comentado para hacer pruebas en swagger. El sellerAccount id se debería obtener a partir del findCurrentUser
         /* 
         Long userId = userService.findCurrentUser().getId();
         Artist artist = artistService.findArtistByUserId(userId);

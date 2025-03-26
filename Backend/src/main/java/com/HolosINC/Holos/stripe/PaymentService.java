@@ -1,6 +1,13 @@
 package com.HolosINC.Holos.stripe;
 
 
+import com.HolosINC.Holos.artist.Artist;
+import com.HolosINC.Holos.artist.ArtistService;
+import com.HolosINC.Holos.commision.Commision;
+import com.HolosINC.Holos.commision.CommisionService;
+import com.HolosINC.Holos.exceptions.ResourceNotFoundException;
+import com.HolosINC.Holos.model.BaseUser;
+import com.HolosINC.Holos.model.BaseUserService;
 import com.stripe.Stripe;
 import com.stripe.exception.StripeException;
 import com.stripe.model.PaymentIntent;
@@ -11,6 +18,7 @@ import com.stripe.param.PaymentIntentListParams;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 
 
@@ -19,9 +27,20 @@ public class PaymentService {
 
     @Value("${stripe.key.secret}") // Inyecta el valor de la variable de entorno
     private String secretKey;
-    private String returnUrl = "http://localhost:8080/api/v1";
+    private String returnUrl = "http://localhost:8081";
     private Double commisionPercentage = 0.06;
+    private CommisionService commisionService;
+    private BaseUserService userService;
+    private String currency = "eur";
 
+    @Autowired
+    public PaymentService(CommisionService commisionService, BaseUserService userService) {
+        this.commisionService = commisionService;
+        this.userService = userService;
+    }  
+
+
+    @Transactional
     public PaymentIntent getById(String paymentIntentId) throws StripeException{
         Stripe.apiKey = secretKey;
         PaymentIntent paymentIntent = PaymentIntent.retrieve(paymentIntentId);
@@ -37,16 +56,35 @@ public class PaymentService {
     }
 
     @Transactional
-    public String createPayment(PaymentDTO paymentDTO, String sellerAccountId) throws StripeException {
+    public String createPayment(PaymentDTO paymentDTO, long commisionId, String email) throws StripeException {
+        Stripe.apiKey = secretKey;
+        Commision commision = commisionService.getCommisionById(commisionId);
+        /*BaseUser activeUser = userService.findCurrentUser();
+        String email = activerUser.getEmail();
+         * 
+        */
+
+        if (commision==null){
+            throw new ResourceNotFoundException("Commision", "id", commisionId);
+        }
+        Artist artist = commision.getArtist();
+        if (artist==null){
+            throw new ResourceNotFoundException("Artist not found");
+        }
+
+        if (paymentDTO.getAmount()!=null||paymentDTO.getAmount()<=0){
+            throw new ResourceNotFoundException("Payment amount can't be empty or 0");
+        }
         long commissionAmount = Math.round(paymentDTO.getAmount() * commisionPercentage);
 
         PaymentIntentCreateParams params = PaymentIntentCreateParams.builder()
             .setAmount(paymentDTO.getAmount()) 
-            .setCurrency(paymentDTO.getCurrency())
+            .setCurrency(currency)
+            .setReceiptEmail(email)
             .setApplicationFeeAmount(commissionAmount) //Comisión de nuestra aplicación
             .setTransferData(
                         PaymentIntentCreateParams.TransferData.builder()
-                            .setDestination(sellerAccountId) // Enviar dinero al vendedor
+                            .setDestination(artist.getSellerAccountId()) // Enviar dinero al vendedor
                             .build())
             .build();
         PaymentIntent paymentIntent = PaymentIntent.create(params);

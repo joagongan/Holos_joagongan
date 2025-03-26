@@ -41,12 +41,14 @@ public class StripeConnectController {
 
     @PostMapping("/create")
     public ResponseEntity<String> createConnectedAccount(@RequestParam String email) throws StripeException{
+        //Esto no debería pedir un email ya que se obtendría con el findCurrentUser
         String accountId = stripeConnectService.createConnectedAccount(email);
         return new ResponseEntity<String>(accountId, HttpStatus.OK);
     }
 
     @GetMapping("/create-link")
     public ResponseEntity<String> createAccountLink(@RequestParam String sellerAccountId) throws StripeException{
+        //Esto no debería pedir un sellerAccountId ya que se obtendría con el findCurrentUser
         String accountLinkUrl = stripeConnectService.createAccountLink(sellerAccountId);
         return new ResponseEntity<String>(accountLinkUrl, HttpStatus.OK);
     }
