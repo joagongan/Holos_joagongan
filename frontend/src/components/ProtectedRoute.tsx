@@ -15,18 +15,22 @@ interface ProtectedRouteProps {
 export default function ProtectedRoute({ children, allowedRoles = [], redirectTo = "/" }: ProtectedRouteProps) {
   const { isAuthenticated, isArtist, isAdmin, loading } = useAuth();
   const router = useRouter();
-  const userRole:UserRole = useMemo(() => { return isAdmin ? "ADMIN" : isArtist ? "ARTIST" : "CLIENT" }, [isAdmin, isArtist]);
+
+  const userRole: UserRole = useMemo(() => {
+    return isAdmin ? "ADMIN" : isArtist ? "ARTIST" : "CLIENT";
+  }, [isAdmin, isArtist]);
+
   const notAllowed = !isAuthenticated || (allowedRoles.length > 0 && !allowedRoles.includes(userRole));
 
-  if (loading) return <LoadingScreen />;
-
   useEffect(() => {
-    if (notAllowed) {
+    if (!loading && notAllowed) {
       router.replace(redirectTo);
     }
-  }, [notAllowed]);
+  }, [loading, notAllowed]);
 
-  if (notAllowed) return <LoadingScreen />;
-  
+  if (loading || notAllowed) {
+    return <LoadingScreen />;
+  }
+
   return <>{children}</>;
 }

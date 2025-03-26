@@ -14,16 +14,22 @@ const PaymentCard = ({ values }: PaymentCardProps) => {
 
   return (
     <View style={styles.card}>
-      <Text style={styles.cardNumber}>
-        {values.cardNumber ? formatCardNumber(values.cardNumber) : '•••• •••• •••• ••••'}
-      </Text>
-      <View style={styles.row}>
-        <View style={styles.column}>
-          <Text style={styles.text}>{values.cardName || 'CARDHOLDER NAME'}</Text>
+      <View style={{ flex: 1, justifyContent: 'space-between' }}>
+        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+          <Text style={styles.cardNumber}>
+            {values.cardNumber ? formatCardNumber(values.cardNumber) : '•••• •••• •••• ••••'}
+          </Text>
         </View>
-
-        <View style={styles.column}>
-          <Text style={styles.text}>{values.exp || 'MM/YY'}</Text>
+        
+        <View style={styles.row}>
+          <View style={styles.column}>
+            <Text style={styles.label}>TITULAR</Text>
+            <Text style={styles.text}>{values.cardName || 'TITULAR DE LA TARJETA'}</Text>
+          </View>
+          <View style={styles.column}>
+            <Text style={styles.label}>VÁLIDA HASTA</Text>
+            <Text style={styles.text}>{values.exp || 'MM/YY'}</Text>
+          </View>
         </View>
       </View>
     </View>
@@ -56,7 +62,6 @@ const styles = StyleSheet.create({
     fontSize: 35,
     fontWeight: '600',
     color: colors.brandSecondary,
-    marginBottom: 16,
   },
   row: {
     flexDirection: 'row',

@@ -80,6 +80,7 @@ const styles = StyleSheet.create({
   },
   column: {
     alignContent:'center',
+    justifyContent: 'center',
     flex: 1,
     padding: 24,
     minWidth: 0,

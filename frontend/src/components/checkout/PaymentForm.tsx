@@ -85,7 +85,7 @@ const PaymentForm = ({ onChange, price }: PaymentFormProps) => {
                         {touched.cvv && errors.cvv && ( <Text style={styles.error}>{errors.cvv}</Text> )}
 
                         <TouchableOpacity onPress={handleSubmit as () => void} style={styles.button}>
-                            <Text style={styles.buttonText}>Send payment 🎉</Text>
+                            <Text style={styles.buttonText}>Send payment</Text>
                         </TouchableOpacity>
                     </View>
                 );
