@@ -22,8 +22,8 @@ public interface StatusKanbanOrderRepository extends JpaRepository<StatusKanbanO
 
     List<StatusKanbanOrder> findByArtistIdOrderByOrderAsc(Long artistId);
 
-    @Query("SELECT new com.HolosINC.Holos.Kanban.DTOs.StatusKanbanWithCommisionsDTO(c.id, c.name, c.description, c.price, c.numMilestones, c.paymentArrangement, c.statusKanbanOrder.name, c.client.baseUser.username)" +
-    "FROM Commision c WHERE c.artist.baseUser.id = :artistId ORDER BY c.statusKanbanOrder.order")
+    @Query("SELECT new com.HolosINC.Holos.Kanban.DTOs.StatusKanbanWithCommisionsDTO(c.id, c.name, c.description, c.price, c.paymentArrangement, c.statusKanbanOrder.name, c.client.baseUser.username)" +
+    "FROM Commision c WHERE c.artist.baseUser.id = :artistId ORDER BY c.statusKanbanOrder.order") // c.numMilestones
     List<StatusKanbanWithCommisionsDTO> getAllCommisionsAcceptedOfArtist(Long artistId);
 
     @Query("SELECT new com.HolosINC.Holos.Kanban.DTOs.StatusKanbanDTO(s.id, s.name, s.order, s.description, s.color)" +
@@ -35,5 +35,9 @@ public interface StatusKanbanOrderRepository extends JpaRepository<StatusKanbanO
 
     @Query("SELECT s FROM StatusKanbanOrder s WHERE s.artist.id = :id AND s.order = :nextOrder")
     Optional<StatusKanbanOrder> nextStatusKanban(Long id, int nextOrder);
+
+    @Query("SELECT COUNT(s) FROM StatusKanbanOrder s WHERE s.artist.baseUser.username = :username")
+    Integer countByArtistUsername(@Param("username") String username);
+
 }
 

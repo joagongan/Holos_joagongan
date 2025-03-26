@@ -8,6 +8,9 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.HolosINC.Holos.model.BaseUser;
+import com.HolosINC.Holos.model.BaseUserService;
+
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 
 @RestController
@@ -16,15 +19,32 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 class ClientRestController {
 
 	private final ClientService clientService;
+	private final BaseUserService baseUserService;
 
 	@Autowired
-	public ClientRestController(ClientService clientService) {
+	public ClientRestController(ClientService clientService, BaseUserService baseUserService) {
 		this.clientService = clientService;
+		this.baseUserService = baseUserService;
 	}
 
 	@GetMapping(value = "{id}")
 	public ResponseEntity<Client> findById(@PathVariable("id") Long id) {
 		return new ResponseEntity<>(clientService.findClient(id), HttpStatus.OK);
+	}
+
+	@GetMapping("/profile")
+	public ResponseEntity<?> profileOfCurrentUser() {
+		try {
+			BaseUser user = baseUserService.findCurrentUser();
+			Object endUser = null;
+			if(user.hasAuthority("CLIENT"))
+				endUser = baseUserService.findClient(user.getId());
+			if(user.hasAuthority("ARTIST"))
+				endUser = baseUserService.findArtist(user.getId());
+			return ResponseEntity.ok().body(endUser);
+		} catch (Exception e) {
+			return ResponseEntity.badRequest().body("No tienes perfil, tienes que loguearte");
+		}
 	}
 
 }
