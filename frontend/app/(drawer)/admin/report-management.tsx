@@ -1,9 +1,11 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { View, Text, ScrollView, StyleSheet, TouchableOpacity, Modal, FlatList, Alert } from "react-native";
 import { Picker } from "@react-native-picker/picker";
 import { useRouter } from "expo-router";
 import { getAllReports, acceptReport, rejectReport, deleteReport } from "@/src/services/reportApi"; 
 import styles from "@/src/styles/Admin.styles";
+import ProtectedRoute from "@/src/components/ProtectedRoute";
+import { AuthenticationContext } from "@/src/contexts/AuthContext";
 
 export enum ReportStatus {
   ACCEPTED = 'ACCEPTED',
@@ -68,13 +70,14 @@ export default function ReportManagement() {
   const [selectedReport, setSelectedReport] = useState<Report | null>(null);
   const [status, setStatus] = useState<ReportStatus>(ReportStatus.PENDING);
   const [filter, setFilter] = useState<ReportStatus | "All">("All");
+  const { loggedInUser } = useContext(AuthenticationContext);
   const [currentPage, setCurrentPage] = useState(1);
   const reportsPerPage = 8;
 
   useEffect(() => {
     const fetchReports = async () => {
       try {
-        const fetchedReports = await getAllReports();
+        const fetchedReports = await getAllReports(loggedInUser.token);
         setReports(fetchedReports);
       } catch (error) {
         console.error("Error al obtener los reportes:", error);
@@ -98,9 +101,9 @@ export default function ReportManagement() {
     if (selectedReport) {
       try {
         if (newStatus === ReportStatus.ACCEPTED) {
-          await acceptReport(selectedReport.id!);  // Aceptar el reporte
+          await acceptReport(selectedReport.id!,loggedInUser.token);  // Aceptar el reporte
         } else if (newStatus === ReportStatus.REJECTED) {
-          await rejectReport(selectedReport.id!);  // Rechazar el reporte
+          await rejectReport(selectedReport.id!,loggedInUser.token);  // Rechazar el reporte
         }
         
         setReports((prevReports) =>
@@ -120,7 +123,7 @@ export default function ReportManagement() {
   const handleDeleteReport = async () => {
     if (selectedReport) {
       try {
-        await deleteReport(selectedReport.id); // Eliminar el reporte
+        await deleteReport(selectedReport.id,loggedInUser.token); // Eliminar el reporte
         setReports((prevReports) =>
           prevReports.filter((report) => report.id !== selectedReport.id)
         );
@@ -159,6 +162,7 @@ export default function ReportManagement() {
   );
 
   return (
+    <ProtectedRoute allowedRoles={["ADMIN"]}>
     <ScrollView contentContainerStyle={styles.container}>
       <Text style={styles.title}>Gestión de Reportes</Text>
 
@@ -232,5 +236,6 @@ export default function ReportManagement() {
         </Modal>
       )}
     </ScrollView>
+    </ProtectedRoute>
   );
 }

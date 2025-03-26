@@ -23,26 +23,26 @@ export const createReport = async (
 };
 
 // Obtener todos los reportes (solo administradores)
-export const getAllReports = async (): Promise<Report[]> => {
-  const response = await api.get(`${REPORT_URL}/admin`);
+export const getAllReports = async (token:string): Promise<Report[]> => {
+  const response = await api.get(`${REPORT_URL}/admin`, { headers: { Authorization: `Bearer ${token}`}});
   return response.data;
 };
 
 // Aceptar un reporte por ID
-export const acceptReport = async (id: number): Promise<Report> => {
-  const response = await api.put(`${REPORT_URL}/admin/accept/${id}`);
+export const acceptReport = async (id: number, token:string): Promise<Report> => {
+  const response = await api.put(`${REPORT_URL}/admin/accept/${id}`, { headers: { Authorization: `Bearer ${token}`}});
   return response.data;
 };
 
 // Rechazar un reporte por ID
-export const rejectReport = async (id: number): Promise<Report> => {
-  const response = await api.put(`${REPORT_URL}/admin/reject/${id}`);
+export const rejectReport = async (id: number, token:string): Promise<Report> => {
+  const response = await api.put(`${REPORT_URL}/admin/reject/${id}`, { headers: { Authorization: `Bearer ${token}`}});
   return response.data;
 };
 
 // Eliminar un reporte rechazado por ID
-export const deleteReport = async (id: number): Promise<void> => {
-  await api.delete(`${REPORT_URL}/admin/delete/${id}`);
+export const deleteReport = async (id: number, token:string): Promise<void> => {
+  await api.delete(`${REPORT_URL}/admin/delete/${id}`, { headers: { Authorization: `Bearer ${token}`}});
 };
 
 // Obtener todos los tipos de reporte

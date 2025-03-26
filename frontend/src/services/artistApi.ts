@@ -12,7 +12,7 @@ export const getArtistById = async (id:number) => {
   }
 };
 
-export const deleteArtist = async (id: number): Promise<void> => {
-  await api.delete(`${ARTIST_URL}/administrator/artists/${id}`);
+export const deleteArtist = async (id: number, token:string): Promise<void> => {
+  await api.delete(`${ARTIST_URL}/administrator/artists/${id}`, { headers: { Authorization: `Bearer ${token}`}});
 };
 

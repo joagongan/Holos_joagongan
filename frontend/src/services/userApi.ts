@@ -5,21 +5,21 @@ import { API_URL } from "@/src/constants/api";
 const USER_URL = `${API_URL}/baseUser`;
 const ADMINISTRATOR_USER_URL = `${API_URL}/baseUser/administrator/users`;
 
-export const getAllUsers = async (): Promise<BaseUser[]> => {
-  const response = await api.get(ADMINISTRATOR_USER_URL);
+export const getAllUsers = async (token:string): Promise<BaseUser[]> => {
+  const response = await api.get(ADMINISTRATOR_USER_URL, { headers: { Authorization: `Bearer ${token}`}});
   return response.data;
 };
 
-export const getUserById = async (id: number): Promise<BaseUser> => {
-  const response = await api.get(`${ADMINISTRATOR_USER_URL}/${id}`);
+export const getUserById = async (id: number, token:string): Promise<BaseUser> => {
+  const response = await api.get(`${ADMINISTRATOR_USER_URL}/${id}`, { headers: { Authorization: `Bearer ${token}`}});
   return response.data;
 };
 
-export const updateUser = async (id: number, user: Partial<BaseUser>): Promise<BaseUser> => {
-  const response = await api.put(`${ADMINISTRATOR_USER_URL}/${id}`, user);
+export const updateUser = async (id: number, user: Partial<BaseUser>, token:string): Promise<BaseUser> => {
+  const response = await api.put(`${ADMINISTRATOR_USER_URL}/${id}`, user, { headers: { Authorization: `Bearer ${token}`}});
   return response.data;
 };
 
-export const deleteUser = async (id: number): Promise<void> => {
-  await api.delete(`${ADMINISTRATOR_USER_URL}/${id}`);
+export const deleteUser = async (id: number, token:string): Promise<void> => {
+  await api.delete(`${ADMINISTRATOR_USER_URL}/${id}`, { headers: { Authorization: `Bearer ${token}`}});
 };

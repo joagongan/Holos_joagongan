@@ -47,32 +47,44 @@ public class CategoryService {
     
     @Transactional
     public Category saveCategory(Category category) {
-        return categoryRepository.save(category);
-    }
-    @Transactional
-    public Category updateCategory(Long categoryId, Category updatedCategory) {
         try {
-            Category category = categoryRepository.findById(categoryId)
-                    .orElseThrow(() -> {
-                        return new ResourceNotFoundException("Category", "id", categoryId);
-                    });
-
-            category.setName(updatedCategory.getName());
-            category.setDescription(updatedCategory.getDescription());
-            category.setImage(updatedCategory.getImage());
-
-            Category savedCategory = categoryRepository.save(category);
-            return savedCategory;
-
-        } catch (ResourceNotFoundException e) {
-            throw e;
+            // Aquí simplemente guardamos la categoría, incluidas las imágenes
+            return categoryRepository.save(category);
         } catch (DataIntegrityViolationException e) {
-            throw new RuntimeException("No se puede actualizar la categoría con ID " + categoryId +
-                                       " debido a restricciones de integridad.");
+            throw new RuntimeException("No se puede guardar la categoría debido a restricciones de integridad.");
         } catch (Exception e) {
-            throw new RuntimeException("Error interno al actualizar la categoría con ID " + categoryId);
+            throw new RuntimeException("Error interno al guardar la categoría.");
         }
     }
+
+    @Transactional
+public Category updateCategory(Long categoryId, Category updatedCategory) {
+    try {
+        // Buscar la categoría que queremos actualizar
+        Category category = categoryRepository.findById(categoryId)
+                .orElseThrow(() -> new ResourceNotFoundException("Category", "id", categoryId));
+
+        // Actualizar los valores de la categoría, incluyendo la imagen
+        category.setName(updatedCategory.getName());
+        category.setDescription(updatedCategory.getDescription());
+
+        // Aquí actualizamos la imagen como un arreglo de bytes
+        category.setImage(updatedCategory.getImage());
+
+        // Guardamos los cambios
+        Category savedCategory = categoryRepository.save(category);
+        return savedCategory;
+
+    } catch (ResourceNotFoundException e) {
+        throw e; // Re-throw if category not found
+    } catch (DataIntegrityViolationException e) {
+        throw new RuntimeException("No se puede actualizar la categoría con ID " + categoryId +
+                                   " debido a restricciones de integridad.");
+    } catch (Exception e) {
+        throw new RuntimeException("Error interno al actualizar la categoría con ID " + categoryId);
+    }
+}
+
     
     @Transactional
     public void deleteCategory(Long categoryId) {

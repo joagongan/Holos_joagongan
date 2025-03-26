@@ -61,7 +61,7 @@ interface Category {
       return;
     }
     try {
-      const createdCategory = await createCategory(newCategory);
+      const createdCategory = await createCategory(newCategory,loggedInUser.token);
       setCategories([...categories, createdCategory]);
       setNewCategory({ name: "", description: "", image: "" });
       setModalVisible(false);
@@ -81,7 +81,7 @@ interface Category {
     try {
       // Actualizamos la categoría
       console.log(editingCategory);
-      await updateCategory(editingCategory.id, editingCategory);
+      await updateCategory(editingCategory.id, editingCategory,loggedInUser.token);
 
   
       // Si la actualización fue exitosa, actualizamos el estado
@@ -116,7 +116,7 @@ interface Category {
   const handleDelete = async (categoryId: number) => {
     try {
       // Llamamos a la función para eliminar la categoría
-      await deleteCategory(categoryId);
+      await deleteCategory(categoryId,loggedInUser.token);
   
       // Si la eliminación fue exitosa, actualizamos el estado de categorías
       setCategories(categories.filter(category => category.id !== categoryId));

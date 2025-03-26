@@ -15,21 +15,21 @@ export const getCategoryById = async (id: number): Promise<Category> => {
   return response.data;
 };
 
-export const getAllCategoriesAdmin = async (): Promise<Category[]> => {
-  const response = await api.get(ADMINISTRATOR_CATEGORY_URL);
+export const getAllCategoriesAdmin = async (token:string): Promise<Category[]> => {
+  const response = await api.get(ADMINISTRATOR_CATEGORY_URL, { headers: { Authorization: `Bearer ${token}`}});
   return response.data;
 };
 
-export const createCategory = async (category: Partial<Category>): Promise<Category> => {
-  const response = await api.post(ADMINISTRATOR_CATEGORY_URL, category);
+export const createCategory = async (category: Partial<Category>, token:string): Promise<Category> => {
+  const response = await api.post(ADMINISTRATOR_CATEGORY_URL, category, { headers: { Authorization: `Bearer ${token}`}});
   return response.data;
 };
 
-export const updateCategory = async (id: number, category: Partial<Category>): Promise<Category> => {
-  const response = await api.put(`${ADMINISTRATOR_CATEGORY_URL}/${id}`, category);
+export const updateCategory = async (id: number, category: Partial<Category>, token:string): Promise<Category> => {
+  const response = await api.put(`${ADMINISTRATOR_CATEGORY_URL}/${id}`, category, { headers: { Authorization: `Bearer ${token}`}});
   return response.data;
 };
 
-export const deleteCategory = async (id: number): Promise<void> => {
-  await api.delete(`${ADMINISTRATOR_CATEGORY_URL}/${id}`);
+export const deleteCategory = async (id: number, token:string): Promise<void> => {
+  await api.delete(`${ADMINISTRATOR_CATEGORY_URL}/${id}`, { headers: { Authorization: `Bearer ${token}`}});
 };
