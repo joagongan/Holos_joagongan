@@ -5,7 +5,6 @@ import { ChatMessage } from "@/src/services/chatMessage";
 import { Conversation } from "@/src/services/Conversation";
 
 const CHAT_URL = `${API_URL}/messages`;
-const CONVERSATIONS_URL = `${API_URL}/conversations`;
 
 export const getConversation = async (
   toUserId: number,
@@ -43,7 +42,7 @@ export const sendMessage = async (
     );
     
     const sentMessage = response.data;
-    // Convertir creationDate a Date si es string
+    
     if (typeof sentMessage.creationDate === "string") {
       sentMessage.creationDate = new Date(sentMessage.creationDate);
     }
@@ -58,7 +57,6 @@ export const sendMessage = async (
     throw error;
   }
 };
-
 
 export const getChatMessage = async (
   id: number,
@@ -102,7 +100,7 @@ export const getAllUserConversations = async (
   token: string
 ): Promise<Conversation[]> => {
   try {
-    const response = await api.get<Conversation[]>(`${CONVERSATIONS_URL}/user/${userId}`, {
+    const response = await api.get<Conversation[]>(`${CHAT_URL}/conversations/user/${userId}`, {
       headers: { Authorization: `Bearer ${token}` },
     });
     return response.data;

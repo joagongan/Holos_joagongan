@@ -19,7 +19,6 @@ import { getArtistById } from "@/src/services/artistApi";
 import { BaseUser } from "@/src/constants/ExploreTypes";
 
 export default function ChatScreen() {
-  // Obtenemos el parámetro "toUserId" desde la URL
   const { toUserId } = useLocalSearchParams();
 
   if (!toUserId) {
@@ -41,9 +40,9 @@ export default function ChatScreen() {
 
   const { loggedInUser } = useContext(AuthenticationContext);
   const userId = loggedInUser.id;
-  const token = loggedInUser.token; // Token del usuario autenticado
+  const token = loggedInUser.token; 
 
-  // Estado para almacenar el BaseUser (cliente o artista) del destinatario
+  
   const [toUser, setToUser] = useState<BaseUser | null>(null);
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [newMessage, setNewMessage] = useState("");
@@ -51,40 +50,21 @@ export default function ChatScreen() {
   const [lastSentMessage, setLastSentMessage] = useState<string | null>(null);
 
   const getBaseUserById = async (userId: number): Promise<BaseUser | null> => {
-    // Intentamos obtener el cliente por su ID
     try {
-      const clientRes = await getClientById(userId);
-      if (clientRes && clientRes.baseUser) {
-        return clientRes.baseUser;
+      let clientResult = await getClientById(userId);
+      let baseUser = clientResult?.baseUser;
+      if (!baseUser) {
+        let artistResult = await getArtistById(userId);
+        baseUser = artistResult?.baseUser;
       }
-    } catch (err: any) {
-      // Si el error es 404, seguimos a la siguiente búsqueda.
-      if (err.response?.status !== 404) {
-        console.error("Error al obtener el cliente:", err);
-        throw err;
-      }
+      return baseUser;
+    } catch (error) {
+      console.error("Error obteniendo el BaseUser:", error);
+      return null;
     }
-  
-    // Si no se encontró cliente, intentamos obtener el artista
-    try {
-      const artistRes = await getArtistById(1);
-      if (artistRes && artistRes.baseUser) {
-        return artistRes.baseUser;
-      }
-    } catch (err: any) {
-      // Si el error es 404, devolvemos null; de lo contrario, lanzamos el error.
-      if (err.response?.status !== 404) {
-        console.error("Error al obtener el artista:", err);
-        throw err;
-      }
-    }
-    
-    // Si no se encontró como cliente ni artista, retornamos null.
-    return null;
   };
-  
 
-  // Cargar el usuario destino (toUser) una sola vez
+  
   useEffect(() => {
     const loadToUser = async () => {
       const user = await getBaseUserById(numericToUserId);
@@ -97,7 +77,7 @@ export default function ChatScreen() {
     loadToUser();
   }, [numericToUserId]);
 
-  // Función para cargar la conversación
+  
   const loadConversation = async () => {
     try {
       const conversation = await getConversation(numericToUserId, token);
@@ -109,9 +89,8 @@ export default function ChatScreen() {
     }
   };
 
-  // Cargar conversación y refrescarla cada 5 segundos
+  
   useEffect(() => {
-    console.log(token);
     if (userId) {
       loadConversation();
       const interval = setInterval(loadConversation, 5000);
@@ -119,21 +98,21 @@ export default function ChatScreen() {
     }
   }, [userId]);
 
-  // Función para enviar mensaje
+  
   const handleSendMessage = async () => {
     if (!newMessage.trim() || !toUser) return;
     try {
-      // Se construye el payload sin enviar creationDate, que se asigna en el backend
+      
       const messagePayload = {
         text: newMessage,
-        fromUser: 25,
-        toUser: 23,
+        fromUser: loggedInUser,
+        toUser: toUser,
       };
 
       console.log("Enviando mensaje:", newMessage);
       const sentMessage = await sendMessage(messagePayload, token);
 
-      // Convertir creationDate a Date si viene como string
+      
       if (typeof sentMessage.creationDate === "string") {
         sentMessage.creationDate = new Date(sentMessage.creationDate);
       }
@@ -150,9 +129,9 @@ export default function ChatScreen() {
     }
   };
 
-  // Renderizado de cada mensaje
+ 
   const renderMessage = ({ item }: { item: ChatMessage }) => {
-    const isSentByCurrentUser = item.fromUser === userId;
+    const isSentByCurrentUser = item.fromUser.id === userId;
     return (
       <View
         style={[

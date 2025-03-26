@@ -2,8 +2,8 @@ export interface ChatMessage {
   id: number;
   text: string;
   creationDate: Date; 
-  fromUser: number;
-  toUser: number;
+  fromUser: BaseUser;
+  toUser: BaseUser;
 }
 
 export interface BaseUser {
