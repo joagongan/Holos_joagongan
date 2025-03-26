@@ -1,36 +1,32 @@
-import { useEffect } from "react";
+import { useEffect, useMemo } from "react";
 import { useRouter } from "expo-router";
-import { View, Text, ActivityIndicator } from "react-native";
+import type { Href } from "expo-router";
 import { useAuth } from "@/src/hooks/useAuth";
 import LoadingScreen from "./LoadingScreen";
 
+type UserRole = "ADMIN" | "ARTIST" | "CLIENT";
+
 interface ProtectedRouteProps {
   children: React.ReactNode;
-  allowedRoles?: ("ADMIN" | "ARTIST" | "CLIENT")[];
+  allowedRoles?: UserRole[];
+  redirectTo?: Href;
 }
 
-export default function ProtectedRoute({ children, allowedRoles = [] }: ProtectedRouteProps) {
+export default function ProtectedRoute({ children, allowedRoles = [], redirectTo = "/" }: ProtectedRouteProps) {
   const { isAuthenticated, isArtist, isAdmin, loading } = useAuth();
   const router = useRouter();
-
-  const userRole = isAdmin ? "ADMIN" : isArtist ? "ARTIST" : "CLIENT";
+  const userRole:UserRole = useMemo(() => { return isAdmin ? "ADMIN" : isArtist ? "ARTIST" : "CLIENT" }, [isAdmin, isArtist]);
+  const notAllowed = !isAuthenticated || (allowedRoles.length > 0 && !allowedRoles.includes(userRole));
 
   if (loading) return <LoadingScreen />;
 
   useEffect(() => {
-    if (!isAuthenticated || (allowedRoles.length > 0 && !allowedRoles.includes(userRole))) {
-      router.replace("/");
+    if (notAllowed) {
+      router.replace(redirectTo);
     }
-  }, [isAuthenticated, userRole]);
+  }, [notAllowed]);
 
-  if (!isAuthenticated || (allowedRoles.length > 0 && !allowedRoles.includes(userRole))) {
-    return (
-      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-        <ActivityIndicator size="large" color="blue" />
-        <Text>Loading...</Text>
-      </View>
-    );
-  }
-
+  if (notAllowed) return <LoadingScreen />;
+  
   return <>{children}</>;
 }
