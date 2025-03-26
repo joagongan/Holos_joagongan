@@ -63,14 +63,20 @@ export default function UserManagement() {
 
   const saveChanges = async () => {
     if (!selectedUser) return;
+    if (!selectedUser.name || !selectedUser.username || !selectedUser.email) {
+      Alert.alert('Error', 'Por favor complete todos los campos.');
+      return;
+    }
     try {
-      const updatedUser = await updateUser(selectedUser.id, selectedUser); // Llamada a la API para actualizar el usuario
+      const updatedUser = await updateUser(selectedUser.id, selectedUser);
       setUsers(users.map((user) => (user.id === updatedUser.id ? updatedUser : user)));
       setModalVisible(false);
     } catch (error) {
       console.error("Error al guardar los cambios", error);
+      Alert.alert('Error', 'Hubo un problema al guardar los cambios. Intente nuevamente.');
     }
   };
+  
 
   const handleDelete = async (id: number) => {
     Alert.alert("Eliminar Usuario", "¿Estás seguro de que quieres eliminar este usuario?", [

@@ -58,7 +58,7 @@ public class ReportController {
         }
     }
 
-    @DeleteMapping("/admin/{id}")
+    @DeleteMapping("/admin/delete/{id}")
     public ResponseEntity<?> deleteReport(@PathVariable Long id) {
         try {
             Report deletedReport = reportService.deleteReport(id);

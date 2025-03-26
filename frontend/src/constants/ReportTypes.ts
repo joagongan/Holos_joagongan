@@ -44,7 +44,7 @@ export interface Work {
 }
 
 export interface Report {
-    id?: number; 
+    id: number; 
     name: string;
     description: string;
     status: ReportStatus;

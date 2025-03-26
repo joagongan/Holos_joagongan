@@ -513,9 +513,39 @@ INSERT INTO work_category(id,category_id,work_id) VALUES
 (4, 4, 4),
 (5, 5, 5);
 
-INSERT INTO report_types(id ,type) VALUES
-(1, 'SPAM'),
-(2, 'INAPPROPRIATE_CONTENT'),
-(3, 'COPYRIGHT_VIOLATION'),
-(4, 'AI_GENERATED'),
-(5, 'OTHER');
+INSERT INTO report_types (id, type) VALUES (500, 'Financial Report');
+INSERT INTO report_types (id, type) VALUES (501, 'Marketing Analysis');
+INSERT INTO report_types (id, type) VALUES (502, 'Customer Feedback');
+INSERT INTO report_types (id, type) VALUES (503, 'Technical Review');
+INSERT INTO report_types (id, type) VALUES (504, 'Annual Summary');
+
+INSERT INTO works (id, name, description, price, artist_id) 
+VALUES (500, 'Sunset Painting', 'A beautiful sunset painting', 150.00, 1);
+
+INSERT INTO works (id, name, description, price, artist_id) 
+VALUES (501, 'Abstract Vibes', 'Modern abstract artwork', 200.50, 2);
+
+INSERT INTO works (id, name, description, price, artist_id) 
+VALUES (502, 'Cityscape', 'A detailed cityscape at night', 300.00, 3);
+
+INSERT INTO works (id, name, description, price, artist_id) 
+VALUES (503, 'Portrait of a Woman', 'Realistic portrait painting', 250.75, 1);
+
+INSERT INTO works (id, name, description, price, artist_id) 
+VALUES (504, 'Sculpture: The Thinker', 'Bronze sculpture inspired by Rodin', 500.00, 4);
+
+
+INSERT INTO reports (id, name, description, status, made_by_id, reported_user_id, work_id, report_type_id) 
+VALUES (1, 'Inappropriate Content', 'This artwork contains sensitive material.', 'ACCEPTED', 1, 2, 500, 501);
+
+INSERT INTO reports (id, name, description, status, made_by_id, reported_user_id, work_id, report_type_id) 
+VALUES (2, 'Plagiarism Report', 'This work closely resembles another known piece.', 'PENDING', 3, 4, 501, 502);
+
+INSERT INTO reports (id, name, description, status, made_by_id, reported_user_id, work_id, report_type_id) 
+VALUES (3, 'Offensive Behavior', 'The artist has been using inappropriate language.', 'ACCEPTED', 5, 6, 503, 503);
+
+INSERT INTO reports (id, name, description, status, made_by_id, reported_user_id, work_id, report_type_id) 
+VALUES (4, 'Fake Account', 'This user might be impersonating someone else.', 'PENDING', 2, 7, 504, 504);
+
+INSERT INTO reports (id, name, description, status, made_by_id, reported_user_id, work_id, report_type_id) 
+VALUES (5, 'Spam Content', 'The artwork description contains promotional links.', 'REJECTED', 8, 9, 502, 500);

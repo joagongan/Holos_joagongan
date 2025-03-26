@@ -1,249 +1,236 @@
-import React, { useState, useEffect, useContext } from "react";
-import { View, Text, TextInput, Button, FlatList, StyleSheet, Modal, TouchableOpacity, Image, Alert } from "react-native";
+import React, { useState, useEffect } from "react";
+import { View, Text, ScrollView, StyleSheet, TouchableOpacity, Modal, FlatList, Alert } from "react-native";
+import { Picker } from "@react-native-picker/picker";
+import { useRouter } from "expo-router";
+import { getAllReports, acceptReport, rejectReport, deleteReport } from "@/src/services/reportApi"; 
 import styles from "@/src/styles/Admin.styles";
-import { AuthenticationContext } from "@/src/contexts/AuthContext";
-import {  createCategory, getAllCategories,updateCategory } from "@/src/services/categoryApi";
-import { BASE_URL } from "@/src/constants/api";
 
-interface Category {
+export enum ReportStatus {
+  ACCEPTED = 'ACCEPTED',
+  REJECTED = 'REJECTED',
+  PENDING = 'PENDING',
+}
+
+export interface ReportType {
+  id: number;
+  type: string;
+}
+
+export interface BaseUser {
   id: number;
   name: string;
-  description?: string;
-  image?: string;
+  username: string;
+  password: string;
+  email: string;
+  phoneNumber?: string;
+  imageProfile?: string;
+  createdUser: string;
+  authority: {
+    id: number;
+    authority: string;
+  };
 }
-  export default function CategoryManagement() {
-    const { loggedInUser } = useContext(AuthenticationContext);
-    const [categories, setCategories] = useState<Category[]>([]);
-    const [loading, setLoading] = useState(true);
-    const [modalVisible, setModalVisible] = useState(false);
-    const [editingCategory, setEditingCategory] = useState<Category | null>(null);
-    const [searchText, setSearchText] = useState('');
-    const [currentPage, setCurrentPage] = useState(1);
-    const itemsPerPage = 10;
-    const [editModalVisible, setEditModalVisible] = useState(false);
-    const [newCategory, setNewCategory] = useState({
-      name: "",
-      description: "",
-      image: "",
-    });
-  
-    const fetchCategories = async () => {
+
+export interface Artist {
+  id: number;
+  numSlotsOfWork: number;
+  tableCommissionsPrice: string;
+  baseUser: BaseUser;
+  name: string;
+  username: string;
+  email: string;
+}
+
+export interface Work {
+  id: number;
+  name: string;
+  description: string;
+  price: number;
+  artist: Artist;
+}
+
+export interface Report {
+  id: number;
+  name: string;
+  description: string;
+  status: ReportStatus;
+  madeBy: BaseUser;
+  reportedUser?: Artist;
+  work?: Work;
+  reportType?: ReportType;
+}
+
+export default function ReportManagement() {
+  const router = useRouter();
+
+  const [reports, setReports] = useState<Report[]>([]);
+  const [modalVisible, setModalVisible] = useState(false);
+  const [selectedReport, setSelectedReport] = useState<Report | null>(null);
+  const [status, setStatus] = useState<ReportStatus>(ReportStatus.PENDING);
+  const [filter, setFilter] = useState<ReportStatus | "All">("All");
+  const [currentPage, setCurrentPage] = useState(1);
+  const reportsPerPage = 8;
+
+  useEffect(() => {
+    const fetchReports = async () => {
       try {
-        const data: Category[] = await getAllCategories();
-        setCategories(data);
+        const fetchedReports = await getAllReports();
+        setReports(fetchedReports);
       } catch (error) {
-        Alert.alert("Error", "Error al obtener las categorías.");
-      } finally {
-        setLoading(false);
+        console.error("Error al obtener los reportes:", error);
       }
     };
+    fetchReports();
+  }, []);
 
-    useEffect(() => {
-      fetchCategories();
-    }, []);
-
-  // Filtrar las categorías basadas en el texto de búsqueda
-  const filteredCategories = categories.filter(category =>
-    category.name.toLowerCase().includes(searchText.toLowerCase())
-  );
-
-  // Obtener las categorías que se deben mostrar en la página actual
-  const currentCategories = filteredCategories.slice(
-    (currentPage - 1) * itemsPerPage,
-    currentPage * itemsPerPage
-  );
-  
-  const handleAddCategory = async () => {
-    if (!newCategory.name.trim() || !newCategory.description.trim()) {
-      Alert.alert("Error", "El nombre y la descripción son obligatorios.");
-      return;
-    }
-    try {
-      const createdCategory = await createCategory(newCategory);
-      setCategories([...categories, createdCategory]);
-      setNewCategory({ name: "", description: "", image: "" });
-      setModalVisible(false);
-      Alert.alert("Éxito", "Categoría añadida correctamente.");
-      fetchCategories();
-    } catch (error) {
-      Alert.alert("Error", "No se pudo agregar la categoría.");
-    }
+  const openModal = (report: Report) => {
+    setSelectedReport(report);
+    setStatus(report.status);
+    setModalVisible(true);
   };
 
-  const handleEditCategory = async () => {
-    if (!editingCategory || !editingCategory.name.trim()) {
-      Alert.alert("Error", "El nombre y la descripción no pueden estar vacíos.");
-      return;
+  const closeModal = () => {
+    setModalVisible(false);
+    setSelectedReport(null);
+  };
+
+  const handleStatusChange = async (newStatus: ReportStatus) => {
+    if (selectedReport) {
+      try {
+        if (newStatus === ReportStatus.ACCEPTED) {
+          await acceptReport(selectedReport.id!);  // Aceptar el reporte
+        } else if (newStatus === ReportStatus.REJECTED) {
+          await rejectReport(selectedReport.id!);  // Rechazar el reporte
+        }
+        
+        setReports((prevReports) =>
+          prevReports.map((report) =>
+            report.id === selectedReport.id ? { ...report, status: newStatus } : report
+          )
+        );
+        setStatus(newStatus);
+      } catch (error) {
+        console.error("Error al actualizar el estado del reporte:", error);
+        alert("Hubo un error al actualizar el estado del reporte. Intenta nuevamente más tarde.");
+      }
     }
-    try {
-      await updateCategory(editingCategory.id, editingCategory);
-      setCategories(categories.map(cat => (cat.id === editingCategory.id ? editingCategory : cat)));
-      setEditModalVisible(false);
-      setEditingCategory(null);
-      Alert.alert("Éxito", "Categoría actualizada correctamente.");
-      fetchCategories();
-    } catch (error) {
-      Alert.alert("Error", "No se pudo actualizar la categoría.");
-    }
-  };
-
-  const openEditModal = (category: Category) => {
-    setEditingCategory(category);
-    setEditModalVisible(true);
-  };
-
-  const handleSearch = (text: string) => {
-    setSearchText(text);
-    setCurrentPage(1); // Volver a la primera página al buscar
-  };
-
-  const handleDelete = (categoryId: number) => {
-    Alert.alert(
-      "Eliminar Categoría",
-      "¿Estás seguro de que quieres eliminar esta categoría?",
-      [
-        {
-          text: "Cancelar",
-          style: "cancel",
-        },
-        {
-          text: "Eliminar",
-          onPress: () => {
-            // Filtrar la categoría eliminada
-            setCategories(categories.filter((category) => category.id !== categoryId));
-          },
-        },
-      ]
-    );
   };
   
+
+  const handleDeleteReport = async () => {
+    if (selectedReport) {
+      try {
+        await deleteReport(selectedReport.id); // Eliminar el reporte
+        setReports((prevReports) =>
+          prevReports.filter((report) => report.id !== selectedReport.id)
+        );
+        closeModal();
+      } catch (error) {
+        console.error("Error al eliminar el reporte:", error);
+      }
+    }
+  };
+  
+
+  const filteredReports = reports.filter((report) =>
+    filter === "All" ? true : report.status === filter
+  );
+
+  const totalPages = Math.ceil(filteredReports.length / reportsPerPage);
+  const paginatedReports = filteredReports.slice(
+    (currentPage - 1) * reportsPerPage,
+    currentPage * reportsPerPage
+  );
+
+  const nextPage = () => {
+    if (currentPage < totalPages) setCurrentPage(currentPage + 1);
+  };
+
+  const prevPage = () => {
+    if (currentPage > 1) setCurrentPage(currentPage - 1);
+  };
+
+  const renderItem = ({ item }: { item: Report }) => (
+    <TouchableOpacity style={styles.reportItem} onPress={() => openModal(item)}>
+      <Text style={styles.reportTitle}>{item.name}</Text>
+      <Text style={styles.reportDescription}>{item.description}</Text>
+      <Text style={styles.reportStatus}>Estado: {item.status}</Text>
+    </TouchableOpacity>
+  );
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Administrar Categorías</Text>
+    <ScrollView contentContainerStyle={styles.container}>
+      <Text style={styles.title}>Gestión de Reportes</Text>
 
-      {/* Buscador */}
-      <TextInput
-        style={styles.searchInput}
-        placeholder="Buscar por nombre"
-        value={searchText}
-        onChangeText={handleSearch}
-      />
-
-      <TouchableOpacity style={styles.button} onPress={() => setModalVisible(true)}>
-        <Text style={styles.buttonText}>Añadir Nueva Categoría</Text>
-      </TouchableOpacity>
+      <View style={styles.filterContainer}>
+        <TouchableOpacity style={styles.filterButton} onPress={() => setFilter("All")}>
+          <Text style={styles.filterButtonText}>Todos</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.filterButton} onPress={() => setFilter(ReportStatus.PENDING)}>
+          <Text style={styles.filterButtonText}>Pendientes</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.filterButton} onPress={() => setFilter(ReportStatus.ACCEPTED)}>
+          <Text style={styles.filterButtonText}>Aceptados</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.filterButton} onPress={() => setFilter(ReportStatus.REJECTED)}>
+          <Text style={styles.filterButtonText}>Rechazados</Text>
+        </TouchableOpacity>
+      </View>
 
       <FlatList
-        data={currentCategories}
+        data={paginatedReports}
+        renderItem={renderItem}
         keyExtractor={(item) => item.id?.toString() || ""}
-        renderItem={({ item }) => (
-          <View style={styles.categoryItem}>
-            <Image 
-              source={{ uri: item.image ? (item.image.startsWith("http") ? item.image : `${BASE_URL}${item.image}`) : "https://via.placeholder.com/150" }} 
-              style={styles.categoryImage} 
-            />
-            <View style={styles.categoryInfo}>
-              <Text style={styles.categoryText}>{item.name}</Text>
-              <Text style={styles.categoryDescription}>{item.description}</Text>
-            </View>
-            <TouchableOpacity style={styles.editButton} onPress={() => openEditModal(item)}>
-              <Text style={styles.buttonText}>✏️ Editar</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.deleteButton} onPress={() => handleDelete(item.id as number)}>
-              <Text style={styles.buttonText}>🗑️ Eliminar</Text>
-            </TouchableOpacity>
-
-          </View>
-        )}
       />
 
-      {/* Paginación */}
       <View style={styles.paginationContainer}>
-        <TouchableOpacity 
-          style={styles.paginationButton} 
-          onPress={() => setCurrentPage(Math.max(currentPage - 1, 1))}
-        >
+        <TouchableOpacity style={styles.paginationButton} onPress={prevPage} disabled={currentPage === 1}>
           <Text style={styles.paginationButtonText}>Anterior</Text>
         </TouchableOpacity>
-        <Text style={styles.paginationText}>Página {currentPage}</Text>
-        <TouchableOpacity 
-          style={styles.paginationButton} 
-          onPress={() => setCurrentPage(Math.min(currentPage + 1, Math.ceil(filteredCategories.length / itemsPerPage)))}
-        >
+        <Text style={styles.paginationText}>
+          Página {currentPage} de {totalPages}
+        </Text>
+        <TouchableOpacity style={styles.paginationButton} onPress={nextPage} disabled={currentPage === totalPages}>
           <Text style={styles.paginationButtonText}>Siguiente</Text>
         </TouchableOpacity>
       </View>
 
-      {/* Modal para agregar categoría */}
-      <Modal visible={modalVisible} animationType="slide" transparent>
-        <View style={styles.modalBackground}>
-          <View style={styles.modalContainer}>
-            <Text style={styles.modalTitle}>Nueva Categoría</Text>
-            <TextInput
-              style={styles.input}
-              placeholder="Nombre"
-              value={newCategory.name}
-              onChangeText={(text) => setNewCategory({ ...newCategory, name: text })}
-            />
-            <TextInput
-              style={styles.input}
-              placeholder="Descripción"
-              value={newCategory.description}
-              onChangeText={(text) => setNewCategory({ ...newCategory, description: text })}
-            />
-            <TextInput
-              style={styles.input}
-              placeholder="URL de Imagen"
-              value={newCategory.image}
-              onChangeText={(text) => setNewCategory({ ...newCategory, image: text })}
-            />
-            <View style={styles.buttonContainer}>
-              <TouchableOpacity style={styles.smallButton} onPress={handleAddCategory}>
-                <Text style={styles.buttonText}>Agregar</Text>
-              </TouchableOpacity>
-              <TouchableOpacity style={[styles.smallButton, styles.cancelButton]} onPress={() => setModalVisible(false)}>
-                <Text style={styles.buttonText}>Cancelar</Text>
-              </TouchableOpacity>
-            </View>
-          </View>
-        </View>
-      </Modal>
+      {selectedReport && (
+        <Modal animationType="slide" transparent={true} visible={modalVisible} onRequestClose={closeModal}>
+          <View style={styles.modalBackground}>
+            <View style={styles.modalContainer}>
+              <Text style={styles.modalTitle}>Actualizar Estado del Reporte</Text>
 
-      {/* Modal para editar categoría */}
-      <Modal visible={editModalVisible} animationType="slide" transparent>
-        <View style={styles.modalBackground}>
-          <View style={styles.modalContainer}>
-            <Text style={styles.modalTitle}>Editar Categoría</Text>
-            <TextInput
-              style={styles.input}
-              placeholder="Nombre"
-              value={editingCategory?.name || ""}
-              onChangeText={(text) => setEditingCategory((prev) => prev ? { ...prev, name: text } : null)}
-            />
-            <TextInput
-              style={styles.input}
-              placeholder="Descripción"
-              value={editingCategory?.description || ""}
-              onChangeText={(text) => setEditingCategory((prev) => prev ? { ...prev, description: text } : null)}
-            />
-            <TextInput
-              style={styles.input}
-              placeholder="URL de Imagen"
-              value={editingCategory?.image || ""}
-              onChangeText={(text) => setEditingCategory((prev) => prev ? { ...prev, image: text } : null)}
-            />
-            <View style={styles.buttonContainer}>
-              <TouchableOpacity style={styles.smallButton} onPress={handleEditCategory}>
-                <Text style={styles.buttonText}>Guardar</Text>
+              <Text style={styles.modalText}>Título: {selectedReport.name}</Text>
+              <Text style={styles.modalText}>Descripción: {selectedReport.description}</Text>
+              <Text style={styles.modalText}>Tipo de Reporte: {selectedReport.reportType?.type}</Text>
+              <Text style={styles.modalText}>Trabajo: {selectedReport.work?.name}</Text>
+              <Text style={styles.modalText}>Descripción del Trabajo: {selectedReport.work?.description}</Text>
+              <Text style={styles.modalText}>Precio: ${selectedReport.work?.price}</Text>
+              <Text style={styles.modalText}>Reportado por: {selectedReport.madeBy.name}</Text>
+              <Text style={styles.modalText}>Reportado a: {selectedReport.reportedUser?.name}</Text>
+
+              <Picker
+                selectedValue={status}
+                style={styles.picker}
+                onValueChange={(itemValue: ReportStatus) => handleStatusChange(itemValue)}
+              >
+                <Picker.Item label="Pendiente" value={ReportStatus.PENDING} />
+                <Picker.Item label="Aceptado" value={ReportStatus.ACCEPTED} />
+                <Picker.Item label="Rechazado" value={ReportStatus.REJECTED} />
+              </Picker>
+
+              <TouchableOpacity style={styles.button} onPress={closeModal}>
+                <Text style={styles.buttonText}>Cerrar</Text>
               </TouchableOpacity>
-              <TouchableOpacity style={[styles.smallButton, styles.cancelButton]} onPress={() => setEditModalVisible(false)}>
-                <Text style={styles.buttonText}>Cancelar</Text>
+
+              <TouchableOpacity style={styles.button} onPress={handleDeleteReport}>
+                <Text style={styles.buttonText}>Eliminar Reporte</Text>
               </TouchableOpacity>
             </View>
           </View>
-        </View>
-      </Modal>
-    </View>
+        </Modal>
+      )}
+    </ScrollView>
   );
 }

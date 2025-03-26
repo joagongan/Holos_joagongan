@@ -49,7 +49,6 @@ public class CategoryService {
     public Category saveCategory(Category category) {
         return categoryRepository.save(category);
     }
-
     @Transactional
     public Category updateCategory(Long categoryId, Category updatedCategory) {
         try {
@@ -74,22 +73,16 @@ public class CategoryService {
             throw new RuntimeException("Error interno al actualizar la categoría con ID " + categoryId);
         }
     }
-
+    
     @Transactional
     public void deleteCategory(Long categoryId) {
         try {
-            List<ArtistCategory> artistCategories = artistCategoryRepository.findAllByCategoryId(categoryId);
-            if (!artistCategories.isEmpty()) {
-                artistCategoryRepository.deleteAll(artistCategories);
+            if (!categoryRepository.existsById(categoryId)) {
+                throw new ResourceNotFoundException("Category", "id", categoryId);
             }
-
-            List<WorkCategory> workCategories = workCategoryRepository.findAllByCategoryId(categoryId);
-            if (!workCategories.isEmpty()) {
-                workCategoryRepository.deleteAll(workCategories);
-            }
-
+    
             categoryRepository.deleteById(categoryId);
-            
+    
         } catch (DataIntegrityViolationException e) {
             throw new RuntimeException("No se puede eliminar la categoría con ID " + categoryId + 
                                        " debido a restricciones de integridad.");
@@ -97,4 +90,5 @@ public class CategoryService {
             throw new RuntimeException("Error interno al eliminar la categoría con ID " + categoryId);
         }
     }
+    
 }

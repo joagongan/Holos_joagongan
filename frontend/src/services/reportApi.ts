@@ -24,7 +24,7 @@ export const createReport = async (
 
 // Obtener todos los reportes (solo administradores)
 export const getAllReports = async (): Promise<Report[]> => {
-  const response = await api.get(`${REPORT_URL}/admin/allReports`);
+  const response = await api.get(`${REPORT_URL}/admin`);
   return response.data;
 };
 

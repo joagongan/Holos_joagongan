@@ -7,9 +7,10 @@ import { useAuth } from "@/src/hooks/useAuth";
 import { Suspense } from "react";
 import LoadingScreen from "@/src/components/LoadingScreen";
 import { Text } from "react-native";
+import SettingsIcon from "@/assets/svgs/SettingIcon";
 
 export default function DrawerLayout() {
-  const { isAuthenticated, isArtist, isClient, loading } = useAuth();
+  const { isAuthenticated,isAdmin, isArtist, isClient, loading } = useAuth();
 
   if (loading) return <LoadingScreen />;
 
@@ -24,6 +25,7 @@ export default function DrawerLayout() {
         <Drawer.Screen name="commission/kanban" options={{ drawerLabel: "Panel de comisiones",title: "🎨 Mis encargos", drawerIcon: () => <Text style={{ fontSize: 22 }}>🎨</Text>, drawerItemStyle: { display: isArtist ? 'flex' : 'none', height: isArtist ? 'auto' : 0 } }} />
         <Drawer.Screen name="commission/index" options={{ drawerLabel: "Pedidos", title:"📦 Mis pedidos", drawerIcon: () => <Text style={{ fontSize: 22 }}>📦</Text>, drawerItemStyle: { display: isArtist ? 'flex' : 'none', height: isArtist ? 'auto' : 0 } }} />
         <Drawer.Screen name="commission/requested/index" options={{ drawerLabel: "Mis pedidos", title:"🎨 Mis pedidos", drawerIcon: () => <Text style={{ fontSize: 22 }}>🎨</Text>, drawerItemStyle: { display:  isClient ? 'flex':'none', height: isClient ? 'auto':0}}}/>
+        <Drawer.Screen name="admin/index" options={{ drawerLabel: "Panel Admin", drawerIcon: SettingsIcon, drawerItemStyle: { display: isAdmin ? 'flex' : 'none', height: isAdmin ? 'auto' : 0 } }} />
         <Drawer.Screen name="logout" options={{ drawerLabel: "Cerrar sesión", title:"🚪 Cerrar sesión", drawerIcon: () => <Text style={{ fontSize: 22 }}>🚪</Text>, drawerItemStyle: { display: isAuthenticated ? 'flex' : 'none', height: isAuthenticated ? 'auto' : 0 } }} />
       </Drawer>
     </Suspense>
