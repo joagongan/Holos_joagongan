@@ -20,6 +20,9 @@ interface Category {
     const [editingCategory, setEditingCategory] = useState<Category | null>(null);
     const [searchText, setSearchText] = useState('');
     const [currentPage, setCurrentPage] = useState(1);
+    const [addError, setAddError] = useState<string | null>(null);
+    const [editError, setEditError] = useState<string | null>(null);
+    const [deleteError, setDeleteError] = useState<string | null>(null);
     const itemsPerPage = 10;
     const [editModalVisible, setEditModalVisible] = useState(false);
     const [newCategory, setNewCategory] = useState({
@@ -56,37 +59,41 @@ interface Category {
   
   const handleAddCategory = async () => {
     if (!newCategory.name.trim()) {
-      Alert.alert("Error", "El nombre es obligatorio.");
+      setAddError("El nombre no puede estar vacío.");
       return;
     }
     try {
-      const createdCategory = await createCategory(newCategory, loggedInUser.token);
-      setCategories([...categories, createdCategory]);
+      await createCategory(newCategory, loggedInUser.token);
       setNewCategory({ name: "", description: "", image: "" });
       setModalVisible(false);
+      setAddError(null); // Limpiar errores si la operación es exitosa
       Alert.alert("Éxito", "Categoría añadida correctamente.");
       fetchCategories();
     } catch (error) {
-      Alert.alert("Error", "No se pudo agregar la categoría.");
+      setAddError("Error al agregar la categoría.");
     }
   };
+  
+  
 
   const handleEditCategory = async () => {
     if (!editingCategory || !editingCategory.name.trim()) {
-      Alert.alert("Error", "El nombre y la descripción no pueden estar vacíos.");
+      setEditError("El nombre no puede estar vacío.");
       return;
     }
     try {
       await updateCategory(editingCategory.id, editingCategory, loggedInUser.token);
-      setCategories(categories.map(cat => (cat.id === editingCategory.id ? editingCategory : cat)));
       setEditModalVisible(false);
       setEditingCategory(null);
+      setEditError(null); // Limpiar errores si la operación es exitosa
       Alert.alert("Éxito", "Categoría actualizada correctamente.");
       fetchCategories();
     } catch (error) {
-      Alert.alert("Error", "No se pudo actualizar la categoría.");
+      setEditError("Error al actualizar la categoría.");
     }
   };
+  
+  
 
   const openEditModal = (category: Category) => {
     setEditingCategory(category);
@@ -100,34 +107,26 @@ interface Category {
 
   const handleDelete = async (categoryId: number) => {
     try {
-      // Llamamos a la función para eliminar la categoría
-      await deleteCategory(categoryId,loggedInUser.token);
-  
-      // Si la eliminación fue exitosa, actualizamos el estado de categorías
+      await deleteCategory(categoryId, loggedInUser.token);
       setCategories(categories.filter(category => category.id !== categoryId));
+      setDeleteError(null); // Limpiar errores si la operación es exitosa
       Alert.alert("Éxito", "Categoría eliminada correctamente.");
-    } catch (error: unknown) {
-      // Comprobamos si el error es una instancia de Error
-      if (error instanceof Error) {
-        // Si el error es de tipo Error, comprobamos el mensaje
-        if (error.message && error.message.includes("Foreign Key constraint fails")) {
-          Alert.alert("Error", "No se puede eliminar la categoría porque está siendo utilizada por otros registros.");
-        } else {
-          Alert.alert("Error", "No se pudo eliminar la categoría.");
-        }
-      } else {
-        // Si el error no es de tipo Error, mostramos un mensaje genérico
-        Alert.alert("Error", "Ocurrió un error desconocido al intentar eliminar la categoría.");
-      }
+    } catch (error) {
+      setDeleteError("Error al eliminar la categoría.");
     }
   };
   
+  
+
+  useEffect(() => {
+    fetchCategories();
+  }, []);
 
   return (
     <ProtectedRoute allowedRoles={["ADMIN"]}>
     <View style={styles.container}>
       <Text style={styles.title}>Administrar Categorías</Text>
-
+      {deleteError && <Text style={styles.errorText}>{deleteError}</Text>}
       {/* Buscador */}
       <TextInput
         style={styles.searchInput}
@@ -139,7 +138,6 @@ interface Category {
       <TouchableOpacity style={styles.button} onPress={() => setModalVisible(true)}>
         <Text style={styles.buttonText}>Añadir Nueva Categoría</Text>
       </TouchableOpacity>
-
       <FlatList
         data={currentCategories}
         keyExtractor={(item) => item.id?.toString() || ""}
@@ -159,7 +157,6 @@ interface Category {
             <TouchableOpacity style={styles.deleteButton} onPress={() => handleDelete(item.id as number)}>
               <Text style={styles.buttonText}>🗑️ Eliminar</Text>
             </TouchableOpacity>
-
           </View>
         )}
       />
@@ -186,6 +183,7 @@ interface Category {
         <View style={styles.modalBackground}>
           <View style={styles.modalContainer}>
             <Text style={styles.modalTitle}>Nueva Categoría</Text>
+            {addError && <Text style={styles.errorText}>{addError}</Text>}
             <TextInput
               style={styles.input}
               placeholder="Nombre"
@@ -221,6 +219,7 @@ interface Category {
         <View style={styles.modalBackground}>
           <View style={styles.modalContainer}>
             <Text style={styles.modalTitle}>Editar Categoría</Text>
+            {editError && <Text style={styles.errorText}>{editError}</Text>}
             <TextInput
               style={styles.input}
               placeholder="Nombre"

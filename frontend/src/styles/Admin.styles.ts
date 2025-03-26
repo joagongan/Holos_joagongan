@@ -251,6 +251,19 @@ const styles = StyleSheet.create({
         color: "#FFF",
         fontWeight: "bold",
       },
+      errorText: {
+        color: "red",
+        fontSize: 14,
+        textAlign: "center",
+        marginBottom: 10,
+      },
+      errorContainer: {
+        backgroundColor: "rgba(255, 0, 0, 0.1)",
+        padding: 10,
+        borderRadius: 8,
+        marginVertical: 10,
+        alignItems: "center",
+      },
   });
 
 export default styles;
