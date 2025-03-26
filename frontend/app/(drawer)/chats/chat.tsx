@@ -9,6 +9,7 @@ import { useRouter } from "expo-router";
 export default function ChatsListScreen() {
   const { loggedInUser } = useContext(AuthenticationContext);
   const userId = loggedInUser?.id;
+  const token = loggedInUser?.token; // Se obtiene el token del usuario autenticado
 
   const [conversations, setConversations] = useState<Conversation[]>([]);
   const [loading, setLoading] = useState(true);
@@ -18,8 +19,8 @@ export default function ChatsListScreen() {
   useEffect(() => {
     const loadChats = async () => {
       try {
-        if (!userId) return; // Si no hay usuario logueado, no cargamos nada
-        const data = await getAllUserConversations(userId);
+        if (!userId || !token) return; // Si no hay usuario logueado, no cargamos nada
+        const data = await getAllUserConversations(userId, token);
         setConversations(data);
       } catch (error) {
         console.error("Error al cargar las conversaciones:", error);
@@ -28,7 +29,7 @@ export default function ChatsListScreen() {
       }
     };
     loadChats();
-  }, [userId]);
+  }, [userId, token]);
 
   if (loading) {
     return (
@@ -55,7 +56,8 @@ export default function ChatsListScreen() {
               <TouchableOpacity
                 style={styles.chatItem}
                 onPress={() => {
-                  // Aqui pretendo añadir que vayas a ese chat cuando lo pulses en la lista
+                  // Redirige al chat del usuario correspondiente
+                  router.push(`/(drawer)/chats/[toUserId]`);
                 }}
               >
                 <Text style={styles.chatTitle}>{item.title}</Text>

@@ -10,14 +10,18 @@ import {
   Alert 
 } from "react-native";
 import { getConversation, sendMessage } from "@/src/services/chatService";
-import { ChatMessage } from "@/src/services/ChatMessage";
+import { ChatMessage } from "@/src/services/chatMessage";
 import { AuthenticationContext } from "@/src/contexts/AuthContext";
 import ProtectedRoute from "@/src/components/ProtectedRoute";
 import { useLocalSearchParams } from "expo-router";
+import { getClientById } from "@/src/services/clientApi";
+import { getArtistById } from "@/src/services/artistApi";
+import { BaseUser } from "@/src/constants/ExploreTypes";
 
 export default function ChatScreen() {
-  // Obtenemos el parámetro "toUserId" desde la URL (asegúrate de que este archivo se llame [toUserId].tsx)
+  // Obtenemos el parámetro "toUserId" desde la URL
   const { toUserId } = useLocalSearchParams();
+
   if (!toUserId) {
     return (
       <View style={styles.centered}>
@@ -37,14 +41,66 @@ export default function ChatScreen() {
 
   const { loggedInUser } = useContext(AuthenticationContext);
   const userId = loggedInUser.id;
+  const token = loggedInUser.token; // Token del usuario autenticado
+
+  // Estado para almacenar el BaseUser (cliente o artista) del destinatario
+  const [toUser, setToUser] = useState<BaseUser | null>(null);
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [newMessage, setNewMessage] = useState("");
   const [loading, setLoading] = useState(true);
   const [lastSentMessage, setLastSentMessage] = useState<string | null>(null);
 
+  const getBaseUserById = async (userId: number): Promise<BaseUser | null> => {
+    // Intentamos obtener el cliente por su ID
+    try {
+      const clientRes = await getClientById(userId);
+      if (clientRes && clientRes.baseUser) {
+        return clientRes.baseUser;
+      }
+    } catch (err: any) {
+      // Si el error es 404, seguimos a la siguiente búsqueda.
+      if (err.response?.status !== 404) {
+        console.error("Error al obtener el cliente:", err);
+        throw err;
+      }
+    }
+  
+    // Si no se encontró cliente, intentamos obtener el artista
+    try {
+      const artistRes = await getArtistById(1);
+      if (artistRes && artistRes.baseUser) {
+        return artistRes.baseUser;
+      }
+    } catch (err: any) {
+      // Si el error es 404, devolvemos null; de lo contrario, lanzamos el error.
+      if (err.response?.status !== 404) {
+        console.error("Error al obtener el artista:", err);
+        throw err;
+      }
+    }
+    
+    // Si no se encontró como cliente ni artista, retornamos null.
+    return null;
+  };
+  
+
+  // Cargar el usuario destino (toUser) una sola vez
+  useEffect(() => {
+    const loadToUser = async () => {
+      const user = await getBaseUserById(numericToUserId);
+      if (user) {
+        setToUser(user);
+      } else {
+        Alert.alert("Error", "No se encontró el usuario destino");
+      }
+    };
+    loadToUser();
+  }, [numericToUserId]);
+
+  // Función para cargar la conversación
   const loadConversation = async () => {
     try {
-      const conversation = await getConversation(numericToUserId);
+      const conversation = await getConversation(numericToUserId, token);
       setMessages(conversation);
     } catch (error) {
       Alert.alert("Error", "No se pudo cargar la conversación");
@@ -53,30 +109,38 @@ export default function ChatScreen() {
     }
   };
 
+  // Cargar conversación y refrescarla cada 5 segundos
   useEffect(() => {
+    console.log(token);
     if (userId) {
       loadConversation();
-      // Refrescar la conversación cada 5 segundos
       const interval = setInterval(loadConversation, 5000);
       return () => clearInterval(interval);
     }
   }, [userId]);
 
+  // Función para enviar mensaje
   const handleSendMessage = async () => {
-    if (!newMessage.trim()) return;
+    if (!newMessage.trim() || !toUser) return;
     try {
-      console.log("Enviando mensaje:", newMessage);
-      const sentMessage = await sendMessage({
+      // Se construye el payload sin enviar creationDate, que se asigna en el backend
+      const messagePayload = {
         text: newMessage,
-        fromUser: { id: userId },
-        toUser: { id: numericToUserId },
-      });
+        fromUser: 25,
+        toUser: 23,
+      };
+
+      console.log("Enviando mensaje:", newMessage);
+      const sentMessage = await sendMessage(messagePayload, token);
+
+      // Convertir creationDate a Date si viene como string
+      if (typeof sentMessage.creationDate === "string") {
+        sentMessage.creationDate = new Date(sentMessage.creationDate);
+      }
       console.log("Mensaje enviado:", sentMessage);
       setNewMessage("");
-      // Guardamos el mensaje enviado para mostrarlo en el lateral
       setLastSentMessage(sentMessage.text);
       await loadConversation();
-      // Limpiar el mensaje lateral después de 3 segundos
       setTimeout(() => {
         setLastSentMessage(null);
       }, 3000);
@@ -88,7 +152,7 @@ export default function ChatScreen() {
 
   // Renderizado de cada mensaje
   const renderMessage = ({ item }: { item: ChatMessage }) => {
-    const isSentByCurrentUser = item.fromUser.id === userId;
+    const isSentByCurrentUser = item.fromUser === userId;
     return (
       <View
         style={[

@@ -1,3 +1,17 @@
+DELETE FROM chat_messages;
+DELETE FROM report_types;
+DELETE FROM work_category;
+DELETE FROM artist_category;
+DELETE FROM milestones;
+DELETE FROM commisions;
+DELETE FROM status_kanban_order;
+DELETE FROM works_done;
+DELETE FROM categories;
+DELETE FROM artists;
+DELETE FROM clients;
+DELETE FROM base_user;
+DELETE FROM authorities;
+
 INSERT INTO authorities (id, authority) VALUES
 (1, 'ADMIN'),
 (2, 'CLIENT'),
@@ -519,3 +533,6 @@ INSERT INTO report_types(id ,type) VALUES
 (3, 'COPYRIGHT_VIOLATION'),
 (4, 'AI_GENERATED'),
 (5, 'OTHER');
+
+INSERT INTO chat_messages (id, creation_date, text, image, from_user, to_user)
+VALUES (1, NOW(), 'Hola, ¿cómo estás?', NULL, 25, 23);
