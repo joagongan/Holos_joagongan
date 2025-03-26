@@ -9,16 +9,14 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.HolosINC.Holos.exceptions.ResourceNotFoundException;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-
-import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
-import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/api/v1/categories")
@@ -41,15 +39,15 @@ public class CategoryRestController {
     public ResponseEntity<Category> getCategoryById(@PathVariable Long id) {
         return new ResponseEntity<>(categoryService.findCategoryById(id), HttpStatus.OK);
     }
-    
+
     @GetMapping("/administrator/categories")
     public ResponseEntity<List<Category>> getAllCategoriesAdmin() {
         List<Category> categories = categoryService.findAllCategories();
         return ResponseEntity.ok(categories);
     }
-    
+
     @PostMapping("/administrator/categories")
-    public ResponseEntity<Category> createCategory(@Valid @RequestBody Category category) {
+    public ResponseEntity<Category> createCategory(@RequestBody Category category) {
         try {
             Category newCategory = categoryService.saveCategory(category);
             return ResponseEntity.status(HttpStatus.CREATED).body(newCategory);
@@ -57,7 +55,7 @@ public class CategoryRestController {
             return ResponseEntity.internalServerError().body(null);
         }
     }
-    
+
     @PutMapping("/administrator/categories/{id}")
     public ResponseEntity<Category> updateCategory(@PathVariable Long id, @RequestBody Category updatedCategory) {
         try {
@@ -69,19 +67,16 @@ public class CategoryRestController {
             return ResponseEntity.internalServerError().body(null);
         }
     }
-    
+
     @DeleteMapping("/administrator/categories/{id}")
     public ResponseEntity<?> deleteCategory(@PathVariable Long id) {
         try {
             categoryService.deleteCategory(id);
             return ResponseEntity.ok().body("Categoría eliminada exitosamente");
-        } catch (ResourceNotFoundException e) {
-            return ResponseEntity.notFound().build();
         } catch (IllegalStateException e) {
             return ResponseEntity.badRequest().body("Error: " + e.getMessage());
         } catch (Exception e) {
             return ResponseEntity.internalServerError().body("Error interno al eliminar la categoría");
         }
     }
-    
 }
