@@ -65,12 +65,13 @@ export interface Report {
 export default function ReportManagement() {
   const router = useRouter();
 
+  const { loggedInUser } = useContext(AuthenticationContext);
   const [reports, setReports] = useState<Report[]>([]);
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedReport, setSelectedReport] = useState<Report | null>(null);
   const [status, setStatus] = useState<ReportStatus>(ReportStatus.PENDING);
   const [filter, setFilter] = useState<ReportStatus | "All">("All");
-  const { loggedInUser } = useContext(AuthenticationContext);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
   const reportsPerPage = 8;
 
@@ -98,40 +99,53 @@ export default function ReportManagement() {
   };
 
   const handleStatusChange = async (newStatus: ReportStatus) => {
-    if (selectedReport) {
-      try {
-        if (newStatus === ReportStatus.ACCEPTED) {
-          await acceptReport(selectedReport.id!,loggedInUser.token);  // Aceptar el reporte
-        } else if (newStatus === ReportStatus.REJECTED) {
-          await rejectReport(selectedReport.id!,loggedInUser.token);  // Rechazar el reporte
-        }
-        
-        setReports((prevReports) =>
-          prevReports.map((report) =>
-            report.id === selectedReport.id ? { ...report, status: newStatus } : report
-          )
-        );
-        setStatus(newStatus);
-      } catch (error) {
-        console.error("Error al actualizar el estado del reporte:", error);
-        alert("Hubo un error al actualizar el estado del reporte. Intenta nuevamente más tarde.");
+    if (!selectedReport) return;
+  
+    try {
+      if (newStatus === ReportStatus.ACCEPTED) {
+        await acceptReport(selectedReport.id, loggedInUser.token);
+      } else if (newStatus === ReportStatus.REJECTED) {
+        await rejectReport(selectedReport.id, loggedInUser.token);
       }
+  
+      setReports((prevReports) =>
+        prevReports.map((report) =>
+          report.id === selectedReport.id ? { ...report, status: newStatus } : report
+        )
+      );
+      setStatus(newStatus);
+      setErrorMessage(null); // Limpiar error si la acción es exitosa
+    } catch (error) {
+      setErrorMessage(
+        newStatus === ReportStatus.ACCEPTED
+          ? "Error al aceptar el reporte."
+          : "Error al rechazar el reporte."
+      );
     }
   };
   
 
   const handleDeleteReport = async () => {
-    if (selectedReport) {
-      try {
-        await deleteReport(selectedReport.id,loggedInUser.token); // Eliminar el reporte
-        setReports((prevReports) =>
-          prevReports.filter((report) => report.id !== selectedReport.id)
-        );
-        closeModal();
-      } catch (error) {
-        console.error("Error al eliminar el reporte:", error);
-      }
+    if (!selectedReport) return;
+  
+    try {
+      await deleteReport(selectedReport.id, loggedInUser.token);
+      setReports((prevReports) => prevReports.filter((report) => report.id !== selectedReport.id));
+      setErrorMessage(null); // Limpiar error si la eliminación es exitosa
+      closeModal();
+    } catch (error) {
+      setErrorMessage("Error al eliminar el reporte.");
     }
+  };
+  
+  const ErrorMessage = ({ message }: { message: string | null }) => {
+    if (!message) return null;
+  
+    return (
+      <View style={styles.errorContainer}>
+        <Text style={styles.errorText}>{message}</Text>
+      </View>
+    );
   };
   
 
@@ -204,6 +218,7 @@ export default function ReportManagement() {
           <View style={styles.modalBackground}>
             <View style={styles.modalContainer}>
               <Text style={styles.modalTitle}>Actualizar Estado del Reporte</Text>
+              <ErrorMessage message={errorMessage} />
 
               <Text style={styles.modalText}>Título: {selectedReport.name}</Text>
               <Text style={styles.modalText}>Descripción: {selectedReport.description}</Text>
