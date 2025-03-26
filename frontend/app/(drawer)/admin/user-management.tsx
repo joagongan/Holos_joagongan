@@ -14,6 +14,8 @@ import {
 import { useRouter } from "expo-router";
 import styles from "@/src/styles/Admin.styles";
 import { getAllUsers, updateUser, deleteUser } from "@/src/services/userApi"; // Asumiendo que las funciones están en userApi
+import { deleteClient } from "@/src/services/clientApi";
+import { deleteArtist } from "@/src/services/artistApi";
 
 
 interface Authority {
@@ -63,36 +65,53 @@ export default function UserManagement() {
 
   const saveChanges = async () => {
     if (!selectedUser) return;
-    if (!selectedUser.name || !selectedUser.username || !selectedUser.email) {
-      Alert.alert('Error', 'Por favor complete todos los campos.');
-      return;
-    }
     try {
-      const updatedUser = await updateUser(selectedUser.id, selectedUser);
+      const updatedUser = await updateUser(selectedUser.id, selectedUser); // Llamada a la API para actualizar el usuario
       setUsers(users.map((user) => (user.id === updatedUser.id ? updatedUser : user)));
       setModalVisible(false);
     } catch (error) {
       console.error("Error al guardar los cambios", error);
-      Alert.alert('Error', 'Hubo un problema al guardar los cambios. Intente nuevamente.');
     }
   };
-  
 
-  const handleDelete = async (id: number) => {
-    Alert.alert("Eliminar Usuario", "¿Estás seguro de que quieres eliminar este usuario?", [
-      { text: "Cancelar", style: "cancel" },
-      {
-        text: "Eliminar",
-        onPress: async () => {
-          try {
-            await deleteUser(id); // Llamada a la API para eliminar el usuario
-            setUsers(users.filter((user) => user.id !== id));
-          } catch (error) {
-            console.error("Error al eliminar el usuario", error);
-          }
-        },
-      },
-    ]);
+  const handleDelete = async (id: number, authority: string) => {
+    if (!id) {
+      console.log("Error: ID de usuario inválido.");
+      return;
+    }
+  
+    console.log("Eliminando usuario con ID:", id);
+  
+    try {
+      console.log("Iniciando eliminación...");
+  
+      if (authority === "CLIENT") {
+        await deleteClient(id); // Llamada a la API para eliminar un cliente
+      } else if (authority === "ARTIST") {
+        await deleteArtist(id); // Llamada a la API para eliminar un artista
+      } else {
+        console.log("Autoridad no válida:", authority);
+        return;
+      }
+  
+      setUsers((prevUsers) =>
+        prevUsers.filter((user) => user.id !== id)
+      );
+  
+      console.log("Usuario eliminado con éxito.");
+    } catch (error: any) {
+      if (error.response) {
+        // La solicitud fue realizada y el servidor respondió con un código de error
+        console.error("Error al eliminar el usuario:", error.response.data);
+        console.error("Detalles del error:", error.response.status);
+      } else if (error.request) {
+        // La solicitud fue realizada pero no se recibió respuesta
+        console.error("No se recibió respuesta del servidor", error.request);
+      } else {
+        // Algo ocurrió al configurar la solicitud
+        console.error("Error en la configuración de la solicitud:", error.message);
+      }
+    }
   };
 
   // Paginación
@@ -141,7 +160,10 @@ export default function UserManagement() {
                 <TouchableOpacity style={styles.editButton} onPress={() => { setSelectedUser(item); setModalVisible(true); }}>
                   <Text style={styles.buttonText}>✏️ Editar</Text>
                 </TouchableOpacity>
-                <TouchableOpacity style={styles.deleteButton} onPress={() => handleDelete(item.id)}>
+                <TouchableOpacity 
+                  style={styles.deleteButton} 
+                  onPress={() => handleDelete(item.id, item.authority.authority)}
+                >
                   <Text style={styles.buttonText}>🗑️ Eliminar</Text>
                 </TouchableOpacity>
               </View>
