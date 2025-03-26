@@ -1,4 +1,3 @@
-// app/chats.tsx
 import React, { useContext, useEffect, useState } from "react";
 import { View, Text, FlatList, ActivityIndicator, StyleSheet, TouchableOpacity } from "react-native";
 import { AuthenticationContext } from "@/src/contexts/AuthContext";
@@ -9,12 +8,11 @@ import { useRouter } from "expo-router";
 
 export default function ChatsListScreen() {
   const { loggedInUser } = useContext(AuthenticationContext);
-  const userId = loggedInUser?.id; // Ajusta según tu estructura (p.e. loggedInUser?.user?.id)
+  const userId = loggedInUser?.id;
 
   const [conversations, setConversations] = useState<Conversation[]>([]);
   const [loading, setLoading] = useState(true);
 
-  // Para navegar a una pantalla específica de chat (opcional, si quieres abrir un chat individual)
   const router = useRouter();
 
   useEffect(() => {
@@ -57,12 +55,7 @@ export default function ChatsListScreen() {
               <TouchableOpacity
                 style={styles.chatItem}
                 onPress={() => {
-                  // OPCIONAL: Si quieres abrir un chat específico con item.otherUserId,
-                  // crea la ruta dinámica app/chats/[toUserId].tsx y navega así:
-                  // router.push({
-                  //   pathname: "/chats/[toUserId]",
-                  //   params: { toUserId: String(item.otherUserId) },
-                  // });
+                  // Aqui pretendo añadir que vayas a ese chat cuando lo pulses en la lista
                 }}
               >
                 <Text style={styles.chatTitle}>{item.title}</Text>
