@@ -31,6 +31,6 @@ export const updateCategory = async (id: number, category: Partial<Category>, to
   return response.data;
 };
 
-export const deleteCategory = async (id: number): Promise<void> => {
-  await del(`${ADMINISTRATOR_CATEGORY_URL}/${id}`);
+export const deleteCategory = async (id: number, token:string): Promise<void> => {
+  await api.delete(`${ADMINISTRATOR_CATEGORY_URL}/${id}`, { headers: { Authorization: `Bearer ${token}`}});
 };

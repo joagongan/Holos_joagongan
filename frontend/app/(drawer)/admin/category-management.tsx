@@ -107,7 +107,7 @@ interface Category {
 
   const handleDelete = async (categoryId: number) => {
     try {
-      await deleteCategory(categoryId);
+      await deleteCategory(categoryId, loggedInUser.token);
       setCategories(categories.filter(category => category.id !== categoryId));
       setDeleteError(null); // Limpiar errores si la operación es exitosa
       Alert.alert("Éxito", "Categoría eliminada correctamente.");
