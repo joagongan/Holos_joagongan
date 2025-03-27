@@ -17,14 +17,14 @@ const UserProfileScreen = () => {
   useEffect(() => {
     const fetchUser = async () => {
       try {
-        const user = await getUser(loggedInUser.token);
-        setUser(user);
+        const usuario = await getUser(loggedInUser.token);
+        setUser(usuario);
       } catch (error) {
         console.error('Failed to fetch user:', error);
       }
     };
     fetchUser();
-  }, [loggedInUser?.id]);
+  }, [user?.id]);  
 
   useEffect(() => {
     navigation.setOptions({ title: `${user?.baseUser.username}'s profile` });
