@@ -1,4 +1,3 @@
-import PaymentCard from "@/src/components/checkout/PaymentCard";
 import PaymentDetails from "@/src/components/checkout/PaymentDetails";
 import PaymentForm from "@/src/components/checkout/PaymentForm";
 import LoadingScreen from "@/src/components/LoadingScreen";
@@ -6,21 +5,24 @@ import ProtectedRoute from "@/src/components/ProtectedRoute";
 import WIPPlaceholder from "@/src/components/WorkInProgress";
 import { Commission } from "@/src/constants/CommissionTypes";
 import { getCommissionById } from "@/src/services/commisionApi";
-import { useLocalSearchParams } from "expo-router";
+import { Elements } from "@stripe/react-stripe-js";
+import { loadStripe } from "@stripe/stripe-js";
+import { useLocalSearchParams, useNavigation } from "expo-router";
 import { useEffect, useState } from "react";
 import { StyleSheet, Text, useWindowDimensions, View } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
 
 export default function Checkout () {
     const { commissionId } = useLocalSearchParams();
-    const [formValues, setFormValues] = useState({ cardNumber: '', cardName: '', exp: '',});
     const [commission, setCommission] = useState<Commission|null>(null);
+    const stripePromise = loadStripe("pk_test_...");
+    const navigation = useNavigation();
 
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
 
     const { width } = useWindowDimensions();
-    const isThreeColumn = width >= 768;
+    const isTwoColumn = width >= 768;
 
     useEffect(() => {
       console.log(commissionId)
@@ -38,6 +40,10 @@ export default function Checkout () {
   
       fetchCommission();
     }, [commissionId]);
+
+    useEffect(() => {
+      navigation.setOptions({ title: '🛍️ Checkout' });
+    }, [navigation]);
     
     if (loading) return <LoadingScreen />;
     if (error) return <Text style={{ padding: 24, color: 'red' }}>{error}</Text>;
@@ -45,19 +51,18 @@ export default function Checkout () {
 
     return (
       <ProtectedRoute allowedRoles={['CLIENT']}>
-        <ScrollView contentContainerStyle={styles.scroll}>
-          <View style={[styles.container, isThreeColumn && styles.row]}>
-            <View style={[styles.column, isThreeColumn && styles.column]}>
-              <PaymentCard values={formValues} />
+        <Elements stripe={stripePromise}>
+          <ScrollView contentContainerStyle={styles.scroll}>
+            <View style={[styles.container, isTwoColumn && styles.row]}>
+              <View style={[styles.column, isTwoColumn && styles.column]}>
+                <PaymentForm price={commission.price} commissionId={commission.id} description={commission.description} />
+              </View>
+              <View style={[styles.column, isTwoColumn && styles.column]}>
+                <PaymentDetails commission={commission} />
+              </View>
             </View>
-            <View style={[styles.column, isThreeColumn && styles.column]}>
-              <PaymentForm onChange={setFormValues} price={commission.price} />
-            </View>
-            <View style={[styles.column, isThreeColumn && styles.column]}>
-              <PaymentDetails commission={commission} />
-            </View>
-          </View>
-        </ScrollView>
+          </ScrollView>
+        </Elements>
       </ProtectedRoute>
     )
 }

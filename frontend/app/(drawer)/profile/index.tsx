@@ -1,11 +1,12 @@
 import React, { useState, useEffect, useContext } from "react";
-import { View, Text, TextInput, Image, Button, StyleSheet, Platform, ScrollView, Alert } from "react-native";
+import { View, Text, TextInput, Image, Button, StyleSheet, Platform, ScrollView, Alert, TouchableOpacity } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { AuthenticationContext } from "@/src/contexts/AuthContext";
 import { User } from "@/src/constants/CommissionTypes";
 import { API_URL } from "@/src/constants/api";
 import LoadingScreen from "@/src/components/LoadingScreen";
 import { getUser } from "@/src/services/userApi";
+import colors from "@/src/constants/colors";
 
 const isWeb = Platform.OS === "web";
 
@@ -67,6 +68,10 @@ const UserProfileScreen = () => {
         {/* <View style={styles.buttonsContainer}>
           <Button title="EDITAR" onPress={handleEdit} color="#1E3A8A" />
         </View> */}
+
+        <TouchableOpacity onPress={() => navigation.navigate("profile/stripe-setup")} style={styles.stripeButton}>
+            <Text style={styles.stripeButtonText}>Conectar Stripe</Text>
+          </TouchableOpacity>
       </View>
     </ScrollView>
   );
@@ -137,6 +142,20 @@ const styles = StyleSheet.create({
     marginTop: 5,
     borderRadius: 5,
   },
+  stripeButton: {
+    backgroundColor: colors.brandPrimary,
+    paddingVertical: 12,
+    borderRadius: 10,
+    alignItems: "center",
+    marginTop: 24,
+    padding:12,
+  },
+  stripeButtonText: {
+    color: "#FFF",
+    fontWeight: "bold",
+    fontSize: 16,
+  },
+  
 });
 
 export default UserProfileScreen;
