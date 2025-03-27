@@ -15,10 +15,11 @@ import { AuthenticationContext } from "@/src/contexts/AuthContext";
 import ProtectedRoute from "@/src/components/ProtectedRoute";
 import { useLocalSearchParams } from "expo-router";
 import { getClientById } from "@/src/services/clientApi";
-import { getArtistById } from "@/src/services/artistApi";
+import { getArtistByBaseId } from "@/src/services/artistApi";
 import { BaseUser } from "@/src/constants/ExploreTypes";
 
 export default function ChatScreen() {
+  // Obtención del parámetro de la URL
   const { toUserId } = useLocalSearchParams();
 
   if (!toUserId) {
@@ -42,20 +43,26 @@ export default function ChatScreen() {
   const userId = loggedInUser.id;
   const token = loggedInUser.token; 
 
-  
+  // Estado para el usuario destino, mensajes, etc.
   const [toUser, setToUser] = useState<BaseUser | null>(null);
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [newMessage, setNewMessage] = useState("");
   const [loading, setLoading] = useState(true);
   const [lastSentMessage, setLastSentMessage] = useState<string | null>(null);
 
+  /**
+   * Función para obtener el BaseUser a partir de su ID.
+   * Primero intenta obtenerlo como artista; de no encontrarse, lo busca como cliente.
+   */
   const getBaseUserById = async (userId: number): Promise<BaseUser | null> => {
     try {
-      let clientResult = await getClientById(userId);
-      let baseUser = clientResult?.baseUser;
+      // Intentamos obtener al artista usando el endpoint /byBaseUser
+      const artistResult = await getArtistByBaseId(userId);
+      let baseUser = artistResult?.baseUser;
       if (!baseUser) {
-        let artistResult = await getArtistById(userId);
-        baseUser = artistResult?.baseUser;
+        // Si no es artista, se intenta obtener como cliente
+        const clientResult = await getClientById(userId);
+        baseUser = clientResult?.baseUser;
       }
       return baseUser;
     } catch (error) {
@@ -64,7 +71,7 @@ export default function ChatScreen() {
     }
   };
 
-  
+  // Cargar el usuario destino
   useEffect(() => {
     const loadToUser = async () => {
       const user = await getBaseUserById(numericToUserId);
@@ -77,7 +84,7 @@ export default function ChatScreen() {
     loadToUser();
   }, [numericToUserId]);
 
-  
+  // Función para cargar la conversación con el usuario destino
   const loadConversation = async () => {
     try {
       const conversation = await getConversation(numericToUserId, token);
@@ -89,7 +96,7 @@ export default function ChatScreen() {
     }
   };
 
-  
+  // Se carga la conversación cuando el componente se monta y se actualiza cada 5 segundos
   useEffect(() => {
     if (userId) {
       loadConversation();
@@ -98,11 +105,10 @@ export default function ChatScreen() {
     }
   }, [userId]);
 
-  
+  // Función para enviar mensaje
   const handleSendMessage = async () => {
     if (!newMessage.trim() || !toUser) return;
     try {
-      
       const messagePayload = {
         text: newMessage,
         fromUser: loggedInUser,
@@ -112,7 +118,7 @@ export default function ChatScreen() {
       console.log("Enviando mensaje:", newMessage);
       const sentMessage = await sendMessage(messagePayload, token);
 
-      
+      // Asegurarse de que creationDate sea un objeto Date
       if (typeof sentMessage.creationDate === "string") {
         sentMessage.creationDate = new Date(sentMessage.creationDate);
       }
@@ -129,7 +135,7 @@ export default function ChatScreen() {
     }
   };
 
- 
+  // Renderizado de cada mensaje
   const renderMessage = ({ item }: { item: ChatMessage }) => {
     const isSentByCurrentUser = item.fromUser.id === userId;
     return (
@@ -176,7 +182,7 @@ export default function ChatScreen() {
             <Button title="Enviar" onPress={handleSendMessage} />
           </View>
         </View>
-        {/* Sidebar que muestra el mensaje enviado, si existe */}
+        {/* Sidebar para mostrar el mensaje enviado recientemente */}
         {lastSentMessage && (
           <View style={styles.sidebar}>
             <Text style={styles.sidebarText}>Mensaje enviado: {lastSentMessage}</Text>

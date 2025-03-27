@@ -31,4 +31,12 @@ class ArtistRestController {
 		return new ResponseEntity<>(artistService.findArtist(id), HttpStatus.OK);
 	}
 
+	@GetMapping("/byBaseUser/{baseUserId}")
+    public ResponseEntity<Artist> getArtistByBaseUser(@PathVariable Long baseUserId) {
+        return artistService.findByBaseUserId(baseUserId)
+                .map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.notFound().build());
+    }
+	
+
 }
