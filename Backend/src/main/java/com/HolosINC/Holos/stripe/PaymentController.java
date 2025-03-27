@@ -4,13 +4,17 @@ import com.stripe.exception.StripeException;
 import com.stripe.model.PaymentIntent;
 import com.stripe.model.PaymentIntentCollection;
 
-import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import org.springframework.web.bind.annotation.RequestBody;
+
 import io.swagger.v3.oas.annotations.tags.Tag;
 
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 
 
 @RestController
@@ -40,10 +44,9 @@ public class PaymentController {
         return new ResponseEntity<String>(paymentStr, HttpStatus.OK);
     }
 
-    @PostMapping("/create")
-    public ResponseEntity<String> createPayment(@RequestBody PaymentDTO paymentDTO, long commisionId) throws StripeException {
-        //El email debería ser el email del cliente, que debe obtenerse con findCurrentUser()
-        String paymentIntent = paymentService.createPayment(paymentDTO, commisionId);
+    @PostMapping("/create/{commissionId}")
+    public ResponseEntity<String> createPayment(@RequestBody PaymentDTO paymentDTO, @PathVariable long commissionId) throws StripeException {
+        String paymentIntent = paymentService.createPayment(paymentDTO, commissionId);
         return new ResponseEntity<String>(paymentIntent, HttpStatus.OK);
     }
 

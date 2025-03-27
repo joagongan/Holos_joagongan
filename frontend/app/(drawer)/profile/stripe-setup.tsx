@@ -1,12 +1,14 @@
 import { View, Text, Pressable, ActivityIndicator, StyleSheet, Image } from "react-native";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import { createStripeAccount, getStripeAccountLink } from "@/src/services/stripeApi";
 import colors from "@/src/constants/colors";
 import { FontAwesome } from "@expo/vector-icons";
 import Animated, { useSharedValue, withSpring, useAnimatedStyle } from "react-native-reanimated";
 import { useNavigation } from "expo-router";
+import { AuthenticationContext } from "@/src/contexts/AuthContext";
 
 export default function StripeSetupScreen() {
+  const { loggedInUser } = useContext(AuthenticationContext);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const scale = useSharedValue(1);
@@ -27,7 +29,8 @@ export default function StripeSetupScreen() {
     try {
       setLoading(true);
       setError(null);
-      await createStripeAccount();
+      console.log(loggedInUser.token)
+      await createStripeAccount(loggedInUser.token);
       const url = await getStripeAccountLink();
       window.location.href = url;
     } catch (err: any) {

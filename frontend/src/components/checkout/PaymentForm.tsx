@@ -1,12 +1,13 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 import { useStripe, useElements, CardElement } from "@stripe/react-stripe-js";
 import { createPaymentIntent } from "@/src/services/stripeApi";
 import colors from "@/src/constants/colors";
 import { useRouter } from "expo-router";
+import { AuthenticationContext } from "@/src/contexts/AuthContext";
 
 interface PaymentFormProps {
-  price: number;
+  amount: number;
   commissionId: number;
   description: string;
 }
@@ -18,12 +19,13 @@ const acceptedCards = [
   "Diners",
 ];
 
-const PaymentForm: React.FC<PaymentFormProps> = ({ price, commissionId, description }) => {
+const PaymentForm: React.FC<PaymentFormProps> = ({ amount, commissionId, description }) => {
   const stripe = useStripe();
   const elements = useElements();
   const router = useRouter();
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
+  const { loggedInUser } = useContext(AuthenticationContext);
 
   const handlePayPress = async () => {
     setError(null);
@@ -35,8 +37,8 @@ const PaymentForm: React.FC<PaymentFormProps> = ({ price, commissionId, descript
     }
 
     try {
-      const paymentDTO = { amount: price, description };
-      const secret = await createPaymentIntent(paymentDTO, commissionId);
+      const paymentDTO = { amount: Math.round(amount*100), description };
+      const secret = await createPaymentIntent(paymentDTO, commissionId, loggedInUser.token);
 
       const result = await stripe.confirmCardPayment(secret, {
         payment_method: {

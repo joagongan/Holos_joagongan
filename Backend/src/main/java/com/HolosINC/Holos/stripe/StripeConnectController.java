@@ -40,9 +40,8 @@ public class StripeConnectController {
     }
 
     @PostMapping("/create")
-    public ResponseEntity<String> createConnectedAccount(@RequestParam String email) throws StripeException{
-        //Esto no debería pedir un email ya que se obtendría con el findCurrentUser
-        String accountId = stripeConnectService.createConnectedAccount(email);
+    public ResponseEntity<String> createConnectedAccount() throws StripeException{
+        String accountId = stripeConnectService.createConnectedAccount();
         return new ResponseEntity<String>(accountId, HttpStatus.OK);
     }
 

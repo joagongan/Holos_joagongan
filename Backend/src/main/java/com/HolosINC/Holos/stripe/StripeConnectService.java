@@ -54,13 +54,15 @@ public class StripeConnectService {
     }
 
     @Transactional
-    public String createConnectedAccount(String email) throws StripeException {
+    public String createConnectedAccount() throws StripeException {
         Stripe.apiKey = secretKey;
         BaseUser activeUser = userService.findCurrentUser();
         Artist artist = artistService.findArtistByUserId(activeUser.getId());
 
-        if (artist.getSellerAccountId() == null) {
-            throw new IllegalStateException("El usuario no tiene una cuenta de Stripe asociada.");
+        System.out.println(activeUser.getUsername());
+
+        if (artist.getSellerAccountId() != null) {
+            return artist.getSellerAccountId();
         } 
         
         AccountCreateParams params = AccountCreateParams.builder()
@@ -70,7 +72,7 @@ public class StripeConnectService {
                 .build();
 
         Account account = Account.create(params);
-         artist.setSellerAccountId(account.getId());
+        artist.setSellerAccountId(account.getId());
         artistService.saveArtist(artist); 
 
         return account.getId(); 

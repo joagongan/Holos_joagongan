@@ -60,18 +60,11 @@ const UserProfileScreen = () => {
         <Text style={styles.fieldLabel}>Correo Electrónico:</Text>
         <TextInput style={styles.input} value={user.baseUser.email} editable={false} />
         <Text style={styles.fieldLabel}>Teléfono:</Text>
-        <TextInput
-          style={styles.input}
-          value={user.baseUser.phoneNumber}
-          editable={false}
-        />
-        {/* <View style={styles.buttonsContainer}>
-          <Button title="EDITAR" onPress={handleEdit} color="#1E3A8A" />
-        </View> */}
+        <TextInput style={styles.input} value={user.baseUser.phoneNumber} editable={false}/>
 
-        <TouchableOpacity onPress={() => navigation.navigate("profile/stripe-setup")} style={styles.stripeButton}>
+        {isArtist ? <TouchableOpacity onPress={() => navigation.navigate("profile/stripe-setup")} style={styles.stripeButton}>
             <Text style={styles.stripeButtonText}>Conectar Stripe</Text>
-          </TouchableOpacity>
+          </TouchableOpacity>:<></>}
       </View>
     </ScrollView>
   );

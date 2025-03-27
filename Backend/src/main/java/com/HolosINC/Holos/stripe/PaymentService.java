@@ -70,9 +70,10 @@ public class PaymentService {
             throw new ResourceNotFoundException("Artist not found");
         }
 
-        if (paymentDTO.getAmount()!=null||paymentDTO.getAmount()<=0){
+        if (paymentDTO.getAmount() == null || paymentDTO.getAmount() <= 0) {
             throw new ResourceNotFoundException("Payment amount can't be empty or 0");
         }
+        
         long commissionAmount = Math.round(paymentDTO.getAmount() * commisionPercentage);
 
         PaymentIntentCreateParams params = PaymentIntentCreateParams.builder()

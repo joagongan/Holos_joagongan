@@ -12,10 +12,12 @@ import { useEffect, useState } from "react";
 import { StyleSheet, Text, useWindowDimensions, View } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
 
+const public_pk =  "pk_test_51R5yBhPEFPLFpq6fet8cJiv4MeVyAS06kdbP7nU1ct0oV9o237npeBw5c1h2WFNL0XYWHRFCzxMUbSnBMFHfzTld00NqKYPZeG";
+
 export default function Checkout () {
     const { commissionId } = useLocalSearchParams();
     const [commission, setCommission] = useState<Commission|null>(null);
-    const stripePromise = loadStripe("pk_test_...");
+    const stripePromise = loadStripe(public_pk);
     const navigation = useNavigation();
 
     const [loading, setLoading] = useState(true);
@@ -55,7 +57,7 @@ export default function Checkout () {
           <ScrollView contentContainerStyle={styles.scroll}>
             <View style={[styles.container, isTwoColumn && styles.row]}>
               <View style={[styles.column, isTwoColumn && styles.column]}>
-                <PaymentForm price={commission.price} commissionId={commission.id} description={commission.description} />
+                <PaymentForm amount={commission.price} commissionId={commission.id} description={commission.description} />
               </View>
               <View style={[styles.column, isTwoColumn && styles.column]}>
                 <PaymentDetails commission={commission} />
