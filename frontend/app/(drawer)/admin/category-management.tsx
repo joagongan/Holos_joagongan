@@ -107,7 +107,7 @@ interface Category {
 
   const handleDelete = async (categoryId: number) => {
     try {
-      await deleteCategory(categoryId, loggedInUser.token);
+      await deleteCategory(categoryId);
       setCategories(categories.filter(category => category.id !== categoryId));
       setDeleteError(null); // Limpiar errores si la operación es exitosa
       Alert.alert("Éxito", "Categoría eliminada correctamente.");
@@ -115,12 +115,7 @@ interface Category {
       setDeleteError("Error al eliminar la categoría.");
     }
   };
-  
-  
 
-  useEffect(() => {
-    fetchCategories();
-  }, []);
 
   return (
     <ProtectedRoute allowedRoles={["ADMIN"]}>

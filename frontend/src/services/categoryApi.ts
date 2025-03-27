@@ -1,6 +1,7 @@
 import api from "./axiosInstance";
 import { Category } from "@/src/constants/CommissionTypes";
 import { API_URL } from "@/src/constants/api";
+import { del } from "./HelperEndpoints/ApiEndpoints";
 
 const CATEGORY_URL = `${API_URL}/categories`;
 const ADMINISTRATOR_CATEGORY_URL = `${API_URL}/categories/administrator/categories`;
@@ -30,6 +31,6 @@ export const updateCategory = async (id: number, category: Partial<Category>, to
   return response.data;
 };
 
-export const deleteCategory = async (id: number, token:string): Promise<void> => {
-  await api.delete(`${ADMINISTRATOR_CATEGORY_URL}/${id}`, { headers: { Authorization: `Bearer ${token}`}});
+export const deleteCategory = async (id: number): Promise<void> => {
+  await del(`${ADMINISTRATOR_CATEGORY_URL}/${id}`);
 };

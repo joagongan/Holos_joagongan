@@ -5,63 +5,49 @@ import { AuthenticationContext } from "@/src/contexts/AuthContext";
 import { User } from "@/src/constants/CommissionTypes";
 import { API_URL } from "@/src/constants/api";
 import LoadingScreen from "@/src/components/LoadingScreen";
-import { getUser } from "@/src/services/userApi";
 
 const isWeb = Platform.OS === "web";
 
 const UserProfileScreen = () => {
   const navigation = useNavigation<any>();
   const { loggedInUser } = useContext(AuthenticationContext);
-  const [user, setUser] = useState<User|null>(null);
-
-  useEffect(() => {
-    const fetchUser = async () => {
-      try {
-        const user = await getUser(loggedInUser.token);
-        setUser(user);
-      } catch (error) {
-        console.error('Failed to fetch user:', error);
-      }
-    };
-    fetchUser();
-  }, [loggedInUser?.id]);  
   
   useEffect(() => {
-      navigation.setOptions({ title: `${user?.baseUser.username}'s profile` });
-    }, [navigation, user]);
+      navigation.setOptions({ title: `${loggedInUser?.baseUser.username}'s profile` });
+    }, [navigation, loggedInUser]);
 
-  if (!user) {
+  if (!loggedInUser) {
     return <LoadingScreen />;
   }
 
   // Determinamos si el usuario es artista verificando si tiene tableCommisionsPrice
-  const isArtist = "tableCommisionsPrice" in user && user.tableCommisionsPrice;
+  const isArtist = "tableCommisionsPrice" in loggedInUser && loggedInUser.tableCommisionsPrice;
 
   return (
     <ScrollView style={styles.scrollView}>
       <View style={styles.container}>
         <Text style={styles.title}>{isArtist ? "ARTISTA" : "CLIENTE"}</Text>
         <Image
-          source={{ uri: `${API_URL}${user.baseUser.imageProfile}` }} // TODO Conseguir static image
+          source={{ uri: `${API_URL}${loggedInUser.baseUser.imageProfile}` }} // TODO Conseguir static image
           style={styles.image}
         />
         <Text style={styles.label}>
           DATOS {isArtist ? "ARTISTA" : "CLIENTE"}
         </Text>
         <Text style={styles.fieldLabel}>Nombre:</Text>
-        <TextInput style={styles.input} value={user.baseUser.username} editable={false} />
+        <TextInput style={styles.input} value={loggedInUser.baseUser.username} editable={false} />
         <Text style={styles.fieldLabel}>Usuario:</Text>
         <TextInput
           style={styles.input}
-          value={user.baseUser.username}
+          value={loggedInUser.baseUser.username}
           editable={false}
         />
         <Text style={styles.fieldLabel}>Correo Electrónico:</Text>
-        <TextInput style={styles.input} value={user.baseUser.email} editable={false} />
+        <TextInput style={styles.input} value={loggedInUser.baseUser.email} editable={false} />
         <Text style={styles.fieldLabel}>Teléfono:</Text>
         <TextInput
           style={styles.input}
-          value={user.baseUser.phoneNumber}
+          value={loggedInUser.baseUser.phoneNumber}
           editable={false}
         />
         {/* <View style={styles.buttonsContainer}>
