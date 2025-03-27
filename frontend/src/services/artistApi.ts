@@ -1,5 +1,6 @@
 import api from "./axiosInstance";
-
+import { API_URL } from "../constants/api";
+const ARTIST_URL = `${API_URL}/artists`;
 export const getArtistById = async (id:number) => {
   try {
     console.log(id);
@@ -10,6 +11,11 @@ export const getArtistById = async (id:number) => {
     throw error;
   }
 };
+
+export const deleteArtist = async (id: number, token:string): Promise<void> => {
+  await api.delete(`${ARTIST_URL}/administrator/artists/${id}`, { headers: { Authorization: `Bearer ${token}`}});
+};
+
 
 export const getArtistByUsername = async (username:string) => {
   try {
