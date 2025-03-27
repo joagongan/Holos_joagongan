@@ -5,29 +5,25 @@ import {
   Text,
   TouchableOpacity,
   ActivityIndicator,
-  StyleSheet,
   Alert,
 } from "react-native";
-import { useNavigation } from "@react-navigation/native";
+import { useRouter } from "expo-router";
 import { AuthenticationContext } from "@/src/contexts/AuthContext";
 import { getAllUserMessages } from "@/src/services/chatService";
-import { useRouter } from "expo-router";
-
+import { ConversationListStyles as styles } from "@/src/styles/ConversationListScreen.styles";
 
 interface BaseUser {
   id: number;
   name: string;
-  
 }
 
 export interface ChatMessage {
   id: number;
   text: string;
-  creationDate: Date; 
+  creationDate: Date;
   fromUser: BaseUser;
   toUser: BaseUser;
 }
-
 
 interface Conversation {
   otherUser: BaseUser;
@@ -40,9 +36,8 @@ export default function ConversationListScreen() {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [conversations, setConversations] = useState<Conversation[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
-  const navigation = useNavigation();
 
-  // Función para cargar TODOS los mensajes del usuario actual
+  // Carga todos los mensajes en los que participa el usuario actual
   const loadMessages = async () => {
     try {
       const msgs = await getAllUserMessages(loggedInUser.id, loggedInUser.token);
@@ -54,14 +49,12 @@ export default function ConversationListScreen() {
     }
   };
 
-  // Función para agrupar los mensajes en conversaciones
+  // Agrupa los mensajes en conversaciones (último mensaje con cada "otro" usuario)
   const groupMessagesToConversations = () => {
     const convMap: { [key: number]: ChatMessage } = {};
     messages.forEach((msg) => {
-      // Determinar el "otro usuario"
       const otherUser =
         msg.fromUser.id === loggedInUser.id ? msg.toUser : msg.fromUser;
-      // Si no existe una conversación para ese usuario o este mensaje es más reciente, lo asignamos
       if (
         !convMap[otherUser.id] ||
         new Date(msg.creationDate) > new Date(convMap[otherUser.id].creationDate)
@@ -69,14 +62,15 @@ export default function ConversationListScreen() {
         convMap[otherUser.id] = msg;
       }
     });
-    // Convertir el mapa a un array de Conversation
+
     const convArray: Conversation[] = Object.keys(convMap).map((key) => {
       const msg = convMap[parseInt(key)];
       const otherUser =
         msg.fromUser.id === loggedInUser.id ? msg.toUser : msg.fromUser;
       return { otherUser, lastMessage: msg };
     });
-    // Ordenar las conversaciones por la fecha del último mensaje (descendente)
+
+    // Ordena por fecha descendente
     convArray.sort(
       (a, b) =>
         new Date(b.lastMessage.creationDate).getTime() -
@@ -89,7 +83,6 @@ export default function ConversationListScreen() {
     loadMessages();
   }, []);
 
-  
   useEffect(() => {
     groupMessagesToConversations();
   }, [messages]);
@@ -98,7 +91,7 @@ export default function ConversationListScreen() {
     <TouchableOpacity
       style={styles.conversationItem}
       onPress={() => {
-        // Navegar hacia la ruta [toUserId].tsx con el ID
+        // Navega a la pantalla de chat del usuario (id) correspondiente
         router.push(`/(drawer)/chats/${item.otherUser.id}`);
       }}
     >
@@ -112,7 +105,7 @@ export default function ConversationListScreen() {
   if (loading) {
     return (
       <View style={styles.centered}>
-        <ActivityIndicator size="large" color="#888" />
+        <ActivityIndicator size="large" color="#F8C3CD" />
       </View>
     );
   }
@@ -121,7 +114,7 @@ export default function ConversationListScreen() {
     <View style={styles.container}>
       {conversations.length === 0 ? (
         <View style={styles.centered}>
-          <Text>No tienes conversaciones</Text>
+          <Text style={styles.userName}>No tienes conversaciones</Text>
         </View>
       ) : (
         <FlatList
@@ -134,16 +127,3 @@ export default function ConversationListScreen() {
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: "#fff", padding: 16 },
-  list: { paddingBottom: 20 },
-  conversationItem: {
-    paddingVertical: 12,
-    borderBottomWidth: 1,
-    borderBottomColor: "#ccc",
-  },
-  userName: { fontSize: 18, fontWeight: "bold" },
-  lastMessage: { fontSize: 14, color: "gray", marginTop: 4 },
-  centered: { flex: 1, alignItems: "center", justifyContent: "center" },
-});
