@@ -1,6 +1,5 @@
 package com.HolosINC.Holos.stripe;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,7 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.HolosINC.Holos.artist.Artist;
 import com.HolosINC.Holos.artist.ArtistService;
-
+import com.HolosINC.Holos.model.BaseUser;
 import com.HolosINC.Holos.model.BaseUserService;
 import com.stripe.Stripe;
 import com.stripe.exception.StripeException;
@@ -57,41 +56,37 @@ public class StripeConnectService {
     @Transactional
     public String createConnectedAccount(String email) throws StripeException {
         Stripe.apiKey = secretKey;
-/*        BaseUser activeUser = userService.findCurrentUser();
-         Artist artist = artistService.findArtistByUserId(activeUser.getId());
+        BaseUser activeUser = userService.findCurrentUser();
+        Artist artist = artistService.findArtistByUserId(activeUser.getId());
 
-        if (artist.getSellerAcountId() == null) {
+        if (artist.getSellerAccountId() == null) {
             throw new IllegalStateException("El usuario no tiene una cuenta de Stripe asociada.");
-        } */
+        } 
         
         AccountCreateParams params = AccountCreateParams.builder()
                 .setType(AccountCreateParams.Type.EXPRESS) 
                 .setCountry("ES") 
-                //.setEmail(activeUser.getEmail())
-                .setEmail(email)
+                .setEmail(activeUser.getEmail())
                 .build();
 
         Account account = Account.create(params);
-/*         artist.setSellerAcountId(account.getId());
-        artistService.saveArtist(artist); */
+         artist.setSellerAccountId(account.getId());
+        artistService.saveArtist(artist); 
 
         return account.getId(); 
     }
 
     @Transactional
-    public String createAccountLink(String sellerAccountId) throws StripeException { 
-        //Código comentado para hacer pruebas en swagger. El sellerAccount id se debería obtener a partir del findCurrentUser
-        /* 
+    public String createAccountLink() throws StripeException {  
         Long userId = userService.findCurrentUser().getId();
         Artist artist = artistService.findArtistByUserId(userId);
 
-        if (artist.getSellerAcountId() == null) {
+        if (artist.getSellerAccountId() == null) {
             throw new IllegalStateException("El usuario no tiene una cuenta de Stripe asociada.");
-        } */
+        } 
 
         AccountLinkCreateParams params = AccountLinkCreateParams.builder()
-            //.setAccount(artist.getSellerAcountId())
-            .setAccount(sellerAccountId)
+            .setAccount(artist.getSellerAccountId())
             .setRefreshUrl(refreshUrl) // Redirigir en caso de error
             .setReturnUrl(returnUrl) // Redirigir tras completar
             .setType(AccountLinkCreateParams.Type.ACCOUNT_ONBOARDING)

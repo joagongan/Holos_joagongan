@@ -2,7 +2,6 @@ package com.HolosINC.Holos.stripe;
 
 
 import com.HolosINC.Holos.artist.Artist;
-import com.HolosINC.Holos.artist.ArtistService;
 import com.HolosINC.Holos.commision.Commision;
 import com.HolosINC.Holos.commision.CommisionService;
 import com.HolosINC.Holos.exceptions.ResourceNotFoundException;
@@ -56,13 +55,12 @@ public class PaymentService {
     }
 
     @Transactional
-    public String createPayment(PaymentDTO paymentDTO, long commisionId, String email) throws StripeException {
+    public String createPayment(PaymentDTO paymentDTO, long commisionId) throws StripeException {
         Stripe.apiKey = secretKey;
         Commision commision = commisionService.getCommisionById(commisionId);
-        /*BaseUser activeUser = userService.findCurrentUser();
-        String email = activerUser.getEmail();
-         * 
-        */
+        BaseUser activeUser = userService.findCurrentUser();
+        String email = activeUser.getEmail();
+        
 
         if (commision==null){
             throw new ResourceNotFoundException("Commision", "id", commisionId);
@@ -98,7 +96,7 @@ public class PaymentService {
         Stripe.apiKey = secretKey;
         PaymentIntent paymentIntent = PaymentIntent.retrieve(paymentIntentId);
         PaymentIntentConfirmParams params = PaymentIntentConfirmParams.builder()
-                .setPaymentMethod(paymentMethod) // Método de pago (por ejemplo, "pm_card_visa")
+                .setPaymentMethod(paymentMethod) 
                 .setReturnUrl(returnUrl) 
                 .build();
         return paymentIntent.confirm(params);

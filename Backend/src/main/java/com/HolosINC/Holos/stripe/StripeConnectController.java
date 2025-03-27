@@ -47,9 +47,9 @@ public class StripeConnectController {
     }
 
     @GetMapping("/create-link")
-    public ResponseEntity<String> createAccountLink(@RequestParam String sellerAccountId) throws StripeException{
+    public ResponseEntity<String> createAccountLink() throws StripeException{
         //Esto no debería pedir un sellerAccountId ya que se obtendría con el findCurrentUser
-        String accountLinkUrl = stripeConnectService.createAccountLink(sellerAccountId);
+        String accountLinkUrl = stripeConnectService.createAccountLink();
         return new ResponseEntity<String>(accountLinkUrl, HttpStatus.OK);
     }
 
