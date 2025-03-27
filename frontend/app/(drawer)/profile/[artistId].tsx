@@ -38,7 +38,7 @@ export default function ArtistDetailScreen() {
   }, [artistId]);
 
   useEffect(() => {
-    navigation.setOptions({ title: `${artist?.username}` });
+    navigation.setOptions({ title: `${artist?.baseUser.username}` });
   }, [navigation, artist]);
 
   if (loading) {

@@ -37,6 +37,11 @@ class ArtistRestController {
                 .map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
-	
+  
+	@GetMapping(value = "username/{username}")
+	@Operation(summary = "Get artist", description = "Retrieve a list of all artists")
+	public ResponseEntity<Artist> findByUsername(@PathVariable("username") String username) {
+		return new ResponseEntity<>(artistService.findArtistByUsername(username), HttpStatus.OK);
+	}
 
 }
