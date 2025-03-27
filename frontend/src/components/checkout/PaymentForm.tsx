@@ -1,125 +1,156 @@
-import React, { useEffect } from 'react';
-import { View, TextInput, Text, StyleSheet, TouchableOpacity } from 'react-native';
-import { Formik } from 'formik';
-import * as Yup from 'yup';
+import React, { useContext, useState } from "react";
+import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
+import { useStripe, useElements, CardElement } from "@stripe/react-stripe-js";
+import { createPaymentIntent } from "@/src/services/stripeApi";
+import colors from "@/src/constants/colors";
+import { useRouter } from "expo-router";
+import { AuthenticationContext } from "@/src/contexts/AuthContext";
 
-type PaymentFormProps = {
-    onChange: (values: { cardNumber: string; cardName: string; exp: string }) => void;
-    price: number;
-}; 
+interface PaymentFormProps {
+  amount: number;
+  commissionId: number;
+  description: string;
+}
 
-const PaymentForm = ({ onChange, price }: PaymentFormProps) => {
-    const validation = Yup.object({
-        cardNumber: Yup.string().matches(/^[0-9\s]{16,19}$/, 'Invalid card number').required('Required'),
-        cardName: Yup.string().required('Required'),
-        exp: Yup.string().matches(/^(0[1-9]|1[0-2])\/?([0-9]{2})$/, 'Invalid expiration').required('Required'),
-        cvv: Yup.string().matches(/^[0-9]{3,4}$/, 'Invalid CVV').required('Required')
-    });
+const acceptedCards = [
+  "Visa",
+  "MasterCard",
+  "American Express",
+  "Diners",
+];
 
-    const onSubmit = (values:any) => {
-        const sanitizedCardNumber = values.cardNumber.replace(/\s/g, '');
-        console.log('Sanitized Card:', {
-          ...values,
-          cardNumber: sanitizedCardNumber
-        });
-        console.log('Amount:', price);
-    };      
+const PaymentForm: React.FC<PaymentFormProps> = ({ amount, commissionId, description }) => {
+  const stripe = useStripe();
+  const elements = useElements();
+  const router = useRouter();
+  const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState(false);
+  const { loggedInUser } = useContext(AuthenticationContext);
 
-    return (
-        <Formik
-            initialValues={{ cardNumber: '', cardName: '', exp: '', cvv: '' }}
-            validationSchema={validation}
-            onSubmit={onSubmit}
-        >
-            {({ handleChange, handleBlur, handleSubmit, values, errors, touched }) => {
-                useEffect(() => { onChange({ cardNumber: values.cardNumber, cardName: values.cardName, exp: values.exp });
-                }, [values.cardNumber, values.cardName, values.exp]);
+  const handlePayPress = async () => {
+    setError(null);
+    setSuccess(false);
 
-                return (
-                    <View style={styles.form}>
-                        <TextInput
-                            textContentType="creditCardNumber"
-                            style={styles.input}
-                            placeholder="Card Number"
-                            keyboardType="number-pad"
-                            onChangeText={handleChange('cardNumber')}
-                            onBlur={handleBlur('cardNumber')}
-                            value={values.cardNumber}
-                            autoComplete="cc-number"
-                        />
-                        {touched.cardNumber && errors.cardNumber && ( <Text style={styles.error}>{errors.cardNumber}</Text> )}
+    if (!stripe || !elements) {
+      setError("Stripe no está disponible 😿");
+      return;
+    }
 
-                        <TextInput
-                            textContentType="name"
-                            style={styles.input}
-                            placeholder="Cardholder Name"
-                            onChangeText={handleChange('cardName')}
-                            onBlur={handleBlur('cardName')}
-                            value={values.cardName}
-                            autoComplete="cc-name"
-                        />
-                        {touched.cardName && errors.cardName && ( <Text style={styles.error}>{errors.cardName}</Text> )}
+    try {
+      const paymentDTO = { amount: Math.round(amount*100), description };
+      const secret = await createPaymentIntent(paymentDTO, commissionId, loggedInUser.token);
 
-                        <TextInput
-                            textContentType="none"
-                            style={styles.input}
-                            placeholder="MM/YY"
-                            onChangeText={handleChange('exp')}
-                            onBlur={handleBlur('exp')}
-                            value={values.exp}
-                            autoComplete="cc-exp"
-                        />
-                        {touched.exp && errors.exp && ( <Text style={styles.error}>{errors.exp}</Text>)}
+      const result = await stripe.confirmCardPayment(secret, {
+        payment_method: {
+          card: elements.getElement(CardElement)!,
+        },
+      });
 
-                        <TextInput
-                            textContentType="oneTimeCode"
-                            style={styles.input}
-                            placeholder="CVV"
-                            keyboardType="number-pad"
-                            onChangeText={handleChange('cvv')}
-                            onBlur={handleBlur('cvv')}
-                            value={values.cvv}
-                            autoComplete="cc-csc"
-                            secureTextEntry
-                        />
-                        {touched.cvv && errors.cvv && ( <Text style={styles.error}>{errors.cvv}</Text> )}
+      if (result.error) {
+        setError(result.error.message || "Ocurrió un error 😿");
+      } else if (result.paymentIntent?.status === "succeeded") {
+        setSuccess(true);
+        setTimeout(() => {
+            router.replace('/');
+        }, 2500);
+      }
+    } catch (err) {
+      setError("No se pudo completar el pago 😿");
+    }
+  };
 
-                        <TouchableOpacity onPress={handleSubmit as () => void} style={styles.button}>
-                            <Text style={styles.buttonText}>Send payment</Text>
-                        </TouchableOpacity>
-                    </View>
-                );
-            }}
-        </Formik>
-    );
+  return (
+    <View style={styles.container}>
+      <View style={styles.instructionBox}>
+        <Text style={styles.instructionHeader}>Tarjetas aceptadas:</Text>
+        <View style={styles.instructionList}>
+          {acceptedCards.map((card) => (
+            <Text style={styles.cardBrand}>· {card}</Text>
+          ))}
+        </View>
+      </View>
+
+      <CardElement options={{ style: cardElementStyle }} />
+
+      <TouchableOpacity onPress={handlePayPress} style={styles.button}>
+        <Text style={styles.buttonText}>Pagar ahora</Text>
+      </TouchableOpacity>
+
+      {error && <Text style={styles.error}>{error}</Text>}
+      {success && <Text style={styles.success}>¡Pago realizado con éxito!</Text>}
+    </View>
+  );
 };
 
 export default PaymentForm;
 
+const cardElementStyle = {
+  base: {
+    fontSize: "16px",
+    color: colors.contentStrong,
+    fontFamily: "'Inter', sans-serif", '::placeholder': { color: colors.accentInfo },
+  },
+  invalid: {
+    color: colors.brandPrimary,
+    iconColor: colors.brandPrimary,
+  },
+};
+
 const styles = StyleSheet.create({
-  form: { gap: 12 },
-  input: {
-    borderWidth: 1,
-    borderColor: '#CCC',
-    borderRadius: 8,
+  container: {
+    gap: 16,
+    padding: 24,
+    backgroundColor: colors.surfaceBase,
+    borderRadius: 16,
+    shadowColor: "#000",
+    shadowOpacity: 0.05,
+    shadowOffset: { width: 0, height: 2 },
+    shadowRadius: 10,
+  },
+  instructionBox: {
+    backgroundColor: colors.surfaceMuted,
+    borderRadius: 12,
     padding: 12,
+    marginBottom: 8,
+  },
+  instructionHeader: {
+    color: colors.contentStrong,
+    fontSize: 14,
+    fontWeight: "bold",
+    marginBottom: 6,
+  },
+  instructionList: {
+    gap: 4,
+  },
+  instructionItem: {
+    color: colors.contentStrong,
+    fontSize: 14,
+    lineHeight: 20,
+  },
+  cardBrand: {
+    fontWeight: "bold",
+    color: colors.brandPrimary,
+  },
+  button: {
+    backgroundColor: colors.brandPrimary,
+    paddingVertical: 12,
+    borderRadius: 12,
+    alignItems: "center",
+    marginTop: 8,
+  },
+  buttonText: {
+    color: "#FFF",
+    fontWeight: "bold",
     fontSize: 16,
   },
   error: {
-    fontSize: 12,
-    color: '#D55',
-    marginLeft: 4,
-  },
-  button: {
-    backgroundColor: '#F05A7E',
-    padding: 14,
-    borderRadius: 10,
-    alignItems: 'center',
+    fontSize: 14,
+    color: colors.brandPrimary,
     marginTop: 12,
   },
-  buttonText: {
-    color: '#FFF',
-    fontWeight: 'bold',
-    fontSize: 16,
+  success: {
+    fontSize: 14,
+    color: colors.brandSecondary,
+    marginTop: 12,
   },
 });

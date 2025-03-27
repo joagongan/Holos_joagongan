@@ -31,6 +31,8 @@ public class Artist{
     @Min(1)
     private Integer numSlotsOfWork;
 
+    private String sellerAccountId;
+
     @Lob
     @Column(name = "tableCommisionsPrice", columnDefinition = "LONGBLOB")
     private byte[] tableCommisionsPrice;

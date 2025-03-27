@@ -70,27 +70,27 @@ INSERT INTO clients (id, base_user_id) VALUES
 (21, 21),
 (22, 22);
 
-INSERT INTO artists (id, num_slots_of_work, table_commisions_price, base_user_id) VALUES 
-(1, 7, '/images/tableCommisionsPrice.png', 23),
-(2, 7, '/images/tableCommisionsPrice.png', 24),
-(3, 7, '/images/tableCommisionsPrice.png', 25),
-(4, 7, '/images/tableCommisionsPrice.png', 26),
-(5, 7, '/images/tableCommisionsPrice.png', 27),
-(6, 7, '/images/tableCommisionsPrice.png', 28),
-(7, 7, '/images/tableCommisionsPrice.png', 29),
-(8, 7, '/images/tableCommisionsPrice.png', 30),
-(9, 7, '/images/tableCommisionsPrice.png', 31),
-(10, 7, '/images/tableCommisionsPrice.png', 32),
-(11, 7, '/images/tableCommisionsPrice.png', 33),
-(12, 7, '/images/tableCommisionsPrice.png', 34),
-(13, 7, '/images/tableCommisionsPrice.png', 35),
-(14, 7, '/images/tableCommisionsPrice.png', 36),
-(15, 7, '/images/tableCommisionsPrice.png', 37),
-(16, 7, '/images/tableCommisionsPrice.png', 38),
-(17, 7, '/images/tableCommisionsPrice.png', 39),
-(18, 7, '/images/tableCommisionsPrice.png', 40),
-(19, 7, '/images/tableCommisionsPrice.png', 41),
-(20, 7, '/images/tableCommisionsPrice.png', 42);
+INSERT INTO artists (id, num_slots_of_work, table_commisions_price, base_user_id, seller_account_id) VALUES 
+(1, 7, '/images/tableCommisionsPrice.png', 23, 'acct_1R6NFEPQHM1XssL0'),
+(2, 7, '/images/tableCommisionsPrice.png', 24, 'acct_1R6NFEPQHM1XssL0'),
+(3, 7, '/images/tableCommisionsPrice.png', 25, 'acct_1R6NFEPQHM1XssL0'),
+(4, 7, '/images/tableCommisionsPrice.png', 26, 'acct_1R6NFEPQHM1XssL0'),
+(5, 7, '/images/tableCommisionsPrice.png', 27, 'acct_1R6NFEPQHM1XssL0'),
+(6, 7, '/images/tableCommisionsPrice.png', 28, 'acct_1R6NFEPQHM1XssL0'),
+(7, 7, '/images/tableCommisionsPrice.png', 29, 'acct_1R6NFEPQHM1XssL0'),
+(8, 7, '/images/tableCommisionsPrice.png', 30, 'acct_1R6NFEPQHM1XssL0'),
+(9, 7, '/images/tableCommisionsPrice.png', 31, 'acct_1R6NFEPQHM1XssL0'),
+(10, 7, '/images/tableCommisionsPrice.png', 32, 'acct_1R6NFEPQHM1XssL0'),
+(11, 7, '/images/tableCommisionsPrice.png', 33, 'acct_1R6NFEPQHM1XssL0'),
+(12, 7, '/images/tableCommisionsPrice.png', 34, 'acct_1R6NFEPQHM1XssL0'),
+(13, 7, '/images/tableCommisionsPrice.png', 35, 'acct_1R6NFEPQHM1XssL0'),
+(14, 7, '/images/tableCommisionsPrice.png', 36, 'acct_1R6NFEPQHM1XssL0'),
+(15, 7, '/images/tableCommisionsPrice.png', 37, 'acct_1R6NFEPQHM1XssL0'),
+(16, 7, '/images/tableCommisionsPrice.png', 38, 'acct_1R6NFEPQHM1XssL0'),
+(17, 7, '/images/tableCommisionsPrice.png', 39, 'acct_1R6NFEPQHM1XssL0'),
+(18, 7, '/images/tableCommisionsPrice.png', 40, 'acct_1R6NFEPQHM1XssL0'),
+(19, 7, '/images/tableCommisionsPrice.png', 41, 'acct_1R6NFEPQHM1XssL0'),
+(20, 7, '/images/tableCommisionsPrice.png', 42, 'acct_1R6NFEPQHM1XssL0');
 
 INSERT INTO categories (id, name, description, image) VALUES
 (1, 'Painting', 'Artworks created using paint on a surface', '/images/painting_category.jpg'),
