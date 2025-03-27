@@ -12,6 +12,7 @@ export default function LoginScreen ({ navigation }:any) {
     const { signIn } = useContext(AuthenticationContext)
     const { reportId } = useLocalSearchParams();
     const [backendErrors, setBackendErrors] = useState<string[]>([]);
+    const [showParssword, setShowPassword] = useState<boolean>(false);
 
     const loginValidationSchema = yup.object().shape({
         username: yup
@@ -93,8 +94,14 @@ export default function LoginScreen ({ navigation }:any) {
                         value={values.password}
                         placeholder="Contraseña"
                         style={styles.input}
-                        secureTextEntry
-                    />
+                        secureTextEntry = {!showParssword} //ShowPassword false -> oculta
+                    /> 
+                    <TouchableOpacity
+                        style = {styles.eyeButton}
+                        onPress= {() => setShowPassword(prev => !prev)} //cambiar visibilidad de arriba
+                    ><Text style={styles.eyeText}>{showPassword ? 'Ocultar' : 'Mostrar'}</Text>
+                    </TouchableOpacity>
+                    </View>
                     {errors.password && touched.password && (
                         <Text style={styles.errorInput}>{errors.password}</Text>
                     )}
@@ -117,5 +124,6 @@ const styles = StyleSheet.create({
   container: { flex: 1, justifyContent: 'center', paddingHorizontal: 20, alignSelf: 'center', maxWidth: 1600, minWidth: '60%' },
   title: { fontSize: 24, textAlign: 'center', marginBottom: 20 },
   input: { borderWidth: 1, borderColor: '#ccc', padding: 10, marginBottom: 15, borderRadius: 5 },
-  errorInput: { color: 'red', marginBottom: 15 },
+  errorInput: { color: 'red', marginBottom: 15 },eyeButton: { marginLeft: 10 },
+  eyeText: { color: '#007BFF' }
 });
