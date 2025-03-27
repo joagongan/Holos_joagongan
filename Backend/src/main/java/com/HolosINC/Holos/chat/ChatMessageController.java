@@ -75,4 +75,20 @@ public class ChatMessageController {
             return ResponseEntity.badRequest().build();
         }
     }
+    @GetMapping("/conversations/user/{userId}")
+public ResponseEntity<List<ConversationDTO>> getUserConversations(@PathVariable Long userId) {
+    List<ConversationDTO> convos = service.findAllConversations(userId);
+    return ResponseEntity.ok(convos);
+}
+
+@GetMapping("/allByUser/{userId}")
+public ResponseEntity<List<ChatMessage>> getAllMessagesByUser(@PathVariable Long userId) {
+    try {
+        List<ChatMessage> messages = service.findAllMessagesByUser(userId);
+        return ResponseEntity.ok(messages);
+    } catch (Exception e) {
+        return ResponseEntity.notFound().build();
+    }
+}
+
 }

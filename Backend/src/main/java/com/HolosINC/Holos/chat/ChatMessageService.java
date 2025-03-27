@@ -58,4 +58,15 @@ public class ChatMessageService {
     public void deleteMessage(Long id) {
         chatMessageRepository.deleteById(id);
     }
+
+    @Transactional
+    public List<ConversationDTO> findAllConversations(Long userId) {
+        return chatMessageRepository.findAllConversations(userId);
+    }
+    
+    @Transactional
+    public List<ChatMessage> findAllMessagesByUser(Long userId) {
+        return chatMessageRepository.findAllByUserId(userId);
+    }
+    
 }

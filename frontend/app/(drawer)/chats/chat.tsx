@@ -1,89 +1,149 @@
 import React, { useContext, useEffect, useState } from "react";
-import { View, Text, FlatList, ActivityIndicator, StyleSheet, TouchableOpacity } from "react-native";
+import {
+  View,
+  FlatList,
+  Text,
+  TouchableOpacity,
+  ActivityIndicator,
+  StyleSheet,
+  Alert,
+} from "react-native";
+import { useNavigation } from "@react-navigation/native";
 import { AuthenticationContext } from "@/src/contexts/AuthContext";
-import ProtectedRoute from "@/src/components/ProtectedRoute";
-import { getAllUserConversations } from "@/src/services/chatService";
-import { Conversation } from "@/src/services/Conversation";
+import { getAllUserMessages } from "@/src/services/chatService";
 import { useRouter } from "expo-router";
 
-export default function ChatsListScreen() {
-  const { loggedInUser } = useContext(AuthenticationContext);
-  const userId = loggedInUser?.id;
-  const token = loggedInUser?.token; // Se obtiene el token del usuario autenticado
 
-  const [conversations, setConversations] = useState<Conversation[]>([]);
-  const [loading, setLoading] = useState(true);
+interface BaseUser {
+  id: number;
+  name: string;
+  
+}
 
+export interface ChatMessage {
+  id: number;
+  text: string;
+  creationDate: Date; 
+  fromUser: BaseUser;
+  toUser: BaseUser;
+}
+
+
+interface Conversation {
+  otherUser: BaseUser;
+  lastMessage: ChatMessage;
+}
+
+export default function ConversationListScreen() {
   const router = useRouter();
+  const { loggedInUser } = useContext(AuthenticationContext);
+  const [messages, setMessages] = useState<ChatMessage[]>([]);
+  const [conversations, setConversations] = useState<Conversation[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
+  const navigation = useNavigation();
+
+  // Función para cargar TODOS los mensajes del usuario actual
+  const loadMessages = async () => {
+    try {
+      const msgs = await getAllUserMessages(loggedInUser.id, loggedInUser.token);
+      setMessages(msgs);
+    } catch (error) {
+      Alert.alert("Error", "No se pudieron cargar los mensajes");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Función para agrupar los mensajes en conversaciones
+  const groupMessagesToConversations = () => {
+    const convMap: { [key: number]: ChatMessage } = {};
+    messages.forEach((msg) => {
+      // Determinar el "otro usuario"
+      const otherUser =
+        msg.fromUser.id === loggedInUser.id ? msg.toUser : msg.fromUser;
+      // Si no existe una conversación para ese usuario o este mensaje es más reciente, lo asignamos
+      if (
+        !convMap[otherUser.id] ||
+        new Date(msg.creationDate) > new Date(convMap[otherUser.id].creationDate)
+      ) {
+        convMap[otherUser.id] = msg;
+      }
+    });
+    // Convertir el mapa a un array de Conversation
+    const convArray: Conversation[] = Object.keys(convMap).map((key) => {
+      const msg = convMap[parseInt(key)];
+      const otherUser =
+        msg.fromUser.id === loggedInUser.id ? msg.toUser : msg.fromUser;
+      return { otherUser, lastMessage: msg };
+    });
+    // Ordenar las conversaciones por la fecha del último mensaje (descendente)
+    convArray.sort(
+      (a, b) =>
+        new Date(b.lastMessage.creationDate).getTime() -
+        new Date(a.lastMessage.creationDate).getTime()
+    );
+    setConversations(convArray);
+  };
 
   useEffect(() => {
-    const loadChats = async () => {
-      try {
-        if (!userId || !token) return; // Si no hay usuario logueado, no cargamos nada
-        const data = await getAllUserConversations(userId, token);
-        setConversations(data);
-      } catch (error) {
-        console.error("Error al cargar las conversaciones:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-    loadChats();
-  }, [userId, token]);
+    loadMessages();
+  }, []);
+
+  
+  useEffect(() => {
+    groupMessagesToConversations();
+  }, [messages]);
+
+  const renderItem = ({ item }: { item: Conversation }) => (
+    <TouchableOpacity
+      style={styles.conversationItem}
+      onPress={() => {
+        // Navegar hacia la ruta [toUserId].tsx con el ID
+        router.push(`/(drawer)/chats/${item.otherUser.id}`);
+      }}
+    >
+      <Text style={styles.userName}>{item.otherUser.name}</Text>
+      <Text style={styles.lastMessage} numberOfLines={1}>
+        {item.lastMessage.text}
+      </Text>
+    </TouchableOpacity>
+  );
 
   if (loading) {
     return (
-      <ProtectedRoute allowedRoles={["ARTIST", "CLIENT"]}>
-        <View style={styles.centered}>
-          <ActivityIndicator size="large" />
-        </View>
-      </ProtectedRoute>
+      <View style={styles.centered}>
+        <ActivityIndicator size="large" color="#888" />
+      </View>
     );
   }
 
   return (
-    <ProtectedRoute allowedRoles={["ARTIST", "CLIENT"]}>
-      <View style={styles.container}>
-        <Text style={styles.title}>Mis Chats</Text>
-
-        {conversations.length === 0 ? (
-          <Text style={styles.noChats}>No tienes chats todavía.</Text>
-        ) : (
-          <FlatList
-            data={conversations}
-            keyExtractor={(item) => String(item.id)}
-            renderItem={({ item }) => (
-              <TouchableOpacity
-                style={styles.chatItem}
-                onPress={() => {
-                  // Redirige al chat del usuario correspondiente
-                  router.push(`/(drawer)/chats/[toUserId]`);
-                }}
-              >
-                <Text style={styles.chatTitle}>{item.title}</Text>
-                <Text style={styles.chatSubtitle}>
-                  Usuario ID: {item.otherUserId}
-                </Text>
-              </TouchableOpacity>
-            )}
-          />
-        )}
-      </View>
-    </ProtectedRoute>
+    <View style={styles.container}>
+      {conversations.length === 0 ? (
+        <View style={styles.centered}>
+          <Text>No tienes conversaciones</Text>
+        </View>
+      ) : (
+        <FlatList
+          data={conversations}
+          keyExtractor={(item) => item.otherUser.id.toString()}
+          renderItem={renderItem}
+          contentContainerStyle={styles.list}
+        />
+      )}
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, padding: 20 },
-  centered: { flex: 1, justifyContent: "center", alignItems: "center" },
-  title: { fontSize: 24, marginBottom: 20 },
-  noChats: { fontSize: 16 },
-  chatItem: {
-    padding: 15,
-    marginBottom: 10,
-    backgroundColor: "#eee",
-    borderRadius: 8,
+  container: { flex: 1, backgroundColor: "#fff", padding: 16 },
+  list: { paddingBottom: 20 },
+  conversationItem: {
+    paddingVertical: 12,
+    borderBottomWidth: 1,
+    borderBottomColor: "#ccc",
   },
-  chatTitle: { fontSize: 18, fontWeight: "bold" },
-  chatSubtitle: { fontSize: 14, color: "#666" },
+  userName: { fontSize: 18, fontWeight: "bold" },
+  lastMessage: { fontSize: 14, color: "gray", marginTop: 4 },
+  centered: { flex: 1, alignItems: "center", justifyContent: "center" },
 });

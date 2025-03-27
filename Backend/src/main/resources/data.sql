@@ -1,17 +1,3 @@
-DELETE FROM chat_messages;
-DELETE FROM report_types;
-DELETE FROM work_category;
-DELETE FROM artist_category;
-DELETE FROM milestones;
-DELETE FROM commisions;
-DELETE FROM status_kanban_order;
-DELETE FROM works_done;
-DELETE FROM categories;
-DELETE FROM artists;
-DELETE FROM clients;
-DELETE FROM base_user;
-DELETE FROM authorities;
-
 INSERT INTO authorities (id, authority) VALUES
 (1, 'ADMIN'),
 (2, 'CLIENT'),

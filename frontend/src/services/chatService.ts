@@ -113,3 +113,17 @@ export const getAllUserConversations = async (
     throw error;
   }
 };
+export const getAllUserMessages = async (
+  userId: number,
+  token: string
+): Promise<ChatMessage[]> => {
+  try {
+    const response = await api.get<ChatMessage[]>(`${CHAT_URL}/allByUser/${userId}`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Error al obtener todos los mensajes del usuario:", error);
+    throw error;
+  }
+};
