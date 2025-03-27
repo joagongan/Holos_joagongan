@@ -60,7 +60,7 @@ export default function ArtistDetailScreen() {
           <Image
             source={
               artist?.baseUser?.imageProfile
-                ? { uri: `${API_URL}${atob(artist.baseUser.imageProfile)}` }
+                ? { uri: `${BASE_URL}${atob(artist.baseUser.imageProfile)}` }
                 : undefined
             }
             // TODO Conseguir de imagenes estáticas
