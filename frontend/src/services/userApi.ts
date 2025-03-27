@@ -1,5 +1,5 @@
 import api from "./axiosInstance"; // Assuming you have an axios instance set up
-import { BaseUser } from "@/src/constants/CommissionTypes"; // Adjust to match your data type
+import { BaseUser, User } from "@/src/constants/CommissionTypes"; // Adjust to match your data type
 import { API_URL } from "@/src/constants/api";
 
 const USER_URL = `${API_URL}/baseUser`;
@@ -12,6 +12,11 @@ export const getAllUsers = async (token:string): Promise<BaseUser[]> => {
 
 export const getUserById = async (id: number, token:string): Promise<BaseUser> => {
   const response = await api.get(`${ADMINISTRATOR_USER_URL}/${id}`, { headers: { Authorization: `Bearer ${token}`}});
+  return response.data;
+};
+
+export const getUser = async (token:string): Promise<User> => {
+  const response = await api.get(`${API_URL}/users/profile`, { headers: { Authorization: `Bearer ${token}`}});
   return response.data;
 };
 
