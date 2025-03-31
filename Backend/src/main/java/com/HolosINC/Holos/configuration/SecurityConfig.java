@@ -41,7 +41,7 @@ public class SecurityConfig {
             .requestMatchers("/api/v1/artists/administrator/**").hasAuthority("ADMIN")
             .requestMatchers("/api/v1/clients/administrator/**").hasAuthority("ADMIN")
             .requestMatchers("/api/v1/categories/administrator/**").hasAuthority("ADMIN")
-            .requestMatchers("/api/v1/report/admin/**").hasAuthority("ADMIN")
+            .requestMatchers("/api/v1/reports/admin/**").hasAuthority("ADMIN")
             .requestMatchers("/api/v1/report-types/admin/**").hasAuthority("ADMIN")
             .requestMatchers("/api/v1/status-kanban-order/**").hasAuthority("ARTIST")
             .requestMatchers(HttpMethod.PUT,"/api/v1/commisions/{id}/status").hasAuthority("ARTIST")
