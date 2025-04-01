@@ -34,10 +34,13 @@ export type User = Client | Artist;
 
 export enum StatusCommission {
     REQUESTED = "REQUESTED",
-    IN_WAIT_LIST = "IN_WAIT_LIST",
+    WAITING_CLIENT = "WAITING_CLIENT",
     ACCEPTED = "ACCEPTED",
     REJECTED = "REJECTED",
     CANCELED = "CANCELED",
+    WAITING_ARTIST = "WAITING_ARTIST",
+    NOT_PAID_YET = "NOT_PAID_YET",
+    IN_WAIT_LIST = "IN_WAIT_LIST",
     ENDED = "ENDED"
 }
 
