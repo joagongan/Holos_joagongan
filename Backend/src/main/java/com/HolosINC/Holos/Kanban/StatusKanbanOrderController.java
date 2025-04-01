@@ -2,13 +2,19 @@ package com.HolosINC.Holos.Kanban;
 
 import java.util.List;
 
+import javax.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.util.Pair;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import com.HolosINC.Holos.Kanban.DTOs.StatusKanbanCreateDTO;
 import com.HolosINC.Holos.Kanban.DTOs.StatusKanbanDTO;
 import com.HolosINC.Holos.Kanban.DTOs.StatusKanbanWithCommisionsDTO;
+import com.HolosINC.Holos.artist.ArtistService;
 import com.HolosINC.Holos.commision.Commision;
 import com.HolosINC.Holos.exceptions.ResourceNotFoundException;
 
@@ -21,18 +27,35 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 @Tag(name = "Status Kanban", description = "API for controlling the usage of the kanban")
 public class StatusKanbanOrderController {
 
+    private final StatusKanbanOrderService statusKanbanOrderService;
+    private final ArtistService artistService;
+
     @Autowired
-    private StatusKanbanOrderService statusKanbanOrderService;
-
-
-    //No he puesto orden porque para añadir una posición concreta es mucho lío, quizá mejor que se añada siempre el último y luego se pueda mover
+	public StatusKanbanOrderController(StatusKanbanOrderService statusKanbanOrderService, ArtistService artistService) {
+		this.statusKanbanOrderService = statusKanbanOrderService;
+        this.artistService = artistService;
+	}
 
     @PostMapping
-    public ResponseEntity<StatusKanbanOrder> addStatusToKanban(@RequestParam String color, @RequestParam String description, 
-    @RequestParam String nombre, @RequestParam Integer artistId) {
-        StatusKanbanOrder sk = statusKanbanOrderService.addStatusToKanban(color, description, nombre, artistId);
-        return new ResponseEntity<>(sk, HttpStatus.OK);
+    public ResponseEntity<?> addStatusToKanban(@Valid @RequestBody StatusKanbanCreateDTO dto) {
+        try {
+            statusKanbanOrderService.addStatusToKanban(
+                dto.getColor(),
+                dto.getDescription(),
+                dto.getNombre()
+            );
+            return ResponseEntity.status(HttpStatus.CREATED).build();
+        } catch (DataIntegrityViolationException e) {
+            return ResponseEntity
+                    .badRequest()
+                    .body("Ya existe un estado con ese nombre para este artista.");
+        } catch (Exception e) {
+            return ResponseEntity
+                    .badRequest()
+                    .body("No se pudo crear el estado Kanban: " + e.getMessage());
+        }
     }
+
 
     @PutMapping("/update")
     public StatusKanbanOrder updateStatusKanbanOrder(@RequestBody StatusKanbanOrder statusKanbanOrder) {

@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,6 +17,7 @@ import com.HolosINC.Holos.commision.Commision;
 import com.HolosINC.Holos.commision.CommisionRepository;
 import com.HolosINC.Holos.commision.StatusCommision;
 import com.HolosINC.Holos.exceptions.AccessDeniedException;
+import com.HolosINC.Holos.exceptions.BadRequestException;
 import com.HolosINC.Holos.exceptions.ResourceNotFoundException;
 import com.HolosINC.Holos.exceptions.ResourceNotOwnedException;
 import com.HolosINC.Holos.model.BaseUserService;
@@ -41,23 +43,29 @@ public class StatusKanbanOrderService {
         return statusKanbanOrderRepository.save(statusKanbanOrder);
     }
 
-    //Se pone el orden el último. Si no hay nada, el primero por dewfecto
-
     @Transactional
-    public StatusKanbanOrder addStatusToKanban(String color, String description, String nombre, Integer artistId) {
+    public StatusKanbanOrder addStatusToKanban(String color, String description, String nombre) {
         StatusKanbanOrder statusKanbanOrder = new StatusKanbanOrder();
         statusKanbanOrder.setColor(color);
         statusKanbanOrder.setDescription(description);
         statusKanbanOrder.setName(nombre);
-        List<StatusKanbanOrder> list = statusKanbanOrderRepository.findByArtist(artistId);
-        if(list.isEmpty()){
-            statusKanbanOrder.setOrder(1);  
-        }else{
-            statusKanbanOrder.setOrder(list.size()+1);
+
+        Long currentUserId = userService.findCurrentUser().getId();
+        Artist artist = artistService.findArtistByUserId(currentUserId);
+
+        List<StatusKanbanOrder> list = statusKanbanOrderRepository.findByArtistIdOrderByOrderAsc(artist.getId());
+        int order = list.isEmpty() ? 1 : list.size() + 1;
+
+        statusKanbanOrder.setOrder(order);
+        statusKanbanOrder.setArtist(artist);
+
+        try {
+            return statusKanbanOrderRepository.save(statusKanbanOrder);
+        } catch (DataIntegrityViolationException e) {
+            throw new BadRequestException("Ya existe un estado con ese nombre u orden para este artista.");
         }
-        statusKanbanOrder.setArtist(artistService.findArtist(artistId.longValue()));
-        return statusKanbanOrderRepository.save(statusKanbanOrder);
     }
+
     
     @Transactional
     public StatusKanbanOrder updateStatusKanbanOrder(StatusKanbanOrder statusKanbanOrder) {
