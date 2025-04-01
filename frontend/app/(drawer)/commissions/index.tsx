@@ -4,7 +4,9 @@ import { Ionicons } from "@expo/vector-icons";
 import { AuthenticationContext } from "@/src/contexts/AuthContext";
 import ProtectedRoute from "@/src/components/ProtectedRoute";
 import { getAllRequestedCommissions, updateCommissionStatus } from "@/src/services/commisionApi";
-import { Commission, HistoryCommisionsDTO } from "@/src/constants/CommissionTypes";
+import { Commission, HistoryCommisionsDTO, StatusCommission } from "@/src/constants/CommissionTypes";
+import ClientCommissionsScreen from "./requested";
+import { useRouter } from "expo-router";  
 
 // 2. Ajusta la pantalla
 const { width } = Dimensions.get("window");
@@ -14,6 +16,7 @@ const MOBILE_CARD_PADDING = 12;
 
 export default function ArtistRequestOrders({ route, navigation }: any) {
   const { loggedInUser } = useContext(AuthenticationContext);
+  const router = useRouter();  // Usamos useRouter de expo-router
 
   // 3. Tipar el estado como arreglo de Commission
   const [commissions, setCommissions] = useState<HistoryCommisionsDTO>({requested: [], accepted: [], history: [], error: ""});
@@ -44,13 +47,34 @@ export default function ArtistRequestOrders({ route, navigation }: any) {
     }
   };
 
+  const getStatusText = (status: string) => {
+    switch (status) {
+      case "REQUESTED":
+        return "Solicitud recibida";
+      case "WAITING_CLIENT":
+        return "Esperando cliente";
+      case "ACCEPTED":
+        return "Solicitud aceptada";
+      case "REJECTED":
+        return "Solicitud rechazada";
+      case "CANCELED":
+        return "Solicitud cancelada";
+      case "WAITING_ARTIST":
+        return "Esperando artista";
+      case "NOT_PAID_YET":
+        return "No pagado aún";
+      case "IN_WAIT_LIST":
+        return "En lista de espera";
+      case "ENDED":
+        return "Finalizado";
+      default:
+        return "Estado desconocido";
+    }
+  };
+
   // Filtra según estado
-  // Considera REQUESTED como "nueva solicitud"
   const newRequests = commissions.requested;
-
-  // Considera como "respondidas" todo lo que NO sea REQUESTED
   const respondedRequests = commissions.history;
-
 
   if (loading) {
     return (
@@ -63,8 +87,9 @@ export default function ArtistRequestOrders({ route, navigation }: any) {
   return (
     <ProtectedRoute allowedRoles={["ARTIST"]}>
       <View style={styles.container}>
+        
         <View style={styles.header}>
-          <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
+          <TouchableOpacity style={styles.backButton} onPress={() => router.back()}>  {/* Usamos router.back() para retroceder */}
             <Ionicons name="arrow-back" size={24} color="#000000" />
             <Text style={styles.backButtonText}>ATRÁS</Text>
           </TouchableOpacity>
@@ -73,17 +98,8 @@ export default function ArtistRequestOrders({ route, navigation }: any) {
         <View style={styles.separator} />
 
         <ScrollView style={styles.content}>
-
-        <Text style={styles.sectionTitle}>EN CURSO</Text>
-          {respondedRequests.length === 0 ? (
-            <Text style={styles.noRequestsText}>No hay trabajos en curso.</Text>
-          ) : (
-            respondedRequests.map((comm) => (
-              <View key={comm.id} style={styles.card}>
-
-              </View>
-            ))
-          )}
+          <Text style={styles.sectionTitle}>EN CURSO</Text>
+          <ClientCommissionsScreen commissions={commissions.accepted}/>
 
           <View style={styles.separator} />
           
@@ -94,7 +110,6 @@ export default function ArtistRequestOrders({ route, navigation }: any) {
             newRequests.map((comm) => (
               <View key={comm.id} style={styles.card}>
                 <View style={styles.profileContainer}>
-                  {/* Imagen redonda del usuario */}
                   <Image 
                     source={{ uri: comm.imageProfile || "URL_DE_IMAGEN_POR_DEFECTO" }} 
                     style={styles.profileImage} 
@@ -107,7 +122,6 @@ export default function ArtistRequestOrders({ route, navigation }: any) {
                   <Text style={styles.text}>{comm.description}</Text>
                 </View>
                 <View style={styles.actions}>
-                  {/* Botón VER DETALLE */}
                   <TouchableOpacity 
                     style={styles.detailsButton} 
                     onPress={() => {/* Acción para ver detalles */}}
@@ -127,6 +141,12 @@ export default function ArtistRequestOrders({ route, navigation }: any) {
           ) : (
             respondedRequests.map((comm) => (
               <View key={comm.id} style={styles.card}>
+                <View style={styles.profileContainer}>
+                  <Image 
+                    source={{ uri: comm.imageProfile || "URL_DE_IMAGEN_POR_DEFECTO" }} 
+                    style={styles.profileImage} 
+                  />
+                </View>
                 <View style={styles.textContainer}>
                   <Text style={styles.text}>
                     {comm.clientUsername || "Usuario desconocido"}
@@ -135,9 +155,7 @@ export default function ArtistRequestOrders({ route, navigation }: any) {
                 </View>
                 <View style={styles.actions}>
                   <Text style={styles.responseText}>
-                    {comm.status === "ACCEPTED"
-                      ? "Solicitud aceptada"
-                      : "Solicitud denegada"}
+                    {getStatusText(comm.status)}
                   </Text>
                 </View>
               </View>
