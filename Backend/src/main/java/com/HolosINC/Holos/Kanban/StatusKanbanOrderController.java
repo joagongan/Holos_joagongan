@@ -13,9 +13,11 @@ import org.springframework.web.bind.annotation.*;
 
 import com.HolosINC.Holos.Kanban.DTOs.StatusKanbanCreateDTO;
 import com.HolosINC.Holos.Kanban.DTOs.StatusKanbanDTO;
+import com.HolosINC.Holos.Kanban.DTOs.StatusKanbanUpdateDTO;
 import com.HolosINC.Holos.Kanban.DTOs.StatusKanbanWithCommisionsDTO;
 import com.HolosINC.Holos.artist.ArtistService;
 import com.HolosINC.Holos.commision.Commision;
+import com.HolosINC.Holos.exceptions.BadRequestException;
 import com.HolosINC.Holos.exceptions.ResourceNotFoundException;
 
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -56,29 +58,16 @@ public class StatusKanbanOrderController {
         }
     }
 
-
     @PutMapping("/update")
-    public StatusKanbanOrder updateStatusKanbanOrder(@RequestBody StatusKanbanOrder statusKanbanOrder) {
-        return statusKanbanOrderService.updateStatusKanbanOrder(statusKanbanOrder);
-    }
-
-    //Cambiar color o descripción ¿Añadir nombre?
-
-    @PutMapping("/{id}/updateKanban")
-    public ResponseEntity<StatusKanbanOrder> updateKanban(@RequestBody StatusKanbanOrder sk) {
-        Integer id = sk.getId().intValue();
-        String color = sk.getColor();
-        String nombre = sk.getName();
-        String description = sk.getDescription();
-
-        StatusKanbanOrder sk2 = statusKanbanOrderService.updateKanban(id, color, description, nombre);
-        return new ResponseEntity<>(sk2, HttpStatus.OK);
-    }
-
-    @PutMapping("/{id}/updateKanbanOrder")
-    public ResponseEntity<StatusKanbanOrder> updateOrder(@PathVariable Long id, @RequestBody Integer order) {
-        StatusKanbanOrder sk2 = statusKanbanOrderService.updateOrder(id, order);
-        return new ResponseEntity<>(sk2, HttpStatus.OK);
+    public ResponseEntity<?> updateStatusKanban(@Valid @RequestBody StatusKanbanUpdateDTO dto) {
+        try {
+            statusKanbanOrderService.updateStatusKanban(dto);
+            return ResponseEntity.ok().build();
+        } catch (BadRequestException | ResourceNotFoundException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new BadRequestException("Error inesperado al actualizar el estado Kanban: " + e.getMessage());
+        }
     }
 
     @DeleteMapping("/{id}")

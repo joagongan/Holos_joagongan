@@ -4,17 +4,20 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.HolosINC.Holos.Kanban.DTOs.StatusKanbanDTO;
+import com.HolosINC.Holos.Kanban.DTOs.StatusKanbanUpdateDTO;
 import com.HolosINC.Holos.Kanban.DTOs.StatusKanbanWithCommisionsDTO;
 import com.HolosINC.Holos.artist.Artist;
 import com.HolosINC.Holos.artist.ArtistService;
 import com.HolosINC.Holos.commision.Commision;
 import com.HolosINC.Holos.commision.CommisionRepository;
+import com.HolosINC.Holos.commision.CommisionService;
 import com.HolosINC.Holos.commision.StatusCommision;
 import com.HolosINC.Holos.exceptions.AccessDeniedException;
 import com.HolosINC.Holos.exceptions.BadRequestException;
@@ -29,13 +32,15 @@ public class StatusKanbanOrderService {
     private final CommisionRepository commisionRepository;
     private final ArtistService artistService;
     private final BaseUserService userService;
+    private final CommisionService commisionService;
 
     @Autowired
-    public StatusKanbanOrderService(StatusKanbanOrderRepository statusKanbanOrderRepository, ArtistService artistService, BaseUserService userService, CommisionRepository commisionRepository) {
+    public StatusKanbanOrderService(StatusKanbanOrderRepository statusKanbanOrderRepository, ArtistService artistService, BaseUserService userService, CommisionRepository commisionRepository, @Lazy CommisionService commisionService) {
         this.statusKanbanOrderRepository = statusKanbanOrderRepository;
         this.artistService = artistService;
         this.userService = userService;
         this.commisionRepository = commisionRepository;
+        this.commisionService = commisionService;
     }
 
     @Transactional
@@ -66,10 +71,24 @@ public class StatusKanbanOrderService {
         }
     }
 
-    
     @Transactional
-    public StatusKanbanOrder updateStatusKanbanOrder(StatusKanbanOrder statusKanbanOrder) {
-        return statusKanbanOrderRepository.save(statusKanbanOrder);
+    public void updateStatusKanban(StatusKanbanUpdateDTO dto) {
+        StatusKanbanOrder sk = statusKanbanOrderRepository.findById(dto.getId().intValue())
+            .orElseThrow(() -> new ResourceNotFoundException("StatusKanbanOrder", "id", dto.getId()));
+    
+        if (commisionService.isStatusKanbanInUse(sk)) {
+            throw new BadRequestException("No se puede modificar un estado que está asignado a una o más comisiones.");
+        }
+    
+        sk.setName(dto.getNombre());
+        sk.setColor(dto.getColor());
+        sk.setDescription(dto.getDescription());
+    
+        try {
+            statusKanbanOrderRepository.save(sk);
+        } catch (DataIntegrityViolationException e) {
+            throw new BadRequestException("Ya existe otro estado con ese nombre u orden para este artista.");
+        }
     }
 
     @Transactional

@@ -193,4 +193,9 @@ public class CommisionService {
 
         return commissions;
     }
+
+    public boolean isStatusKanbanInUse(StatusKanbanOrder status) {
+        return commisionRepository.existsByStatusKanban(status);
+    }
+    
 }

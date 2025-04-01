@@ -71,8 +71,19 @@ public class ExceptionHandlerController {
 	@ExceptionHandler(BadRequestException.class)
 	@ResponseStatus(value = HttpStatus.BAD_REQUEST)
 	public ResponseEntity<ErrorMessage> handleBadRequest(BadRequestException ex, WebRequest request) {
-		ErrorMessage message = new ErrorMessage(HttpStatus.BAD_REQUEST.value(), new Date(), ex.getMessage(),
-				request.getDescription(false));
+		String userFriendlyMessage = ex.getMessage();
+	
+		if (userFriendlyMessage != null && userFriendlyMessage.contains("could not execute statement")) {
+			userFriendlyMessage = "Ya existe otro estado con ese nombre u orden para este artista.";
+		}
+	
+		ErrorMessage message = new ErrorMessage(
+			HttpStatus.BAD_REQUEST.value(),
+			new Date(),
+			userFriendlyMessage,
+			request.getDescription(false)
+		);
+	
 		return new ResponseEntity<>(message, HttpStatus.BAD_REQUEST);
 	}
 
