@@ -87,4 +87,52 @@ export interface Category {
     description?: string;
     image?: string;
 }
-  
+
+export interface HistoryCommisionsDTO {
+    
+    requested: CommissionProtected[];
+
+    accepted: CommissionInProgress[];
+
+    history: CommissionProtected[];
+
+    error: string;
+}
+
+export interface CommissionProtected {
+    image?: string;
+
+    imageProfile?: string;
+    
+    id: number;
+
+    name: string;
+
+    description: string;
+
+    price: number;
+
+    status: StatusCommission;
+
+    paymentArrangement: PaymentArrangement;
+
+    milestoneDate: Date;
+    
+    artistUsername: string;
+
+    clientUsername: string;
+}
+
+export interface CommissionInProgress {
+    image?: string;
+
+    imageProfile?: string;
+    
+    name: string;
+
+    artistUsername: string;
+
+    currentStep: number;
+
+    totalSteps: number;
+}

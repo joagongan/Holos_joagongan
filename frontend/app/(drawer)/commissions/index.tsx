@@ -4,7 +4,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { AuthenticationContext } from "@/src/contexts/AuthContext";
 import ProtectedRoute from "@/src/components/ProtectedRoute";
 import { getAllRequestedCommissions, updateCommissionStatus } from "@/src/services/commisionApi";
-import { Commission } from "@/src/constants/CommissionTypes";
+import { Commission, HistoryCommisionsDTO } from "@/src/constants/CommissionTypes";
 
 // 2. Ajusta la pantalla
 const { width } = Dimensions.get("window");
@@ -16,12 +16,12 @@ export default function ArtistRequestOrders({ route, navigation }: any) {
   const { loggedInUser } = useContext(AuthenticationContext);
 
   // 3. Tipar el estado como arreglo de Commission
-  const [commissions, setCommissions] = useState<Commission[]>([]);
+  const [commissions, setCommissions] = useState<HistoryCommisionsDTO>({requested: [], accepted: [], history: [], error: ""});
   const [loading, setLoading] = useState(true);
 
   const fetchCommissions = async () => {
     try {
-      const data: Commission[] = await getAllRequestedCommissions(loggedInUser.token);
+      const data: HistoryCommisionsDTO = await getAllRequestedCommissions(loggedInUser.token);
       setCommissions(data);
     } catch (error) {
       Alert.alert("Error", "Error al obtener las comisiones.");
@@ -49,9 +49,7 @@ export default function ArtistRequestOrders({ route, navigation }: any) {
   const newRequests = commissions.requested;
 
   // Considera como "respondidas" todo lo que NO sea REQUESTED
-  const respondedRequests = commissions.filter(
-    (comm) => comm.status !== "REQUESTED"
-  );
+  const respondedRequests = commissions.history;
 
 
   if (loading) {
@@ -98,13 +96,13 @@ export default function ArtistRequestOrders({ route, navigation }: any) {
                 <View style={styles.profileContainer}>
                   {/* Imagen redonda del usuario */}
                   <Image 
-                    source={{ uri: comm.client?.baseUser.imageProfile || "URL_DE_IMAGEN_POR_DEFECTO" }} 
+                    source={{ uri: comm.imageProfile || "URL_DE_IMAGEN_POR_DEFECTO" }} 
                     style={styles.profileImage} 
                   />
                 </View>
                 <View style={styles.textContainer}>
                   <Text style={styles.textName}>
-                    {comm.client?.baseUser.username || "Usuario desconocido"}
+                    {comm.clientUsername || "Usuario desconocido"}
                   </Text>
                   <Text style={styles.text}>{comm.description}</Text>
                 </View>
@@ -131,7 +129,7 @@ export default function ArtistRequestOrders({ route, navigation }: any) {
               <View key={comm.id} style={styles.card}>
                 <View style={styles.textContainer}>
                   <Text style={styles.text}>
-                    {comm.client?.baseUser.username || "Usuario desconocido"}
+                    {comm.clientUsername || "Usuario desconocido"}
                   </Text>
                   <Text style={styles.text}>Descripción: {comm.description}</Text>
                 </View>

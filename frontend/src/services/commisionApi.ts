@@ -1,7 +1,7 @@
 import { API_URL } from "@/src/constants/api";
 import api from "@/src/services/axiosInstance";
 import { handleError } from "@/src/utils/handleError";
-import { Commission } from "@/src/constants/CommissionTypes";
+import { Commission, HistoryCommisionsDTO } from "@/src/constants/CommissionTypes";
 
 const COMMISSION_URL = `${API_URL}/commisions`;
 
@@ -15,7 +15,7 @@ export const getAllCommissions = async (): Promise<Commission[]> => {
   }
 };
 
-export const getAllRequestedCommissions = async (token:string): Promise<Commission[]> => {
+export const getAllRequestedCommissions = async (token:string): Promise<HistoryCommisionsDTO> => {
   try {
     const response = await api.get(`${COMMISSION_URL}/historyOfCommisions`, {headers: {Autorization: `Bearer ${token}`}});
     return response.data;

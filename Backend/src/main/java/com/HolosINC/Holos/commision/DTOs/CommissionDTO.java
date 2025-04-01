@@ -34,4 +34,6 @@ public class CommissionDTO {
     private String clientUsername;
 
     private byte[] image;
+
+    private byte[] imageProfile;
 }
