@@ -25,6 +25,8 @@ export default function DrawerLayout() {
         <Drawer.Screen name="commissions/index" options={{ drawerLabel: "Pedidos", title:"📦 Mis pedidos", drawerIcon: () => <Text style={{ fontSize: 22 }}>📦</Text>, drawerItemStyle: { display: isArtist ? 'flex' : 'none', height: isArtist ? 'auto' : 0 } }} />
         <Drawer.Screen name="commissions/requested/index" options={{ drawerLabel: "Mis pedidos", title:"🎨 Mis pedidos", drawerIcon: () => <Text style={{ fontSize: 22 }}>🎨</Text>, drawerItemStyle: { display:  isClient ? 'flex':'none', height: isClient ? 'auto':0}}}/>
         <Drawer.Screen name="logout" options={{ drawerLabel: "Cerrar sesión", title:"🚪 Cerrar sesión", drawerIcon: () => <Text style={{ fontSize: 22 }}>🚪</Text>, drawerItemStyle: { display: isAuthenticated ? 'flex' : 'none', height: isAuthenticated ? 'auto' : 0 } }} />
+        <Drawer.Screen name="work/uploadNewWorkArtist" options={{ drawerLabel: "Subir obra", title:"  Subir obra", drawerIcon: () => <Text style={{ fontSize: 22 }}>⬆️</Text>, drawerItemStyle: { display: isArtist ? 'flex' : 'none', height: isArtist ? 'auto' : 0 } }} />
+
         </Drawer>
       )}
     </Suspense>
