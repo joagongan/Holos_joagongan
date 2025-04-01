@@ -2,5 +2,9 @@ export interface newWorkArtist {
     name: string;
     description: string;
     price: number;
-    image: string;
+  }
+
+  export interface newWorkUploadArtist {
+    newWorkArtist: newWorkArtist;
+    image: number[];
   }

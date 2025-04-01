@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useContext } from "react";
 import { View, Text, TextInput, TouchableOpacity, Image, ScrollView } from "react-native";
-import { uploadNewWorkArtist } from "@/src/services/uploadNewWorkArtist";
+import { postWorkdone } from "@/src/services/uploadNewWorkArtist_2";
 import { AuthenticationContext } from "@/src/contexts/AuthContext";
 import { useRouter, useNavigation } from "expo-router";
 import {styles} from "@/src/styles/UploadNewWorkArtist";
@@ -13,16 +13,17 @@ import * as ImagePicker from "expo-image-picker";
 import ProtectedRoute from "@/src/components/ProtectedRoute";
 import {newWorkArtist } from "@/src/constants/uploadNewWorkArtist";
 
+
+
 const MaskedInput = TextInputMask as any;
 const cameraIcon = "photo-camera";
 
 export default function UploadWorkArtist() {
-  const { isArtist } = useContext(AuthenticationContext);
+  const { isArtist, loggedInUser } = useContext(AuthenticationContext);
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const router = useRouter();
   const navigation = useNavigation();
   const [inputValue, setInputValue] = useState("");
-
 
   useEffect(() => {
     navigation.setOptions("Subir una nueva obra al portafolio");
@@ -36,38 +37,55 @@ export default function UploadWorkArtist() {
     image: string().trim().required("La imagen de la obra es requerida"),
   });
 
-const pickImage = async ( setFieldValue: (field: string, value: any) => void) => {
-    const result = await ImagePicker.launchImageLibraryAsync({
-         mediaTypes: ImagePicker.MediaTypeOptions.Images,
-         allowsEditing: true,
-         aspect: [1, 1],
-         quality: 1,
-       });
-   
-       if (!result.canceled) {
-         const uri = result.assets[0].uri;
-         setSelectedImage(uri);
-         setFieldValue("image", uri);
-       }
+  const pickImage = async (
+    setFieldValue: (field: string, value: any) => void,
+    setSelectedImage: (uri: string) => void,
+  ) => {
+     
+      const result = await ImagePicker.launchImageLibraryAsync({
+           mediaTypes: ImagePicker.MediaTypeOptions.Images,
+           allowsEditing: true,
+           aspect: [1, 1],
+           quality: 1,
+         });
+     
+         if (!result.canceled) {
+           const uri = result.assets[0].uri;
+           setSelectedImage(uri);
+           setFieldValue("image", uri)
+         }
   };
+  
 
 
 
   const sendWork = async (values: newWorkArtist, resetForm: () => void) => {
     try {
+      if (!selectedImage) {
+        popUpMovilWindows("Error", "No has seleccionado una imagen válida.");
+        return;
+      }
+
+
+    const workdoneUriParts = selectedImage.split("/");
+    const workdoneFileName = workdoneUriParts[workdoneUriParts.length - 1];
+    const workdoneFileExtension = workdoneFileName?.split(".").pop() || "jpg";
+    const workdoneMimeType = `image/${workdoneFileExtension}`;
+
+
       const uploadWork = {
               name: values.name,
               description: values.description,
               price: values.price,
-              image: values.image
             };
-      await uploadNewWorkArtist(uploadWork);
+      await postWorkdone(uploadWork, workdoneMimeType, loggedInUser.token );
       popUpMovilWindows("Éxito", " Enviado correctamente");
       resetForm();
       setInputValue("");
       setSelectedImage(null); 
       router.push({ pathname: "/explore" });
     } catch (error: any) {
+      console.log(error)
       popUpMovilWindows("Error", "No se pudo enviar el reporte. Intentelo de nuevo más tarde");
     }
   };
@@ -97,6 +115,7 @@ const pickImage = async ( setFieldValue: (field: string, value: any) => void) =>
               {errors.name && touched.name && (<Text style={styles.errorText}>{errors.name}</Text>)}
 
               <Text style={styles.formLabel}>Dalé una descripción a tu obra</Text>
+              <View style={styles.inputDescriptionBox}>
               <TextInput
                 style={styles.inputDescriptionWork}
                 placeholder="Introduzca una descripción"
@@ -105,6 +124,7 @@ const pickImage = async ( setFieldValue: (field: string, value: any) => void) =>
                 onChangeText={handleChange("description")}
                 multiline
               />
+              </View>
               {errors.description && touched.description && (<Text style={styles.errorText}>{errors.description}</Text>)}
 
               <Text style={styles.formLabel}>¿Cuál es el precio de la obra?</Text>
@@ -151,7 +171,7 @@ const pickImage = async ( setFieldValue: (field: string, value: any) => void) =>
                 {errors.image && touched.image && ( <Text style={styles.errorText}>{errors.image}</Text>)}
               {/* Image Picker + Submit */}
               <View style={styles.buttonContainer}>
-                <TouchableOpacity onPress={() => pickImage(setFieldValue)}>
+                <TouchableOpacity onPress={() => pickImage(setFieldValue, setSelectedImage)}>
                   <Icon name={cameraIcon} style={styles.iconButton} />
                 </TouchableOpacity>
                 <TouchableOpacity  style={styles.sendButton} onPress={() => handleSubmit()}>
