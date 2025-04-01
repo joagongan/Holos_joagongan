@@ -34,10 +34,13 @@ export type User = Client | Artist;
 
 export enum StatusCommission {
     REQUESTED = "REQUESTED",
-    IN_WAIT_LIST = "IN_WAIT_LIST",
+    WAITING_CLIENT = "WAITING_CLIENT",
     ACCEPTED = "ACCEPTED",
     REJECTED = "REJECTED",
     CANCELED = "CANCELED",
+    WAITING_ARTIST = "WAITING_ARTIST",
+    NOT_PAID_YET = "NOT_PAID_YET",
+    IN_WAIT_LIST = "IN_WAIT_LIST",
     ENDED = "ENDED"
 }
 
@@ -84,4 +87,52 @@ export interface Category {
     description?: string;
     image?: string;
 }
-  
+
+export interface HistoryCommisionsDTO {
+    
+    requested: CommissionProtected[];
+
+    accepted: CommissionInProgress[];
+
+    history: CommissionProtected[];
+
+    error: string;
+}
+
+export interface CommissionProtected {
+    image?: string;
+
+    imageProfile?: string;
+    
+    id: number;
+
+    name: string;
+
+    description: string;
+
+    price: number;
+
+    status: StatusCommission;
+
+    paymentArrangement: PaymentArrangement;
+
+    milestoneDate: Date;
+    
+    artistUsername: string;
+
+    clientUsername: string;
+}
+
+export interface CommissionInProgress {
+    image?: string;
+
+    imageProfile?: string;
+    
+    name: string;
+
+    artistUsername: string;
+
+    currentStep: number;
+
+    totalSteps: number;
+}
