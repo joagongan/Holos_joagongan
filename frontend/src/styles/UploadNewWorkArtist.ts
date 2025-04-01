@@ -45,8 +45,15 @@ export const styles = StyleSheet.create({
     textAlign: "left",
   },
 
+  inputDescriptionBox:{
+    width: "100%",
+    justifyContent: "center",
+    alignItems: "center",
+    
+  },
+
   inputDescriptionWork: {
-    height: 80,
+    height: 100,
     borderColor: "#ccc",
     borderWidth: 1,
     borderRadius: 10,
