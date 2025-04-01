@@ -1,7 +1,11 @@
 package com.HolosINC.Holos.Kanban;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
@@ -89,46 +93,6 @@ public class StatusKanbanOrderService {
         } catch (DataIntegrityViolationException e) {
             throw new BadRequestException("Ya existe otro estado con ese nombre u orden para este artista.");
         }
-    }
-
-    @Transactional
-    public StatusKanbanOrder updateKanban(int id, String color, String description, String nombre) {
-        StatusKanbanOrder sk = statusKanbanOrderRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("StatusKanbanOrder", "id", id));
-        sk.setColor(color);
-        sk.setDescription(description);
-        sk.setName(nombre);
-        return statusKanbanOrderRepository.save(sk);
-    }
-
-    @Transactional
-    public StatusKanbanOrder updateOrder(Long id, Integer order) {
-        StatusKanbanOrder statusKanban = statusKanbanOrderRepository.findById(id.intValue())
-                .orElseThrow(() -> new ResourceNotFoundException("StatusKanbanOrder", "id", id));
-        
-        Artist artist = artistService.findArtist(userService.findCurrentUser().getId());
-        List<StatusKanbanOrder> kanban = statusKanbanOrderRepository.findByArtistIdOrderByOrderAsc(artist.getId());
-
-        if (order <= 0 || kanban.size() < order)
-            throw new IllegalArgumentException("El orden proporcionado no es válido. Debe estar entre 1 y " + kanban.size());
-
-        kanban.remove(statusKanban);
-        kanban.add(order - 1, statusKanban);
-
-        // Añadir un order negativo para evitar problemas de unicidad
-        for(int i=1; i<=kanban.size(); i++) {
-            kanban.get(i - 1).setOrder(-i);
-        }
-        statusKanbanOrderRepository.saveAll(kanban);
-        statusKanbanOrderRepository.flush();
-
-        // Establecer el orden bien
-        for(int i=1; i<=kanban.size(); i++) {
-            kanban.get(i - 1).setOrder(i);
-        }
-        statusKanbanOrderRepository.saveAll(kanban);
-
-        return kanban.get(order-1);
     }
 
     @Transactional(readOnly = true)
@@ -245,4 +209,43 @@ public class StatusKanbanOrderService {
             throw e;
         }
     }
+
+    @Transactional
+    public void reorderStatuses(List<Long> orderedIds) {
+        if (orderedIds == null || orderedIds.isEmpty())
+            throw new BadRequestException("La lista de IDs no puede estar vacía.");
+
+        Set<Long> uniqueIds = new HashSet<>(orderedIds);
+        if (uniqueIds.size() != orderedIds.size()) {
+            throw new BadRequestException("La lista contiene IDs duplicados.");
+        }
+
+        Long userId = userService.findCurrentUser().getId();
+        Artist artist = artistService.findArtistByUserId(userId);
+        List<StatusKanbanOrder> allStatuses = statusKanbanOrderRepository.findByArtistIdOrderByOrderAsc(artist.getId());
+
+        Map<Long, StatusKanbanOrder> map = allStatuses.stream()
+                .collect(Collectors.toMap(StatusKanbanOrder::getId, s -> s));
+
+        for (Long id : orderedIds) {
+            if (!map.containsKey(id)) {
+                throw new BadRequestException("El estado con ID " + id + " no pertenece al artista.");
+            }
+        }
+
+        for (StatusKanbanOrder status : allStatuses) {
+            status.setOrder(-status.getOrder());
+        }
+
+        statusKanbanOrderRepository.saveAll(allStatuses);
+        statusKanbanOrderRepository.flush();
+
+        int order = 1;
+        for (Long id : orderedIds) {
+            map.get(id).setOrder(order++);
+        }
+
+        statusKanbanOrderRepository.saveAll(allStatuses);
+    }
+    
 }

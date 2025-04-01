@@ -19,6 +19,7 @@ import com.HolosINC.Holos.artist.ArtistService;
 import com.HolosINC.Holos.commision.Commision;
 import com.HolosINC.Holos.exceptions.BadRequestException;
 import com.HolosINC.Holos.exceptions.ResourceNotFoundException;
+import com.HolosINC.Holos.exceptions.ResourceNotOwnedException;
 
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -121,4 +122,17 @@ public class StatusKanbanOrderController {
             return ResponseEntity.internalServerError().body("Something weird happend. See the following:\n" + e.getMessage());
         }
     }
+
+    @PutMapping("/reorder")
+    public ResponseEntity<?> reorderStatuses(@RequestBody List<Long> orderedIds) {
+        try {
+            statusKanbanOrderService.reorderStatuses(orderedIds);
+            return ResponseEntity.ok().build();
+        } catch (BadRequestException | ResourceNotOwnedException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new BadRequestException("No se pudo reordenar el Kanban: " + e.getMessage());
+        }
+    }
+
 }
