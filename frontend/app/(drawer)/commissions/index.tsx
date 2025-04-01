@@ -85,7 +85,7 @@ export default function ArtistRequestOrders({ route, navigation }: any) {
   }
 
   return (
-    <ProtectedRoute allowedRoles={["ARTIST"]}>
+    <ProtectedRoute allowedRoles={["ARTIST", "CLIENT"]}>
       <View style={styles.container}>
         
         <View style={styles.header}>
