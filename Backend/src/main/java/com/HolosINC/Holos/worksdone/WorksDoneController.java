@@ -43,23 +43,71 @@ public class WorksDoneController {
         return ResponseEntity.ok(createdWork);
     }
 
+    // TODO:  
     @GetMapping
-    public ResponseEntity<List<WorksDone>> getAllWorksDone() {
-        List<WorksDone> works = worksDoneService.getAllWorksDone();
-        return ResponseEntity.ok(works);
+    public ResponseEntity<List<WorksDoneDTO>> getAllWorksDone() {
+        try {
+            List<WorksDoneDTO> worksDoneDTOs = worksDoneService.getAllWorksDone()
+                    .stream()
+                    .map(work -> WorksDoneDTO.builder()
+                            .id(work.getId())
+                            .name(work.getName())
+                            .description(work.getDescription())
+                            .price(work.getPrice())
+                            .image(work.getImage())
+                            .artistId(work.getArtist().getId())
+                            .artistName(work.getArtist().getBaseUser().getName())
+                            .artistSurname(work.getArtist().getBaseUser().getUsername())
+                            .build())
+                    .toList();
+            return ResponseEntity.ok(worksDoneDTOs);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        }
     }
 
+    // TODO:  
     @GetMapping("/{id}")
-    public ResponseEntity<WorksDone> getWorksDoneById(@PathVariable Long id) {
-        WorksDone worksDone = worksDoneService.getWorksDoneById(id);
-        return worksDone != null ? ResponseEntity.ok(worksDone) : ResponseEntity.notFound().build();
+    public ResponseEntity<WorksDoneDTO> getWorksDoneById(@PathVariable Long id) {
+        try {
+            WorksDone worksDone = worksDoneService.getWorksDoneById(id);
+            WorksDoneDTO workDoneDTO = WorksDoneDTO.builder()
+                    .id(worksDone.getId())
+                    .name(worksDone.getName())
+                    .description(worksDone.getDescription())
+                    .price(worksDone.getPrice())
+                    .image(worksDone.getImage())
+                    .artistId(worksDone.getArtist().getId())
+                    .artistName(worksDone.getArtist().getBaseUser().getName())
+                    .artistSurname(worksDone.getArtist().getBaseUser().getUsername())
+                    .build();
+            return worksDone != null ? ResponseEntity.ok(workDoneDTO) : ResponseEntity.notFound().build();
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        }
     }
 
-    @GetMapping("/artist/{artistId}")
-    public ResponseEntity<List<WorksDone>> getWorksDoneByArtist(@PathVariable Long artistId) {
-        Artist artist = artistService.findArtist(artistId);
-        List<WorksDone> works = worksDoneService.getWorksDoneByArtist(artist);
-        return ResponseEntity.ok(works);
+    // TODO:    
+    @GetMapping("/artist/{username}")
+    public ResponseEntity<List<WorksDoneDTO>> getWorksDoneByArtist(@PathVariable String username) {
+        try {
+            Artist artist = artistService.findArtistByUsername(username);
+            List<WorksDoneDTO> worksDoneDTOs = worksDoneService.getWorksDoneByArtist(artist).stream()
+                    .map(work -> WorksDoneDTO.builder()
+                            .id(work.getId())
+                            .name(work.getName())
+                            .description(work.getDescription())
+                            .price(work.getPrice())
+                            .image(work.getImage())
+                            .artistId(work.getArtist().getId())
+                            .artistName(work.getArtist().getBaseUser().getName())
+                            .artistSurname(work.getArtist().getBaseUser().getUsername())
+                            .build())
+                    .toList();
+            return ResponseEntity.ok(worksDoneDTOs);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        }
     }
 
     @PutMapping(value = "/artist/{artistId}/{worksDoneId}")

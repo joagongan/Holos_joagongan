@@ -49,6 +49,7 @@ public class SecurityConfig {
             .requestMatchers("/api/v1/payment/{paymentIntentId}", "/api/v1/payment/all").hasAuthority("ADMIN")
             .requestMatchers("/api/v1/stripe-account/**").hasAuthority("ARTIST")
             .requestMatchers("/api/v1/payment/**").authenticated()
+            .requestMatchers(HttpMethod.POST,"/api/v1/worksdone/**").hasAnyAuthority("ADMIN", "ARTIST")
             .anyRequest().permitAll()
         )
         .addFilterBefore(authTokenFilter, org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter.class); // 🔥 Register Filter
