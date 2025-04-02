@@ -215,31 +215,30 @@ public class StatusKanbanOrderService {
     }
 
     @Transactional
-    public Commision previousStatusOfCommision(Long id) throws Exception {
-        try {
-            Long currentUserId = userService.findCurrentUser().getId();
-            Long artistId = artistService.findArtistByUserId(currentUserId).getId();
-            Commision c = commisionRepository.findById(id)
+    public void previousStatusOfCommision(Long id) {
+        BaseUser currentUser = userService.findCurrentUser();
+        Artist currentArtist = artistService.findArtistByUserId(currentUser.getId());
+    
+        Commision c = commisionRepository.findById(id)
             .orElseThrow(() -> new ResourceNotFoundException("Comisión no encontrada"));
-            
-            if (!artistId.equals(c.getArtist().getId())){
-                throw new ResourceNotOwnedException("No tienes permisos para cambiar esta comisión");
-            }
-
-            StatusKanbanOrder thisStatus = statusKanbanOrderRepository.actualStatusKanban(id);
-            Optional<StatusKanbanOrder> previousStatus = statusKanbanOrderRepository.nextStatusKanban(thisStatus.getArtist().getId(),
-                                                                                                     thisStatus.getOrder() - 1);
-            if (previousStatus.isEmpty()) {
-                throw new Exception("No tienes un estado anterior para esta comisión");
-            } else 
-                c.setStatusKanbanOrder(previousStatus.get());
-
+    
+        if (!currentArtist.getId().equals(c.getArtist().getId())) {
+            throw new ResourceNotOwnedException("No tienes permisos para modificar una comisión que no te pertenece.");
+        }
+    
+        StatusKanbanOrder thisStatus = c.getStatusKanbanOrder();
+        if (thisStatus == null) {
+            throw new ResourceNotFoundException("La comisión con ID " + id + " no tiene un estado asignado.");
+        }
+    
+        Optional<StatusKanbanOrder> previousStatus = statusKanbanOrderRepository
+            .nextStatusKanban(currentArtist.getId(), thisStatus.getOrder() - 1);
+    
+        if (previousStatus.isEmpty()) {
+            throw new BadRequestException("No existe un estado anterior a este.");
+        } else {
+            c.setStatusKanbanOrder(previousStatus.get());
             commisionRepository.save(c);
-            return c;
-        } catch (ResourceNotFoundException e) {
-            throw e;
-        } catch (Exception e) {
-            throw e;
         }
     }
 

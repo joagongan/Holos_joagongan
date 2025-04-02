@@ -107,16 +107,12 @@ public class StatusKanbanOrderController {
     }
 
     @PutMapping("/{id}/previous")
-    public ResponseEntity<?> updateToPreviousStatusTheCommision(@PathVariable Long id) {
-        try {
-            Commision c = statusKanbanOrderService.previousStatusOfCommision(id);
-            return ResponseEntity.ok().body(c);
-        } catch (ResourceNotFoundException e) {
-            return ResponseEntity.badRequest().body(e);
-        } catch (Exception e) {
-            return ResponseEntity.internalServerError().body("Something weird happend. See the following:\n" + e.getMessage());
-        }
+    @Operation(summary = "Retrocede la comisión al estado anterior Kanban")
+    public ResponseEntity<Void> moveCommisionToPreviousStatus(@PathVariable Long id) {
+        statusKanbanOrderService.previousStatusOfCommision(id);
+        return ResponseEntity.noContent().build();
     }
+    
 
     @GetMapping("/{id}")
     public ResponseEntity<?> getStatusKanbanOrder(@PathVariable Integer id) {
