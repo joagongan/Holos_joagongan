@@ -16,8 +16,6 @@ import com.HolosINC.Holos.Kanban.DTOs.StatusKanbanDTO;
 import com.HolosINC.Holos.Kanban.DTOs.StatusKanbanFullResponseDTO;
 import com.HolosINC.Holos.Kanban.DTOs.StatusKanbanUpdateDTO;
 import com.HolosINC.Holos.Kanban.DTOs.StatusKanbanWithCommisionsDTO;
-import com.HolosINC.Holos.artist.ArtistService;
-import com.HolosINC.Holos.commision.Commision;
 import com.HolosINC.Holos.exceptions.BadRequestException;
 import com.HolosINC.Holos.exceptions.ResourceNotFoundException;
 import com.HolosINC.Holos.exceptions.ResourceNotOwnedException;
@@ -33,15 +31,14 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 public class StatusKanbanOrderController {
 
     private final StatusKanbanOrderService statusKanbanOrderService;
-    private final ArtistService artistService;
 
     @Autowired
-	public StatusKanbanOrderController(StatusKanbanOrderService statusKanbanOrderService, ArtistService artistService) {
+	public StatusKanbanOrderController(StatusKanbanOrderService statusKanbanOrderService) {
 		this.statusKanbanOrderService = statusKanbanOrderService;
-        this.artistService = artistService;
 	}
 
     @PostMapping
+    @Operation(summary = "Crea un nuevo estado Kanban para el artista autenticado")
     public ResponseEntity<?> addStatusToKanban(@Valid @RequestBody StatusKanbanCreateDTO dto) {
         try {
             statusKanbanOrderService.addStatusToKanban(
@@ -62,6 +59,7 @@ public class StatusKanbanOrderController {
     }
 
     @PutMapping("/update")
+    @Operation(summary = "Actualiza los atributos de un estado Kanban (nombre, color y descripción)")
     public ResponseEntity<?> updateStatusKanban(@Valid @RequestBody StatusKanbanUpdateDTO dto) {
         try {
             statusKanbanOrderService.updateStatusKanban(dto);
@@ -74,6 +72,7 @@ public class StatusKanbanOrderController {
     }
 
     @DeleteMapping("/{id}")
+    @Operation(summary = "Elimina un estado Kanban si no está asignado a ninguna comisión")
     public ResponseEntity<?> deleteStatusKanbanOrder(@PathVariable Integer id) {
         try {
             statusKanbanOrderService.deleteStatusKanbanOrder(id);
@@ -121,6 +120,7 @@ public class StatusKanbanOrderController {
     }
 
     @PutMapping("/reorder")
+    @Operation(summary = "Actualiza el orden de todos los estados Kanban del artista")
     public ResponseEntity<?> reorderStatuses(@RequestBody List<Long> orderedIds) {
         try {
             statusKanbanOrderService.reorderStatuses(orderedIds);
