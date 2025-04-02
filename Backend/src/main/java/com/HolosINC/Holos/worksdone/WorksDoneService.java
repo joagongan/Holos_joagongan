@@ -55,4 +55,9 @@ public class WorksDoneService {
                 .filter(work -> work.getArtist().equals(artist))
                 .collect(Collectors.toList());
     }
+
+    public Long countByArtistId(Long artistId) {
+        return worksDoneRepository.countByArtistId(artistId);
+    }
+
 }

@@ -65,9 +65,6 @@ export default function UploadWorkArtist() {
         popUpMovilWindows("Error", "No has seleccionado una imagen válida.");
         return;
       }
-
-      console.log(selectedImage)
-
       const uploadWork = {
               name: values.name,
               description: values.description,
@@ -80,7 +77,6 @@ export default function UploadWorkArtist() {
       setSelectedImage(null); 
       router.push({ pathname: "/explore" });
     } catch (error: any) {
-      console.log(error)
       popUpMovilWindows("Error", "No se pudo enviar el reporte. Intentelo de nuevo más tarde");
     }
   };
