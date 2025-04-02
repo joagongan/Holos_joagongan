@@ -1,7 +1,8 @@
 INSERT INTO authorities (id, authority) VALUES
 (1, 'ADMIN'),
 (2, 'CLIENT'),
-(3, 'ARTIST');
+(3, 'ARTIST'),
+(4, 'ARTIST_PREMIUM');
 
 INSERT INTO base_user (id, first_name, username, password, email, phone_number, image_profile, created_user, authority) VALUES
 (1, 'client1', 'client1', '$2a$10$bQCIA7E2i4469olxpfn9keJqj22QmiDRZHQ2JbAKWUgYLK7ZgAnae', 'client1@gmail.com', '600619217', NULL, '2025-03-06', 2),

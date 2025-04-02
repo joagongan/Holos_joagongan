@@ -71,12 +71,9 @@ public class PremiumSubscriptionService {
     }
 
     @Transactional
-    public Subscription cancelSubscription(String subscriptionId, long artistId) throws StripeException {
+    public Subscription cancelSubscription(String subscriptionId) throws StripeException {
         Stripe.apiKey = secretKey;
-        Artist artist = artistService.findArtist(artistId);
         Subscription subscription = Subscription.retrieve(subscriptionId);
-        artist.setSubscriptionId(null);
-        artistService.saveArtist(artist);
         return subscription.cancel();
     }
 
