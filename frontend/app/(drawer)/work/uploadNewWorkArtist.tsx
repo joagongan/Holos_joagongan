@@ -66,19 +66,14 @@ export default function UploadWorkArtist() {
         return;
       }
 
-
-    const workdoneUriParts = selectedImage.split("/");
-    const workdoneFileName = workdoneUriParts[workdoneUriParts.length - 1];
-    const workdoneFileExtension = workdoneFileName?.split(".").pop() || "jpg";
-    const workdoneMimeType = `image/${workdoneFileExtension}`;
-
+      console.log(selectedImage)
 
       const uploadWork = {
               name: values.name,
               description: values.description,
               price: values.price,
             };
-      await postWorkdone(uploadWork, workdoneMimeType, loggedInUser.token );
+      await postWorkdone(uploadWork, selectedImage, loggedInUser.token );
       popUpMovilWindows("Éxito", " Enviado correctamente");
       resetForm();
       setInputValue("");
