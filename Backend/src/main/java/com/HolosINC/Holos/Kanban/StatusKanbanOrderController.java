@@ -100,15 +100,10 @@ public class StatusKanbanOrderController {
     }
 
     @PutMapping("/{id}/next")
-    public ResponseEntity<?> updateToNextStatusTheCommision(@PathVariable Long id) {
-        try {
-            Commision c = statusKanbanOrderService.nextStatusOfCommision(id);
-            return ResponseEntity.ok().body(c);
-        } catch (ResourceNotFoundException e) {
-            return ResponseEntity.badRequest().body(e);
-        } catch (Exception e) {
-            return ResponseEntity.internalServerError().body("Something weird happend. See the following:\n" + e.getMessage());
-        }
+    @Operation(summary = "Avanza una comisión al siguiente estado Kanban")
+    public ResponseEntity<Void> advanceCommisionToNextStatus(@PathVariable Long id) {
+        statusKanbanOrderService.nextStatusOfCommision(id);
+        return ResponseEntity.noContent().build();
     }
 
     @PutMapping("/{id}/previous")

@@ -27,6 +27,7 @@ import com.HolosINC.Holos.exceptions.AccessDeniedException;
 import com.HolosINC.Holos.exceptions.BadRequestException;
 import com.HolosINC.Holos.exceptions.ResourceNotFoundException;
 import com.HolosINC.Holos.exceptions.ResourceNotOwnedException;
+import com.HolosINC.Holos.model.BaseUser;
 import com.HolosINC.Holos.model.BaseUserService;
 
 @Service
@@ -173,14 +174,25 @@ public class StatusKanbanOrderService {
     }
 
     @Transactional
-    public Commision nextStatusOfCommision(Long id) {
+    public void nextStatusOfCommision(Long id) {
         try {
-            Long artistId = userService.findCurrentUser().getId();
-            Commision c = commisionRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Comisión no encontrada"));
-            if (artistId.equals(c.getArtist().getId()))
-                throw new AccessDeniedException("No tienes permisos para cambiar esta comisión");
+            BaseUser currentUser = userService.findCurrentUser();
+            Artist currentArtist = artistService.findArtistByUserId(currentUser.getId());
+            if (currentArtist == null) {
+                throw new AccessDeniedException("Tu usuario no está vinculado a ningún artista.");
+            }
+
+            Commision c = commisionRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Comisión no encontrada"));
+
+            if (!currentArtist.getId().equals(c.getArtist().getId())) {
+                throw new ResourceNotOwnedException("No tienes permisos para modificar una comisión que no te pertenece.");
+            }  
 
             StatusKanbanOrder thisStatus = statusKanbanOrderRepository.actualStatusKanban(id);
+            if (thisStatus == null) {
+                throw new ResourceNotFoundException("La comisión con ID " + id + " no tiene un estado asignado.");
+            }
             Optional<StatusKanbanOrder> nextStatus = statusKanbanOrderRepository.nextStatusKanban(thisStatus.getArtist().getId(),
                                                                                                      thisStatus.getOrder() + 1);
             if (nextStatus.isEmpty()) {
@@ -189,8 +201,12 @@ public class StatusKanbanOrderService {
             } else 
                 c.setStatusKanbanOrder(nextStatus.get());
 
+            System.out.println("ID del usuario actual: " + currentUser.getId());
+            System.out.println("Artista asociado al usuario: " + currentArtist.getId());
+            System.out.println("Artista de la comisión: " + c.getArtist().getId());
+                
             commisionRepository.save(c);
-            return c;
+
         } catch (ResourceNotFoundException e) {
             throw e;
         } catch (Exception e) {
@@ -201,10 +217,14 @@ public class StatusKanbanOrderService {
     @Transactional
     public Commision previousStatusOfCommision(Long id) throws Exception {
         try {
-            Long artistId = userService.findCurrentUser().getId();
-            Commision c = commisionRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Comisión no encontrada"));
-            if (artistId.equals(c.getArtist().getId()))
+            Long currentUserId = userService.findCurrentUser().getId();
+            Long artistId = artistService.findArtistByUserId(currentUserId).getId();
+            Commision c = commisionRepository.findById(id)
+            .orElseThrow(() -> new ResourceNotFoundException("Comisión no encontrada"));
+            
+            if (!artistId.equals(c.getArtist().getId())){
                 throw new ResourceNotOwnedException("No tienes permisos para cambiar esta comisión");
+            }
 
             StatusKanbanOrder thisStatus = statusKanbanOrderRepository.actualStatusKanban(id);
             Optional<StatusKanbanOrder> previousStatus = statusKanbanOrderRepository.nextStatusKanban(thisStatus.getArtist().getId(),
