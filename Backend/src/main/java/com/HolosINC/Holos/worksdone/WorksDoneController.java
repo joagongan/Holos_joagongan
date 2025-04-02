@@ -103,7 +103,7 @@ public class WorksDoneController {
         Long currentUserId = baseUserService.findCurrentUser().getId();
         Artist artist = baseUserService.findArtist(currentUserId);
 
-        boolean isPremium = false;
+        boolean isPremium = artist.getAuthority().equals("ARTIST_PREMIUM");
         long worksCount = worksDoneService.countByArtistId(artist.getId());
 
         boolean canUpload = isPremium || worksCount <= 7;
