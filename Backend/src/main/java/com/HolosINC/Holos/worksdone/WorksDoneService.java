@@ -35,7 +35,7 @@ public class WorksDoneService {
         Artist artist = artistService.findArtist(artistId);
 
         WorksDone worksDoneToUpdate = worksDoneRepository.findById(worksDoneId)
-            .orElseThrow(() -> new ResourceNotFoundException("WorksDone", "id", worksDoneId));
+                .orElseThrow(() -> new ResourceNotFoundException("WorksDone", "id", worksDoneId));
 
         if (!worksDoneToUpdate.getArtist().getId().equals(artist.getId())) {
             throw new IllegalArgumentException("El artista no tiene permisos para modificar este trabajo.");
@@ -53,4 +53,9 @@ public class WorksDoneService {
         return worksDoneRepository.findAll().stream().filter(work -> work.getArtist().equals(artist))
                 .collect(Collectors.toList());
     }
+
+    public Long countByArtistId(Long artistId) {
+        return worksDoneRepository.countByArtistId(artistId);
+    }
+
 }

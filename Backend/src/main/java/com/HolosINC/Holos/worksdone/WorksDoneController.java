@@ -98,4 +98,17 @@ public class WorksDoneController {
         return new ResponseEntity<>(worksDoneService.updateWorksDone(worksDone, worksDoneId, artistId), HttpStatus.OK);
     }
 
+    @GetMapping("/can-upload")
+    public ResponseEntity<Boolean> canUserUploadWork() {
+        Long currentUserId = baseUserService.findCurrentUser().getId();
+        Artist artist = baseUserService.findArtist(currentUserId);
+
+        boolean isPremium = false;
+        long worksCount = worksDoneService.countByArtistId(artist.getId());
+
+        boolean canUpload = isPremium || worksCount <= 7;
+
+        return ResponseEntity.ok(canUpload);
+    }
+
 }
