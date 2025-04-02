@@ -49,11 +49,6 @@ public class StatusKanbanOrderService {
     }
 
     @Transactional
-    public StatusKanbanOrder createStatusKanbanOrder(StatusKanbanOrder statusKanbanOrder) {
-        return statusKanbanOrderRepository.save(statusKanbanOrder);
-    }
-
-    @Transactional
     public StatusKanbanOrder addStatusToKanban(String color, String description, String nombre) {
         StatusKanbanOrder statusKanbanOrder = new StatusKanbanOrder();
         statusKanbanOrder.setColor(color);
@@ -110,11 +105,6 @@ public class StatusKanbanOrderService {
         );
     }    
 
-    @Transactional(readOnly = true)
-	public List<StatusKanbanOrder> findAllStatusKanbanOrder() {
-		return statusKanbanOrderRepository.findAll();
-	}
-
     @Transactional
     public void deleteStatusKanbanOrder(Integer id) {
         StatusKanbanOrder statusToDelete = statusKanbanOrderRepository.findById(id)
@@ -146,12 +136,6 @@ public class StatusKanbanOrderService {
             status.setOrder(-status.getOrder() - 1);
         }
         statusKanbanOrderRepository.saveAll(statusList);
-    }
-    
-
-    @Transactional
-    public StatusKanbanOrder updateOrder(StatusKanbanOrder statusKanbanOrder) {
-        return statusKanbanOrderRepository.save(statusKanbanOrder);
     }
 
     @Transactional
