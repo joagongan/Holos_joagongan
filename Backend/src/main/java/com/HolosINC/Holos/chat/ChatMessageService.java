@@ -1,11 +1,16 @@
 package com.HolosINC.Holos.chat;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.HolosINC.Holos.commision.Commision;
+import com.HolosINC.Holos.commision.CommisionRepository;
+import com.HolosINC.Holos.commision.CommisionService;
 import com.HolosINC.Holos.exceptions.AccessDeniedException;
 import com.HolosINC.Holos.exceptions.ResourceNotFoundException;
 import com.HolosINC.Holos.model.BaseUser;
@@ -14,16 +19,18 @@ import com.HolosINC.Holos.model.BaseUserService;
 @SuppressWarnings("unused")
 @Service
 public class ChatMessageService {
-    private ChatMessageRepository chatMessageRepository;
+
+    private final ChatMessageRepository chatMessageRepository;
     private final BaseUserService baseUserService;
+    private final CommisionRepository commisionRepository;
 
     @Autowired
-    public ChatMessageService(ChatMessageRepository chatMessageRepository, BaseUserService baseUserService) {
+    public ChatMessageService(ChatMessageRepository chatMessageRepository, BaseUserService baseUserService, CommisionRepository commisionRepository) {
+        this.commisionRepository = commisionRepository;
         this.chatMessageRepository = chatMessageRepository;
         this.baseUserService = baseUserService;
     }
 
-    
     @Transactional
     public ChatMessage createChatMessage(ChatMessage chatMessage) {
         BaseUser user = baseUserService.findCurrentUser();
@@ -34,25 +41,17 @@ public class ChatMessageService {
     }
 
     @Transactional(readOnly = true)
-    public ChatMessage findChatMessage(Long chatMessageId) {
-        BaseUser fromUser = baseUserService.findCurrentUser();
-		return chatMessageRepository.findById(chatMessageId)
-				.orElseThrow(() -> new ResourceNotFoundException("ChatMessage", "id", chatMessageId));
-	}
-
-    @Transactional(readOnly = true)
-    public List<ChatMessage> findAllChatMessages() {
-		return chatMessageRepository.findAll();
-	}
-
-    @Transactional(readOnly = true)
-    public List<ChatMessage> findConversation(Long toUserId) {
-        BaseUser fromUser = baseUserService.findCurrentUser();
-        if (fromUser.getId().equals(toUserId)) {
-            throw new AccessDeniedException("You can't send a message to yourself");
+    public List<ChatMessage> findConversationByCommisionId(Long commisionId) {
+        BaseUser user = baseUserService.findCurrentUser();
+        Commision commision = commisionRepository.findById(commisionId).orElse(null);
+        if (commision == null) {
+            throw new ResourceNotFoundException("Commision", "id", commisionId);
         }
-        return chatMessageRepository.findConversation(fromUser.getId(), toUserId);
-	}
+        if (commision.getArtist().getBaseUser().getId() != user.getId() && commision.getClient().getBaseUser().getId() != user.getId()) {
+            throw new AccessDeniedException("You don't have access to this commision");
+        }
+        return chatMessageRepository.findConversationByCommisionId(commisionId);
+    }
 
     @Transactional
     public void deleteMessage(Long id) {
@@ -60,13 +59,19 @@ public class ChatMessageService {
     }
 
     @Transactional
-    public List<ConversationDTO> findAllConversations(Long userId) {
-        return chatMessageRepository.findAllConversations(userId);
+    public Map<Long, List<ChatMessage>> findAllConversations() {
+        BaseUser user = baseUserService.findCurrentUser();
+        List<ChatMessage> chatMessages = chatMessageRepository.findAll();
+
+        Map<Long, List<ChatMessage>> conversations = new HashMap<>();
+        for (ChatMessage message : chatMessages) {
+            if(conversations.keySet().contains(message.getCommision().getId())) {
+                conversations.get(message.getCommision().getId()).add(message);
+            } else {
+                conversations.put(message.getCommision().getId(), List.of(message));
+            }
+        }
+
+        return conversations;
     }
-    
-    @Transactional
-    public List<ChatMessage> findAllMessagesByUser(Long userId) {
-        return chatMessageRepository.findAllByUserId(userId);
-    }
-    
 }

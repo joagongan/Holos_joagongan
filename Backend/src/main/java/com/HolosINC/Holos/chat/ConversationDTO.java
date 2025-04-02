@@ -15,5 +15,4 @@ public class ConversationDTO {
         this.lastDate = lastDate;
         this.lastMessage = lastMessage;
     }
-    // ...
 }

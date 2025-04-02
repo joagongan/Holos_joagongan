@@ -1,7 +1,5 @@
 package com.HolosINC.Holos.chat;
 
-import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -46,49 +44,21 @@ public class ChatMessageController {
         }
     }
 
-    @GetMapping("/chat/{toUserId}")
-    public ResponseEntity<List<ChatMessage>> getConversation(@PathVariable Long toUserId) {
+    @GetMapping("/chat/{commisionId}")
+    public ResponseEntity<?> getConversation(@PathVariable Long commisionId) {
         try {
-            List<ChatMessage> conversation = service.findConversation(toUserId);
-            return ResponseEntity.ok(conversation);
+            return ResponseEntity.ok(service.findConversationByCommisionId(commisionId));
         } catch (Exception e) {
             return ResponseEntity.badRequest().build();
         }
     }
 
-    @GetMapping("/admin")
-    public ResponseEntity<List<ChatMessage>> getAllChatMessages() {
+    @GetMapping("/admin/chats")
+    public ResponseEntity<?> getAllChats() {
         try {
-            List<ChatMessage> messages = service.findAllChatMessages();
-            return ResponseEntity.ok(messages);
+            return ResponseEntity.ok(service.findAllConversations());
         } catch (Exception e) {
             return ResponseEntity.badRequest().build();
         }
     }
-
-    @GetMapping("/{id}")
-    public ResponseEntity<ChatMessage> getChatMessage(@PathVariable Long id) {
-        try {
-            ChatMessage chatMessage = service.findChatMessage(id);
-            return ResponseEntity.ok(chatMessage);
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().build();
-        }
-    }
-    @GetMapping("/conversations/user/{userId}")
-public ResponseEntity<List<ConversationDTO>> getUserConversations(@PathVariable Long userId) {
-    List<ConversationDTO> convos = service.findAllConversations(userId);
-    return ResponseEntity.ok(convos);
-}
-
-@GetMapping("/allByUser/{userId}")
-public ResponseEntity<List<ChatMessage>> getAllMessagesByUser(@PathVariable Long userId) {
-    try {
-        List<ChatMessage> messages = service.findAllMessagesByUser(userId);
-        return ResponseEntity.ok(messages);
-    } catch (Exception e) {
-        return ResponseEntity.notFound().build();
-    }
-}
-
 }

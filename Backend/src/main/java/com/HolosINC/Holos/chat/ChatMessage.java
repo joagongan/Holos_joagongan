@@ -8,7 +8,7 @@ import java.time.LocalDateTime;
 
 import javax.validation.constraints.Size;
 
-import com.HolosINC.Holos.model.BaseUser;
+import com.HolosINC.Holos.commision.Commision;
 
 @Data
 @Entity
@@ -32,11 +32,6 @@ public class ChatMessage {
     private Blob image;
 
     @ManyToOne
-    @JoinColumn(name = "from_user", nullable = false)
-    private BaseUser fromUser;
-
-    @ManyToOne
-    @JoinColumn(name = "to_user", nullable = false)
-    private BaseUser toUser;
-
+    @JoinColumn(name = "commision_id", nullable = false)
+    private Commision commision;
 }
