@@ -15,6 +15,7 @@ public class WorksDoneDTO {
     private Double price;
     private byte[] image;
     private Long artistId;
+    private Long baseUserId;
     private String artistName;
     private String artistSurname;
 }

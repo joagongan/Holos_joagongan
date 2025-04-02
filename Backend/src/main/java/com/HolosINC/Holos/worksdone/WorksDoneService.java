@@ -56,4 +56,8 @@ public class WorksDoneService {
         return worksDoneRepository.findAll().stream().filter(work -> work.getArtist().equals(artist))
                 .collect(Collectors.toList());
     }
+
+    public List<Artist> getMostPublicationsArtists() {
+        return worksDoneRepository.findTop3ArtistsByWorksDone();
+    }
 }

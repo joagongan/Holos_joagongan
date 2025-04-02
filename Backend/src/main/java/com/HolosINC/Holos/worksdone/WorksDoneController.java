@@ -56,6 +56,7 @@ public class WorksDoneController {
                             .price(work.getPrice())
                             .image(work.getImage())
                             .artistId(work.getArtist().getId())
+                            .baseUserId(work.getArtist().getBaseUser().getId())
                             .artistName(work.getArtist().getBaseUser().getName())
                             .artistSurname(work.getArtist().getBaseUser().getUsername())
                             .build())
@@ -78,6 +79,7 @@ public class WorksDoneController {
                     .price(worksDone.getPrice())
                     .image(worksDone.getImage())
                     .artistId(worksDone.getArtist().getId())
+                    .baseUserId(worksDone.getArtist().getBaseUser().getId())
                     .artistName(worksDone.getArtist().getBaseUser().getName())
                     .artistSurname(worksDone.getArtist().getBaseUser().getUsername())
                     .build();
@@ -100,6 +102,7 @@ public class WorksDoneController {
                             .price(work.getPrice())
                             .image(work.getImage())
                             .artistId(work.getArtist().getId())
+                            .baseUserId(work.getArtist().getBaseUser().getId())
                             .artistName(work.getArtist().getBaseUser().getName())
                             .artistSurname(work.getArtist().getBaseUser().getUsername())
                             .build())
@@ -113,11 +116,20 @@ public class WorksDoneController {
     @PutMapping(value = "/artist/{artistId}/{worksDoneId}")
     public ResponseEntity<WorksDone> updateWorksDone(@PathVariable("worksDoneId") Long worksDoneId, 
         @PathVariable("artistId") Long artistId,
-        @RequestBody @Valid WorksDone worksDone) {
+            @RequestBody @Valid WorksDone worksDone) {
 
         RestPreconditions.checkNotNull(worksDoneService.getWorksDoneById(worksDoneId), "WorksDone", "ID", worksDoneId);
 
         return new ResponseEntity<>(worksDoneService.updateWorksDone(worksDone, worksDoneId, artistId), HttpStatus.OK);
     }
-
+    
+    @GetMapping("/mostPublicationsArtists")
+    public ResponseEntity<List<Artist>> getMostPublicationsArtists() {
+        try {
+            List<Artist> artists = worksDoneService.getMostPublicationsArtists();
+            return ResponseEntity.ok(artists);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        }
+    }
 }
