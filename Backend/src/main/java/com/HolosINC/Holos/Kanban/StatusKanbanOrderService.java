@@ -105,27 +105,40 @@ public class StatusKanbanOrderService {
 	public List<StatusKanbanOrder> findAllStatusKanbanOrder() {
 		return statusKanbanOrderRepository.findAll();
 	}
-    
 
     @Transactional
     public void deleteStatusKanbanOrder(Integer id) {
         StatusKanbanOrder statusToDelete = statusKanbanOrderRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("StatusKanbanOrder", "id", id));
-
+    
+        if (commisionService.isStatusKanbanInUse(statusToDelete)) {
+            throw new BadRequestException("No se puede eliminar un estado que está asignado a una o más comisiones.");
+        }
+    
         Integer artistId = statusToDelete.getArtist().getId().intValue();
         Integer orderDeleted = statusToDelete.getOrder();
-
+    
         statusKanbanOrderRepository.deleteById(id);
-
-        List<StatusKanbanOrder> statusList = statusKanbanOrderRepository.findByArtist(artistId);
-
+        statusKanbanOrderRepository.flush();
+    
+        List<StatusKanbanOrder> statusList = statusKanbanOrderRepository.findByArtist(artistId)
+            .stream()
+            .filter(s -> s.getOrder() > orderDeleted)
+            .sorted((a, b) -> Integer.compare(a.getOrder(), b.getOrder()))
+            .toList();
+    
         for (StatusKanbanOrder status : statusList) {
-            if (status.getOrder() > orderDeleted) {
-                status.setOrder(status.getOrder() - 1);
-                statusKanbanOrderRepository.save(status);
-            }
+            status.setOrder(-status.getOrder());
         }
+        statusKanbanOrderRepository.saveAll(statusList);
+        statusKanbanOrderRepository.flush();
+    
+        for (StatusKanbanOrder status : statusList) {
+            status.setOrder(-status.getOrder() - 1);
+        }
+        statusKanbanOrderRepository.saveAll(statusList);
     }
+    
 
     @Transactional
     public StatusKanbanOrder updateOrder(StatusKanbanOrder statusKanbanOrder) {

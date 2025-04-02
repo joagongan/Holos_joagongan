@@ -72,9 +72,16 @@ public class StatusKanbanOrderController {
     }
 
     @DeleteMapping("/{id}")
-    public void deleteStatusKanbanOrder(@PathVariable Integer id) {
-        statusKanbanOrderService.deleteStatusKanbanOrder(id);
-    }
+    public ResponseEntity<?> deleteStatusKanbanOrder(@PathVariable Integer id) {
+        try {
+            statusKanbanOrderService.deleteStatusKanbanOrder(id);
+            return ResponseEntity.noContent().build(); // 204 sin cuerpo
+        } catch (BadRequestException | ResourceNotFoundException e) {
+            throw e; // Manejadas por tu ExceptionHandler
+        } catch (Exception e) {
+            throw new BadRequestException("No se pudo eliminar el estado Kanban: " + e.getMessage());
+        }
+    }    
 
     @GetMapping
     public ResponseEntity<?> getAllStatusKanbanOrder() {
