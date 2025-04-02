@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 
 import com.HolosINC.Holos.Kanban.DTOs.StatusKanbanCreateDTO;
 import com.HolosINC.Holos.Kanban.DTOs.StatusKanbanDTO;
+import com.HolosINC.Holos.Kanban.DTOs.StatusKanbanFullResponseDTO;
 import com.HolosINC.Holos.Kanban.DTOs.StatusKanbanUpdateDTO;
 import com.HolosINC.Holos.Kanban.DTOs.StatusKanbanWithCommisionsDTO;
 import com.HolosINC.Holos.artist.ArtistService;
@@ -21,6 +22,7 @@ import com.HolosINC.Holos.exceptions.BadRequestException;
 import com.HolosINC.Holos.exceptions.ResourceNotFoundException;
 import com.HolosINC.Holos.exceptions.ResourceNotOwnedException;
 
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
@@ -75,24 +77,26 @@ public class StatusKanbanOrderController {
     public ResponseEntity<?> deleteStatusKanbanOrder(@PathVariable Integer id) {
         try {
             statusKanbanOrderService.deleteStatusKanbanOrder(id);
-            return ResponseEntity.noContent().build(); // 204 sin cuerpo
+            return ResponseEntity.noContent().build();
         } catch (BadRequestException | ResourceNotFoundException e) {
-            throw e; // Manejadas por tu ExceptionHandler
+            throw e;
         } catch (Exception e) {
             throw new BadRequestException("No se pudo eliminar el estado Kanban: " + e.getMessage());
         }
     }    
 
     @GetMapping
-    public ResponseEntity<?> getAllStatusKanbanOrder() {
-        try {
-            Pair<List<StatusKanbanDTO>,List<StatusKanbanWithCommisionsDTO>> allStatus = statusKanbanOrderService.getAllStatusFromArtist();
-            return ResponseEntity.ok().body(allStatus);
-        } catch (ResourceNotFoundException e) {
-            return ResponseEntity.badRequest().body(e);
-        } catch (Exception e) {
-            return ResponseEntity.internalServerError().body("Something weird happend. See the following:\n" + e.getMessage());
-        }
+    @Operation(summary = "Obtiene todos los estados Kanban del artista junto con sus comisiones asociadas")
+    public ResponseEntity<StatusKanbanFullResponseDTO> getAllStatusKanban() {
+        Pair<List<StatusKanbanDTO>, List<StatusKanbanWithCommisionsDTO>> data =
+                statusKanbanOrderService.getAllStatusFromArtist();
+
+        StatusKanbanFullResponseDTO response = new StatusKanbanFullResponseDTO(
+                data.getFirst(),
+                data.getSecond()
+        );
+
+        return ResponseEntity.ok(response);
     }
 
     @PutMapping("/{id}/next")
