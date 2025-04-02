@@ -113,16 +113,11 @@ public class StatusKanbanOrderController {
         return ResponseEntity.noContent().build();
     }
     
-
     @GetMapping("/{id}")
-    public ResponseEntity<?> getStatusKanbanOrder(@PathVariable Integer id) {
-        try {
-            return ResponseEntity.ok().body(statusKanbanOrderService.findStatusKanbanOrder(id));
-        } catch (ResourceNotFoundException e) {
-            return ResponseEntity.badRequest().body(e);
-        } catch (Exception e) {
-            return ResponseEntity.internalServerError().body("Something weird happend. See the following:\n" + e.getMessage());
-        }
+    @Operation(summary = "Obtiene un estado Kanban por su ID")
+    public ResponseEntity<StatusKanbanDTO> getStatusKanban(@PathVariable Integer id) {
+        StatusKanbanDTO dto = statusKanbanOrderService.getStatusKanbanById(id);
+        return ResponseEntity.ok(dto);
     }
 
     @PutMapping("/reorder")

@@ -97,10 +97,18 @@ public class StatusKanbanOrderService {
     }
 
     @Transactional(readOnly = true)
-	public StatusKanbanOrder findStatusKanbanOrder(Integer statusKanbanOrderId) {
-		return statusKanbanOrderRepository.findById(statusKanbanOrderId)
-				.orElseThrow(() -> new ResourceNotFoundException("StatusKanbanOrder", "id", statusKanbanOrderId));
-	}
+    public StatusKanbanDTO getStatusKanbanById(Integer id) {
+        StatusKanbanOrder status = statusKanbanOrderRepository.findById(id)
+            .orElseThrow(() -> new ResourceNotFoundException("StatusKanbanOrder", "id", id));
+    
+        return new StatusKanbanDTO(
+            status.getId(),
+            status.getName(),
+            status.getOrder(),
+            status.getDescription(),
+            status.getColor()
+        );
+    }    
 
     @Transactional(readOnly = true)
 	public List<StatusKanbanOrder> findAllStatusKanbanOrder() {
