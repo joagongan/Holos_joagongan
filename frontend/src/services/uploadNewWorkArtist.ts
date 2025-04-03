@@ -1,9 +1,13 @@
+
 import api from "./axiosInstance";
 import { newWorkArtist } from "@/src/constants/uploadNewWorkArtist";
 import { globalNewWorkUploadArtist } from "@/src/constants/uploadNewWorkArtist";
+
 import { API_URL } from "@/src/constants/api";
 
 const worksdone_URL = `${API_URL}/worksdone`;
+
+
 
 const base64ToFile = (base64Data: string, filename: string): File => {
   const arr = base64Data.split(',');
@@ -26,6 +30,8 @@ const base64ToFile = (base64Data: string, filename: string): File => {
 };
 
 
+
+
 export const postWorkdone = async (
   work: newWorkArtist,
   imageBase64: string,
@@ -45,6 +51,7 @@ export const postWorkdone = async (
   });
 
   return response.data;
+
 };
 
 export const updateWorkdone = async (
@@ -71,3 +78,4 @@ export const updateWorkdone = async (
 
   return response.data;
 };
+

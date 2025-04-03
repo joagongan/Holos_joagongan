@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useContext } from "react";
 import { View, Text, TextInput, TouchableOpacity, Image, ScrollView } from "react-native";
-import { postWorkdone } from "@/src/services/uploadNewWorkArtist_2";
+import { postWorkdone } from "@/src/services/uploadNewWorkArtist";
 import { AuthenticationContext } from "@/src/contexts/AuthContext";
 import { useRouter, useNavigation } from "expo-router";
 import {styles} from "@/src/styles/UploadNewWorkArtist";
