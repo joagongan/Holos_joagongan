@@ -1,4 +1,4 @@
-package com.HolosINC.Holos.Artist;
+package com.HolosINC.Holos.artist;
 
 import com.HolosINC.Holos.model.BaseUserDTO;
 
