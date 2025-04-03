@@ -86,7 +86,7 @@ export default function WorkDetailScreen() {
         <View style={styles.leftColumn}>
           {work.image ? (
             <Image
-              source={{ uri: `${BASE_URL}${work.image}` }}
+              source={{ uri: `${BASE_URL}${atob(work?.image)}` }}
               style={styles.imageStyle}
             />
           ) : (

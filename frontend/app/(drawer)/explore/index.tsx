@@ -1,34 +1,22 @@
+
 import React, { useState, useEffect, useMemo } from "react";
-import {
-  View,
-  Text,
-  Image,
-  ScrollView,
-  TouchableOpacity,
-  useWindowDimensions,
-  TouchableWithoutFeedback,
-} from "react-native";
-import { Ionicons } from "@expo/vector-icons";
+import { Text, ScrollView, View, Image, TouchableOpacity, LayoutChangeEvent, NativeSyntheticEvent, NativeScrollEvent, TouchableWithoutFeedback   } from "react-native";
 import { useRouter } from "expo-router";
-import { useFonts } from "expo-font";
-
-import { desktopStyles, mobileStyles } from "@/src/styles/Explore.styles";
+import { useFonts } from "expo-font";6
+import { styles } from "@/src/styles/Explore.styles";
 import { BASE_URL } from "@/src/constants/api";
-import { Work } from "../../../src/constants/ExploreTypes";
-import ReportDropdown from "@/src/components/report/ReportDropDown";
-
-import {
-  fetchWorksAndTransform,
-  getFirstThreeArtists,
-} from "../../../src/services/ExploreWorkHelpers";
+import { WorksDoneDTO } from "../../../src/constants/ExploreTypes";
+import { getFirstThreeArtists } from "../../../src/services/ExploreWorkHelpers";
+import WorkCard from "@/src/components/explore/WorkCard";
+import { fetchWorksDone } from "@/src/services/WorksDoneApi";
 
 export default function ExploreScreen() {
-  const [works, setWorks] = useState<Work[]>([]);
-  const router = useRouter();
-  const { width } = useWindowDimensions();
-  const isDesktop = width > 768;
-  const styles = isDesktop ? desktopStyles : mobileStyles;
+  const [works, setWorks] = useState<WorksDoneDTO[]>([]);
   const [menuVisibleId, setMenuVisibleId] = useState<number | null>(null);
+  const router = useRouter();
+  // const { width } = useWindowDimensions();
+  // const isDesktop = width > 768;
+  // const styles = desktopStyles;
 
   const [fontsLoaded] = useFonts({
     "Merriweather-Regular": require("../../../assets/fonts/Merriweather_24pt-Regular.ttf"),
@@ -40,8 +28,8 @@ export default function ExploreScreen() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const data = await fetchWorksAndTransform();
-        setWorks(data);
+        const works = await fetchWorksDone();
+        setWorks(works);
       } catch (error) {
         console.error("Error fetching works:", error);
       }
@@ -57,77 +45,35 @@ export default function ExploreScreen() {
   }
 
   return (
-    <ScrollView style={{ flex: 1, backgroundColor: "#fff" }}>
+
+    <TouchableWithoutFeedback onPress={() => {
+      if (menuVisibleId !== null) {
+        setMenuVisibleId(null); // Cierra el menú al tocar fuera
+      }
+    }}>
+
+   
+    <ScrollView style={{ flex: 1, backgroundColor: "#fff" }} contentContainerStyle={{ flexGrow: 1 }}>
       <View style={styles.container}>
+
         {/* Sección superior */}
         <View style={styles.topSection}>
           <Text style={styles.topSectionText}>Obras</Text>
-          <View style={styles.topSectionRight}>
-            <Text style={styles.topSectionSecondText}>Desliza</Text>
-            <Ionicons
-              name="arrow-forward"
-              size={20}
-              color="#666"
-              style={{ marginLeft: 4 }}
-            />
-          </View>
         </View>
 
         {/* Sección del medio: Obras */}
-        <TouchableWithoutFeedback
-          onPress={() => {
-            if (menuVisibleId !== null) {
-              setMenuVisibleId(null);
-            }
-          }}
-        >
-          <View style={styles.middleSection}>
-            <ScrollView
-              horizontal
-              showsHorizontalScrollIndicator={false}
-              contentContainerStyle={styles.worksScrollContainer}
-            >
-              {works.map((work) => (
-                <View key={work.id} style={styles.workItemWrapper}>
-                  <TouchableOpacity
-                    style={styles.workItem}
-                    onPress={() =>
-                      router.push({
-                        pathname: "/work/[workId]",
-                        params: { workId: String(work.id) },
-                      })
-                    }
-                  >
-                    <Image
-                      source={{ uri: `${BASE_URL}${work.image}` }}
-                      style={styles.workImage}
-                    />
-                    <View style={styles.workTextContainer}>
-                      <Text style={styles.workTitle}>{work.name}</Text>
-                      <Text style={styles.workArtist}>
-                        {work.artist?.baseUser?.username ??
-                          "Artista desconocido"}
-                      </Text>
-                      <Text style={styles.workSubtitle}>
-                        {work.description}
-                      </Text>
-                    </View>
-                  </TouchableOpacity>
-
-                  {/* Report Dropdown */}
-                  <View style={styles.dropdownOverlay}>
-                    <ReportDropdown
-                      workId={work.id}
-                      menuVisibleId={menuVisibleId}
-                      setMenuVisibleId={setMenuVisibleId}
-                      isBigScreen={true}
-                    />
-                  </View>
-                </View>
-              ))}
-            </ScrollView>
-          </View>
-        </TouchableWithoutFeedback>
+        <View style={styles.middleSection}>
+          <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+            {works.map((work) => (
+              <WorkCard
+                key={work.id}
+                work={work}
+                menuVisibleId={menuVisibleId}
+                setMenuVisibleId={setMenuVisibleId}
+              />
+            ))}
+          </ScrollView>
+        </View>
 
         {/* Sección inferior: Artistas */}
         <View style={styles.bottomSection}>
@@ -135,35 +81,26 @@ export default function ExploreScreen() {
             <Text style={styles.bottomSectionHeaderText}>ARTISTAS</Text>
           </View>
           <View style={styles.artistsContainer}>
-            {firstThreeArtists.map((artist) => (
+          {/* {firstThreeArtists.map((artist:any) => (
+            <View key={artist.id}>
               <TouchableOpacity
-                key={artist.id}
                 style={styles.artistCard}
-                onPress={() => {
-                  if (artist && artist.id) {
-                    router.push(`/profile/${artist.id}`);
-                  } else {
-                    console.warn("No se encontró el artista");
-                  }
-                }}
+                onPress={() => router.push({ pathname: "/profile/[artistId]", params: { artistId: String(artist.id) }})}
               >
                 <Image
-                  source={{
-                    uri: `${BASE_URL}${artist.baseUser?.imageProfile}`,
-                  }}
+                  source={{ uri: `${BASE_URL}${artist.baseUser?.imageProfile}`}}
                   style={styles.artistImage}
                 />
                 <View style={styles.artistTextContainer}>
-                  <Text style={styles.artistName}>
-                    {artist.baseUser?.username}
-                  </Text>
-                  <Text style={styles.artistLocation}>Painter, Amsterdam</Text>
+                  <Text style={styles.artistName}>{artist.username}</Text>
                 </View>
               </TouchableOpacity>
-            ))}
+            </View>
+          ))} */}
           </View>
         </View>
       </View>
     </ScrollView>
+    </TouchableWithoutFeedback>
   );
 }
