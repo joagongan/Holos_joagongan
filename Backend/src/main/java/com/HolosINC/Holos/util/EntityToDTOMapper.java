@@ -5,7 +5,7 @@ import com.HolosINC.Holos.artist
 import com.HolosINC.Holos.artist
 .ArtistDTO;
 import com.HolosINC.Holos.client.Client;
-import com.HolosINC.Holos.Client.ClientDTO;
+import com.HolosINC.Holos.client.ClientDTO;
 import com.HolosINC.Holos.model.BaseUser;
 import com.HolosINC.Holos.model.BaseUserDTO;
 

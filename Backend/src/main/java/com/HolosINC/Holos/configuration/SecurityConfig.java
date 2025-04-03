@@ -46,6 +46,7 @@ public class SecurityConfig {
             .requestMatchers("/api/v1/status-kanban-order/**").hasAuthority("ARTIST")
             .requestMatchers(HttpMethod.PUT,"/api/v1/commisions/{id}/status").hasAuthority("ARTIST")
             .requestMatchers("/api/v1/commisions/**").authenticated()
+            .requestMatchers("/api/v1/messages/**").authenticated()
             .requestMatchers("/api/v1/payment/{paymentIntentId}", "/api/v1/payment/all").hasAuthority("ADMIN")
             .requestMatchers("/api/v1/stripe-account/**").hasAuthority("ARTIST")
             .requestMatchers("/api/v1/payment/**").authenticated()
