@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.ResponseEntity.BodyBuilder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.HolosINC.Holos.commision.DTOs.ClientCommissionDTO;
 import com.HolosINC.Holos.commision.DTOs.CommisionDTO;
 import com.HolosINC.Holos.commision.DTOs.CommisionRequestDTO;
+import com.HolosINC.Holos.commision.DTOs.HistoryCommisionsDTO;
 
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -58,22 +60,16 @@ public class CommisionController {
         }
     }
 
-    @GetMapping
-    public ResponseEntity<List<Commision>> getAllCommisions() {
-        List<Commision> commisions = commisionService.getAllCommisions();
-        return ResponseEntity.ok(commisions);
-    }
-
-    @GetMapping("/requested")
-    public ResponseEntity<List<Commision>> getAllRequestedCommisions() {
-        List<Commision> commisions = commisionService.getAllRequestedCommisions();
-        return ResponseEntity.ok(commisions);
-    }
-
-    @GetMapping("/clientRequested")
-    public ResponseEntity<List<ClientCommissionDTO>> getClientCommissions() {
-        List<ClientCommissionDTO> commissions = commisionService.getClientCommissions();
-        return ResponseEntity.ok(commissions);
+    @GetMapping("/historyOfCommisions")
+    public ResponseEntity<HistoryCommisionsDTO> getClientCommissions() throws Exception {
+        try {
+            HistoryCommisionsDTO commissions = commisionService.getHistoryOfCommissions();
+            return ResponseEntity.ok(commissions);
+        } catch (Exception e) {
+            HistoryCommisionsDTO withError = new HistoryCommisionsDTO();
+            withError.setError(e.getMessage());
+            return ResponseEntity.internalServerError().body(withError);
+        }
     }
 
     @GetMapping("/{id}")
