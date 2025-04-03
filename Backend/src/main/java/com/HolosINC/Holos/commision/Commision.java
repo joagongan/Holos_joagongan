@@ -28,7 +28,6 @@ public class Commision extends Work{
     @Enumerated(EnumType.STRING)
     private StatusCommision status;
 
-    @NotNull
     @Temporal(TemporalType.DATE)
     private Date acceptedDateByArtist;
 
