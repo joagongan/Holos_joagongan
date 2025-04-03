@@ -1,9 +1,9 @@
 package com.Profile;
 
-import com.HolosINC.Holos.Client.Client;
-import com.HolosINC.Holos.Client.ClientService;
-import com.HolosINC.Holos.Artist.Artist;
-import com.HolosINC.Holos.Artist.ArtistService;
+import com.HolosINC.Holos.client.Client;
+import com.HolosINC.Holos.client.ClientService;
+import com.HolosINC.Holos.artist.Artist;
+import com.HolosINC.Holos.artist.ArtistService;
 import com.HolosINC.Holos.model.BaseUser;
 import com.HolosINC.Holos.model.BaseUserDTO;
 import com.HolosINC.Holos.model.BaseUserService;
@@ -25,12 +25,11 @@ public class ProfileService {
     @Autowired
     private ClientService clientService;
 
-    
     @Transactional
     public BaseUserDTO updateProfile(BaseUserDTO baseUserDTO) {
         // Verificamos que el usuario que está haciendo la solicitud sea el usuario actual
         BaseUser currentUser = baseUserService.findCurrentUser();
-        
+
         Artist artist = artistService.findArtist(currentUser.getId());
         if (artist != null) {
             // Si encontramos al artista, actualizamos los datos del artista
@@ -39,31 +38,24 @@ public class ProfileService {
             artist.getBaseUser().setPhoneNumber(baseUserDTO.getPhoneNumber());
             artist.getBaseUser().setImageProfile(baseUserDTO.getImageProfile());
 
-            artistService.saveArtist(artist); 
-            return EntityToDTOMapper.toArtistDTO
-                (
-                artist
-                )
-                ;}
+            artistService.saveArtist(artist);
+            return EntityToDTOMapper.toArtistDTO(artist);
 
-        // Si no es un artista, intentamos encontrarlo como cliente
-        Client client = clientService.findClient(currentUser.getId());
-        if (client != null) {
-            // Si encontramos al cliente, actualizamos los datos del cliente
-            client.getBaseUser().setName(baseUserDTO.getName());
-            client.getBaseUser().setEmail(baseUserDTO.getEmail());
-            client.getBaseUser().setPhoneNumber(baseUserDTO.getPhoneNumber());
-            client.getBaseUser().setImageProfile(baseUserDTO.getImageProfile());
+            // Si no es un artista, intentamos encontrarlo como cliente
+        } else {
+            Client client = clientService.findClient(currentUser.getId());
+            if (client != null) {
+                // Si encontramos al cliente, actualizamos los datos del cliente
+                client.getBaseUser().setName(baseUserDTO.getName());
+                client.getBaseUser().setEmail(baseUserDTO.getEmail());
+                client.getBaseUser().setPhoneNumber(baseUserDTO.getPhoneNumber());
+                client.getBaseUser().setImageProfile(baseUserDTO.getImageProfile());
 
-            clientService.saveClient(client);
-            return EntityToDTOMapper.toClientDTO
-            (
-                client
-            )
-            ;
+                clientService.saveClient(client);
+                return EntityToDTOMapper.toClientDTO(client);
+            }
+
+            throw new RuntimeException("User type is not recognized.");
         }
-
-        
-        throw new RuntimeException("User type is not recognized.");
     }
 }

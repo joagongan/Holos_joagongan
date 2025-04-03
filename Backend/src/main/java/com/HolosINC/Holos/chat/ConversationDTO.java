@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 
 import com.HolosINC.Holos.model.BaseUser;
 
+@SuppressWarnings("unused")
 public class ConversationDTO {
     private BaseUser otherUser;
     private LocalDateTime lastDate;

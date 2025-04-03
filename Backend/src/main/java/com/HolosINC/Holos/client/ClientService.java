@@ -26,6 +26,7 @@ public class ClientService {
 	private BaseUserRepository baseUserRepository;
 	private CommisionRepository commisionRepository;
 	private MilestoneRepository milestoneRepository;
+	@SuppressWarnings("unused")
 	private AuthoritiesRepository authoritiesRepository;
 	private ReportRepository reportRepository;
 

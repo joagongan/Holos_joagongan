@@ -1,4 +1,4 @@
-package com.HolosINC.Holos.Client;
+package com.HolosINC.Holos.client;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
