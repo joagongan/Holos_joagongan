@@ -27,7 +27,8 @@ public class PremiumSubscriptionService {
     @Value("${stripe.key.secret}") 
     private String secretKey;
 
-    private String priceId = "price_1R74KBPEFPLFpq6fosvWoTIi";
+    @Value("${stripe.product.id}") 
+    private String priceId;
 
     private final BaseUserService userService;
     private final ArtistRepository artistRepository;
