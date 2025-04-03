@@ -1,7 +1,7 @@
-import api from "./axiosInstance"; 
-import {newWorkArtist } from "@/src/constants/uploadNewWorkArtist";
-import { API_URL } from "@/src/constants/api";
 
+import api from "./axiosInstance"; 
+import {newWorkArtist, globalNewWorkUploadArtist } from "@/src/constants/uploadNewWorkArtist";
+import { API_URL } from "@/src/constants/api";
 const worksdone_URL = `${API_URL}/worksdone`;
 
 
@@ -27,12 +27,12 @@ const base64ToFile = (base64Data: string, filename: string): File => {
 };
 
 
-
 export const postWorkdone = async (
   work: newWorkArtist,
   imageBase64: string,
   token: string
-): Promise<any> => {
+
+): Promise<globalNewWorkUploadArtist> => {
   const formData = new FormData();
   formData.append("work", JSON.stringify(work));
 
@@ -47,4 +47,32 @@ export const postWorkdone = async (
   });
 
   return response.data;
+
 };
+
+export const updateWorkdone = async (
+  work: newWorkArtist,
+  imageBase64: string | null, 
+  artistId: number,
+  worksDoneId: number,
+  token: string
+): Promise<globalNewWorkUploadArtist> => {
+  const formData = new FormData();
+  formData.append("work", JSON.stringify(work));
+
+  if (imageBase64) {
+    const imageFile = base64ToFile(imageBase64, "image.png");
+    formData.append("image", imageFile);
+  }
+
+  const response = await api.put(`${worksdone_URL}/artist/${artistId}/${worksDoneId}`, formData, {
+    headers: {
+      "Content-Type": "multipart/form-data",
+      "Authorization": `Bearer ${token}`,
+    },
+  });
+
+  return response.data;
+};
+
+

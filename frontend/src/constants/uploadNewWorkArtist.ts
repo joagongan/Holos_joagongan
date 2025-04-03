@@ -8,3 +8,10 @@ export interface newWorkArtist {
     newWorkArtist: newWorkArtist;
     image: number[];
   }
+
+  export interface globalNewWorkUploadArtist {
+    name: string;
+    description: string;
+    price: number;
+    image: number[];
+  }
