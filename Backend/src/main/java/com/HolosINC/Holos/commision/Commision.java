@@ -15,6 +15,7 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
+import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -27,6 +28,7 @@ public class Commision extends Work{
     @Enumerated(EnumType.STRING)
     private StatusCommision status;
 
+    @NotNull
     @Temporal(TemporalType.DATE)
     private Date acceptedDateByArtist;
 
