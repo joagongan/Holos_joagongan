@@ -81,9 +81,9 @@ public class CommisionController {
 
     @PutMapping("/{commissionId}/waiting")
     public ResponseEntity<?> waitingCommission(
-            @PathVariable Long id) {
+            @PathVariable Long commissionId) {
         try {
-            commisionService.waitingCommission(id);
+            commisionService.waitingCommission(commissionId);
             return ResponseEntity.ok("En espera de confirmación del precio.");
         } catch (IllegalArgumentException | IllegalStateException e) {
             return ResponseEntity.badRequest().body("Error: " + e.getMessage());
@@ -94,9 +94,9 @@ public class CommisionController {
 
     @PutMapping("/{commissionId}/toPay")
     public ResponseEntity<?> toPayCommission(
-            @PathVariable Long id) {
+            @PathVariable Long commissionId) {
         try {
-            commisionService.toPayCommission(id);
+            commisionService.toPayCommission(commissionId);
             return ResponseEntity.ok("Se aceptó el precio correctamente.");
         } catch (IllegalArgumentException | IllegalStateException e) {
             return ResponseEntity.badRequest().body("Error: " + e.getMessage());
@@ -107,9 +107,9 @@ public class CommisionController {
 
     @PutMapping("/{commissionId}/reject")
     public ResponseEntity<?> rejectCommission(
-            @PathVariable Long id) {
+            @PathVariable Long commissionId) {
         try {
-            commisionService.rejectCommission(id);
+            commisionService.rejectCommission(commissionId);
             return ResponseEntity.ok("Comisión rechazada correctamente.");
         } catch (IllegalArgumentException | IllegalStateException e) {
             return ResponseEntity.badRequest().body("Error: " + e.getMessage());
@@ -120,9 +120,9 @@ public class CommisionController {
 
     @PutMapping("/{commissionId}/accept")
     public ResponseEntity<?> acceptCommission(
-            @PathVariable Long id) {
+            @PathVariable Long commissionId) {
         try {
-            commisionService.acceptCommission(id);
+            commisionService.acceptCommission(commissionId);
             return ResponseEntity.ok("Comisión pagada correctamente.");
         } catch (IllegalArgumentException | IllegalStateException e) {
             return ResponseEntity.badRequest().body("Error: " + e.getMessage());
@@ -133,9 +133,9 @@ public class CommisionController {
 
     @PutMapping("/{commissionId}/cancel")
     public ResponseEntity<?> cancelCommision(
-            @PathVariable Long id) {
+            @PathVariable Long commissionId) {
         try {
-            commisionService.cancelCommission(id);
+            commisionService.cancelCommission(commissionId);
             return ResponseEntity.ok("Comisión cancelada correctamente.");
         } catch (IllegalArgumentException | IllegalStateException e) {
             return ResponseEntity.badRequest().body("Error: " + e.getMessage());
