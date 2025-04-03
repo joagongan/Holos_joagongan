@@ -16,7 +16,7 @@ import { object, string, number } from "yup";
 import { Formik } from "formik";
 import * as ImagePicker from "expo-image-picker";
 import ProtectedRoute from "@/src/components/ProtectedRoute";
-import { updateWorkdone } from "@/src/services/uploadNewWorkArtist_2";
+import { updateWorkdone } from "@/src/services/uploadNewWorkArtist";
 import { AuthenticationContext } from "@/src/contexts/AuthContext";
 
 /**
