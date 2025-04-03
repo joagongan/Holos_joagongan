@@ -1,18 +1,17 @@
 package com.HolosINC.Holos.stripe;
 
-
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.HolosINC.Holos.artist.Artist;
-import com.HolosINC.Holos.artist.ArtistService;
+import com.HolosINC.Holos.artist.ArtistRepository;
+import com.HolosINC.Holos.exceptions.ResourceNotFoundException;
+import com.HolosINC.Holos.model.BaseUser;
 import com.HolosINC.Holos.model.BaseUserService;
 
 import com.stripe.Stripe;
-import com.stripe.exception.StripeException;
 import com.stripe.model.Customer;
 
 import com.stripe.model.Subscription;
@@ -31,23 +30,29 @@ public class PremiumSubscriptionService {
     private String priceId = "price_1R74KBPEFPLFpq6fosvWoTIi";
 
     private final BaseUserService userService;
-    private final ArtistService artistService;
+    private final ArtistRepository artistRepository;
     
 
     @Autowired
-    public PremiumSubscriptionService(BaseUserService userService, ArtistService artistService) {
+    public PremiumSubscriptionService(BaseUserService userService, ArtistRepository artistRepository) {
         this.userService = userService;
-        this.artistService = artistService;
+        this.artistRepository = artistRepository;
     }  
 
     @Transactional
-    public String createSubscription(String email, String paymentMethod, long artistId) throws StripeException {
+    public String createSubscription(String paymentMethod) throws Exception {
         Stripe.apiKey = secretKey;
-        Artist artist = artistService.findArtist(artistId);
+        BaseUser activeUser = userService.findCurrentUser();
+        Artist artist = artistRepository.findArtistByUser(activeUser.getId())
+            .orElseThrow(() -> new ResourceNotFoundException("Artist", "userId", activeUser.getId()));
+
+        if(artist.getSubscriptionId()!=null){
+            throw new Exception("Este usuario ya tiene una suscripción activa");
+        }
 
         // Crear un cliente en Stripe (si aún no tienes uno)
         CustomerCreateParams customerParams = CustomerCreateParams.builder()
-                .setEmail(email)
+                .setEmail(activeUser.getEmail())
                 .setPaymentMethod(paymentMethod)
                 .setInvoiceSettings(CustomerCreateParams.InvoiceSettings.builder()
                     .setDefaultPaymentMethod(paymentMethod).build())
@@ -64,35 +69,22 @@ public class PremiumSubscriptionService {
                 .build();
 
         Subscription subscription = Subscription.create(subscriptionParams);
-
         artist.setSubscriptionId(subscription.getId());
-        artistService.saveArtist(artist);
+        artistRepository.save(artist);
         return subscription.getId();
     }
 
     @Transactional
-    public Subscription cancelSubscription(String subscriptionId) throws StripeException {
+    public Subscription cancelSubscription(String subscriptionId) throws Exception {
         Stripe.apiKey = secretKey;
         Subscription subscription = Subscription.retrieve(subscriptionId);
+        BaseUser activeUser = userService.findCurrentUser();
+        Artist artist = artistRepository.findArtistByUser(activeUser.getId())
+            .orElseThrow(() -> new ResourceNotFoundException("Artist", "userId", activeUser.getId()));
+        if(!artist.getSubscriptionId().trim().equals(subscriptionId.trim())){
+            throw new Exception("Este usuario no es propietario de esta suscripción");
+        }
         return subscription.cancel();
-    }
-
-    @Transactional
-    public boolean isArtistPremium(long artistId) {
-        Stripe.apiKey = secretKey;
-        Artist artist = artistService.findArtist(artistId);
-        String subscriptionId = artist.getSubscriptionId();
-        
-        if (subscriptionId == null || subscriptionId.isEmpty()) {
-            return false;
-        }
-        
-        try {
-            Subscription subscription = Subscription.retrieve(subscriptionId);
-            return "active".equals(subscription.getStatus());
-        } catch (StripeException e) {
-            return false;
-        }
     }
 
 }

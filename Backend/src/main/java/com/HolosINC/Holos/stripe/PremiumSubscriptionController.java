@@ -1,8 +1,5 @@
 package com.HolosINC.Holos.stripe;
 
-
-import com.stripe.exception.StripeException;
-
 import com.stripe.model.Subscription;
 
 
@@ -25,22 +22,16 @@ public class PremiumSubscriptionController {
     private PremiumSubscriptionService stripeService;
 
     @PostMapping("/create")
-    public ResponseEntity<String> createSubscription(@RequestParam String email, @RequestParam String paymentMethod, @RequestParam long artistId) throws StripeException{
-        String accountId = stripeService.createSubscription(email, paymentMethod, artistId);
+    public ResponseEntity<String> createSubscription(@RequestParam String paymentMethod) throws Exception{
+        String accountId = stripeService.createSubscription(paymentMethod);
         return new ResponseEntity<String>(accountId, HttpStatus.OK);
     }
 
     @PostMapping("/delete/{subscriptionId}")
-    public ResponseEntity<String> cancelSubscription(@RequestParam String subscriptionId) throws StripeException{
+    public ResponseEntity<String> cancelSubscription(@RequestParam String subscriptionId) throws Exception{
         Subscription subscription = stripeService.cancelSubscription(subscriptionId);
         String subscriptionString = subscription.toJson();
         return new ResponseEntity<String>(subscriptionString, HttpStatus.OK);
-    }
-
-    @GetMapping("/artist-premium/{artistId}")
-    public ResponseEntity<Boolean> isArtistPremium(@RequestParam long artistId) throws StripeException{
-        Boolean result = stripeService.isArtistPremium(artistId);
-        return new ResponseEntity<Boolean>(result, HttpStatus.OK);
     }
 
 }

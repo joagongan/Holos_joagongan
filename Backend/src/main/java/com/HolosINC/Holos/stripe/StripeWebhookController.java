@@ -37,19 +37,14 @@ public class StripeWebhookController {
             JsonNode eventJson = objectMapper.readTree(payload);
 
             switch (event.getType()) {
-                case "account.deleted":
-                    String sellerAccountId = eventJson.get("data").get("object").get("id").asText();
-                    stripeWebhookService.handleAccountDeleted(sellerAccountId);
-                    break;
-
                 case "customer.subscription.deleted":
                     String deletedSubscriptionId = eventJson.get("data").get("object").get("id").asText();
                     stripeWebhookService.handleSubscriptionDeleted(deletedSubscriptionId);
                     break;
-                case "invoice.payment_failed":
-                    /* String deletedSubscriptionId = eventJson.get("data").get("object").get("id").asText();
-                    stripeWebhookService.handleSubscriptionDeleted(deletedSubscriptionId);
-                    break; */
+                 case "invoice.payment_failed":
+                    String failedSubscriptionId = eventJson.get("data").get("object").get("id").asText();
+                    stripeWebhookService.handleSubscriptionDeleted(failedSubscriptionId);
+                    break; 
 
                 case "customer.subscription.created":
                     String createdSubscriptionId = eventJson.get("data").get("object").get("id").asText();

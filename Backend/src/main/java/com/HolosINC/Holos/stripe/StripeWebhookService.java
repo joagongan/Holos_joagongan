@@ -4,7 +4,6 @@ import com.HolosINC.Holos.artist.Artist;
 import com.HolosINC.Holos.artist.ArtistRepository;
 import com.HolosINC.Holos.auth.Authorities;
 import com.HolosINC.Holos.auth.AuthoritiesRepository;
-import com.HolosINC.Holos.auth.AuthoritiesService;
 import com.HolosINC.Holos.exceptions.ResourceNotFoundException;
 import com.HolosINC.Holos.model.BaseUser;
 import com.HolosINC.Holos.model.BaseUserRepository;
@@ -28,38 +27,22 @@ public class StripeWebhookService {
     }
 
     @Transactional
-    public void handleAccountDeleted(String sellerAccountId) {
-        Optional<Artist> artistOpt = artistRepository.findBySellerAccountId(sellerAccountId);
-        artistOpt.ifPresent(artist -> {
-            artist.setSellerAccountId(null);
-            artistRepository.save(artist);
-        });
-    }
-
-    @Transactional
     public void handleSubscriptionDeleted(String subscriptionId) {
-        System.out.println("============================================================================================");
-        System.out.println("SUBSCRIPTION ID:"+subscriptionId);
         Optional<Artist> artistOpt = artistRepository.findBySubscriptionId(subscriptionId);
         if (artistOpt.isEmpty()) {
             System.out.println("No se encontró el artista con el subscriptionId: " + subscriptionId);
             return;
         }
         Artist artist = artistOpt.get();     
-        try {
-            BaseUser user = artist.getBaseUser();
-            Authorities auth = authoritiesRepository.findByName("ARTIST")
-                .orElseThrow(() -> new ResourceNotFoundException("Authority not found"));
-            
-            user.setAuthority(auth);
-            userRepository.save(user);
+        BaseUser user = artist.getBaseUser();
+        Authorities auth = authoritiesRepository.findByName("ARTIST")
+            .orElseThrow(() -> new ResourceNotFoundException("Authority not found"));
+        
+        user.setAuthority(auth);
+        userRepository.save(user);
 
-            artist.setSubscriptionId(null);
-            artistRepository.save(artist);
-        } catch (Exception e) {
-            System.out.println("Error procesando la suscripción eliminada: " + e.getMessage());
-            e.printStackTrace();
-        }
+        artist.setSubscriptionId(null);
+        artistRepository.save(artist);
     }
 
     @Transactional
@@ -69,7 +52,6 @@ public class StripeWebhookService {
             BaseUser user = artist.getBaseUser();
             Authorities auth = authoritiesRepository.findByName("ARTIST_PREMIUM")
                 .orElseThrow(() -> new ResourceNotFoundException("Authority not found"));
-            
             user.setAuthority(auth);
             userRepository.save(user);
             artistRepository.save(artist);
