@@ -54,6 +54,11 @@ public class ClientService {
 	}
 
 	@Transactional(readOnly = true)
+	public boolean isClient(Long userId) {
+		return !(clientRepository.getClientByUser(userId).isEmpty());
+	}
+
+	@Transactional(readOnly = true)
 	public Iterable<Client> findAll() {
 		return clientRepository.findAll();
 	}

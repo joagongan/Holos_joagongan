@@ -76,6 +76,11 @@ public class ArtistService {
 				.orElseThrow(() -> new ResourceNotFoundException("Artist", "username", username));
 	}
 
+	@Transactional(readOnly = true)
+	public boolean isArtist(Long userId) {
+		return !(artistRepository.findByUserId(userId).isEmpty());
+	}
+
 	@Transactional
 	public void deleteArtist(Long userId) {
 		try {
