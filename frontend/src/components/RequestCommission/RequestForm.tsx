@@ -10,6 +10,7 @@ import { AuthenticationContext } from "@/src/contexts/AuthContext";
 import { Artist, PaymentArrangement } from "@/src/constants/CommissionTypes";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { Platform } from "react-native";
+import { router } from "expo-router";
 
 const cameraIcon = "photo-camera";
 
@@ -64,7 +65,10 @@ export default function RequestForm({ artist }: RequestFormProps) {
         milestoneDate: values.milestoneDate?.toISOString().slice(0, 10),
       };
 
-      await createCommission( artist.id, commissionData, loggedInUser.token );
+      const createdCommission = await createCommission(artist.id, commissionData, loggedInUser.token);
+      setTimeout(() => {
+        router.push(`/commissions/${createdCommission.id}/checkout`);
+      }, 2000);
   
       Alert.alert("Success", "Commission request sent!");
     } catch (error) {

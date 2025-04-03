@@ -70,27 +70,27 @@ INSERT INTO clients (id, base_user_id) VALUES
 (21, 21),
 (22, 22);
 
-INSERT INTO artists (id, num_slots_of_work, table_commisions_price, base_user_id) VALUES 
-(1, 7, '/images/tableCommisionsPrice.png', 23),
-(2, 7, '/images/tableCommisionsPrice.png', 24),
-(3, 7, '/images/tableCommisionsPrice.png', 25),
-(4, 7, '/images/tableCommisionsPrice.png', 26),
-(5, 7, '/images/tableCommisionsPrice.png', 27),
-(6, 7, '/images/tableCommisionsPrice.png', 28),
-(7, 7, '/images/tableCommisionsPrice.png', 29),
-(8, 7, '/images/tableCommisionsPrice.png', 30),
-(9, 7, '/images/tableCommisionsPrice.png', 31),
-(10, 7, '/images/tableCommisionsPrice.png', 32),
-(11, 7, '/images/tableCommisionsPrice.png', 33),
-(12, 7, '/images/tableCommisionsPrice.png', 34),
-(13, 7, '/images/tableCommisionsPrice.png', 35),
-(14, 7, '/images/tableCommisionsPrice.png', 36),
-(15, 7, '/images/tableCommisionsPrice.png', 37),
-(16, 7, '/images/tableCommisionsPrice.png', 38),
-(17, 7, '/images/tableCommisionsPrice.png', 39),
-(18, 7, '/images/tableCommisionsPrice.png', 40),
-(19, 7, '/images/tableCommisionsPrice.png', 41),
-(20, 7, '/images/tableCommisionsPrice.png', 42);
+INSERT INTO artists (id, num_slots_of_work, table_commisions_price, base_user_id, seller_account_id) VALUES 
+(1, 7, '/images/tableCommisionsPrice.png', 23, 'acct_1R6NFEPQHM1XssL0'),
+(2, 7, '/images/tableCommisionsPrice.png', 24, 'acct_1R6NFEPQHM1XssL0'),
+(3, 7, '/images/tableCommisionsPrice.png', 25, 'acct_1R6NFEPQHM1XssL0'),
+(4, 7, '/images/tableCommisionsPrice.png', 26, 'acct_1R6NFEPQHM1XssL0'),
+(5, 7, '/images/tableCommisionsPrice.png', 27, 'acct_1R6NFEPQHM1XssL0'),
+(6, 7, '/images/tableCommisionsPrice.png', 28, 'acct_1R6NFEPQHM1XssL0'),
+(7, 7, '/images/tableCommisionsPrice.png', 29, 'acct_1R6NFEPQHM1XssL0'),
+(8, 7, '/images/tableCommisionsPrice.png', 30, 'acct_1R6NFEPQHM1XssL0'),
+(9, 7, '/images/tableCommisionsPrice.png', 31, 'acct_1R6NFEPQHM1XssL0'),
+(10, 7, '/images/tableCommisionsPrice.png', 32, 'acct_1R6NFEPQHM1XssL0'),
+(11, 7, '/images/tableCommisionsPrice.png', 33, 'acct_1R6NFEPQHM1XssL0'),
+(12, 7, '/images/tableCommisionsPrice.png', 34, 'acct_1R6NFEPQHM1XssL0'),
+(13, 7, '/images/tableCommisionsPrice.png', 35, 'acct_1R6NFEPQHM1XssL0'),
+(14, 7, '/images/tableCommisionsPrice.png', 36, 'acct_1R6NFEPQHM1XssL0'),
+(15, 7, '/images/tableCommisionsPrice.png', 37, 'acct_1R6NFEPQHM1XssL0'),
+(16, 7, '/images/tableCommisionsPrice.png', 38, 'acct_1R6NFEPQHM1XssL0'),
+(17, 7, '/images/tableCommisionsPrice.png', 39, 'acct_1R6NFEPQHM1XssL0'),
+(18, 7, '/images/tableCommisionsPrice.png', 40, 'acct_1R6NFEPQHM1XssL0'),
+(19, 7, '/images/tableCommisionsPrice.png', 41, 'acct_1R6NFEPQHM1XssL0'),
+(20, 7, '/images/tableCommisionsPrice.png', 42, 'acct_1R6NFEPQHM1XssL0');
 
 INSERT INTO categories (id, name, description, image) VALUES
 (1, 'Painting', 'Artworks created using paint on a surface', '/images/painting_category.jpg'),
@@ -120,11 +120,11 @@ INSERT INTO categories (id, name, description, image) VALUES
 
 
 INSERT INTO works_done(id, artist_id, name, description, price, image) VALUES 
-(1, 1, 'Sunset Painting', 'A beautiful sunset painting', 150.0, '/images/sunset_painting.jpg'), 
-(2, 1, 'Ocean Waves', 'A calming ocean scene with waves', 200.0, '/images/ocean_waves.jpg'), 
-(3, 1, 'Starry Night Replica', 'Inspired by Van Gogh`s Starry Night', 300.0, '/images/starry_night_replica.jpg'), 
-(4, 1, 'Abstract Art', 'A modern abstract composition', 180.0, '/images/abstract_art.jpg'),
-(5, 1, 'Forest Path', 'A peaceful forest pathway', 120.0, '/images/abstract_art.jpg');
+(25, 1, 'Sunset Painting', 'A beautiful sunset painting', 150.0, '/images/sunset_painting.jpg'), 
+(26, 1, 'Ocean Waves', 'A calming ocean scene with waves', 200.0, '/images/ocean_waves.jpg'), 
+(27, 1, 'Starry Night Replica', 'Inspired by Van Gogh`s Starry Night', 300.0, '/images/starry_night_replica.jpg'), 
+(28, 1, 'Abstract Art', 'A modern abstract composition', 180.0, '/images/abstract_art.jpg'),
+(29, 1, 'Forest Path', 'A peaceful forest pathway', 120.0, '/images/abstract_art.jpg');
 
 INSERT INTO status_kanban_order (id, artist_id, name, order_in_kanban, description, color) VALUES 
 (1, 1, 'To Do', 1, 'Tasks that need to be started', '#FF5733'),
@@ -513,9 +513,39 @@ INSERT INTO work_category(id,category_id,work_id) VALUES
 (4, 4, 4),
 (5, 5, 5);
 
-INSERT INTO report_types(id ,type) VALUES
-(1, 'SPAM'),
-(2, 'INAPPROPRIATE_CONTENT'),
-(3, 'COPYRIGHT_VIOLATION'),
-(4, 'AI_GENERATED'),
-(5, 'OTHER');
+INSERT INTO report_types (id, type) VALUES (500, 'Financial Report');
+INSERT INTO report_types (id, type) VALUES (501, 'Marketing Analysis');
+INSERT INTO report_types (id, type) VALUES (502, 'Customer Feedback');
+INSERT INTO report_types (id, type) VALUES (503, 'Technical Review');
+INSERT INTO report_types (id, type) VALUES (504, 'Annual Summary');
+
+INSERT INTO works (id, name, description, price, artist_id) 
+VALUES (500, 'Sunset Painting', 'A beautiful sunset painting', 150.00, 1);
+
+INSERT INTO works (id, name, description, price, artist_id) 
+VALUES (501, 'Abstract Vibes', 'Modern abstract artwork', 200.50, 2);
+
+INSERT INTO works (id, name, description, price, artist_id) 
+VALUES (502, 'Cityscape', 'A detailed cityscape at night', 300.00, 3);
+
+INSERT INTO works (id, name, description, price, artist_id) 
+VALUES (503, 'Portrait of a Woman', 'Realistic portrait painting', 250.75, 1);
+
+INSERT INTO works (id, name, description, price, artist_id) 
+VALUES (504, 'Sculpture: The Thinker', 'Bronze sculpture inspired by Rodin', 500.00, 4);
+
+
+INSERT INTO reports (id, name, description, status, made_by_id, reported_user_id, work_id, report_type_id) 
+VALUES (1, 'Inappropriate Content', 'This artwork contains sensitive material.', 'ACCEPTED', 1, 2, 500, 501);
+
+INSERT INTO reports (id, name, description, status, made_by_id, reported_user_id, work_id, report_type_id) 
+VALUES (2, 'Plagiarism Report', 'This work closely resembles another known piece.', 'PENDING', 3, 4, 501, 502);
+
+INSERT INTO reports (id, name, description, status, made_by_id, reported_user_id, work_id, report_type_id) 
+VALUES (3, 'Offensive Behavior', 'The artist has been using inappropriate language.', 'ACCEPTED', 5, 6, 503, 503);
+
+INSERT INTO reports (id, name, description, status, made_by_id, reported_user_id, work_id, report_type_id) 
+VALUES (4, 'Fake Account', 'This user might be impersonating someone else.', 'PENDING', 2, 7, 504, 504);
+
+INSERT INTO reports (id, name, description, status, made_by_id, reported_user_id, work_id, report_type_id) 
+VALUES (5, 'Spam Content', 'The artwork description contains promotional links.', 'REJECTED', 8, 9, 502, 500);
