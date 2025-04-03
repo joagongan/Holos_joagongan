@@ -17,8 +17,8 @@ import com.HolosINC.Holos.client.Client;
 import com.HolosINC.Holos.client.ClientRepository;
 import com.HolosINC.Holos.client.ClientService;
 import com.HolosINC.Holos.commision.DTOs.ClientCommissionDTO;
-import com.HolosINC.Holos.commision.DTOs.CommisionDTO;
 import com.HolosINC.Holos.commision.DTOs.CommisionRequestDTO;
+import com.HolosINC.Holos.commision.DTOs.CommissionDTO;
 import com.HolosINC.Holos.commision.DTOs.HistoryCommisionsDTO;
 import com.HolosINC.Holos.exceptions.ResourceNotFoundException;
 import com.HolosINC.Holos.model.BaseUser;
@@ -68,7 +68,7 @@ public class CommisionService {
     }
 
     @Transactional
-    public Commision requestChangesCommision(CommisionDTO commisionDTO, Long commisionId) throws Exception {
+    public Commision requestChangesCommision(CommissionDTO commisionDTO, Long commisionId) throws Exception {
         try {
             BaseUser user = userService.findCurrentUser();
             Commision commisionUpdated = commisionDTO.createCommision();

@@ -10,8 +10,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-
-import com.HolosINC.Holos.commision.DTOs.CommisionDTO;
 import com.HolosINC.Holos.commision.DTOs.CommisionRequestDTO;
 import com.HolosINC.Holos.commision.DTOs.CommissionDTO;
 import com.HolosINC.Holos.commision.DTOs.HistoryCommisionsDTO;
@@ -46,7 +44,7 @@ public class CommisionController {
     }
 
     @PutMapping("/{commisionId}/requestChanges")
-    public ResponseEntity<?> changeRequestedCommision(@Valid @RequestBody CommisionDTO commision, @PathVariable Long commisionId) {
+    public ResponseEntity<?> changeRequestedCommision(@Valid @RequestBody CommissionDTO commision, @PathVariable Long commisionId) {
         try {
             commisionService.requestChangesCommision(commision, commisionId);
             return ResponseEntity.noContent().build();
