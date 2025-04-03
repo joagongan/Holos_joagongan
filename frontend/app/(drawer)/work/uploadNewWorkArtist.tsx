@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useContext } from "react";
 import { View, Text, TextInput, TouchableOpacity, Image, ScrollView } from "react-native";
-import { postWorkdone } from "@/src/services/uploadNewWorkArtist_2";
+import { postWorkdone } from "@/src/services/uploadNewWorkArtist";
 import { AuthenticationContext } from "@/src/contexts/AuthContext";
 import { useRouter, useNavigation } from "expo-router";
 import {styles} from "@/src/styles/UploadNewWorkArtist";
@@ -77,6 +77,7 @@ export default function UploadWorkArtist() {
       setSelectedImage(null); 
       router.push({ pathname: "/explore" });
     } catch (error: any) {
+      console.log(error)
       popUpMovilWindows("Error", "No se pudo enviar el reporte. Intentelo de nuevo más tarde");
     }
   };
