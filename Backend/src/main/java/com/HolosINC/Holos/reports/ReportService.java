@@ -73,7 +73,6 @@ public class ReportService {
 
     @Transactional
     public Report acceptReport(Long reportId) {
-        try {
             Report report = getReportByIdOrThrow(reportId);
     
             if (report.getStatus() != ReportStatus.PENDING) {
@@ -82,12 +81,7 @@ public class ReportService {
     
             report.setStatus(ReportStatus.ACCEPTED);
     
-            return reportRepository.save(report);
-    
-        } catch (Exception e) {
-            e.printStackTrace(); 
-            throw new RuntimeException("Fallo interno al aceptar el reporte");
-        }
+            return reportRepository.save(report);  
     }
     
     
@@ -101,7 +95,7 @@ public class ReportService {
         report.setStatus(ReportStatus.REJECTED);
         return reportRepository.save(report);
     }
-    
+
     public void deleteReport(Long reportId) {
         Report report = getReportByIdOrThrow(reportId);
     

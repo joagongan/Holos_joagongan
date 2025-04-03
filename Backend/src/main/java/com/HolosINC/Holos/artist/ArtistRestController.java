@@ -57,7 +57,7 @@ class ArtistRestController {
         } catch (ResourceNotFoundException e) {
             return ResponseEntity.badRequest().body("Error: " + e.getMessage());
         } catch (Exception e) {
-            return ResponseEntity.internalServerError().body("Error interno al eliminar el cliente: " + e.getMessage());
+            return ResponseEntity.internalServerError().body("Error interno al eliminar el artista: " + e.getMessage());
         }
     }
 
