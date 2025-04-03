@@ -1,4 +1,4 @@
-package com.HolosINC.Holos.Client;
+package com.HolosINC.Holos.client;
 
 import com.HolosINC.Holos.model.BaseUserDTO;
 

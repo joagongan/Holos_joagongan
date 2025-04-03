@@ -1,4 +1,4 @@
-package com.HolosINC.Holos.Client;
+package com.HolosINC.Holos.client;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -64,6 +64,16 @@ class ClientRestController {
 			return ResponseEntity.badRequest().body("No tienes perfil, tienes que loguearte");
 		}
 	}
+	@GetMapping("/byBaseUser/{baseUserId}")
+public ResponseEntity<Client> getClientByBaseUser(@PathVariable Long baseUserId) {
+    Client client = clientService.findClientByUserId(baseUserId);
+    if(client == null) {
+        return ResponseEntity.notFound().build();
+    }
+    return ResponseEntity.ok(client);
+}
+
+
 
     @DeleteMapping("/administrator/clients/{id}")
     public ResponseEntity<?> deleteClient(@PathVariable Long id) {

@@ -26,6 +26,7 @@ export default function ArtistDetailScreen() {
   const [loading, setLoading] = useState<boolean>(true);
   const [menuVisibleId, setMenuVisibleId] = useState<number | null>(null);
 
+  const [menuVisibleId, setMenuVisibleId] = useState<number | null>(null);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -43,27 +44,22 @@ export default function ArtistDetailScreen() {
   }, [navigation, artist]);
 
   if (loading) {
-    return (
-      <LoadingScreen />
-    );
+    return <LoadingScreen />;
   }
 
   return (
-    <TouchableWithoutFeedback onPress={() => {
-      if (menuVisibleId !== null) {
-        setMenuVisibleId(null);
-      } // Cierra el menú al tocar fuera
-    }}>
+    <TouchableWithoutFeedback
+      onPress={() => {
+        if (menuVisibleId !== null) {
+          setMenuVisibleId(null);
+        }
+      }}
+    >
       <ScrollView contentContainerStyle={styles.container}>
         {/* Información del artista */}
         <View style={styles.header}>
           <Image
-            source={
-              artist?.baseUser?.imageProfile
-                ? { uri: `${BASE_URL}${atob(artist.baseUser.imageProfile)}` }
-                : undefined
-            }
-            // TODO Conseguir de imagenes estáticas
+            source={{ uri: `${API_URL}${artist?.baseUser?.imageProfile}` }}
             style={styles.artistImage}
           />
           <View style={styles.artistDetails}>
@@ -72,15 +68,33 @@ export default function ArtistDetailScreen() {
           </View>
         </View>
 
-        {/* Botones de acción */}
-        <View style={styles.buttonContainer}>
+          {/* Botones de acción */}
+          <View style={styles.buttonContainer}>
+            <TouchableOpacity
+              style={styles.button}
+              onPress={() =>
+              router.push({
+                pathname: "/commission/request/[artistId]",
+                params: { artistId: String(artist?.id) },
+              })
+            }
+            >
+              <Text style={styles.buttonText}>Solicitar trabajo</Text>
+            </TouchableOpacity>
+
+          
           <TouchableOpacity
             style={styles.button}
-            onPress={() => router.push(`/commissions/request/${artist?.baseUser.username}`)}
+            onPress={() =>
+              router.push({
+                pathname: "/chats/[toUserId]",
+                params: { toUserId: String(artist?.baseUser?.id) },
+              })
+            }
           >
-            <Text style={styles.buttonText}>Solicitar trabajo</Text>
+            <Text style={styles.buttonText}>Enviar un mensaje</Text>
           </TouchableOpacity>
-        </View>
+          </View>
 
         {/* Obras del artista */}
         <View style={styles.artworksContainer}>
