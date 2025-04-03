@@ -1,7 +1,7 @@
 import { API_URL } from "@/src/constants/api";
 import api from "@/src/services/axiosInstance";
 import { handleError } from "@/src/utils/handleError";
-import { Commission, HistoryCommisionsDTO } from "@/src/constants/CommissionTypes";
+import { Commission } from "@/src/constants/CommissionTypes";
 
 const COMMISSION_URL = `${API_URL}/commisions`;
 
@@ -15,9 +15,9 @@ export const getAllCommissions = async (): Promise<Commission[]> => {
   }
 };
 
-export const getAllRequestedCommissions = async (token:string): Promise<HistoryCommisionsDTO> => {
+export const getAllRequestedCommissions = async (): Promise<Commission[]> => {
   try {
-    const response = await api.get(`${COMMISSION_URL}/historyOfCommisions`, {headers: {Autorization: `Bearer ${token}`}});
+    const response = await api.get(`${COMMISSION_URL}/requested`);
     return response.data;
   } catch (error) {
     handleError(error, "Error fetching requested commissions");
@@ -35,6 +35,15 @@ export const getCommissionById = async (id: number): Promise<Commission> => {
   }
 };
 
+export const getClientCommissions = async (): Promise<Commission[]> => {
+  try {
+    const response = await api.get(`${COMMISSION_URL}/clientRequested`);
+    return response.data;
+  } catch (error) {
+    handleError(error, "Error fetching client commissions");
+    throw error;
+  }
+};
 
 export const createCommission = async ( commissionData: Partial<Commission>, artistId: number ): Promise<Commission> => {
   try {
@@ -46,11 +55,10 @@ export const createCommission = async ( commissionData: Partial<Commission>, art
   }
 };
 
-export const updateCommissionStatus = async ( id: number, artistId: number, accept: boolean, token:string ): Promise<Commission> => {
+export const updateCommissionStatus = async ( id: number, artistId: number, accept: boolean ): Promise<Commission> => {
   try {
     const response = await api.put(`${COMMISSION_URL}/${id}/status`, null, {
-      params: { artistId, accept }, 
-      headers: {Autorization: `Bearer ${token}`}
+      params: { artistId, accept },
     });
     return response.data;
   } catch (error) {

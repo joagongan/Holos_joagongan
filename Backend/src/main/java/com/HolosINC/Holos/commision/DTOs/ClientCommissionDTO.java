@@ -8,8 +8,6 @@ import lombok.Setter;
 public class ClientCommissionDTO {
 
     private byte[] image;
-
-    private byte[] imageProfile;
     
     private String name;
 
@@ -19,12 +17,11 @@ public class ClientCommissionDTO {
 
     private Integer totalSteps;
 
-    public ClientCommissionDTO( byte[] image, String name, String artistUsername, int currentStep, int totalSteps, byte[] imageProfile ) {
+    public ClientCommissionDTO( byte[] image, String name, String artistUsername, int currentStep, int totalSteps ) {
         this.image = image;
         this.name = name;
         this.artistUsername = artistUsername;
         this.currentStep = currentStep;
         this.totalSteps = totalSteps;
-        this.imageProfile = imageProfile;
     }
 }
