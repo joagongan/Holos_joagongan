@@ -1,16 +1,16 @@
 import axios from "axios";
 import { API_URL } from "@/src/constants/api";
-import { WorksDone } from "@/src/constants/CommissionTypes";
+import { WorksDone, Artist } from "@/src/constants/CommissionTypes";
 import api from "@/src/services/axiosInstance";
 import { handleError } from "@/src/utils/handleError";
+import { WorksDoneDTO } from "@/src/constants/ExploreTypes";
 
 const WORKS_DONE_URL = `${API_URL}/worksdone`;
 
-
-export const getAllWorksDone = async (): Promise<WorksDone[]> => {
+export const getAllWorksDone = async (): Promise<WorksDoneDTO[]> => {
   try {
     const response = await api.get(WORKS_DONE_URL);
-    return response.data;
+    return response.data; // Aquí será un array de WorksDoneDTO
   } catch (error) {
     handleError(error, "Error fetching works done");
     throw error;
@@ -27,7 +27,19 @@ export const getWorksDoneById = async (id: number): Promise<WorksDone> => {
   }
 };
 
-export const getWorksDoneByArtist = async (artistId: number): Promise<WorksDone[]> => {
+export const getAllWorksDoneDTO = async (): Promise<WorksDoneDTO[]> => {
+  try {
+    const response = await api.get(WORKS_DONE_URL);
+    return response.data; // Aquí será un array de WorksDoneDTO
+  } catch (error) {
+    handleError(error, "Error fetching works done");
+    throw error;
+  }
+};
+
+export const getWorksDoneByArtist = async (
+  artistId: number
+): Promise<WorksDone[]> => {
   try {
     const response = await api.get(`${WORKS_DONE_URL}/artist/${artistId}`);
     return response.data;
@@ -37,7 +49,9 @@ export const getWorksDoneByArtist = async (artistId: number): Promise<WorksDone[
   }
 };
 
-export const createWorksDone = async (worksDone: Partial<WorksDone>): Promise<WorksDone> => {
+export const createWorksDone = async (
+  worksDone: Partial<WorksDone>
+): Promise<WorksDone> => {
   try {
     const response = await api.post(WORKS_DONE_URL, worksDone);
     return response.data;
@@ -47,7 +61,11 @@ export const createWorksDone = async (worksDone: Partial<WorksDone>): Promise<Wo
   }
 };
 
-export const updateWorksDone = async (artistId: number, worksDoneId: number, worksDone: Partial<WorksDone>): Promise<WorksDone> => {
+export const updateWorksDone = async (
+  artistId: number,
+  worksDoneId: number,
+  worksDone: Partial<WorksDone>
+): Promise<WorksDone> => {
   try {
     const response = await api.put(
       `${WORKS_DONE_URL}/artist/${artistId}/${worksDoneId}`,
@@ -56,6 +74,28 @@ export const updateWorksDone = async (artistId: number, worksDoneId: number, wor
     return response.data;
   } catch (error) {
     handleError(error, "Error updating the work done");
+    throw error;
+  }
+};
+
+export const getWorksDoneByIdDTO = async (
+  id: number
+): Promise<WorksDoneDTO> => {
+  try {
+    const response = await api.get(`${WORKS_DONE_URL}/${id}`);
+    return response.data; // Aquí se espera un objeto de tipo WorksDoneDTO
+  } catch (error) {
+    handleError(error, "Error fetching the work done (DTO)");
+    throw error;
+  }
+};
+
+export const getMostPublicationsArtists = async (): Promise<Artist[]> => {
+  try {
+    const response = await api.get(`${WORKS_DONE_URL}/mostPublicationsArtists`);
+    return response.data;
+  } catch (error) {
+    handleError(error, "Error fetching most publications artists");
     throw error;
   }
 };

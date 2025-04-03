@@ -1,29 +1,38 @@
+// src/screens/ExploreScreen.tsx
 
-import React, { useState, useEffect, useMemo } from "react";
-import { Text, ScrollView, View, TextInput, Image, TouchableOpacity, LayoutChangeEvent, NativeSyntheticEvent, NativeScrollEvent, TouchableWithoutFeedback   } from "react-native";
-
+import React, { useState, useEffect } from "react";
+import {
+  View,
+  Text,
+  Image,
+  ScrollView,
+  TouchableOpacity,
+  useWindowDimensions,
+} from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
-import ReportDropdown from "@/src/components/report/ReportDropDown";
-import { useFonts } from "expo-font";6
+import { useFonts } from "expo-font";
 
-import { styles } from "@/src/styles/Explore.styles";
-import { BASE_URL } from "@/src/constants/api";
-import { Work } from "../../../src/constants/ExploreTypes";
+import { desktopStyles, mobileStyles } from "@/src/styles/Explore.styles";
+import ReportDropdown from "@/src/components/report/ReportDropDown";
 
 import {
   fetchWorksAndTransform,
-  getFirstThreeArtists,
-} from "../../../src/services/ExploreWorkHelpers";
-import WorkCard from "@/src/components/explore/WorkCard";
+  getTopThreeArtists,
+  decodeImagePath,
+  ArtistMin,
+} from "@/src/services/ExploreWorkHelpers";
+import { WorksDoneDTO } from "@/src/constants/ExploreTypes";
 
 export default function ExploreScreen() {
-  const [works, setWorks] = useState<Work[]>([]);
-  const [menuVisibleId, setMenuVisibleId] = useState<number | null>(null);
+  const [works, setWorks] = useState<WorksDoneDTO[]>([]);
+  // Guardamos en este estado los tres artistas obtenidos de la nueva API.
+  const [topThreeArtists, setTopThreeArtists] = useState<ArtistMin[]>([]);
   const router = useRouter();
-  // const { width } = useWindowDimensions();
-  // const isDesktop = width > 768;
-  // const styles = desktopStyles;
+  const { width } = useWindowDimensions();
+  const isDesktop = width > 768;
+  const styles = isDesktop ? desktopStyles : mobileStyles;
+  const [menuVisibleId, setMenuVisibleId] = useState<number | null>(null);
 
   const [fontsLoaded] = useFonts({
     "Merriweather-Regular": require("../../../assets/fonts/Merriweather_24pt-Regular.ttf"),
@@ -32,6 +41,7 @@ export default function ExploreScreen() {
     "Merriweather-BoldItalic": require("../../../assets/fonts/Merriweather_24pt-BoldItalic.ttf"),
   });
 
+  // Llamada a la API para obtener las obras (sección intermedia)
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -41,34 +51,42 @@ export default function ExploreScreen() {
         console.error("Error fetching works:", error);
       }
     };
-
     fetchData();
   }, []);
 
-  const firstThreeArtists = useMemo(() => getFirstThreeArtists(works), [works]);
+  // Llamada a la nueva API para obtener los tres artistas con más publicaciones
+  useEffect(() => {
+    const fetchTopArtists = async () => {
+      try {
+        const artists = await getTopThreeArtists();
+        setTopThreeArtists(artists);
+        console.log("Top three artists:", artists);
+      } catch (error) {
+        console.error("Error fetching top three artists:", error);
+      }
+    };
+    fetchTopArtists();
+  }, []);
 
   if (!fontsLoaded) {
     return null;
   }
 
   return (
-
-    <TouchableWithoutFeedback onPress={() => {
-      if (menuVisibleId !== null) {
-        setMenuVisibleId(null); // Cierra el menú al tocar fuera
-      }
-    }}>
-
-   
-    <ScrollView
-      style={{ flex: 1, backgroundColor: "#fff" }}
-      contentContainerStyle={{ flexGrow: 1 }}
-    >
+    <ScrollView style={{ flex: 1, backgroundColor: "#fff" }}>
       <View style={styles.container}>
-
         {/* Sección superior */}
         <View style={styles.topSection}>
           <Text style={styles.topSectionText}>Obras</Text>
+          <View style={styles.topSectionRight}>
+            <Text style={styles.topSectionSecondText}>Desliza</Text>
+            <Ionicons
+              name="arrow-forward"
+              size={20}
+              color="#666"
+              style={{ marginLeft: 4 }}
+            />
+          </View>
         </View>
 
         {/* Sección del medio: Obras */}
@@ -76,14 +94,29 @@ export default function ExploreScreen() {
           <ScrollView
             horizontal
             showsHorizontalScrollIndicator={false}
+            contentContainerStyle={styles.worksScrollContainer}
           >
             {works.map((work) => (
-              <WorkCard
+              <TouchableOpacity
                 key={work.id}
-                work={work}
-                menuVisibleId={menuVisibleId}
-                setMenuVisibleId={setMenuVisibleId}
-              />
+                style={styles.workItem}
+                onPress={() =>
+                  router.push({
+                    pathname: "/work/[workId]",
+                    params: { workId: String(work.id) },
+                  })
+                }
+              >
+                <Image
+                  source={{ uri: decodeImagePath(work.image) }}
+                  style={styles.workImage}
+                />
+                <View style={styles.workTextContainer}>
+                  <Text style={styles.workTitle}>{work.name}</Text>
+                  <Text style={styles.workArtist}>{work.artistName}</Text>
+                  <Text style={styles.workSubtitle}>{work.description}</Text>
+                </View>
+              </TouchableOpacity>
             ))}
           </ScrollView>
         </View>
@@ -94,26 +127,33 @@ export default function ExploreScreen() {
             <Text style={styles.bottomSectionHeaderText}>ARTISTAS</Text>
           </View>
           <View style={styles.artistsContainer}>
-          {firstThreeArtists.map((artist) => (
-            <View key={artist.id}>
-              <TouchableOpacity
-                style={styles.artistCard}
-                onPress={() => router.push({ pathname: "/profile/[artistId]", params: { artistId: String(artist.id) }})}
-              >
-                <Image
-                  source={{ uri: `${BASE_URL}${artist.baseUser?.imageProfile}`}}
-                  style={styles.artistImage}
-                />
-                <View style={styles.artistTextContainer}>
-                  <Text style={styles.artistName}>{artist.username}</Text>
-                </View>
-              </TouchableOpacity>
-            </View>
-          ))}
+            {topThreeArtists.map((artist) => {
+              // Usamos directamente artist.imageProfile para obtener la URI de la imagen
+              const imageUri = artist.imageProfile
+                ? decodeImagePath(artist.imageProfile)
+                : undefined;
+              return (
+                <TouchableOpacity
+                  key={artist.id}
+                  style={styles.artistCard}
+                  onPress={() => router.push(`/profile/${artist.id}`)}
+                >
+                  <Image
+                    source={{ uri: imageUri }}
+                    style={styles.artistImage}
+                  />
+                  <View style={styles.artistTextContainer}>
+                    <Text style={styles.artistName}>{artist.name}</Text>
+                    <Text style={styles.artistLocation}>
+                      Painter, Amsterdam
+                    </Text>
+                  </View>
+                </TouchableOpacity>
+              );
+            })}
           </View>
         </View>
       </View>
     </ScrollView>
-    </TouchableWithoutFeedback>
   );
 }
