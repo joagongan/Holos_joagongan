@@ -8,4 +8,9 @@ export const getClientById = async (baseUserId: number) => {
     console.error(`Error obteniendo cliente con baseUserId ${baseUserId}:`, error);
     throw error;
   }
+  
+};
+
+export const deleteClient = async (id: number, token:string): Promise<void> => {
+  await api.delete(`${CLIENT_URL}/administrator/clients/${id}`, { headers: { Authorization: `Bearer ${token}`}});
 };

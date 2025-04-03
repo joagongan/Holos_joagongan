@@ -26,6 +26,8 @@ export default function ArtistDetailScreen() {
   const [loading, setLoading] = useState<boolean>(true);
   const [menuVisibleId, setMenuVisibleId] = useState<number | null>(null);
 
+  const [menuVisibleId, setMenuVisibleId] = useState<number | null>(null);
+
   useEffect(() => {
     const fetchData = async () => {
       const artistData: Artist = await getArtistById(Number(artistId));
@@ -66,19 +68,19 @@ export default function ArtistDetailScreen() {
           </View>
         </View>
 
-        {/* Botones de acción */}
-        <View style={styles.buttonContainer}>
-          <TouchableOpacity
-            style={styles.button}
-            onPress={() =>
+          {/* Botones de acción */}
+          <View style={styles.buttonContainer}>
+            <TouchableOpacity
+              style={styles.button}
+              onPress={() =>
               router.push({
                 pathname: "/commission/request/[artistId]",
                 params: { artistId: String(artist?.id) },
               })
             }
-          >
-            <Text style={styles.buttonText}>Solicitar trabajo</Text>
-          </TouchableOpacity>
+            >
+              <Text style={styles.buttonText}>Solicitar trabajo</Text>
+            </TouchableOpacity>
 
           
           <TouchableOpacity
@@ -92,7 +94,7 @@ export default function ArtistDetailScreen() {
           >
             <Text style={styles.buttonText}>Enviar un mensaje</Text>
           </TouchableOpacity>
-        </View>
+          </View>
 
         {/* Obras del artista */}
         <View style={styles.artworksContainer}>
@@ -100,18 +102,18 @@ export default function ArtistDetailScreen() {
           <View style={styles.artworksList}>
             {works.map((work: Artwork) => (
               <View key={work.id} style={styles.artworkItem}>
+
                 <Image
-                  source={{ uri: `${BASE_URL}/${work.image}` }}
+                  source={
+                    work.image
+                      ? { uri: `${BASE_URL}${atob(work.image)}` }
+                      : undefined
+                  }
                   style={styles.artworkImage}
                 />
                 <Text style={styles.artworkTitle}>{work.name}</Text>
                 <View style={styles.reportDropDownContainer}>
-                  <ReportDropdown
-                    workId={work.id}
-                    menuVisibleId={menuVisibleId}
-                    setMenuVisibleId={setMenuVisibleId}
-                    isBigScreen={false}
-                  />
+                  <ReportDropdown workId={work.id} menuVisibleId={menuVisibleId} setMenuVisibleId={setMenuVisibleId} isBigScreen={false} />
                 </View>
               </View>
             ))}

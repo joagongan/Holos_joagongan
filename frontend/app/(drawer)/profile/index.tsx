@@ -1,34 +1,35 @@
 import React, { useState, useEffect, useContext } from "react";
-import { View, Text, TextInput, Image, Button, StyleSheet, Platform, ScrollView, Alert } from "react-native";
+import { View, Text, TextInput, Image, Button, StyleSheet, Platform, ScrollView, Alert, TouchableOpacity } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { AuthenticationContext } from "@/src/contexts/AuthContext";
 import { User } from "@/src/constants/CommissionTypes";
-import { API_URL } from "@/src/constants/api";
+import { API_URL, BASE_URL } from "@/src/constants/api";
 import LoadingScreen from "@/src/components/LoadingScreen";
 import { getUser } from "@/src/services/userApi";
+import colors from "@/src/constants/colors";
 
 const isWeb = Platform.OS === "web";
 
 const UserProfileScreen = () => {
   const navigation = useNavigation<any>();
   const { loggedInUser } = useContext(AuthenticationContext);
-  const [user, setUser] = useState<User|null>(null);
+  const [user, setUser] = useState<User | null>(null);
 
   useEffect(() => {
     const fetchUser = async () => {
       try {
-        const user = await getUser(loggedInUser.token);
-        setUser(user);
+        const usuario = await getUser(loggedInUser.token);
+        setUser(usuario);
       } catch (error) {
         console.error('Failed to fetch user:', error);
       }
     };
     fetchUser();
-  }, [loggedInUser?.id]);  
-  
+  }, [user?.id]);  
+
   useEffect(() => {
-      navigation.setOptions({ title: `${user?.baseUser.username}'s profile` });
-    }, [navigation, user]);
+    navigation.setOptions({ title: `${user?.baseUser.username}'s profile` });
+  }, [navigation, user]);
 
   if (!user) {
     return <LoadingScreen />;
@@ -42,7 +43,12 @@ const UserProfileScreen = () => {
       <View style={styles.container}>
         <Text style={styles.title}>{isArtist ? "ARTISTA" : "CLIENTE"}</Text>
         <Image
-          source={{ uri: `${API_URL}${user.baseUser.imageProfile}` }} // TODO Conseguir static image
+          source={
+            user?.baseUser?.imageProfile
+              ? { uri: `${BASE_URL}${atob(user.baseUser.imageProfile)}` }
+              : undefined
+          }
+          // TODO Conseguir de imagenes estáticas
           style={styles.image}
         />
         <Text style={styles.label}>
@@ -59,14 +65,11 @@ const UserProfileScreen = () => {
         <Text style={styles.fieldLabel}>Correo Electrónico:</Text>
         <TextInput style={styles.input} value={user.baseUser.email} editable={false} />
         <Text style={styles.fieldLabel}>Teléfono:</Text>
-        <TextInput
-          style={styles.input}
-          value={user.baseUser.phoneNumber}
-          editable={false}
-        />
-        {/* <View style={styles.buttonsContainer}>
-          <Button title="EDITAR" onPress={handleEdit} color="#1E3A8A" />
-        </View> */}
+        <TextInput style={styles.input} value={user.baseUser.phoneNumber} editable={false}/>
+
+        {isArtist ? <TouchableOpacity onPress={() => navigation.navigate("profile/stripe-setup")} style={styles.stripeButton}>
+            <Text style={styles.stripeButtonText}>Conectar Stripe</Text>
+          </TouchableOpacity>:<></>}
       </View>
     </ScrollView>
   );
@@ -137,6 +140,20 @@ const styles = StyleSheet.create({
     marginTop: 5,
     borderRadius: 5,
   },
+  stripeButton: {
+    backgroundColor: colors.brandPrimary,
+    paddingVertical: 12,
+    borderRadius: 10,
+    alignItems: "center",
+    marginTop: 24,
+    padding:12,
+  },
+  stripeButtonText: {
+    color: "#FFF",
+    fontWeight: "bold",
+    fontSize: 16,
+  },
+  
 });
 
 export default UserProfileScreen;

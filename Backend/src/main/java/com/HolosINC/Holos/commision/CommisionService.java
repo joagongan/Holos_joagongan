@@ -19,6 +19,8 @@ import com.HolosINC.Holos.client.ClientService;
 import com.HolosINC.Holos.commision.DTOs.ClientCommissionDTO;
 import com.HolosINC.Holos.commision.DTOs.CommisionDTO;
 import com.HolosINC.Holos.commision.DTOs.CommisionRequestDTO;
+import com.HolosINC.Holos.commision.DTOs.CommissionDTO;
+import com.HolosINC.Holos.commision.DTOs.HistoryCommisionsDTO;
 import com.HolosINC.Holos.exceptions.ResourceNotFoundException;
 import com.HolosINC.Holos.model.BaseUser;
 import com.HolosINC.Holos.model.BaseUserService;
@@ -94,27 +96,6 @@ public class CommisionService {
         }
     }
 
-    public List<Commision> getAllCommisions() {
-        return commisionRepository.findAll();
-    }
-
-    @Transactional(readOnly=true)
-    public List<Commision> getAllRequestedCommisions() {
-        try {
-            BaseUser user = userService.findCurrentUser();
-            List<Commision> commisions = null;
-
-            if (user.hasAuthority("ARTIST"))
-                commisions = commisionRepository.findAllPendingCommisionsByArtistId(user.getId());
-            if (user.hasAuthority("CLIENT"))
-                commisions = commisionRepository.findAllPendingCommisionsByClientId(user.getId());
-            
-            return commisions;
-        } catch (Exception e) {
-            throw e;
-        }
-    }
-
     public Commision getCommisionById(Long id) {
         return commisionRepository.findById(id).orElse(null);
     }
@@ -171,26 +152,71 @@ public class CommisionService {
         commisionRepository.save(commision);
     }
 
-    @Transactional
-    public List<ClientCommissionDTO> getClientCommissions() {
-        Long userId = userService.findCurrentUser().getId();
+    @Transactional(readOnly = true)
+    public HistoryCommisionsDTO getHistoryOfCommissions() throws Exception {
+        try {
+            BaseUser user = userService.findCurrentUser();
+            HistoryCommisionsDTO historyCommisionsDTO = new HistoryCommisionsDTO();
 
-        Client currentClient = clientService.findClientByUserId(userId);
-        if (currentClient == null) {
-            throw new ResourceNotFoundException("Client not found for user ID: " + userId);
+            if(user.hasAuthority("ARTIST"))
+                fillDataForArtist(user.getId(), historyCommisionsDTO);
+            else if(user.hasAuthority("CLIENT"))
+                fillDataForClient(user.getId(), historyCommisionsDTO);
+            else
+                throw new IllegalAccessException("Error al intentar acceder al historial. Primero tienes que iniciar sesión");
+
+            // Añade la información en los aceptados, del progreso en que se encuentra la comisión
+            for (ClientCommissionDTO commission : historyCommisionsDTO.getAccepted()) {
+                Integer totalSteps = statusKanbanOrderService.countByArtistUsername(commission.getArtistUsername());
+                commission.setTotalSteps(totalSteps);
+            }
+    
+            return historyCommisionsDTO;
+        } catch (IllegalAccessException e) {
+            throw e;
+        } catch (Exception e) {
+            throw e;
         }
-
-        List<ClientCommissionDTO> commissions = commisionRepository.findAllForClient(currentClient);
-
-        if (commissions == null || commissions.isEmpty()) {
-            throw new IllegalStateException("No commissions found for this client!");
-        }
-
-        for (ClientCommissionDTO commission : commissions) {
-            Integer totalSteps = statusKanbanOrderService.countByArtistUsername(commission.getArtistUsername());
-            commission.setTotalSteps(totalSteps);
-        }
-
-        return commissions;
     }
+
+    private void fillDataForArtist(Long userId, HistoryCommisionsDTO historyCommisionsDTO) {
+        historyCommisionsDTO.setRequested(
+            commisionRepository.findCommisionsFilteredByArtistIdAndPermittedStatus(
+                userId, 
+                List.of(StatusCommision.REQUESTED, StatusCommision.WAITING_ARTIST, StatusCommision.WAITING_CLIENT)
+            )
+        );
+
+        historyCommisionsDTO.setAccepted(commisionRepository.findCommissionsInProgressByArtist(userId));
+
+        historyCommisionsDTO.setHistory(
+            commisionRepository.findCommisionsFilteredByArtistIdAndPermittedStatus(
+                userId,
+                List.of(StatusCommision.REJECTED, StatusCommision.NOT_PAID_YET, StatusCommision.IN_WAIT_LIST, StatusCommision.CANCELED, StatusCommision.ENDED)
+            )
+        );
+    }
+
+    private void fillDataForClient(Long userId, HistoryCommisionsDTO historyCommisionsDTO) {
+        historyCommisionsDTO.setRequested(
+            commisionRepository.findCommisionsFilteredByClientIdAndPermittedStatus(
+                userId, 
+                List.of(StatusCommision.WAITING_ARTIST, StatusCommision.WAITING_CLIENT)
+            )
+        );
+
+        historyCommisionsDTO.setAccepted(commisionRepository.findCommissionsInProgressByClient(userId));
+
+        historyCommisionsDTO.setHistory(
+            commisionRepository.findCommisionsFilteredByClientIdAndPermittedStatus(
+                userId,
+                List.of(StatusCommision.REJECTED, StatusCommision.NOT_PAID_YET, StatusCommision.IN_WAIT_LIST, StatusCommision.CANCELED, StatusCommision.ENDED)
+            )
+        );
+    }
+
+    public boolean isStatusKanbanInUse(StatusKanbanOrder status) {
+        return commisionRepository.existsByStatusKanban(status);
+    }
+    
 }
