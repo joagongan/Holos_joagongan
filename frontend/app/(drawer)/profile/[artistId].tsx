@@ -26,8 +26,6 @@ export default function ArtistDetailScreen() {
   const [loading, setLoading] = useState<boolean>(true);
   const [menuVisibleId, setMenuVisibleId] = useState<number | null>(null);
 
-  const [menuVisibleId, setMenuVisibleId] = useState<number | null>(null);
-
   useEffect(() => {
     const fetchData = async () => {
       const artistData: Artist = await getArtistById(Number(artistId));
@@ -73,11 +71,11 @@ export default function ArtistDetailScreen() {
             <TouchableOpacity
               style={styles.button}
               onPress={() =>
-              router.push({
-                pathname: "/commission/request/[artistId]",
-                params: { artistId: String(artist?.id) },
-              })
-            }
+                router.push({
+                  pathname: "/commissions/request/[artistUsername]",
+                  params: { artistUsername: String(artist?.baseUser.username) },
+                })
+              }
             >
               <Text style={styles.buttonText}>Solicitar trabajo</Text>
             </TouchableOpacity>
