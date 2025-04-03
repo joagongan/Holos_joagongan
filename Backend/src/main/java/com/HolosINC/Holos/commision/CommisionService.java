@@ -214,4 +214,9 @@ public class CommisionService {
             )
         );
     }
+
+    public boolean isStatusKanbanInUse(StatusKanbanOrder status) {
+        return commisionRepository.existsByStatusKanban(status);
+    }
+    
 }
