@@ -38,10 +38,10 @@ export const getAllWorksDoneDTO = async (): Promise<WorksDoneDTO[]> => {
 };
 
 export const getWorksDoneByArtist = async (
-  artistId: number
+  username: string
 ): Promise<WorksDone[]> => {
   try {
-    const response = await api.get(`${WORKS_DONE_URL}/artist/${artistId}`);
+    const response = await api.get(`${WORKS_DONE_URL}/artist/${username}`);
     return response.data;
   } catch (error) {
     handleError(error, "Error fetching works done by artist");
