@@ -76,15 +76,21 @@ public class PremiumSubscriptionService {
     }
 
     @Transactional
-    public Subscription cancelSubscription(String subscriptionId) throws Exception {
+    public Subscription cancelSubscription() throws Exception {
         Stripe.apiKey = secretKey;
-        Subscription subscription = Subscription.retrieve(subscriptionId);
         BaseUser activeUser = userService.findCurrentUser();
         Artist artist = artistRepository.findArtistByUser(activeUser.getId())
             .orElseThrow(() -> new ResourceNotFoundException("Artist", "userId", activeUser.getId()));
+        String subscriptionId = artist.getSubscriptionId();
+        if(subscriptionId==null){
+            throw new Exception("Este usuario no es propietario de esta suscripción");
+        }
+        
         if(!artist.getSubscriptionId().trim().equals(subscriptionId.trim())){
             throw new Exception("Este usuario no es propietario de esta suscripción");
         }
+
+        Subscription subscription = Subscription.retrieve(subscriptionId);
         return subscription.cancel();
     }
 

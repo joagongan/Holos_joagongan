@@ -27,9 +27,9 @@ public class PremiumSubscriptionController {
         return new ResponseEntity<String>(accountId, HttpStatus.OK);
     }
 
-    @PostMapping("/delete/{subscriptionId}")
-    public ResponseEntity<String> cancelSubscription(@RequestParam String subscriptionId) throws Exception{
-        Subscription subscription = stripeService.cancelSubscription(subscriptionId);
+    @PostMapping("/delete")
+    public ResponseEntity<String> cancelSubscription() throws Exception{
+        Subscription subscription = stripeService.cancelSubscription();
         String subscriptionString = subscription.toJson();
         return new ResponseEntity<String>(subscriptionString, HttpStatus.OK);
     }
