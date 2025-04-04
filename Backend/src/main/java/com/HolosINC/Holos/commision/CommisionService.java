@@ -71,7 +71,6 @@ public class CommisionService {
     public Commision requestChangesCommision(CommisionDTO commisionDTO, Long commisionId) throws Exception {
         try {
             BaseUser user = userService.findCurrentUser();
-            Commision commisionUpdated = commisionDTO.createCommision();
             Commision commisionInBDD = commisionRepository.findById(commisionId)
                     .orElseThrow(() -> new ResourceNotFoundException("No existe la comisión que se quiere cambiar"));
 
@@ -79,20 +78,18 @@ public class CommisionService {
                     user.getId().equals(commisionInBDD.getArtist().getBaseUser().getId())))
                 throw new IllegalArgumentException("No puedes editar una comisión que no te pertenece");
 
-            if (user.hasAuthority("ARTIST"))
-                commisionUpdated.setStatus(StatusCommision.WAITING_CLIENT);
-            if (user.hasAuthority("CLIENT"))
-                commisionUpdated.setStatus(StatusCommision.WAITING_ARTIST);
+            commisionInBDD.setPrice(commisionDTO.getPrice());
 
-            BeanUtils.copyProperties(commisionUpdated, commisionInBDD);
+            if (user.hasAuthority("ARTIST"))
+                commisionInBDD.setStatus(StatusCommision.WAITING_CLIENT);
+            else if (user.hasAuthority("CLIENT"))
+                commisionInBDD.setStatus(StatusCommision.WAITING_ARTIST);
 
             return commisionRepository.save(commisionInBDD);
-        } catch (ResourceNotFoundException e) {
-            throw e;
-        } catch (IllegalArgumentException e) {
+        } catch (ResourceNotFoundException | IllegalArgumentException e) {
             throw e;
         } catch (Exception e) {
-            throw e;
+            throw new Exception(e);
         }
     }
 
@@ -313,14 +310,14 @@ public class CommisionService {
         historyCommisionsDTO.setRequested(
                 commisionRepository.findCommisionsFilteredByClientIdAndPermittedStatus(
                         userId,
-                        List.of(StatusCommision.WAITING_ARTIST, StatusCommision.WAITING_CLIENT)));
+                        List.of(StatusCommision.WAITING_ARTIST, StatusCommision.WAITING_CLIENT, StatusCommision.NOT_PAID_YET)));
 
         historyCommisionsDTO.setAccepted(commisionRepository.findCommissionsInProgressByClient(userId));
 
         historyCommisionsDTO.setHistory(
                 commisionRepository.findCommisionsFilteredByClientIdAndPermittedStatus(
                         userId,
-                        List.of(StatusCommision.REJECTED, StatusCommision.NOT_PAID_YET, StatusCommision.IN_WAIT_LIST,
+                        List.of(StatusCommision.REJECTED, StatusCommision.IN_WAIT_LIST,
                                 StatusCommision.CANCELED, StatusCommision.ENDED)));
     }
 }
