@@ -13,11 +13,11 @@ export default function PremiumScreen() {
     const navigation = useNavigation();
 
     useEffect(() => {
-        navigation.setOptions({ title: '💎 Activate Premium' });
+        navigation.setOptions({ title: '💎 Activar Holos Premium' });
     }, [navigation]);
 
     return (
-        <ProtectedRoute allowedRoles={['ARTIST']}>
+      <ProtectedRoute allowedRoles={['ARTIST']}>
         <Elements stripe={stripePromise}>
             <ScrollView contentContainerStyle={styles.scrollContainer}>
             <View style={styles.card}>
@@ -30,7 +30,7 @@ export default function PremiumScreen() {
             </View>
             </ScrollView>
         </Elements>
-        </ProtectedRoute>
+      </ProtectedRoute>
     );
 }
 

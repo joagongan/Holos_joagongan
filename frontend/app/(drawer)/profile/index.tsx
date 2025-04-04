@@ -77,9 +77,23 @@ const UserProfileScreen = () => {
         {isArtist ? <TouchableOpacity onPress={() => navigation.navigate("profile/stripe-setup")} style={styles.stripeButton}>
             <Text style={styles.stripeButtonText}>Conectar Stripe</Text>
           </TouchableOpacity>:<></>}
-        {isArtist ? <TouchableOpacity onPress={() => navigation.navigate("profile/premium")} style={styles.stripeButton}>
-            <Text style={styles.stripeButtonText}>Holos Premium</Text>
-          </TouchableOpacity>:<></>}
+        {isArtist && (
+          isPremium ? (
+            <TouchableOpacity
+              onPress={() => navigation.navigate("profile/premium/cancel")}
+              style={styles.stripeButton}
+            >
+              <Text style={styles.stripeButtonText}>Cancelar Holos Premium</Text>
+            </TouchableOpacity>
+          ) : (
+            <TouchableOpacity
+              onPress={() => navigation.navigate("profile/premium/index")}
+              style={styles.stripeButton}
+            >
+              <Text style={styles.stripeButtonText}>Holos Premium</Text>
+            </TouchableOpacity>
+          )
+        )}
       </View>
     </ScrollView>
   );
