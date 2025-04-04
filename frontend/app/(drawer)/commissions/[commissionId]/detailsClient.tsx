@@ -7,6 +7,7 @@ import { CommissionProtected } from "@/src/constants/CommissionTypes";
 import { AuthenticationContext } from "@/src/contexts/AuthContext";
 import ProtectedRoute from "@/src/components/ProtectedRoute";
 import { styles } from "@/src/styles/CommissionDetail.styles";
+import * as yup from 'yup';
 
 export default function CommissionDetailsScreen() {
   const { commissionId } = useLocalSearchParams();
@@ -14,9 +15,17 @@ export default function CommissionDetailsScreen() {
   const [commission, setCommission] = useState<CommissionProtected | null>(null);
   const [loading, setLoading] = useState(true);
   const [isEditingPrice, setIsEditingPrice] = useState(false);
-  const [newPrice, setNewPrice] = useState<string>(""); // Solo se usa si se puede fijar el precio
+  const [newPrice, setNewPrice] = useState<string>("");
   const [totalPrice, setTotalPrice] = useState<number>(0);
   const { loggedInUser } = useContext(AuthenticationContext);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+
+  const priceValidationSchema = yup.object().shape({
+    newPrice: yup
+      .string()
+      .required("El precio es obligatorio")
+      .matches(/^\d+(\.\d{1,2})?$/, "El precio debe ser un número con hasta 2 decimales"),
+  });
 
   useEffect(() => {
     const fetchCommission = async () => {
@@ -25,7 +34,7 @@ export default function CommissionDetailsScreen() {
           const data = await getCommissionByIdDetails(Number(commissionId));
           setCommission(data);
           setNewPrice(data.price.toString());
-          setTotalPrice(data.price + data.price * 0.05); // Calcula el precio total con el porcentaje adicional
+          setTotalPrice(data.price + data.price * 0.06);
         }
       } catch (error) {
         console.error("Error al obtener detalles de la comisión:", error);
@@ -45,11 +54,19 @@ export default function CommissionDetailsScreen() {
   const handleAccept = async () => {
     if (commission) {
       try {
-        await acceptCommission(commission.id, loggedInUser.token); // Realiza el pago
-        alert("Comisión pagada exitosamente");
-      } catch (error) {
-        console.error("Error al realizar el pago:", error);
-        alert("Hubo un error al realizar el pago");
+        await acceptCommission(commission.id, loggedInUser.token);
+        alert("Comisión aceptada");
+      } catch (error:any) {
+        let errorMessage = "Hubo un error al aceptar pagar la comisión";
+        if (error.response?.data) {
+          if (typeof error.response.data === "string") {
+            errorMessage = error.response.data.replace(/^Error:\s*/, '');
+          }
+          else if (typeof error.response.data === "object" && error.response.data.message) {
+            errorMessage = error.response.data.message;
+          }
+        }
+        setErrorMessage(errorMessage);
       }
     }
   };
@@ -57,11 +74,19 @@ export default function CommissionDetailsScreen() {
   const handleReject = async () => {
     if (commission) {
       try {
-        await rejectCommission(commission.id, loggedInUser.token); // Rechaza la comisión
+        await rejectCommission(commission.id, loggedInUser.token);
         alert("Comisión rechazada");
-      } catch (error) {
-        console.error("Error al rechazar la comisión:", error);
-        alert("Hubo un error al rechazar la comisión");
+      } catch (error:any) {
+        let errorMessage = "Hubo un error al rechazar la comisión";
+        if (error.response?.data) {
+          if (typeof error.response.data === "string") {
+            errorMessage = error.response.data.replace(/^Error:\s*/, '');
+          }
+          else if (typeof error.response.data === "object" && error.response.data.message) {
+            errorMessage = error.response.data.message;
+          }
+        }
+        setErrorMessage(errorMessage);
       }
     }
   };
@@ -71,14 +96,19 @@ export default function CommissionDetailsScreen() {
 
     try {
       if (isEditingPrice) {
-        const updatedCommission = { ...commission, price: parseFloat(newPrice) }; // Actualiza el precio
+        await priceValidationSchema.validate({ newPrice });
+        const updatedCommission = { ...commission, price: parseFloat(newPrice) };
         await requestChangesCommission(commission.id, updatedCommission, loggedInUser.token);
         setIsEditingPrice(!isEditingPrice);
       }
       alert("Precio actualizado con éxito");
     } catch (error) {
-      console.error("Error al actualizar el precio:", error);
-      alert("Hubo un error al actualizar el precio");
+      if (error instanceof yup.ValidationError) {
+        setErrorMessage(error.message);
+      } else {
+        console.error("Error al actualizar el precio:", error);
+        alert("Hubo un error al actualizar el precio");
+      }
     }
   };
 
@@ -120,6 +150,7 @@ export default function CommissionDetailsScreen() {
           </View>
 
           <View style={styles.rightSection}>
+            <Text style={styles.errorText}>{errorMessage}</Text>
             <View style={styles.imagePlaceholder}>
               {commission.imageProfile ? (
                 <Image source={{ uri: commission.imageProfile }} style={styles.clientImage} />

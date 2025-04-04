@@ -7,6 +7,7 @@ import { CommissionProtected } from "@/src/constants/CommissionTypes";
 import { AuthenticationContext } from "@/src/contexts/AuthContext";
 import ProtectedRoute from "@/src/components/ProtectedRoute";
 import { styles } from "@/src/styles/CommissionDetail.styles";
+import * as yup from 'yup';
 
 export default function CommissionDetailsScreen() {
   const { commissionId } = useLocalSearchParams();
@@ -17,6 +18,14 @@ const [commission, setCommission] = useState<CommissionProtected | null>(null);
   const [newPrice, setNewPrice] = useState<string>("");
   const [totalPrice, setTotalPrice] = useState<number>(0);
   const { loggedInUser } = useContext(AuthenticationContext);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+
+  const priceValidationSchema = yup.object().shape({
+      newPrice: yup
+        .string()
+        .required("El precio es obligatorio")
+        .matches(/^\d+(\.\d{1,2})?$/, "El precio debe ser un número con hasta 2 decimales"),
+    });
 
   useEffect(() => {
     const fetchCommission = async () => {
@@ -25,7 +34,7 @@ const [commission, setCommission] = useState<CommissionProtected | null>(null);
           const data = await getCommissionByIdDetails(Number(commissionId));
           setCommission(data);
           setNewPrice(data.price.toString());
-          setTotalPrice(data.price + data.price * 0.05);
+          setTotalPrice(data.price + data.price * 0.06);
         }
       } catch (error) {
         console.error("Error al obtener detalles de la comisión:", error);
@@ -47,9 +56,17 @@ const [commission, setCommission] = useState<CommissionProtected | null>(null);
       try {
         await toPayCommission(commission.id, loggedInUser.token);
         alert("Comisión aceptada");
-      } catch (error) {
-        console.error("Error al aceptar la comisión:", error);
-        alert("Hubo un error al aceptar la comisión");
+      } catch (error:any) {
+        let errorMessage = "Hubo un error al aceptar la comisión";
+        if (error.response?.data) {
+          if (typeof error.response.data === "string") {
+            errorMessage = error.response.data.replace(/^Error:\s*/, '');
+          }
+          else if (typeof error.response.data === "object" && error.response.data.message) {
+            errorMessage = error.response.data.message;
+          }
+        }
+        setErrorMessage(errorMessage);
       }
     }
   };
@@ -59,26 +76,40 @@ const [commission, setCommission] = useState<CommissionProtected | null>(null);
       try {
         await rejectCommission(commission.id, loggedInUser.token);
         alert("Comisión rechazada");
-      } catch (error) {
-        console.error("Error al rechazar la comisión:", error);
-        alert("Hubo un error al rechazar la comisión");
+      } catch (error:any) {
+        let errorMessage = "Hubo un error al rechazar la comisión";
+        if (error.response?.data) {
+          if (typeof error.response.data === "string") {
+            errorMessage = error.response.data.replace(/^Error:\s*/, '');
+          }
+          else if (typeof error.response.data === "object" && error.response.data.message) {
+            errorMessage = error.response.data.message;
+          }
+        }
+        setErrorMessage(errorMessage);
       }
     }
   };
+  
 
   const handleSavePrice = async () => {
     if (!commission || !commission.id || !loggedInUser.token) return;
     
     try {
       if (isEditingPrice) {
+      await priceValidationSchema.validate({ newPrice });
       const updatedCommission = { ...commission, price: parseFloat(newPrice) }; // Convert `newPrice` to a number
       await requestChangesCommission(commission.id, updatedCommission, loggedInUser.token);
       setIsEditingPrice(!isEditingPrice);
     }
       alert("Precio actualizado con éxito");
     } catch (error) {
-      console.error("Error al actualizar el precio:", error);
-      alert("Hubo un error al actualizar el precio");
+      if (error instanceof yup.ValidationError) {
+        setErrorMessage(error.message);
+      } else {
+        console.error("Error al actualizar el precio:", error);
+        alert("Hubo un error al actualizar el precio");
+      }
     }
   };
   
@@ -121,6 +152,7 @@ const [commission, setCommission] = useState<CommissionProtected | null>(null);
           </View>
 
           <View style={styles.rightSection}>
+            <Text style={styles.errorText}>{errorMessage}</Text>
             <View style={styles.imagePlaceholder}>
               {commission.imageProfile ? (
                 <Image source={{ uri: commission.imageProfile }} style={styles.clientImage} />

@@ -123,7 +123,6 @@ export const cancelCommission = async (id: number, token: string): Promise<void>
 
 export const requestChangesCommission = async (id: number, updatedCommission: CommissionProtected, token: string) => {
   try {
-    console.log("Enviando cambios para la comisión:", updatedCommission);  // Verifica lo que se está enviando
     await api.put(`${COMMISSION_URL}/${id}/requestChanges`, updatedCommission, {
       headers: { Authorization: `Bearer ${token}` },
     });
