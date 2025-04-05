@@ -18,7 +18,7 @@ const PaymentDetails = ({ commission }: Props) => {
 
       <View style={styles.separator} />
 
-      <View style={styles.row}><Text style={styles.label}>Total:</Text><View style={styles.dots} /><Text style={styles.total}>{commission.price}€</Text></View>
+      <View style={styles.row}><Text style={styles.label}>Total:</Text><View style={styles.dots} /><Text style={styles.total}>{(commission.price * 1.06).toFixed(2)}€</Text></View>
     </View>
   );
 };
