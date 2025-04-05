@@ -5,11 +5,13 @@ import { createPaymentIntent } from "@/src/services/stripeApi";
 import colors from "@/src/constants/colors";
 import { useRouter } from "expo-router";
 import { AuthenticationContext } from "@/src/contexts/AuthContext";
+import { acceptCommission, getCommissionById } from "@/src/services/commisionApi";
 
 interface PaymentFormProps {
   amount: number;
   commissionId: number;
   description: string;
+  status: string;
 }
 
 const acceptedCards = [
@@ -19,7 +21,7 @@ const acceptedCards = [
   "Diners",
 ];
 
-const PaymentForm: React.FC<PaymentFormProps> = ({ amount, commissionId, description }) => {
+const PaymentForm: React.FC<PaymentFormProps> = ({ amount, commissionId, description,status }) => {
   const stripe = useStripe();
   const elements = useElements();
   const router = useRouter();
@@ -33,6 +35,10 @@ const PaymentForm: React.FC<PaymentFormProps> = ({ amount, commissionId, descrip
 
     if (!stripe || !elements) {
       setError("Stripe no está disponible 😿");
+      return;
+    }
+    if (status != "NOT_PAID_YET" ) {
+      setError("Esta comisión ya fue pagada o no está disponible para pago.");
       return;
     }
 
@@ -50,12 +56,33 @@ const PaymentForm: React.FC<PaymentFormProps> = ({ amount, commissionId, descrip
         setError(result.error.message || "Ocurrió un error 😿");
       } else if (result.paymentIntent?.status === "succeeded") {
         setSuccess(true);
+        handleAccept();
         setTimeout(() => {
             router.replace('/');
         }, 2500);
       }
     } catch (err) {
       setError("No se pudo completar el pago 😿");
+    }
+  };
+
+  const handleAccept = async () => {
+    if (commissionId) {
+      try {
+        await acceptCommission(commissionId, loggedInUser.token);
+        alert("Comisión aceptada");
+      } catch (error:any) {
+        let errorMessage = "Hubo un error al aceptar pagar la comisión";
+        if (error.response?.data) {
+          if (typeof error.response.data === "string") {
+            errorMessage = error.response.data.replace(/^Error:\s*/, '');
+          }
+          else if (typeof error.response.data === "object" && error.response.data.message) {
+            errorMessage = error.response.data.message;
+          }
+        }
+        setError(errorMessage);
+      }
     }
   };
 

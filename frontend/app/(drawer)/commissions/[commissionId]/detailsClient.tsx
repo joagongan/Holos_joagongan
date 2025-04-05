@@ -2,7 +2,7 @@ import { useLocalSearchParams, useRouter } from "expo-router";
 import { useContext, useEffect, useState } from "react";
 import { View, Text, Image, StyleSheet, ScrollView, ActivityIndicator, TouchableOpacity, TextInput } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import { acceptCommission, rejectCommission, getCommissionByIdDetails, requestChangesCommission, toPayCommission } from "@/src/services/commisionApi";
+import { acceptCommission, rejectCommission, getCommissionByIdDetails, requestChangesCommission, toPayCommission, waitingCommission } from "@/src/services/commisionApi";
 import { CommissionProtected } from "@/src/constants/CommissionTypes";
 import { AuthenticationContext } from "@/src/contexts/AuthContext";
 import ProtectedRoute from "@/src/components/ProtectedRoute";
@@ -51,23 +51,14 @@ export default function CommissionDetailsScreen() {
     setTotalPrice(price + price * 0.05); // Recalcular el precio total al cambiar el precio
   }, [newPrice]);
 
+  
+
   const handleAccept = async () => {
-    if (commission) {
-      try {
-        await acceptCommission(commission.id, loggedInUser.token);
-        alert("Comisión aceptada");
-      } catch (error:any) {
-        let errorMessage = "Hubo un error al aceptar pagar la comisión";
-        if (error.response?.data) {
-          if (typeof error.response.data === "string") {
-            errorMessage = error.response.data.replace(/^Error:\s*/, '');
-          }
-          else if (typeof error.response.data === "object" && error.response.data.message) {
-            errorMessage = error.response.data.message;
-          }
-        }
-        setErrorMessage(errorMessage);
-      }
+    if (commission && commission.status == "NOT_PAID_YET" ) {
+      router.push(`/commissions/${commission.id}/checkout`);
+
+    } else {
+      alert("La comisión no está disponible para pagar");
     }
   };
 
@@ -99,21 +90,33 @@ export default function CommissionDetailsScreen() {
         await priceValidationSchema.validate({ newPrice });
         const updatedCommission = { ...commission, price: parseFloat(newPrice) };
         await requestChangesCommission(commission.id, updatedCommission, loggedInUser.token);
+        await waitingCommission(commission.id, loggedInUser.token);
         setIsEditingPrice(!isEditingPrice);
       }
       alert("Precio actualizado con éxito");
-    } catch (error) {
+    } catch (error: any) {
+      let errorMessage = "Hubo un error al actualizar el precio";
+  
       if (error instanceof yup.ValidationError) {
-        setErrorMessage(error.message);
-      } else {
-        console.error("Error al actualizar el precio:", error);
-        alert("Hubo un error al actualizar el precio");
+        errorMessage = error.message;
+      } else if (error.response?.data) {
+        if (typeof error.response.data === "string") {
+          errorMessage = error.response.data.replace(/^Error:\s*/, '');
+        } else if (
+          typeof error.response.data === "object" &&
+          error.response.data.message
+        ) {
+          errorMessage = error.response.data.message;
+        }
       }
+  
+      setErrorMessage(errorMessage);
+      console.error("Error al actualizar el precio:", error);
     }
   };
 
   const handleEditPrice = () => {
-    setIsEditingPrice(true); // Habilitar la edición del precio
+    setIsEditingPrice(true); 
   };
 
   if (loading) {
@@ -180,7 +183,7 @@ export default function CommissionDetailsScreen() {
             </TouchableOpacity>
 
             <View style={styles.buttonRow}>
-              <TouchableOpacity style={styles.acceptButton} /*onPress={handleAccept}*/>
+              <TouchableOpacity style={styles.acceptButton} onPress={handleAccept}>
                 <Text style={styles.buttonText}>PAGAR</Text>
               </TouchableOpacity>
               <TouchableOpacity style={styles.rejectButton} onPress={handleReject}>

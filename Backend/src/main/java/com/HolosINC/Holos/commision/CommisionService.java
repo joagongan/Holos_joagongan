@@ -79,12 +79,6 @@ public class CommisionService {
                 throw new IllegalArgumentException("No puedes editar una comisión que no te pertenece");
 
             commisionInBDD.setPrice(commisionDTO.getPrice());
-
-            if (user.hasAuthority("ARTIST"))
-                commisionInBDD.setStatus(StatusCommision.WAITING_CLIENT);
-            else if (user.hasAuthority("CLIENT"))
-                commisionInBDD.setStatus(StatusCommision.WAITING_ARTIST);
-
             return commisionRepository.save(commisionInBDD);
         } catch (ResourceNotFoundException | IllegalArgumentException e) {
             throw e;

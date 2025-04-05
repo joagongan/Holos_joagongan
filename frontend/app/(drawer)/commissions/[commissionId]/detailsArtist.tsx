@@ -100,16 +100,28 @@ const [commission, setCommission] = useState<CommissionProtected | null>(null);
       await priceValidationSchema.validate({ newPrice });
       const updatedCommission = { ...commission, price: parseFloat(newPrice) }; // Convert `newPrice` to a number
       await requestChangesCommission(commission.id, updatedCommission, loggedInUser.token);
+      await waitingCommission(commission.id, loggedInUser.token);
       setIsEditingPrice(!isEditingPrice);
     }
       alert("Precio actualizado con éxito");
-    } catch (error) {
+    } catch (error: any) {
+      let errorMessage = "Hubo un error al actualizar el precio";
+  
       if (error instanceof yup.ValidationError) {
-        setErrorMessage(error.message);
-      } else {
-        console.error("Error al actualizar el precio:", error);
-        alert("Hubo un error al actualizar el precio");
+        errorMessage = error.message;
+      } else if (error.response?.data) {
+        if (typeof error.response.data === "string") {
+          errorMessage = error.response.data.replace(/^Error:\s*/, '');
+        } else if (
+          typeof error.response.data === "object" &&
+          error.response.data.message
+        ) {
+          errorMessage = error.response.data.message;
+        }
       }
+  
+      setErrorMessage(errorMessage);
+      console.error("Error al actualizar el precio:", error);
     }
   };
   
