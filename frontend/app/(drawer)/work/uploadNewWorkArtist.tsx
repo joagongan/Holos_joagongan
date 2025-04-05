@@ -1,6 +1,6 @@
-import React, { useState, useEffect, useContext } from "react";
+import React, { useState, useEffect, useContext, useCallback } from "react";
 import { View, Text, TextInput, TouchableOpacity, Image, ScrollView } from "react-native";
-import { postWorkdone } from "@/src/services/uploadNewWorkArtist";
+import { postWorkdone, getAbilityPost } from "@/src/services/uploadNewWorkArtist";
 import { AuthenticationContext } from "@/src/contexts/AuthContext";
 import { useRouter, useNavigation } from "expo-router";
 import {styles} from "@/src/styles/UploadNewWorkArtist";
@@ -12,6 +12,7 @@ import { Formik } from "formik";
 import * as ImagePicker from "expo-image-picker"; 
 import ProtectedRoute from "@/src/components/ProtectedRoute";
 import {newWorkArtist } from "@/src/constants/uploadNewWorkArtist";
+import { useFocusEffect } from '@react-navigation/native';
 
 
 
@@ -23,11 +24,29 @@ export default function UploadWorkArtist() {
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const router = useRouter();
   const navigation = useNavigation();
-  const [inputValue, setInputValue] = useState("");
+  const [inputValue, setInputValue] = useState<string>("");
+  const [abilityPost, setabilityPost] = useState<Boolean>(false);
 
   useEffect(() => {
     navigation.setOptions("Subir una nueva obra al portafolio");
   }, [navigation]);
+
+  useFocusEffect(
+    useCallback(() => {
+      const fetchAbilityPost = async () => {
+        try {
+          const data = await getAbilityPost(loggedInUser.token);
+          setabilityPost(data);
+          console.log(data)
+        } catch (error) {
+          console.error("Error fetching abilityPost:", error);
+        }
+      };
+ 
+  
+      fetchAbilityPost();
+    }, []) 
+  );
 
 
   const uploadNewWorkValidationSchema = object({
@@ -187,13 +206,10 @@ export default function UploadWorkArtist() {
     );
   };
 
-
-  // isArtist se deberá  modificar por un booleano que indique si el usuario puede subir una obra o no, en base  si tiene o no
-  //  una cuenta gratuita y si ya ha subido más de 7 obras en el caso de que no tenga cuenta premium
   return (
     <View style={styles.container}>
       <ProtectedRoute allowedRoles={["ARTIST"]}>
-      {!isArtist ? enableUpload() : unableUpload()}  
+      {abilityPost ? enableUpload() : unableUpload()}  
 
       </ProtectedRoute>
     </View>

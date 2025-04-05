@@ -6,6 +6,21 @@ const worksdone_URL = `${API_URL}/worksdone`;
 
 
 
+export const getAbilityPost = async (
+  token: string
+): Promise<Boolean> => {
+  const response = await api.get(`${worksdone_URL}/can-upload`, {
+    headers: {
+      "Content-Type": "multipart/form-data",
+      "Authorization": `Bearer ${token}`,
+    },
+  });
+console.log(response.data)
+  return response.data;
+
+};
+
+
 const base64ToFile = (base64Data: string, filename: string): File => {
   const arr = base64Data.split(',');
   const mimeMatch = arr[0].match(/:(.*?);/);
