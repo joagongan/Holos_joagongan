@@ -20,8 +20,8 @@ public class CommisionRequestDTO {
 
     public Date milestoneDate;
 
-    public Double price; // TODO Refinar cómo se va a realizar el acuerdo
-
+    public Double price;
+    
     public Commision createCommision() {
         Commision commision = new Commision();
         commision.setName(this.getName());

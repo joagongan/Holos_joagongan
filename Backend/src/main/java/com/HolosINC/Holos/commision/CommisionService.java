@@ -17,7 +17,6 @@ import com.HolosINC.Holos.client.Client;
 import com.HolosINC.Holos.client.ClientRepository;
 import com.HolosINC.Holos.client.ClientService;
 import com.HolosINC.Holos.commision.DTOs.ClientCommissionDTO;
-import com.HolosINC.Holos.commision.DTOs.CommisionDTO;
 import com.HolosINC.Holos.commision.DTOs.CommisionRequestDTO;
 import com.HolosINC.Holos.commision.DTOs.CommissionDTO;
 import com.HolosINC.Holos.commision.DTOs.HistoryCommisionsDTO;
@@ -32,6 +31,7 @@ public class CommisionService {
     private final ClientRepository clientRepository;
     private final ArtistService artistService;
     private final BaseUserService userService;
+    @SuppressWarnings("unused")
     private final ClientService clientService;
     private final StatusKanbanOrderService statusKanbanOrderService;
 
@@ -68,7 +68,7 @@ public class CommisionService {
     }
 
     @Transactional
-    public Commision requestChangesCommision(CommisionDTO commisionDTO, Long commisionId) throws Exception {
+    public Commision requestChangesCommision(CommissionDTO commisionDTO, Long commisionId) throws Exception {
         try {
             BaseUser user = userService.findCurrentUser();
             Commision commisionInBDD = commisionRepository.findById(commisionId)
@@ -320,4 +320,9 @@ public class CommisionService {
                         List.of(StatusCommision.REJECTED, StatusCommision.IN_WAIT_LIST,
                                 StatusCommision.CANCELED, StatusCommision.ENDED)));
     }
+
+    public boolean isStatusKanbanInUse(StatusKanbanOrder status) {
+        return commisionRepository.existsByStatusKanban(status);
+    }
+    
 }

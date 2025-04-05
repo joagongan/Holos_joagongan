@@ -1,7 +1,7 @@
 import { API_URL } from "@/src/constants/api";
 import api from "@/src/services/axiosInstance";
 import { handleError } from "@/src/utils/handleError";
-import { Commission, CommissionProtected, HistoryCommisionsDTO } from "@/src/constants/CommissionTypes";
+import { Commission, CommissionDTO, CommissionProtected, HistoryCommisionsDTO } from "@/src/constants/CommissionTypes";
 
 const COMMISSION_URL = `${API_URL}/commisions`;
 
@@ -29,8 +29,7 @@ export const getAllRequestedCommissions = async (token: string): Promise<History
   }
 };
 
-// Obtener una comisión por ID
-export const getCommissionById = async (id: number): Promise<Commission> => {
+export const getCommissionById = async (id: number): Promise<CommissionDTO> => {
   try {
     const response = await api.get(`${COMMISSION_URL}/${id}`);
     return response.data;

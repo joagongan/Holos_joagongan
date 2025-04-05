@@ -51,4 +51,17 @@ public class CommissionDTO {
         this.image = commision.getImage();
         this.imageProfile = commision.getArtist().getBaseUser().getImageProfile();
     }
+
+    public Commision createCommision() {
+        Commision commision = new Commision();
+        commision.setId(this.id);
+        commision.setName(this.name);
+        commision.setDescription(this.description);
+        commision.setPrice(this.price);
+        commision.setStatus(this.status);
+        commision.setPaymentArrangement(this.paymentArrangement);
+        commision.setMilestoneDate(this.milestoneDate);
+        commision.setImage(this.image);
+        return commision;
+    }
 }
