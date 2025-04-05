@@ -19,12 +19,13 @@ export default function DrawerLayout() {
         <Drawer.Screen name="login" options={{ drawerLabel: "Inicio de sesión", drawerIcon: ProfileIcon, drawerItemStyle: { display: isAuthenticated?'none':'flex', height: 'auto' } }} />
         <Drawer.Screen name="search/index" options={{ drawerLabel: "Buscar", title: "🔍 Buscar", drawerIcon: () => <Text style={{ fontSize: 22 }}>🔍</Text>, drawerItemStyle: { display: 'flex', height: 'auto' } }} />
         <Drawer.Screen name="signup" options={{ drawerLabel: "Registrar", drawerIcon: ProfileIcon, drawerItemStyle: { display: isAuthenticated?'none':'flex', height: 'auto' } }} />
-        <Drawer.Screen name="explore/index" options={{ drawerLabel: "Explorar", title:"🔍 Explorar", drawerIcon: () => <Text style={{ fontSize: 22 }}>🔍</Text>, drawerItemStyle: { display: 'flex', height: 'auto' } }} />
+        <Drawer.Screen name="explore/index" options={{ drawerLabel: "Explorar", title:"🧭 Explorar", drawerIcon: () => <Text style={{ fontSize: 22 }}>🧭</Text>, drawerItemStyle: { display: 'flex', height: 'auto' } }} />
+        <Drawer.Screen name="kanban/index" options={{ drawerLabel: "Encargos",title: "🎨 Mis encargos", drawerIcon: () => <Text style={{ fontSize: 22 }}>🎨</Text>, drawerItemStyle: { display: isArtist ? 'flex' : 'none', height: isArtist ? 'auto' : 0 } }} />
         <Drawer.Screen name="admin/index" options={{ drawerLabel: "Panel Admin", drawerIcon: SettingsIcon, drawerItemStyle: { display: isAdmin ? 'flex' : 'none', height: isAdmin ? 'auto' : 0 } }} />
-        <Drawer.Screen name="kanban" options={{ drawerLabel: "Panel de comisiones",title: "🎨 Mis encargos", drawerIcon: () => <Text style={{ fontSize: 22 }}>🎨</Text>, drawerItemStyle: { display: isArtist ? 'flex' : 'none', height: isArtist ? 'auto' : 0 } }} />
         <Drawer.Screen name="commissions/index" options={{ drawerLabel: "Pedidos", title:"📦 Mis pedidos", drawerIcon: () => <Text style={{ fontSize: 22 }}>📦</Text>, drawerItemStyle: { display: isArtist || isClient ? 'flex' : 'none', height: isArtist || isClient ? 'auto' : 0 } }} />
-        <Drawer.Screen name="logout" options={{ drawerLabel: "Cerrar sesión", title:"🚪 Cerrar sesión", drawerIcon: () => <Text style={{ fontSize: 22 }}>🚪</Text>, drawerItemStyle: { display: isAuthenticated ? 'flex' : 'none', height: isAuthenticated ? 'auto' : 0 } }} />
+        <Drawer.Screen name="chats/chat" options={{drawerLabel: "Mis Chats",title: " Mis Chats",drawerIcon: () => <Text style={{ fontSize: 22 }}>💬</Text>,drawerItemStyle: {display: isAuthenticated ? "flex" : "none",height: isAuthenticated ? "auto" : 0,},}}/>
         <Drawer.Screen name="work/uploadNewWorkArtist" options={{ drawerLabel: "Subir obra", title:"  Subir obra", drawerIcon: () => <Text style={{ fontSize: 22 }}>⬆️</Text>, drawerItemStyle: { display: isArtist ? 'flex' : 'none', height: isArtist ? 'auto' : 0 } }} />
+        <Drawer.Screen name="logout" options={{ drawerLabel: "Cerrar sesión", title:"🚪 Cerrar sesión", drawerIcon: () => <Text style={{ fontSize: 22 }}>🚪</Text>, drawerItemStyle: { display: isAuthenticated ? 'flex' : 'none', height: isAuthenticated ? 'auto' : 0 } }} />
 
         </Drawer>
       )}

@@ -5,7 +5,6 @@ import { AuthenticationContext } from "@/src/contexts/AuthContext";
 import { useRouter, useNavigation } from "expo-router";
 import {styles} from "@/src/styles/UploadNewWorkArtist";
 import popUpMovilWindows from "@/src/components/PopUpAlertMovilWindows";
-import { TextInputMask } from 'react-native-masked-text';
 import Icon from "react-native-vector-icons/MaterialIcons";
 import { object, string, number } from "yup";
 import { Formik } from "formik";
@@ -14,9 +13,6 @@ import ProtectedRoute from "@/src/components/ProtectedRoute";
 import {newWorkArtist } from "@/src/constants/uploadNewWorkArtist";
 import { useFocusEffect } from '@react-navigation/native';
 
-
-
-const MaskedInput = TextInputMask as any;
 const cameraIcon = "photo-camera";
 
 export default function UploadWorkArtist() {
@@ -139,37 +135,26 @@ export default function UploadWorkArtist() {
               {errors.description && touched.description && (<Text style={styles.errorText}>{errors.description}</Text>)}
 
               <Text style={styles.formLabel}>¿Cuál es el precio de la obra?</Text>
-              <MaskedInput
-                type={"money"}
-                options={{
-                  precision: 2,
-                  separator: ",",
-                  delimiter: ".",
-                  unit: "",
-                  suffixUnit: " €",
-                  }}
-                keyboardType="numeric" 
-                value={inputValue}
-                onChangeText={(text: string) => {
-                  setInputValue(text);
-
-                const cleaned = text
-                  .replace(/\s/g, "")
-                  .replace("€", "")
-                  .replace(/\./g, "")
-                  .replace(",", ".");
-
-                if (cleaned.trim() === "" || isNaN(Number(cleaned))) {
-                  setFieldValue("price", null); 
-                } else {
+              <Text style={styles.formLabel}>¿Cuál es el precio de la obra?</Text>
+              <TextInput
+                style={styles.inputCostWork}
+                placeholder="0,00"
+                placeholderTextColor="#888"
+                keyboardType="decimal-pad"
+                value={values.price ? String(values.price) : ""}
+                onChangeText={(text) => {
+                  const cleaned = text
+                    .replace(/\s/g, "")
+                    .replace(",", ".")
+                    .replace(/[^\d.]/g, ""); // remove everything except numbers and dot
                   setFieldValue("price", Number(cleaned));
-                }
                 }}
                 onBlur={handleBlur("price")}
-                placeholder="0,00 €"
-                placeholderTextColor="#888"
-                style={styles.inputCostWork}
-            />
+              />
+              <Text style={styles.inputCostWork}>
+                {values.price ? `${values.price.toFixed(2)} €` : "0,00 €"}
+              </Text>
+
             {errors.price && touched.price && (<Text style={styles.errorText}>Por favor, inserte un valor</Text>)}
               {/* Image Preview */}
               <View style={styles.previewImageContainer}>

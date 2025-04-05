@@ -1,16 +1,8 @@
 import React, { useState, useEffect, useContext } from "react";
-import {
-  View,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  Image,
-  ScrollView,
-} from "react-native";
+import { View, Text, TextInput, TouchableOpacity, Image, ScrollView } from "react-native";
 import { useRouter, useNavigation, useLocalSearchParams } from "expo-router";
 import { styles } from "@/src/styles/UploadNewWorkArtist";
 import popUpMovilWindows from "@/src/components/PopUpAlertMovilWindows";
-import { TextInputMask } from "react-native-masked-text";
 import Icon from "react-native-vector-icons/MaterialIcons";
 import { object, string, number } from "yup";
 import { Formik } from "formik";
@@ -30,7 +22,7 @@ interface RouteParams {
     currentDescription?: string;
     currentPrice?: string;
   }
-const MaskedInput: any = TextInputMask;
+// const MaskedInput: any = TextInputMask;
 const cameraIcon = "photo-camera";
 
 export default function UpdateWorkArtist() {
@@ -204,36 +196,15 @@ await updateWorkdone(
               )}
 
               <Text style={styles.formLabel}>Precio de la obra</Text>
-              <MaskedInput
-                type="money"
-                options={{
-                  precision: 2,
-                  separator: ",",
-                  delimiter: ".",
-                  unit: "",
-                  suffixUnit: " €",
-                }}
+              <TextInput
                 keyboardType="numeric"
-                value={inputValue}
-                onChangeText={(text: string) => {
-                  setInputValue(text);
-                  const cleaned = text
-                    .replace(/\s/g, "")
-                    .replace("€", "")
-                    .replace(/\./g, "")
-                    .replace(",", ".");
-
-                  if (cleaned.trim() === "" || isNaN(Number(cleaned))) {
-                    setFieldValue("price", 0);
-                  } else {
-                    setFieldValue("price", Number(cleaned));
-                  }
-                }}
-                onBlur={handleBlur("price")}
-                placeholder="0,00 €"
-                placeholderTextColor="#888"
-                style={styles.inputCostWork}
+                onChangeText={handleChange("price")}
+                value={String(values.price)}
               />
+              <Text style={styles.inputCostWork}>
+                {values.price > 0 ? `${values.price.toFixed(2)} €` : "0,00 €"}
+              </Text>
+
               {errors.price && touched.price && (
                 <Text style={styles.errorText}>Por favor, inserte un valor</Text>
               )}
