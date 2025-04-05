@@ -16,7 +16,7 @@ import { object, string, number } from "yup";
 import { Formik } from "formik";
 import * as ImagePicker from "expo-image-picker";
 import ProtectedRoute from "@/src/components/ProtectedRoute";
-import { updateWorkdone } from "@/src/services/uploadNewWorkArtist_2";
+import { updateWorkdone } from "@/src/services/uploadNewWorkArtist";
 import { AuthenticationContext } from "@/src/contexts/AuthContext";
 
 /**
@@ -110,21 +110,22 @@ export default function UpdateWorkArtist() {
         return;
       }
 
-      // Objeto con datos de la obra
-      const workToUpdate = {
-        name: values.name,
-        description: values.description,
-        price: values.price,
-      };
+      // Objeto con los datos de la obra (newWorkArtist)
+const workToUpdate = {
+  name: values.name,
+  description: values.description,
+  price: values.price,
+};
 
-      // Llamamos a nuestra función de servicio
-      await updateWorkdone(
-        artistId,
-        worksDoneId,
-        workToUpdate,
-        selectedImage, // Si no hay imagen, es null, y en backend se conserva la anterior
-        loggedInUser.token
-      );
+// Llamada correcta al servicio:
+await updateWorkdone(
+  workToUpdate,         // <-- newWorkArtist
+  selectedImage,        // <-- string | null
+  Number(artistId),     // <-- number
+  Number(worksDoneId),  // <-- number
+  loggedInUser.token    // <-- string
+);
+
 
       popUpMovilWindows("Éxito", "¡Obra actualizada correctamente!");
 
