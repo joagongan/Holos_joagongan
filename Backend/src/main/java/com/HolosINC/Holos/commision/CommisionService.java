@@ -304,7 +304,7 @@ public class CommisionService {
         historyCommisionsDTO.setRequested(
                 commisionRepository.findCommisionsFilteredByClientIdAndPermittedStatus(
                         userId,
-                        List.of(StatusCommision.WAITING_ARTIST, StatusCommision.WAITING_CLIENT, StatusCommision.NOT_PAID_YET)));
+                        List.of(StatusCommision.REQUESTED, StatusCommision.WAITING_ARTIST, StatusCommision.WAITING_CLIENT, StatusCommision.NOT_PAID_YET)));
 
         historyCommisionsDTO.setAccepted(commisionRepository.findCommissionsInProgressByClient(userId));
 
