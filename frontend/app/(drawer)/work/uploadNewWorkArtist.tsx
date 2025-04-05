@@ -37,9 +37,7 @@ export default function UploadWorkArtist() {
           console.error("Error fetching whether the artist is allowed to post:", error);
         }
       };
- 
-  
-      fetchAbilityPost();
+       fetchAbilityPost();
     }, []) 
   );
 

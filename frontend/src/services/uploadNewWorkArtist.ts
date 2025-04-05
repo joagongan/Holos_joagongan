@@ -11,7 +11,7 @@ export const getAbilityPost = async (
 ): Promise<Boolean> => {
   const response = await api.get(`${worksdone_URL}/can-upload`, {
     headers: {
-      "Content-Type": "multipart/form-data",
+      "Content-Type": "application/json",
       "Authorization": `Bearer ${token}`,
     },
   });
