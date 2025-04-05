@@ -122,10 +122,10 @@ public class WorksDoneController {
 
         boolean isPremium = artist.getBaseUser().hasAuthority("ARTIST_PREMIUM");
         long worksCount = worksDoneService.countByArtistId(artist.getId());
-
-        boolean canUpload = !isPremium && worksCount >= 7;
-        return ResponseEntity.ok(canUpload);
         
+        boolean canUpload = (!isPremium && worksCount >= 7) || isPremium ;
+        return ResponseEntity.ok(canUpload);
+
     }
 
 }
