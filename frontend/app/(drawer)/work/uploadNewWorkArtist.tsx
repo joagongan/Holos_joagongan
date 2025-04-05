@@ -132,7 +132,6 @@ export default function UploadWorkArtist() {
               {errors.description && touched.description && (<Text style={styles.errorText}>{errors.description}</Text>)}
 
               <Text style={styles.formLabel}>¿Cuál es el precio de la obra?</Text>
-              <Text style={styles.formLabel}>¿Cuál es el precio de la obra?</Text>
               <TextInput
                 style={styles.inputCostWork}
                 placeholder="0,00"
