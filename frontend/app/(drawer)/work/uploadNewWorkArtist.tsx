@@ -33,9 +33,8 @@ export default function UploadWorkArtist() {
         try {
           const data = await getAbilityPost(loggedInUser.token);
           setabilityPost(data);
-          console.log(data)
         } catch (error) {
-          console.error("Error fetching abilityPost:", error);
+          console.error("Error fetching whether the artist is allowed to post:", error);
         }
       };
  
