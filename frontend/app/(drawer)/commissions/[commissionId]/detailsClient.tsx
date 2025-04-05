@@ -48,7 +48,7 @@ export default function CommissionDetailsScreen() {
 
   useEffect(() => {
     const price = parseFloat(newPrice) || 0;
-    setTotalPrice(price + price * 0.05); // Recalcular el precio total al cambiar el precio
+    setTotalPrice(price + price * 0.06);
   }, [newPrice]);
 
   
@@ -129,9 +129,7 @@ export default function CommissionDetailsScreen() {
 
   if (!commission) {
     return (
-      <View style={styles.container}>
-        <Text style={styles.errorText}>No se encontraron detalles para esta comisión.</Text>
-      </View>
+      router.push(`/`)
     );
   }
 

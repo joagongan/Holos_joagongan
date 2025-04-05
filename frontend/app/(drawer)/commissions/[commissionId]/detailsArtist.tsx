@@ -37,7 +37,7 @@ const [commission, setCommission] = useState<CommissionProtected | null>(null);
           setTotalPrice(data.price + data.price * 0.06);
         }
       } catch (error) {
-        console.error("Error al obtener detalles de la comisión:", error);
+        router.push(`/`);
       } finally {
         setLoading(false);
       }
@@ -48,7 +48,7 @@ const [commission, setCommission] = useState<CommissionProtected | null>(null);
 
   useEffect(() => {
     const price = parseFloat(newPrice) || 0;
-    setTotalPrice(price + price * 0.05);
+    setTotalPrice(price + price * 0.06);
   }, [newPrice]);
 
   const handleAccept = async () => {

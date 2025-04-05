@@ -6,6 +6,8 @@ import java.util.Optional;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -87,11 +89,27 @@ public class CommisionService {
         }
     }
 
-    public CommissionDTO getCommisionById(Long id) {
-        CommissionDTO commission = new CommissionDTO(commisionRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Commision", "id", id)));
-        return commission;
+    @Transactional
+    public CommissionDTO getCommisionById(Long commisionId) throws Exception {
+        try {
+            BaseUser user = userService.findCurrentUser();
+
+            Commision commisionInBDD = commisionRepository.findById(commisionId)
+                    .orElseThrow(() -> new ResourceNotFoundException("No existe la comisión con el ID proporcionado"));
+
+            if (!(user.getId().equals(commisionInBDD.getClient().getBaseUser().getId()) ||
+                    user.getId().equals(commisionInBDD.getArtist().getBaseUser().getId())))
+                throw new IllegalArgumentException("No tienes permiso para acceder a esta comisión");
+
+            return new CommissionDTO(commisionInBDD);
+            
+        } catch (ResourceNotFoundException | IllegalArgumentException e) {
+            throw e; 
+        } catch (Exception e) {
+            throw new Exception("Error al obtener la comisión: " + e.getMessage(), e);
+        }
     }
+
 
     @Transactional
     public Commision updateCommisionStatus(Long commisionId, boolean accept) {
