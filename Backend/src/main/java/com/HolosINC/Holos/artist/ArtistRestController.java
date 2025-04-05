@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.HolosINC.Holos.Profile.ProfileService;
-import com.HolosINC.Holos.exceptions.ResourceNotFoundException;
 import com.HolosINC.Holos.model.BaseUserDTO;
 
 import io.swagger.v3.oas.annotations.Operation;

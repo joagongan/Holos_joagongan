@@ -31,7 +31,6 @@ public class CommisionService {
     private final ClientRepository clientRepository;
     private final ArtistService artistService;
     private final BaseUserService userService;
-    @SuppressWarnings("unused")
     private final ClientService clientService;
     private final StatusKanbanOrderService statusKanbanOrderService;
 
