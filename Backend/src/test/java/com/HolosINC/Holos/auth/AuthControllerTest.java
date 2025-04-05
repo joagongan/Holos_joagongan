@@ -17,10 +17,8 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import org.springframework.mock.web.MockMultipartFile;
 
 import com.HolosINC.Holos.auth.payload.request.LoginRequest;
-import com.HolosINC.Holos.auth.payload.request.SignupRequest;
 import com.HolosINC.Holos.configuration.jwt.JwtUtils;
 import com.HolosINC.Holos.configuration.service.UserDetailsImpl;
 import com.HolosINC.Holos.model.BaseUserService;

@@ -1,5 +1,6 @@
 package com.HolosINC.Holos.chat;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -10,7 +11,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.HolosINC.Holos.commision.Commision;
 import com.HolosINC.Holos.commision.CommisionRepository;
-import com.HolosINC.Holos.commision.CommisionService;
 import com.HolosINC.Holos.exceptions.AccessDeniedException;
 import com.HolosINC.Holos.exceptions.ResourceNotFoundException;
 import com.HolosINC.Holos.model.BaseUser;
@@ -41,7 +41,7 @@ public class ChatMessageService {
     }
 
     @Transactional(readOnly = true)
-    public List<ChatMessage> findConversationByCommisionId(Long commisionId) {
+    public List<ChatMessage> findConversationByCommisionId(Long commisionId) throws Exception{
         BaseUser user = baseUserService.findCurrentUser();
         Commision commision = commisionRepository.findById(commisionId).orElse(null);
         if (commision == null) {
@@ -65,10 +65,10 @@ public class ChatMessageService {
 
         Map<Long, List<ChatMessage>> conversations = new HashMap<>();
         for (ChatMessage message : chatMessages) {
-            if(conversations.keySet().contains(message.getCommision().getId())) {
+            if (conversations.containsKey(message.getCommision().getId())) {
                 conversations.get(message.getCommision().getId()).add(message);
             } else {
-                conversations.put(message.getCommision().getId(), List.of(message));
+                conversations.put(message.getCommision().getId(), new ArrayList<>(List.of(message)));
             }
         }
 
