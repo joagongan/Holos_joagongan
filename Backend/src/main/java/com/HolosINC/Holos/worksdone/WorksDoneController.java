@@ -29,13 +29,12 @@ public class WorksDoneController {
 
     @Autowired
     public WorksDoneController(WorksDoneService worksDoneService,
-                               ArtistService artistService,
-                               BaseUserService baseUserService) {
+            ArtistService artistService,
+            BaseUserService baseUserService) {
         this.worksDoneService = worksDoneService;
         this.artistService = artistService;
         this.baseUserService = baseUserService;
     }
-
 
     @PostMapping(consumes = { "multipart/form-data" })
     public ResponseEntity<WorksDoneDTO> createWorksDone(
@@ -85,10 +84,8 @@ public class WorksDoneController {
             @PathVariable("artistId") Long artistId,
             @PathVariable("worksDoneId") Long worksDoneId,
             @RequestPart("work") String workJson,
-            @RequestPart(value = "image", required = false) MultipartFile imageFile
-    ) throws IOException {
+            @RequestPart(value = "image", required = false) MultipartFile imageFile) throws IOException {
 
-        
         ObjectMapper mapper = new ObjectMapper();
         WorksDoneDTO dto = mapper.readValue(workJson, WorksDoneDTO.class);
         WorksDone existingWork = worksDoneService.getWorksDoneById(worksDoneId);
@@ -104,7 +101,7 @@ public class WorksDoneController {
             dto.setImage(existingWork.getImage());
         }
         WorksDone workToUpdate = dto.createWorksDone();
-        workToUpdate.setId(existingWork.getId());       // Mantenemos el mismo ID
+        workToUpdate.setId(existingWork.getId()); // Mantenemos el mismo ID
         workToUpdate.setArtist(existingWork.getArtist()); // Mantenemos el mismo artista
         WorksDone updated = worksDoneService.updateWorksDone(workToUpdate, worksDoneId, artistId);
 
@@ -116,7 +113,7 @@ public class WorksDoneController {
         Long currentUserId = baseUserService.findCurrentUser().getId();
         Artist artist = baseUserService.findArtist(currentUserId);
 
-        boolean isPremium = artist.getAuthority().equals("ARTIST_PREMIUM");
+        boolean isPremium = artist.getBaseUser().hasAuthority("ARTIST_PREMIUM");
         long worksCount = worksDoneService.countByArtistId(artist.getId());
 
         boolean canUpload = isPremium || worksCount <= 7;
