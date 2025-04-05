@@ -36,17 +36,25 @@ public class WorksDoneController {
     }
 
     @PostMapping(consumes = { "multipart/form-data" })
-    public ResponseEntity<WorksDoneDTO> createWorksDone(
+    public ResponseEntity<?> createWorksDone(
             @RequestPart("work") String workJson,
             @RequestPart("image") MultipartFile imageFile) throws IOException {
 
         ObjectMapper mapper = new ObjectMapper();
         WorksDoneDTO dto = mapper.readValue(workJson, WorksDoneDTO.class);
-
         dto.setImage(imageFile.getBytes());
 
         Long currentUserId = baseUserService.findCurrentUser().getId();
         Artist artist = baseUserService.findArtist(currentUserId);
+
+        boolean isPremium = artist.getBaseUser().hasAuthority("ARTIST_PREMIUM");
+        long worksCount = worksDoneService.countByArtistId(artist.getId());
+
+        if (!isPremium && worksCount >= 7) {
+            return ResponseEntity
+                    .status(HttpStatus.FORBIDDEN)
+                    .body("Has alcanzado el límite de 7 obras. Hazte premium para subir más.");
+        }
 
         WorksDone work = dto.createWorksDone();
         work.setArtist(artist);

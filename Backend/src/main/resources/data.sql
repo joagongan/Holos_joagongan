@@ -46,7 +46,8 @@ INSERT INTO base_user (id, first_name, username, password, email, phone_number, 
 (40,'Rafael', 'rafaelcastillo_artist','$2a$10$KHEzZb0ioIjGoAYqvUX6G.5q6apcUxxMCY.dLXpnTgZnuFjkMLfdG', 'rafaelcastillocebolla2@gmail.com', '671168164','/images/nobita.jpg', '2025-03-06', 3),
 (41,'Mohamed', 'mohamed_artist','$2a$10$/xzsXNtwVMPX4eIu1coLYeBWvN7DDMiuzAE39B3M3fCt1SvVPo73u', 'mohmmedabourihhh2@gmail.com', '602171961','/images/nobita.jpg', '2025-03-06', 3),
 (42,'Enrique', 'enrique_artist','$2a$10$tbDdopmXHspY4l2iTHMJl.wFf/btZGataJBHRRdenrDHRSsHh/GlC', 'kiquegaraba2@gmail.com', '600619217','/images/nobita.jpg', '2025-03-06', 3),
-(43, 'admin1', 'admin1', '$2b$10$OHjdYNE5IRkwWb5R1NtPGeIyb2l8xShgxjIZHG7bZn1WI3jfIntRi', 'admin1@gmail.com', '600619217', NULL, '2025-03-06', 1);
+(43, 'admin1', 'admin1', '$2b$10$OHjdYNE5IRkwWb5R1NtPGeIyb2l8xShgxjIZHG7bZn1WI3jfIntRi', 'admin1@gmail.com', '600619217', NULL, '2025-03-06', 1),
+(44, 'ArtistaPremium', 'premium_artist', '$2a$12$Rei2PsecjBwwGRyHPAuNPu0xPnLf9cTFh1mXfa3HKpP/LQ5Pah1di','premium.artist@example.com', '600123456','/images/premium_artist.jpg','2025-04-05', 4 );
 
 INSERT INTO clients (id, base_user_id) VALUES
 (1, 1),
@@ -91,7 +92,8 @@ INSERT INTO artists (id, num_slots_of_work, table_commisions_price, base_user_id
 (17, 7, '/images/tableCommisionsPrice.png', 39, null),
 (18, 7, '/images/tableCommisionsPrice.png', 40, null),
 (19, 7, '/images/tableCommisionsPrice.png', 41, null),
-(20, 7, '/images/tableCommisionsPrice.png', 42, null);
+(20, 7, '/images/tableCommisionsPrice.png', 42, null),
+(21, 7, '/images/tableCommisionsPrice.png', 44, null);
 
 INSERT INTO categories (id, name, description, image) VALUES
 (1, 'Painting', 'Artworks created using paint on a surface', '/images/painting_category.jpg'),
