@@ -102,30 +102,21 @@ public class AuthController {
 			@RequestPart(value = "tableCommissionsPrice", required = false) MultipartFile tableCommissionsPrice) {
 
 		try {
-			// Convertir el JSON plano a objeto Java
 			ObjectMapper objectMapper = new ObjectMapper();
 			SignupRequest signupRequest = objectMapper.readValue(signupRequestJson, SignupRequest.class);
 
-			// Validar y asignar la imagen de perfil
 			if (imageProfile != null && !imageProfile.isEmpty()) {
 				signupRequest.setImageProfile(imageProfile);
 			}
 
-			// Validar y asignar la imagen del precio del tablero de comisiones
 			if (tableCommissionsPrice != null && !tableCommissionsPrice.isEmpty()) {
 				signupRequest.setTableCommissionsPrice(tableCommissionsPrice);
 			}
 
-			// Registrar usuario
 			authService.createUser(signupRequest);
 			return ResponseEntity.ok(new MessageResponse("User registered successfully!"));
-
-		} catch (IllegalArgumentException e) {
-			return ResponseEntity.badRequest().body(e.getMessage());
 		} catch (Exception e) {
-			e.printStackTrace(); // Para ver el error en consola
-			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-					.body(new MessageResponse("Error during registration: " + e.getMessage()));
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new MessageResponse("Error during registration: " + e.getMessage()));
 		}
 	}
 
