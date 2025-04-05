@@ -25,21 +25,20 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 @Tag(name = "Artist", description = "API for managing artists")
 class ArtistRestController {
 
-	private final ArtistService artistService;
-
-	@Autowired
-	public ArtistRestController(ArtistService artistService) {
-		this.artistService = artistService;
+    private final ArtistService artistService;
+    
+    private final ProfileService profileService;
+	
+    @Autowired
+	public ArtistRestController(ArtistService artistService, ProfileService profileService) {
+        this.artistService = artistService;
+        this.profileService = profileService;
 	}
-	@Autowired
-    private ProfileService profileService;
+	
 
     @PutMapping("/update")
     public ResponseEntity<BaseUserDTO> updateProfile(@RequestBody BaseUserDTO baseUserDTO) {
-        // Llamamos al servicio para actualizar el perfil y usamos findCurrentUser() para obtener el id
         BaseUserDTO updatedUserDTO = profileService.updateProfile(baseUserDTO);
-        
-        // Devolvemos el resultado de la actualización, que será el mismo DTO con los datos actualizados
         return ResponseEntity.ok(updatedUserDTO);
     
 	}
@@ -56,17 +55,20 @@ class ArtistRestController {
         try {
             artistService.deleteArtist(id);
             return ResponseEntity.ok().body("Cliente eliminado exitosamente");
-        } catch (ResourceNotFoundException e) {
-            return ResponseEntity.badRequest().body("Error: " + e.getMessage());
         } catch (Exception e) {
-            return ResponseEntity.internalServerError().body("Error interno al eliminar el artista: " + e.getMessage());
+            return ResponseEntity.badRequest().body("Error: " + e.getMessage());
         }
     }
 
 	@GetMapping(value = "username/{username}")
 	@Operation(summary = "Get artist", description = "Retrieve a list of all artists")
 	public ResponseEntity<Artist> findByUsername(@PathVariable("username") String username) {
-		return new ResponseEntity<>(artistService.findArtistByUsername(username), HttpStatus.OK);
+		try {
+            Artist artist = artistService.findArtistByUsername(username);
+            return new ResponseEntity<>(artist, HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
 	}
 
 }

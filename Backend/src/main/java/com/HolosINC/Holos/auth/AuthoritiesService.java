@@ -137,7 +137,7 @@ public class AuthoritiesService {
 	}
 
 	@Transactional
-	public void deleteUser(Long id) {
+	public void deleteUser(Long id) throws Exception{
 		BaseUser user = baseUserService.findCurrentUser();
 		if (user.getId() != id) {
 			throw new AccessDeniedException("No puedes eliminar un usuario que no eres tu");

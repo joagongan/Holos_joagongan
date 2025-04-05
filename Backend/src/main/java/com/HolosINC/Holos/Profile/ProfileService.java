@@ -9,6 +9,8 @@ import com.HolosINC.Holos.model.BaseUserDTO;
 import com.HolosINC.Holos.model.BaseUserService;
 import com.HolosINC.Holos.util.EntityToDTOMapper;
 
+import io.swagger.v3.oas.annotations.parameters.RequestBody;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,22 +27,18 @@ public class ProfileService {
     private ClientService clientService;
 
     @Transactional
-    public BaseUserDTO updateProfile(BaseUserDTO baseUserDTO) {
-        // Verificamos que el usuario que está haciendo la solicitud sea el usuario
-        // actual
+    public BaseUserDTO updateProfile(@RequestBody BaseUserDTO baseUserDTO) {
         BaseUser currentUser = baseUserService.findCurrentUser();
-
         Artist artist = artistService.findArtist(currentUser.getId());
+
         if (artist != null) {
-            // Si encontramos al artista, actualizamos los datos del artista
             artist.getBaseUser().setName(baseUserDTO.getName());
             artist.getBaseUser().setEmail(baseUserDTO.getEmail());
             artist.getBaseUser().setPhoneNumber(baseUserDTO.getPhoneNumber());
             artist.getBaseUser().setImageProfile(baseUserDTO.getImageProfile());
 
             artistService.saveArtist(artist);
-            return EntityToDTOMapper.toArtistDTO(
-                    artist);
+            return EntityToDTOMapper.toArtistDTO(artist);
         }
 
         // Si no es un artista, intentamos encontrarlo como cliente

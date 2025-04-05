@@ -46,8 +46,12 @@ public class PaymentController {
 
     @PostMapping("/create/{commissionId}")
     public ResponseEntity<String> createPayment(@RequestBody PaymentDTO paymentDTO, @PathVariable long commissionId) throws StripeException {
-        String paymentIntent = paymentService.createPayment(paymentDTO, commissionId);
-        return new ResponseEntity<String>(paymentIntent, HttpStatus.OK);
+        try {
+            String paymentIntent = paymentService.createPayment(paymentDTO, commissionId);
+            return new ResponseEntity<String>(paymentIntent, HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
     }
 
     @PostMapping("/confirm")

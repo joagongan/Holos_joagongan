@@ -59,7 +59,7 @@ public class PaymentService {
     }
 
     @Transactional
-    public String createPayment(PaymentDTO paymentDTO, long commisionId) throws StripeException {
+    public String createPayment(PaymentDTO paymentDTO, long commisionId) throws StripeException, Exception {
         Stripe.apiKey = secretKey;
         CommissionDTO commision = commisionService.getCommisionById(commisionId);
         BaseUser activeUser = userService.findCurrentUser();

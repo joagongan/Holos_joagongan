@@ -140,8 +140,12 @@ public class AuthController {
 
 	@DeleteMapping("/delete/{id}")
 	public ResponseEntity<MessageResponse> deleteUser(@RequestParam Long id) {
-		authService.deleteUser(id);
-		return ResponseEntity.ok(new MessageResponse("User deleted successfully!"));
+		try {
+			authService.deleteUser(id);
+			return ResponseEntity.ok(new MessageResponse("User deleted successfully!"));
+		} catch (Exception e) {
+			return ResponseEntity.badRequest().body(new MessageResponse("Error: " + e.getMessage()));
+		}
 	}
 
 }

@@ -1,7 +1,7 @@
 package com.HolosINC.Holos.artist;
 
 import java.util.Optional;
-
+import java.nio.file.AccessDeniedException;
 import java.util.Collections;
 import java.util.List;
 import com.HolosINC.Holos.Category.ArtistCategory;
@@ -66,7 +66,7 @@ public class ArtistService {
 	}
 
 	@Transactional(readOnly = true)
-	public Artist findArtistByUsername(String username) {
+	public Artist findArtistByUsername(String username) throws Exception{
 		return artistRepository.findByUsername(username)
 				.orElseThrow(() -> new ResourceNotFoundException("Artist", "username", username));
 	}
@@ -77,12 +77,11 @@ public class ArtistService {
 	}
 
 	@Transactional
-	public void deleteArtist(Long userId) {
+	public void deleteArtist(Long userId) throws Exception {
 		try {
 			Artist artist = artistRepository.findArtistByUser(userId)
 				.orElseThrow(() -> new ResourceNotFoundException("Artist", "id", userId));
 			Long artistId = artist.id;
-					
 
 			List<Commision> commisions = Optional.ofNullable(commisionRepository.findAll())
 				.orElse(Collections.emptyList())
@@ -90,12 +89,11 @@ public class ArtistService {
 				.filter(c -> c.getArtist() != null && artistId.equals(c.getArtist().getId()))
 				.toList();
 
-
 			boolean hasAccepted = commisions.stream()
 					.anyMatch(c -> c.getStatus() == StatusCommision.ACCEPTED);
 
 			if (hasAccepted) {
-				throw new IllegalStateException("No se puede eliminar al artista porque tiene comisiones en estado ACCEPTED.");
+				throw new AccessDeniedException("No se puede eliminar al artista porque tiene comisiones en estado ACCEPTED.");
 			}
 
 			for (Commision c : commisions) {
@@ -123,12 +121,8 @@ public class ArtistService {
 
 			artistRepository.delete(artist);
 
-		} catch (ResourceNotFoundException e) {
-			throw new ResourceNotFoundException("Error: El artista con ID " + userId + " no existe.");
-		} catch (IllegalStateException e) {
-			throw e;
 		} catch (Exception e) {
-			throw new RuntimeException("Error al eliminar el artista con ID " + userId + ": " + e.getMessage());
+			throw new ResourceNotFoundException("Error: El artista con ID " + userId + " no existe.");
 		}
 	}
 	
