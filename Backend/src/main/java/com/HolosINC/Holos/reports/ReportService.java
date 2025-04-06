@@ -19,14 +19,14 @@ public class ReportService {
     
     private final ReportRepository reportRepository;
     private final ReportTypeRepository reportTypeRepository;
-    private final WorkService worskService;
+    private final WorkService workService;
     private final BaseUserService baseUserService;
 
     @Autowired
-    public ReportService(ReportRepository reportRepository, ReportTypeRepository reportTypeRepository, WorkService worskService, BaseUserService baseUserService) {
+    public ReportService(ReportRepository reportRepository, ReportTypeRepository reportTypeRepository, WorkService workService, BaseUserService baseUserService) {
         this.reportRepository = reportRepository;
         this.reportTypeRepository = reportTypeRepository;
-        this.worskService = worskService;
+        this.workService = workService;
         this.baseUserService = baseUserService;
     }
 
@@ -40,14 +40,14 @@ public class ReportService {
 
     public Report createReport(ReportDTO reportDTO) throws Exception {
         try {
-            Work work = worskService.getWorkById(reportDTO.getWorkId());
+            Work work = workService.getWorkById(reportDTO.getWorkId());
             if (work == null) {
                 throw new ResourceNotFoundException("Work not found with ID: " + reportDTO.getWorkId());
             }
 
             ReportType reportType = reportTypeRepository.findByType(reportDTO.getReportType())
                 .orElseThrow(() -> new ResourceNotFoundException("Report type not found"));
-            BaseUser baseUser = baseUserService.findCurrentUser();
+            BaseUser baseUser = baseUserService.findById(1L);
 
             boolean alreadyReported = reportRepository.existsByMadeByIdAndWorkIdAndReportTypeId(baseUser.getId(), work.getId(), reportType.getId());
 
