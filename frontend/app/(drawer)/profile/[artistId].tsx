@@ -16,8 +16,9 @@ import { getArtistById } from "@/src/services/artistApi";
 import { getWorksDoneByArtist } from "@/src/services/WorksDoneApi";
 import LoadingScreen from "@/src/components/LoadingScreen";
 
-import { Artist } from "@/src/constants/CommissionTypes";
+import { Artist } from "@/src/constants/ExploreTypes";
 import { decodeImagePath } from "@/src/services/ExploreWorkHelpers";
+import styles from "@/src/styles/ArtistDetail.styles";
 
 interface Artwork {
   id: number;
@@ -73,7 +74,7 @@ export default function ArtistDetailScreen() {
         setArtist(artistData);
 
         const worksData: Artwork[] = await getWorksDoneByArtist(
-          artistData.baseUser.username
+          artistData.baseUser?.username || ""
         );
         setWorks(worksData);
       } catch (error) {
@@ -127,10 +128,7 @@ export default function ArtistDetailScreen() {
             />
             <View style={styles.profileTextContainer}>
               <Text style={styles.artistName}>
-                {artist?.name || "Eugenia Cohen"}
-              </Text>
-              <Text style={styles.artistLocation}>
-                {artist?.location || "Pintora, Amsterdam"}
+                {artist?.baseUser?.username || "Eugenia Cohen"}
               </Text>
             </View>
           </View>
@@ -139,8 +137,7 @@ export default function ArtistDetailScreen() {
           <View style={styles.topRight}>
             <Text style={styles.descriptionTitle}>Descripción</Text>
             <Text style={styles.descriptionText}>
-              {artist?.description ||
-                `Artista visual apasionada por la expresión a través del color y la textura.
+              {`Artista visual apasionada por la expresión a través del color y la textura.
 Su obra fusiona emoción y técnica, explorando desde lo abstracto hasta lo figurativo.
 Con cada pincelada, busca capturar la vida y transmitir historias que invitan a reflexionar
 sobre las realidades cotidianas.`}
@@ -192,154 +189,3 @@ sobre las realidades cotidianas.`}
     </TouchableWithoutFeedback>
   );
 }
-
-const styles = StyleSheet.create({
-  /* CONTENEDOR GENERAL */
-  container: {
-    flex: 1,
-    backgroundColor: "#fff",
-    padding: 16,
-    paddingTop: 40,
-  },
-  backButton: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginBottom: 15,
-  },
-  backArrow: {
-    fontSize: 15,
-    marginRight: 5,
-    transform: [{ translateY: -3 }],
-  },
-  backText: {
-    fontFamily: "Merriweather-Regular",
-    fontSize: 15,
-    marginLeft: 5,
-  },
-  divider: {
-    height: 1,
-    backgroundColor: "#ccc",
-    margin: 8,
-    marginBottom: 20,
-  },
-
-  /* SECCIÓN SUPERIOR */
-  topContainer: {
-    flexDirection: "row",
-    marginBottom: 0,
-  },
-
-  /* Perfil (columna izquierda) */
-  profileContainer: {
-    height: 250,
-    flexDirection: "row",
-    alignItems: "center",
-    backgroundColor: "#fff",
-    borderWidth: 1,
-    borderColor: "#ddd",
-    width: "40%",
-    marginHorizontal: 80,
-  },
-  profileImage: {
-    height: "100%",
-    resizeMode: "contain",
-    marginRight: 16,
-  },
-  profileTextContainer: {
-    flex: 1,
-    justifyContent: "center",
-    paddingLeft: 16,
-    marginRight: 16,
-  },
-  artistName: {
-    fontSize: 32,
-    fontWeight: "bold",
-    color: "#000",
-    marginBottom: 8,
-    fontFamily: "Merriweather",
-  },
-  artistLocation: {
-    fontSize: 18,
-    color: "#666",
-    fontFamily: "Merriweather",
-  },
-
-  /* Descripción (columna derecha) */
-  topRight: {
-    flex: 1,
-    marginTop: 20,
-  },
-  descriptionTitle: {
-    fontSize: 30,
-    fontWeight: "bold",
-    marginBottom: 8,
-    fontFamily: "Merriweather",
-  },
-  descriptionText: {
-    marginTop: 20,
-    fontSize: 18,
-    lineHeight: 30,
-    fontFamily: "Merriweather",
-    color: "#65635F",
-    paddingRight: 20,
-  },
-
-  /* BOTÓN */
-  button: {
-    backgroundColor: "#3E334E",
-    paddingVertical: 12,
-    paddingHorizontal: 16,
-    borderRadius: 8,
-    alignSelf: "flex-start",
-    marginBottom: 24,
-    marginTop: 16,
-    marginLeft: 80,
-    width: "40%",
-  },
-  buttonText: {
-    alignSelf: "center",
-    color: "#fff",
-    fontSize: 16,
-  },
-
-  /* SECCIÓN INFERIOR: SCROLL HORIZONTAL */
-  bottomContainer: {
-    height: 250,
-  },
-  worksScrollContainer: {
-    alignItems: "center",
-    paddingHorizontal: 40,
-  },
-  workItem: {
-    width: 220,
-    height: "100%",
-    marginRight: 90,
-    backgroundColor: "#FFF",
-    overflow: "hidden",
-    borderRadius: 8,
-  },
-  workImage: {
-    width: "100%",
-    height: "80%",
-    padding: 10,
-    resizeMode: "contain",
-  },
-  workTextContainer: {
-    paddingHorizontal: 4,
-    paddingBottom: 10,
-  },
-  workTitle: {
-    fontSize: 16,
-    fontWeight: "700",
-    marginBottom: 4,
-  },
-  workArtist: {
-    fontSize: 14,
-    fontWeight: "500",
-    marginBottom: 2,
-  },
-  workSubtitle: {
-    fontSize: 12,
-    fontWeight: "400",
-  },
-});
