@@ -54,13 +54,15 @@ public class AuthoritiesService {
 	}
 
 	@Transactional
-	public void createUser(@Valid SignupRequest request) throws IllegalArgumentException, Exception {
+	public void createUser(@Valid SignupRequest request) throws Exception {
 
 		try {
 			if(authoritiesRepository.existsBaseUserByUsername(request.getUsername()))
-			throw new IllegalArgumentException("Nombre de usuario ya existente en la base de datos.");
+				throw new IllegalArgumentException("Nombre de usuario ya existente en la base de datos.");
 			if(authoritiesRepository.existsBaseUserByUsername(request.getEmail()))
-			throw new IllegalArgumentException("Email ya existente en la base de datos.");
+				throw new IllegalArgumentException("Email ya existente en la base de datos.");
+			if (request.getImageProfile().getSize() > 5 * 1024 * 1024) 
+				throw new IllegalArgumentException("La imagen de perfil no puede ser mayor a 5MB.");
 			
 			// Crear el usuario base
 			BaseUser user = new BaseUser();
@@ -70,25 +72,18 @@ public class AuthoritiesService {
 			user.setPassword(encoder.encode(request.getPassword()));
 			user.setEmail(request.getEmail());
 			user.setPhoneNumber(request.getPhoneNumber());
+			user.setImageProfile(imageHandler.getBytes(request.getImageProfile()));
 	
-			// Procesar la imagen de perfil
-			if (request.getImageProfile() != null) {
-				user.setImageProfile(imageHandler.getBytes(request.getImageProfile()));
-			}
-	
-			// Asignar el rol al usuario
 			String strRoles = request.getAuthority().toUpperCase();
 			Authorities role = findByAuthority(strRoles);
 			user.setAuthority(role);
 	
-			// Si el rol es ARTIST, crear un artista asociado
 			if (strRoles.equals("ARTIST")) {
 				baseUserService.save(user);
 	
 				Artist artist = new Artist();
 				artist.setBaseUser(user);
 	
-				// Procesar la imagen del precio del tablero de comisiones
 				if (request.getTableCommissionsPrice() != null) {
 					artist.setTableCommisionsPrice(imageHandler.getBytes(request.getTableCommissionsPrice()));
 				}
@@ -96,43 +91,65 @@ public class AuthoritiesService {
 				artistService.saveArtist(artist);
 	
 			} else if (strRoles.equals("CLIENT")) {
-				// Si el rol es CLIENT, crear un cliente asociado
 				Client client = new Client();
 				baseUserService.save(user);
 				client.setBaseUser(user);
 				clientService.saveClient(client);
 	
 			} else {
-				// Guardar el usuario base si no es ARTIST ni CLIENT
 				baseUserService.save(user);
 			}
-		} catch (IllegalArgumentException e) {
-			throw e;
 		} catch (Exception e) {
 			throw e;
 		}
 	}
 
 	@Transactional
-	public void updateUser(@Valid SignupRequest request) {
-		BaseUser user = baseUserService.findCurrentUser();
-		user.setUsername(request.getUsername());
-		user.setName(request.getFirstName());
-		user.setUpdatedUser(Date.from(Instant.now()));
-		user.setPassword(encoder.encode(request.getPassword()));
-		user.setEmail(request.getEmail());
-		user.setPhoneNumber(request.getPhoneNumber());
-		user.setImageProfile(imageHandler.getBytes(request.getImageProfile()));
+	public BaseUser updateUser(@Valid SignupRequest request) throws Exception {
+		try {
+			BaseUser user = baseUserService.findCurrentUser();
+			if (request.getImageProfile() != null && request.getImageProfile().getSize() > 5 * 1024 * 1024) {
+				throw new IllegalArgumentException("La imagen de perfil no puede ser mayor a 5MB.");
+			}
 
-		if (request.getAuthority().toUpperCase() == "ARTIST") {
-			Artist artist = artistService.findArtist(user.getId());
-			artist.setBaseUser(user);
-			artistService.saveArtist(artist);
-		} else if (request.getAuthority().toUpperCase() == "CLIENT") {
-			Client client = clientService.findClient(user.getId());
-			client.setBaseUser(user);
-		} else {
-			baseUserService.save(user);
+			if (request.getTableCommissionsPrice() != null && request.getTableCommissionsPrice().getSize() > 5 * 1024 * 1024) {
+				throw new IllegalArgumentException("La tabla de comisiones no puede ser mayor a 5MB.");
+			}
+
+			if (request.getUsername() != null) {
+				user.setUsername(request.getUsername());
+			}
+			if (request.getFirstName() != null) {
+				user.setName(request.getFirstName());
+			}
+			user.setUpdatedUser(Date.from(Instant.now()));
+			if (request.getPassword() != null) {
+				user.setPassword(encoder.encode(request.getPassword()));
+			}
+			if (request.getEmail() != null) {
+				user.setEmail(request.getEmail());
+			}
+			if (request.getPhoneNumber() != null) {
+				user.setPhoneNumber(request.getPhoneNumber());
+			}
+			if (request.getImageProfile() != null) {
+				user.setImageProfile(imageHandler.getBytes(request.getImageProfile()));
+			}
+
+			if (user.getAuthority().getAuthority().toUpperCase() == "ARTIST") {
+				Artist artist = artistService.findArtist(user.getId());
+				if (request.getTableCommissionsPrice() != null) {
+					artist.setTableCommisionsPrice(imageHandler.getBytes(request.getTableCommissionsPrice()));
+				}
+				artist.setBaseUser(user);
+				artistService.saveArtist(artist);
+			} else if (user.getAuthority().getAuthority().toUpperCase() == "CLIENT") {
+				Client client = clientService.findClient(user.getId());
+				client.setBaseUser(user);
+			} 
+			return baseUserService.save(user);
+		} catch (Exception e) {
+			throw e;
 		}
 	}
 
