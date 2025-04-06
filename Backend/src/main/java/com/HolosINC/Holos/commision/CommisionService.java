@@ -4,10 +4,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -33,7 +30,6 @@ public class CommisionService {
     private final ClientRepository clientRepository;
     private final ArtistService artistService;
     private final BaseUserService userService;
-    @SuppressWarnings("unused")
     private final ClientService clientService;
     private final StatusKanbanOrderService statusKanbanOrderService;
 

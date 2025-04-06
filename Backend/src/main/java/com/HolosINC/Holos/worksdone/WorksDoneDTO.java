@@ -16,7 +16,6 @@ public class WorksDoneDTO {
     private String description;
     private Double price;
     private byte[] image;
-    // TODO Send artist as well pls
 
     public WorksDone createWorksDone() {
         WorksDone work = new WorksDone();
