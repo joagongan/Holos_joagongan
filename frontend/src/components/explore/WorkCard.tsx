@@ -19,6 +19,16 @@ const WorkCard = ({ work, menuVisibleId, setMenuVisibleId }: Props) => {
   // const isDesktop = width > 768;
   // const styles = isDesktop ? desktopStyles : mobileStyles;
 
+  const isBase64Path = (base64: string): boolean => {
+    try {
+      const decoded = atob(base64);
+      return decoded.startsWith("/images/");
+    } catch (e) {
+      return false;
+    }
+  };
+
+
   return (
     <View style={styles.cardWrapper}>
       <TouchableOpacity
@@ -26,12 +36,15 @@ const WorkCard = ({ work, menuVisibleId, setMenuVisibleId }: Props) => {
         onPress={() => router.push({ pathname: "/work/[workId]", params: { workId: String(work.id) } })}
       >
         <Image
-          source={{ uri: `${BASE_URL}${atob(work?.image)}` }}
+          source={{
+            uri: isBase64Path(work.image)
+              ? `${BASE_URL}${atob(work.image)}`
+              : `data:image/jpeg;base64,${work.image}`,
+          }}
           style={styles.image}
           resizeMode="cover"
-          onError={() => console.log("Error cargando imagen:", atob(work.image))}
+          onError={() => console.log("Error cargando imagen:", work.image)}
         />
-
 
         <View style={styles.textContainer}>
           <Text style={styles.title}>{work.name}</Text>

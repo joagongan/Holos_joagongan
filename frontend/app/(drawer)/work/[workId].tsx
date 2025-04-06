@@ -73,6 +73,15 @@ export default function WorkDetailScreen() {
     );
   }
 
+  const isBase64Path = (base64: string): boolean => {
+    try {
+      const decoded = atob(base64);
+      return decoded.startsWith("/images/");
+    } catch (e) {
+      return false;
+    }
+  };
+
   return (
     // >>> Usamos un TouchableWithoutFeedback para poder cerrar el menú al pulsar fuera <<<
     <TouchableWithoutFeedback
@@ -86,8 +95,14 @@ export default function WorkDetailScreen() {
         <View style={styles.leftColumn}>
           {work.image ? (
             <Image
-              source={{ uri: `${BASE_URL}${atob(work?.image)}` }}
+              source={{
+                uri: isBase64Path(work.image)
+                  ? `${BASE_URL}${atob(work.image)}`
+                  : `data:image/jpeg;base64,${work.image}`,
+              }}
               style={styles.imageStyle}
+              resizeMode="cover"
+              onError={() => console.log("Error cargando imagen:", work.image)}
             />
           ) : (
             <View style={styles.placeholderContainer}>

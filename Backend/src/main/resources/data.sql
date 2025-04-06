@@ -46,7 +46,8 @@ INSERT INTO base_user (id, first_name, username, password, email, phone_number, 
 (40,'Rafael', 'rafaelcastillo_artist','$2a$10$KHEzZb0ioIjGoAYqvUX6G.5q6apcUxxMCY.dLXpnTgZnuFjkMLfdG', 'rafaelcastillocebolla2@gmail.com', '671168164','/images/nobita.jpg', '2025-03-06', 3),
 (41,'Mohamed', 'mohamed_artist','$2a$10$/xzsXNtwVMPX4eIu1coLYeBWvN7DDMiuzAE39B3M3fCt1SvVPo73u', 'mohmmedabourihhh2@gmail.com', '602171961','/images/nobita.jpg', '2025-03-06', 3),
 (42,'Enrique', 'enrique_artist','$2a$10$tbDdopmXHspY4l2iTHMJl.wFf/btZGataJBHRRdenrDHRSsHh/GlC', 'kiquegaraba2@gmail.com', '600619217','/images/nobita.jpg', '2025-03-06', 3),
-(43, 'admin1', 'admin1', '$2b$10$OHjdYNE5IRkwWb5R1NtPGeIyb2l8xShgxjIZHG7bZn1WI3jfIntRi', 'admin1@gmail.com', '600619217', NULL, '2025-03-06', 1);
+(43, 'admin1', 'admin1', '$2b$10$OHjdYNE5IRkwWb5R1NtPGeIyb2l8xShgxjIZHG7bZn1WI3jfIntRi', 'admin1@gmail.com', '600619217', NULL, '2025-03-06', 1),
+(44, 'ArtistaPremium', 'premium_artist', '$2a$12$Rei2PsecjBwwGRyHPAuNPu0xPnLf9cTFh1mXfa3HKpP/LQ5Pah1di','premium.artist@example.com', '600123456','/images/premium_artist.jpg','2025-04-05', 4 );
 
 INSERT INTO clients (id, base_user_id) VALUES
 (1, 1),
@@ -514,39 +515,24 @@ INSERT INTO work_category(id,category_id,work_id) VALUES
 (4, 4, 4),
 (5, 5, 5);
 
-INSERT INTO report_types (id, type) VALUES (500, 'Financial Report');
-INSERT INTO report_types (id, type) VALUES (501, 'Marketing Analysis');
-INSERT INTO report_types (id, type) VALUES (502, 'Customer Feedback');
-INSERT INTO report_types (id, type) VALUES (503, 'Technical Review');
-INSERT INTO report_types (id, type) VALUES (504, 'Annual Summary');
+INSERT INTO report_types (id, type) VALUES 
+(1, 'Financial Report'),
+(2, 'Marketing Analysis'),
+(3, 'Customer Feedback'),
+(4, 'Technical Review'),
+(5, 'Annual Summary');
 
-INSERT INTO works (id, name, description, price, artist_id) 
-VALUES (500, 'Sunset Painting', 'A beautiful sunset painting', 150.00, 1);
-
-INSERT INTO works (id, name, description, price, artist_id) 
-VALUES (501, 'Abstract Vibes', 'Modern abstract artwork', 200.50, 2);
-
-INSERT INTO works (id, name, description, price, artist_id) 
-VALUES (502, 'Cityscape', 'A detailed cityscape at night', 300.00, 3);
-
-INSERT INTO works (id, name, description, price, artist_id) 
-VALUES (503, 'Portrait of a Woman', 'Realistic portrait painting', 250.75, 1);
-
-INSERT INTO works (id, name, description, price, artist_id) 
-VALUES (504, 'Sculpture: The Thinker', 'Bronze sculpture inspired by Rodin', 500.00, 4);
+INSERT INTO works (id, name, description, price, artist_id) VALUES 
+(1, 'Sunset Painting', 'A beautiful sunset painting', 150.00, 1),
+(2, 'Abstract Vibes', 'Modern abstract artwork', 200.50, 2),
+(3, 'Cityscape', 'A detailed cityscape at night', 300.00, 3),
+(4, 'Portrait of a Woman', 'Realistic portrait painting', 250.75, 1),
+(5, 'Sculpture: The Thinker', 'Bronze sculpture inspired by Rodin', 500.00, 4);
 
 
-INSERT INTO reports (id, name, description, status, made_by_id, reported_user_id, work_id, report_type_id) 
-VALUES (1, 'Inappropriate Content', 'This artwork contains sensitive material.', 'ACCEPTED', 1, 2, 500, 501);
-
-INSERT INTO reports (id, name, description, status, made_by_id, reported_user_id, work_id, report_type_id) 
-VALUES (2, 'Plagiarism Report', 'This work closely resembles another known piece.', 'PENDING', 3, 4, 501, 502);
-
-INSERT INTO reports (id, name, description, status, made_by_id, reported_user_id, work_id, report_type_id) 
-VALUES (3, 'Offensive Behavior', 'The artist has been using inappropriate language.', 'ACCEPTED', 5, 6, 503, 503);
-
-INSERT INTO reports (id, name, description, status, made_by_id, reported_user_id, work_id, report_type_id) 
-VALUES (4, 'Fake Account', 'This user might be impersonating someone else.', 'PENDING', 2, 7, 504, 504);
-
-INSERT INTO reports (id, name, description, status, made_by_id, reported_user_id, work_id, report_type_id) 
-VALUES (5, 'Spam Content', 'The artwork description contains promotional links.', 'REJECTED', 8, 9, 502, 500);
+INSERT INTO reports (id, name, description, status, made_by_id, reported_user_id, work_id, report_type_id) VALUES 
+(1, 'Inappropriate Content', 'This artwork contains sensitive material.', 'ACCEPTED', 1, 2, 1, 1),
+(2, 'Plagiarism Report', 'This work closely resembles another known piece.', 'PENDING', 3, 4, 2, 2),
+(3, 'Offensive Behavior', 'The artist has been using inappropriate language.', 'ACCEPTED', 5, 6, 3, 3),
+(4, 'Fake Account', 'This user might be impersonating someone else.', 'PENDING', 2, 7, 4, 4),
+(5, 'Spam Content', 'The artwork description contains promotional links.', 'REJECTED', 8, 9, 2, 1);
