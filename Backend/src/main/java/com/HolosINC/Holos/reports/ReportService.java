@@ -47,7 +47,7 @@ public class ReportService {
 
             ReportType reportType = reportTypeRepository.findByType(reportDTO.getReportType())
                 .orElseThrow(() -> new ResourceNotFoundException("Report type not found"));
-            BaseUser baseUser = baseUserService.findById(1L);
+            BaseUser baseUser = baseUserService.findCurrentUser();
 
             boolean alreadyReported = reportRepository.existsByMadeByIdAndWorkIdAndReportTypeId(baseUser.getId(), work.getId(), reportType.getId());
 
