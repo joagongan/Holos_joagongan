@@ -31,7 +31,7 @@ public class ProfileController {
             BaseUserDTO updatedUser = profileService.updateProfile(baseUserDTO);  
             return ResponseEntity.ok(updatedUser);
         } catch (Exception e) {
-            return ResponseEntity.status(500).body(null);
+            return ResponseEntity.badRequest().body(null);
         }
 }
 }

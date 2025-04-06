@@ -62,7 +62,7 @@ public class BaseUserController {
         try {
             return ResponseEntity.ok(baseUserService.changeUserRole(id, newRole));
         } catch (Exception e) {
-            return ResponseEntity.internalServerError().body("Error al cambiar el rol: " + e.getMessage());
+            return ResponseEntity.badRequest().body("Error al cambiar el rol: " + e.getMessage());
         }
     }
 }

@@ -40,7 +40,7 @@ public class CommisionController {
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         } catch (Exception e) {
-            return ResponseEntity.internalServerError().body(e.getMessage());
+            return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
 
@@ -52,7 +52,7 @@ public class CommisionController {
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         } catch (Exception e) {
-            return ResponseEntity.internalServerError().body(e.getMessage());
+            return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
 
@@ -64,7 +64,7 @@ public class CommisionController {
         } catch (Exception e) {
             HistoryCommisionsDTO withError = new HistoryCommisionsDTO();
             withError.setError(e.getMessage());
-            return ResponseEntity.internalServerError().body(withError);
+            return ResponseEntity.badRequest().body(withError);
         }
     }
 
@@ -84,7 +84,7 @@ public class CommisionController {
             return ResponseEntity.badRequest().body(e.getMessage());
         } catch (Exception e) {
             // Si ocurre un error inesperado, respondemos con un 500
-            return ResponseEntity.internalServerError().body(e.getMessage());
+            return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
 
@@ -98,7 +98,7 @@ public class CommisionController {
         } catch (IllegalArgumentException | IllegalStateException e) {
             return ResponseEntity.badRequest().body("Error: " + e.getMessage());
         } catch (Exception e) {
-            return ResponseEntity.internalServerError().body("⚠ Error interno: " + e.getMessage());
+            return ResponseEntity.badRequest().body("⚠ Error interno: " + e.getMessage());
         }
     }
 
@@ -108,10 +108,8 @@ public class CommisionController {
         try {
             commisionService.toPayCommission(commissionId);
             return ResponseEntity.ok("Se aceptó el precio correctamente.");
-        } catch (IllegalArgumentException | IllegalStateException e) {
-            return ResponseEntity.badRequest().body("Error: " + e.getMessage());
         } catch (Exception e) {
-            return ResponseEntity.internalServerError().body("⚠ Error interno: " + e.getMessage());
+            return ResponseEntity.badRequest().body("⚠ Error interno: " + e.getMessage());
         }
     }
 
@@ -121,10 +119,8 @@ public class CommisionController {
         try {
             commisionService.rejectCommission(commissionId);
             return ResponseEntity.ok("Comisión rechazada correctamente.");
-        } catch (IllegalArgumentException | IllegalStateException e) {
-            return ResponseEntity.badRequest().body("Error: " + e.getMessage());
         } catch (Exception e) {
-            return ResponseEntity.internalServerError().body("⚠ Error interno: " + e.getMessage());
+            return ResponseEntity.badRequest().body("⚠ Error interno: " + e.getMessage());
         }
     }
 
@@ -134,10 +130,8 @@ public class CommisionController {
         try {
             commisionService.acceptCommission(commissionId);
             return ResponseEntity.ok("Comisión pagada correctamente.");
-        } catch (IllegalArgumentException | IllegalStateException e) {
-            return ResponseEntity.badRequest().body("Error: " + e.getMessage());
         } catch (Exception e) {
-            return ResponseEntity.internalServerError().body("⚠ Error interno: " + e.getMessage());
+            return ResponseEntity.badRequest().body("⚠ Error interno: " + e.getMessage());
         }
     }
 
@@ -150,7 +144,7 @@ public class CommisionController {
         } catch (IllegalArgumentException | IllegalStateException e) {
             return ResponseEntity.badRequest().body("Error: " + e.getMessage());
         } catch (Exception e) {
-            return ResponseEntity.internalServerError().body("⚠ Error interno: " + e.getMessage());
+            return ResponseEntity.badRequest().body("⚠ Error interno: " + e.getMessage());
         }
     }
 

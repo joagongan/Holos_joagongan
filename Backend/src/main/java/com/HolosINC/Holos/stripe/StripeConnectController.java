@@ -32,7 +32,7 @@ public class StripeConnectController {
             List<Account> accounts = stripeConnectService.getAllConnectedAccounts();
             return new ResponseEntity<>(accounts, HttpStatus.OK);
         } catch (StripeException e) {
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     }
 
@@ -53,7 +53,7 @@ public class StripeConnectController {
             String accountId = stripeConnectService.createConnectedAccount();
             return new ResponseEntity<String>(accountId, HttpStatus.OK);
         } catch (Exception e) {
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     }
 
@@ -63,7 +63,7 @@ public class StripeConnectController {
             String accountLinkUrl = stripeConnectService.createAccountLink();
             return new ResponseEntity<String>(accountLinkUrl, HttpStatus.OK);
         } catch (Exception e) {
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     }
 
