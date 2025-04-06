@@ -27,9 +27,11 @@ public class ProfileController {
         description = "Permite actualizar los datos del perfil del usuario a un DTO para usa mas facil en Front. El usuario debe estar autenticado, y asi usamos el finduser."
     )
     public ResponseEntity<BaseUserDTO> updateProfile(@RequestBody @Parameter(description = "DTO con los nuevos datos del usuario") BaseUserDTO baseUserDTO) {
-        // Llamamos al servicio para actualizar el perfil y usamos findCurrentUser() para obtener el id
-        BaseUserDTO updatedUser = profileService.updateProfile(baseUserDTO);  
-        // Devolvemos el resultado de la actualización
-        return ResponseEntity.ok(updatedUser);
+        try {
+            BaseUserDTO updatedUser = profileService.updateProfile(baseUserDTO);  
+            return ResponseEntity.ok(updatedUser);
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body(null);
+        }
 }
 }
