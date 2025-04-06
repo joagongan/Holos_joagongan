@@ -145,7 +145,7 @@ export default function ReportScreen() {
       popUpMovilWindows("Éxito", "Reporte enviado correctamente");
       cleanStatus();
     } catch (error:any) {
-      if (error.response?.status === 409) {
+      if (error.response?.status === 400) {
         popUpMovilWindows("¡Ya reportaste esta obra!", "No puedes enviar el mismo reporte dos veces 😵‍💫");
         cleanStatus();
       } else {
