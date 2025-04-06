@@ -154,8 +154,7 @@ public class AuthoritiesService {
 				client.setBaseUser(user);
 			} 
 			return baseUserService.save(user);
-		}catch(Exception e)
-		{
+		}catch(Exception e){
 			throw e;
 		}
 	}
