@@ -118,7 +118,7 @@ export default function UploadWorkArtist() {
               />
               {errors.name && touched.name && (<Text style={styles.errorText}>{errors.name}</Text>)}
 
-              <Text style={styles.formLabel}>Dalé una descripción a tu obra</Text>
+              <Text style={styles.formLabel}>Dale una descripción a tu obra</Text>
               <View style={styles.inputDescriptionBox}>
               <TextInput
                 style={styles.inputDescriptionWork}
