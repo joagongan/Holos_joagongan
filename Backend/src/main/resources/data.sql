@@ -516,11 +516,11 @@ INSERT INTO work_category(id,category_id,work_id) VALUES
 (5, 5, 5);
 
 INSERT INTO report_types (id, type) VALUES 
-(1, 'Financial Report'),
-(2, 'Marketing Analysis'),
-(3, 'Customer Feedback'),
-(4, 'Technical Review'),
-(5, 'Annual Summary');
+(1, 'Reporte financiero'),
+(2, 'Reporte de calidad'),
+(3, 'Reporte de contenido'),
+(4, 'Reporte de usuario'),
+(5, 'Reporte de artista');
 
 INSERT INTO reports (id, name, description, status, made_by_id, reported_user_id, work_id, report_type_id) VALUES 
 (1, 'Inappropriate Content', 'This artwork contains sensitive material.', 'ACCEPTED', 1, 2, 1, 1),
