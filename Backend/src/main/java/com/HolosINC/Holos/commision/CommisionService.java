@@ -108,7 +108,7 @@ public class CommisionService {
 
 
     @Transactional
-    public Commision updateCommisionStatus(Long commisionId, boolean accept) {
+    public Commision updateCommisionStatus(Long commisionId, boolean accept) throws Exception {
         Commision commision = commisionRepository.findById(commisionId)
                 .orElseThrow(() -> new ResourceNotFoundException("Commision", "id", commisionId));
 
@@ -142,7 +142,7 @@ public class CommisionService {
     }
 
     @Transactional
-    public void waitingCommission(Long commisionId) {
+    public void waitingCommission(Long commisionId) throws Exception {
         Commision commision = commisionRepository.findById(commisionId)
                 .orElseThrow(() -> new ResourceNotFoundException("Commision", "id", commisionId));
         Long id = userService.findCurrentUser().getId();
@@ -171,7 +171,7 @@ public class CommisionService {
     }
 
     @Transactional
-    public void toPayCommission(Long commisionId) {
+    public void toPayCommission(Long commisionId) throws Exception {
         Commision commision = commisionRepository.findById(commisionId)
                 .orElseThrow(() -> new ResourceNotFoundException("Commision", "id", commisionId));
         Long id = userService.findCurrentUser().getId();
@@ -202,7 +202,7 @@ public class CommisionService {
     }
 
     @Transactional
-    public void rejectCommission(Long commisionId) {
+    public void rejectCommission(Long commisionId) throws Exception {
         Commision commision = commisionRepository.findById(commisionId)
                 .orElseThrow(() -> new ResourceNotFoundException("Commision", "id", commisionId));
         Long id = userService.findCurrentUser().getId();

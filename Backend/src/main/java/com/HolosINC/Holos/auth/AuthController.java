@@ -40,13 +40,10 @@ import org.springframework.security.authentication.BadCredentialsException;
 @RequestMapping("/api/v1/auth")
 @Tag(name = "Authentication", description = "The Authentication API based on JWT")
 public class AuthController {
-
 	private final AuthenticationManager authenticationManager;
 	private final JwtUtils jwtUtils;
 	private final AuthoritiesService authService;
-	@SuppressWarnings("unused")
-	private final PasswordEncoder encoder;
-
+	
 	@Autowired
 	public AuthController(AuthenticationManager authenticationManager,
 			JwtUtils jwtUtils, PasswordEncoder encoder,
@@ -54,7 +51,6 @@ public class AuthController {
 		this.jwtUtils = jwtUtils;
 		this.authenticationManager = authenticationManager;
 		this.authService = authService;
-		this.encoder = encoder;
 	}
 
 	@PostMapping("/signin")
@@ -73,7 +69,9 @@ public class AuthController {
 			return ResponseEntity.ok()
 					.body(new JwtResponse(jwt, userDetails.getId(), userDetails.getUsername(), roles));
 		} catch (BadCredentialsException exception) {
-			return ResponseEntity.badRequest().body("Bad Credentials!");
+			return ResponseEntity.badRequest().body("Credenciales incorrectas!");
+		} catch (Exception exception) {
+			return ResponseEntity.badRequest().body("Fallo de autenticacion!");
 		}
 	}
 	

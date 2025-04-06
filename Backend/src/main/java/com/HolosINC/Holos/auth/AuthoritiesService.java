@@ -104,16 +104,22 @@ public class AuthoritiesService {
 		}
 	}
 
-	@Transactional
-	public BaseUser updateUser(@Valid SignupRequest request) throws Exception {
-		try {
+	public BaseUser updateUser(@Valid SignupRequest request) throws Exception{
+		try{
 			BaseUser user = baseUserService.findCurrentUser();
-			if (request.getImageProfile() != null && request.getImageProfile().getSize() > 5 * 1024 * 1024) {
-				throw new IllegalArgumentException("La imagen de perfil no puede ser mayor a 5MB.");
-			}
+			user.setUsername(request.getUsername());
+			user.setName(request.getFirstName());
+			user.setUpdatedUser(Date.from(Instant.now()));
+			user.setPassword(encoder.encode(request.getPassword()));
+			user.setEmail(request.getEmail());
+			user.setPhoneNumber(request.getPhoneNumber());
+			user.setImageProfile(imageHandler.getBytes(request.getImageProfile()));
 
 			if (request.getTableCommissionsPrice() != null && request.getTableCommissionsPrice().getSize() > 5 * 1024 * 1024) {
 				throw new IllegalArgumentException("La tabla de comisiones no puede ser mayor a 5MB.");
+			}
+			if (request.getImageProfile() != null && request.getImageProfile().getSize() > 5 * 1024 * 1024) {
+				throw new IllegalArgumentException("La imagen de perfil no puede ser mayor a 5MB.");
 			}
 
 			if (request.getUsername() != null) {
@@ -148,13 +154,14 @@ public class AuthoritiesService {
 				client.setBaseUser(user);
 			} 
 			return baseUserService.save(user);
-		} catch (Exception e) {
+		}catch(Exception e)
+		{
 			throw e;
 		}
 	}
 
 	@Transactional
-	public void deleteUser(Long id) {
+	public void deleteUser(Long id) throws Exception{
 		BaseUser user = baseUserService.findCurrentUser();
 		if (user.getId() != id) {
 			throw new AccessDeniedException("No puedes eliminar un usuario que no eres tu");

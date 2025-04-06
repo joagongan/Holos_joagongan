@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.HolosINC.Holos.Profile.ProfileService;
+import com.HolosINC.Holos.auth.payload.response.MessageResponse;
 import com.HolosINC.Holos.exceptions.ResourceNotFoundException;
 import com.HolosINC.Holos.model.BaseUser;
 import com.HolosINC.Holos.model.BaseUserDTO;
@@ -31,12 +32,13 @@ class ClientRestController {
     private ProfileService profileService;
 
     @PutMapping("/update")
-    public ResponseEntity<BaseUserDTO> updateProfile(@RequestBody BaseUserDTO baseUserDTO) {
-        // Llamamos al servicio para actualizar el perfil y usamos findCurrentUser() para obtener el id
-        BaseUserDTO updatedUserDTO = profileService.updateProfile(baseUserDTO);
-        
-        // Devolvemos el resultado de la actualización, que será el mismo DTO con los datos actualizados
-        return ResponseEntity.ok(updatedUserDTO);
+    public ResponseEntity<?> updateProfile(@RequestBody BaseUserDTO baseUserDTO){
+        try{
+            BaseUserDTO updatedUserDTO = profileService.updateProfile(baseUserDTO);
+            return ResponseEntity.ok(updatedUserDTO);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(new MessageResponse(e.getMessage()));
+        }
     }
 	
 	@Autowired

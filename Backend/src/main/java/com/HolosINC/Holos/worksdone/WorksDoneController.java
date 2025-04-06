@@ -2,6 +2,7 @@ package com.HolosINC.Holos.worksdone;
 
 import com.HolosINC.Holos.artist.Artist;
 import com.HolosINC.Holos.artist.ArtistService;
+import com.HolosINC.Holos.auth.payload.response.MessageResponse;
 import com.HolosINC.Holos.model.BaseUserService;
 import com.HolosINC.Holos.util.RestPreconditions;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -74,39 +75,47 @@ public class WorksDoneController {
     }
 
     @GetMapping("/artist/{artistId}")
-    public ResponseEntity<List<WorksDone>> getWorksDoneByArtist(@PathVariable Long artistId) {
-        Artist artist = artistService.findArtist(artistId);
-        List<WorksDone> works = worksDoneService.getWorksDoneByArtist(artist);
-        return ResponseEntity.ok(works);
+    public ResponseEntity<?> getWorksDoneByArtist(@PathVariable Long artistId) {
+        try{
+            Artist artist = artistService.findArtist(artistId);
+            List<WorksDone> works = worksDoneService.getWorksDoneByArtist(artist);
+            return ResponseEntity.ok(works);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(new MessageResponse(e.getMessage()));
+        }
     }
 
     @PutMapping(value = "/artist/{artistId}/{worksDoneId}", consumes = { "multipart/form-data" })
-    public ResponseEntity<WorksDoneDTO> updateWorksDone(
+    public ResponseEntity<?> updateWorksDone(
             @PathVariable("artistId") Long artistId,
             @PathVariable("worksDoneId") Long worksDoneId,
             @RequestPart("work") String workJson,
             @RequestPart(value = "image", required = false) MultipartFile imageFile) throws IOException {
 
-        ObjectMapper mapper = new ObjectMapper();
-        WorksDoneDTO dto = mapper.readValue(workJson, WorksDoneDTO.class);
-        WorksDone existingWork = worksDoneService.getWorksDoneById(worksDoneId);
-        RestPreconditions.checkNotNull(existingWork, "WorksDone", "ID", worksDoneId);
-        Long currentUserId = baseUserService.findCurrentUser().getId();
-        Artist currentArtist = baseUserService.findArtist(currentUserId);
-        if (!existingWork.getArtist().getId().equals(currentArtist.getId())) {
-            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
-        }
-        if (imageFile != null && !imageFile.isEmpty()) {
-            dto.setImage(imageFile.getBytes());
-        } else {
-            dto.setImage(existingWork.getImage());
-        }
-        WorksDone workToUpdate = dto.createWorksDone();
-        workToUpdate.setId(existingWork.getId()); // Mantenemos el mismo ID
-        workToUpdate.setArtist(existingWork.getArtist()); // Mantenemos el mismo artista
-        WorksDone updated = worksDoneService.updateWorksDone(workToUpdate, worksDoneId, artistId);
+        try{
+            ObjectMapper mapper = new ObjectMapper();
+            WorksDoneDTO dto = mapper.readValue(workJson, WorksDoneDTO.class);
+            WorksDone existingWork = worksDoneService.getWorksDoneById(worksDoneId);
+            RestPreconditions.checkNotNull(existingWork, "WorksDone", "ID", worksDoneId);
+            Long currentUserId = baseUserService.findCurrentUser().getId();
+            Artist currentArtist = baseUserService.findArtist(currentUserId);
+            if (!existingWork.getArtist().getId().equals(currentArtist.getId())) {
+                return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+            }
+            if (imageFile != null && !imageFile.isEmpty()) {
+                dto.setImage(imageFile.getBytes());
+            } else {
+                dto.setImage(existingWork.getImage());
+            }
+            WorksDone workToUpdate = dto.createWorksDone();
+            workToUpdate.setId(existingWork.getId()); // Mantenemos el mismo ID
+            workToUpdate.setArtist(existingWork.getArtist()); // Mantenemos el mismo artista
+            WorksDone updated = worksDoneService.updateWorksDone(workToUpdate, worksDoneId, artistId);
 
-        return ResponseEntity.ok(WorksDoneDTO.createDTO(updated));
+            return ResponseEntity.ok(WorksDoneDTO.createDTO(updated));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(new MessageResponse(e.getMessage()));
+        }
     }
 
     @GetMapping("/can-upload")

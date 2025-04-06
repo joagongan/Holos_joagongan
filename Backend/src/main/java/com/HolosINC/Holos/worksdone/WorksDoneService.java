@@ -53,7 +53,7 @@ public class WorksDoneService {
     }
 
     @Transactional
-    public WorksDone updateWorksDone(WorksDone worksDone, Long worksDoneId, Long artistId) {
+    public WorksDone updateWorksDone(WorksDone worksDone, Long worksDoneId, Long artistId) throws Exception{
         Artist artist = artistService.findArtist(artistId);
 
         WorksDone worksDoneToUpdate = worksDoneRepository.findById(worksDoneId)

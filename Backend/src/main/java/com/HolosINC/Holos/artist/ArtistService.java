@@ -13,8 +13,6 @@ import com.HolosINC.Holos.commision.Commision;
 import com.HolosINC.Holos.commision.CommisionRepository;
 import com.HolosINC.Holos.commision.StatusCommision;
 import com.HolosINC.Holos.exceptions.ResourceNotFoundException;
-import com.HolosINC.Holos.milestone.Milestone;
-import com.HolosINC.Holos.milestone.MilestoneService;
 import com.HolosINC.Holos.model.BaseUserRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,19 +28,14 @@ public class ArtistService {
 	private BaseUserRepository baseUserRepository;
 
 	private CommisionRepository commisionRepository;
-	private MilestoneService milestoneService;
-	@SuppressWarnings("unused")
-	private AuthoritiesRepository authoritiesRepository;
 	private StatusKanbanOrderService statusKanbanOrderService;
 	private ArtistCategoryRepository artistCategoryRepository;
 
 	@Autowired
-	public ArtistService(ArtistRepository artistRepository, BaseUserRepository baseUserRepository, AuthoritiesRepository authoritiesRepository, CommisionRepository commisionRepository, MilestoneService milestoneService, @Lazy StatusKanbanOrderService statusKanbanOrderService, ArtistCategoryRepository artistCategoryRepository) {
+	public ArtistService(ArtistRepository artistRepository, BaseUserRepository baseUserRepository, AuthoritiesRepository authoritiesRepository, CommisionRepository commisionRepository, @Lazy StatusKanbanOrderService statusKanbanOrderService, ArtistCategoryRepository artistCategoryRepository) {
 		this.artistRepository = artistRepository;
 		this.baseUserRepository = baseUserRepository;
-		this.authoritiesRepository = authoritiesRepository;
 		this.commisionRepository = commisionRepository;
-		this.milestoneService = milestoneService;
 		this.statusKanbanOrderService = statusKanbanOrderService;
 		this.artistCategoryRepository = artistCategoryRepository;
 	}
@@ -54,30 +47,30 @@ public class ArtistService {
 	}
 
 	@Transactional(readOnly = true)
-	public Artist findArtist(Long artistId) {
+	public Artist findArtist(Long artistId) throws Exception {
 		return artistRepository.findById(artistId)
 				.orElseThrow(() -> new ResourceNotFoundException("Artist", "id", artistId));
 	}
 
 	@Transactional(readOnly = true)
-	public Artist findArtistByUserId(Long artistId) {
+	public Artist findArtistByUserId(Long artistId) throws Exception {
 		return artistRepository.findByUserId(artistId)
 				.orElseThrow(() -> new ResourceNotFoundException("Artist", "id", artistId));
 	}
 
 	@Transactional(readOnly = true)
-	public Artist findArtistByUsername(String username) {
+	public Artist findArtistByUsername(String username) throws Exception {
 		return artistRepository.findByUsername(username)
 				.orElseThrow(() -> new ResourceNotFoundException("Artist", "username", username));
 	}
 
 	@Transactional(readOnly = true)
-	public boolean isArtist(Long userId) {
+	public boolean isArtist(Long userId) throws Exception {
 		return !(artistRepository.findByUserId(userId).isEmpty());
 	}
 
 	@Transactional
-	public void deleteArtist(Long userId) {
+	public void deleteArtist(Long userId) throws Exception {
 		try {
 			Artist artist = artistRepository.findArtistByUser(userId)
 				.orElseThrow(() -> new ResourceNotFoundException("Artist", "id", userId));
@@ -98,13 +91,6 @@ public class ArtistService {
 				throw new IllegalStateException("No se puede eliminar al artista porque tiene comisiones en estado ACCEPTED.");
 			}
 
-			for (Commision c : commisions) {
-				List<Milestone> milestones = milestoneService.getByCommisionId(c.getId());
-				for (Milestone m : milestones) {
-					milestoneService.delete(m.getId());
-				}
-			}
-
 			commisionRepository.deleteAll(commisions);
 
 			List<StatusKanbanOrder> kanbanStatuses = statusKanbanOrderService.findAllStatusKanbanOrderByArtist(artistId);
@@ -122,18 +108,13 @@ public class ArtistService {
 			}
 
 			artistRepository.delete(artist);
-
-		} catch (ResourceNotFoundException e) {
-			throw new ResourceNotFoundException("Error: El artista con ID " + userId + " no existe.");
-		} catch (IllegalStateException e) {
-			throw e;
 		} catch (Exception e) {
 			throw new RuntimeException("Error al eliminar el artista con ID " + userId + ": " + e.getMessage());
 		}
 	}
 	
 	@Transactional
-	public Optional<Artist> findByBaseUserId(Long baseUserId) {
+	public Optional<Artist> findByBaseUserId(Long baseUserId) throws Exception {
         return artistRepository.findByUserId(baseUserId);
     }
 }
