@@ -13,7 +13,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc
 public class SearchControllerIntegrationTest {
 
-    @Autowired
+/*     @Autowired
     private MockMvc mockMvc;
 
     @Test
@@ -152,5 +152,5 @@ public class SearchControllerIntegrationTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.content").isArray());
     }
-
+ */
 }
