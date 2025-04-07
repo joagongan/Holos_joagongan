@@ -26,13 +26,12 @@ public class WorksDoneService {
         return worksDoneRepository.save(worksDone);
     }
 
-    // TODO: this method has no exception handling because a non logged person shoud see works done
     public List<WorksDone> getAllWorksDone() {
         return worksDoneRepository.findAll();
     }
 
     @Transactional
-    public WorksDone updateWorksDone(WorksDone worksDone, Long worksDoneId, Long artistId) {
+    public WorksDone updateWorksDone(WorksDone worksDone, Long worksDoneId, Long artistId) throws Exception{
         Artist artist = artistService.findArtist(artistId);
 
         WorksDone worksDoneToUpdate = worksDoneRepository.findById(worksDoneId)
@@ -46,12 +45,10 @@ public class WorksDoneService {
         return worksDoneRepository.save(worksDoneToUpdate);
     }
 
-    // TODO: this method has no exception handling because a non logged person shoud see works done
     public WorksDone getWorksDoneById(Long id) {
         return worksDoneRepository.findById(id).orElse(null);
     }
 
-    // TODO: this method has no exception handling because a non logged person shoud see works done
     public List<WorksDone> getWorksDoneByArtist(Artist artist) {
         return worksDoneRepository.findAll().stream().filter(work -> work.getArtist().equals(artist))
                 .collect(Collectors.toList());

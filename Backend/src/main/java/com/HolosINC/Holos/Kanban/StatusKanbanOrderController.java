@@ -29,7 +29,7 @@ public class StatusKanbanOrderController {
 
     @PostMapping
     public ResponseEntity<StatusKanbanOrder> addStatusToKanban(@RequestParam String color, @RequestParam String description, 
-    @RequestParam String nombre, @RequestParam Integer artistId) {
+    @RequestParam String nombre, @RequestParam Integer artistId) throws Exception{
         StatusKanbanOrder sk = statusKanbanOrderService.addStatusToKanban(color, description, nombre, artistId);
         return new ResponseEntity<>(sk, HttpStatus.OK);
     }
@@ -42,7 +42,7 @@ public class StatusKanbanOrderController {
     //Cambiar color o descripción ¿Añadir nombre?
 
     @PutMapping("/{id}/updateKanban")
-    public ResponseEntity<StatusKanbanOrder> updateKanban(@RequestBody StatusKanbanOrder sk) {
+    public ResponseEntity<StatusKanbanOrder> updateKanban(@RequestBody StatusKanbanOrder sk) throws Exception{
         Integer id = sk.getId().intValue();
         String color = sk.getColor();
         String nombre = sk.getName();
@@ -53,7 +53,7 @@ public class StatusKanbanOrderController {
     }
 
     @PutMapping("/{id}/updateKanbanOrder")
-    public ResponseEntity<StatusKanbanOrder> updateOrder(@PathVariable Long id, @RequestBody Integer order) {
+    public ResponseEntity<StatusKanbanOrder> updateOrder(@PathVariable Long id, @RequestBody Integer order) throws Exception{
         StatusKanbanOrder sk2 = statusKanbanOrderService.updateOrder(id, order);
         return new ResponseEntity<>(sk2, HttpStatus.OK);
     }

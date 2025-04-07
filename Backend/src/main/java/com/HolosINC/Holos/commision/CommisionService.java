@@ -15,11 +15,9 @@ import com.HolosINC.Holos.artist.Artist;
 import com.HolosINC.Holos.artist.ArtistService;
 import com.HolosINC.Holos.client.Client;
 import com.HolosINC.Holos.client.ClientRepository;
-import com.HolosINC.Holos.client.ClientService;
 import com.HolosINC.Holos.commision.DTOs.ClientCommissionDTO;
 import com.HolosINC.Holos.commision.DTOs.CommisionDTO;
 import com.HolosINC.Holos.commision.DTOs.CommisionRequestDTO;
-import com.HolosINC.Holos.commision.DTOs.CommissionDTO;
 import com.HolosINC.Holos.commision.DTOs.HistoryCommisionsDTO;
 import com.HolosINC.Holos.exceptions.ResourceNotFoundException;
 import com.HolosINC.Holos.model.BaseUser;
@@ -32,16 +30,14 @@ public class CommisionService {
     private final ClientRepository clientRepository;
     private final ArtistService artistService;
     private final BaseUserService userService;
-    private final ClientService clientService;
     private final StatusKanbanOrderService statusKanbanOrderService;
 
     @Autowired
-    public CommisionService(CommisionRepository commisionRepository, ArtistService artistService, BaseUserService userService, ClientRepository clientRepository, ClientService clientService, StatusKanbanOrderService statusKanbanOrderService) {
+    public CommisionService(CommisionRepository commisionRepository, ArtistService artistService, BaseUserService userService, ClientRepository clientRepository, StatusKanbanOrderService statusKanbanOrderService) {
         this.commisionRepository = commisionRepository;
         this.artistService = artistService;
         this.userService = userService;
         this.clientRepository = clientRepository;
-        this.clientService = clientService;
         this.statusKanbanOrderService = statusKanbanOrderService;
     }
 
@@ -101,7 +97,7 @@ public class CommisionService {
     }
 
     @Transactional
-    public Commision updateCommisionStatus(Long commisionId, boolean accept) {
+    public Commision updateCommisionStatus(Long commisionId, boolean accept) throws Exception {
         Commision commision = commisionRepository.findById(commisionId)
                 .orElseThrow(() -> new ResourceNotFoundException("Commision", "id", commisionId));
 

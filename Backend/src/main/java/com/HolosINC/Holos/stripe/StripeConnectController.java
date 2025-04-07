@@ -40,16 +40,28 @@ public class StripeConnectController {
     }
 
     @PostMapping("/create")
-    public ResponseEntity<String> createConnectedAccount() throws StripeException{
-        String accountId = stripeConnectService.createConnectedAccount();
+    public ResponseEntity<String> createConnectedAccount(){
+        try{
+            String accountId = stripeConnectService.createConnectedAccount();
         return new ResponseEntity<String>(accountId, HttpStatus.OK);
+        } catch (StripeException e) {
+            return new ResponseEntity<String>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        } catch (Exception e) {
+            return new ResponseEntity<String>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
+        
     }
 
     @GetMapping("/create-link")
     public ResponseEntity<String> createAccountLink() throws StripeException{
-        //Esto no debería pedir un sellerAccountId ya que se obtendría con el findCurrentUser
-        String accountLinkUrl = stripeConnectService.createAccountLink();
-        return new ResponseEntity<String>(accountLinkUrl, HttpStatus.OK);
+        try{
+            String accountLinkUrl = stripeConnectService.createAccountLink();
+            return new ResponseEntity<String>(accountLinkUrl, HttpStatus.OK);
+        } catch (StripeException e) {
+            return new ResponseEntity<String>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        } catch (Exception e) {
+            return new ResponseEntity<String>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
     }
 
 }

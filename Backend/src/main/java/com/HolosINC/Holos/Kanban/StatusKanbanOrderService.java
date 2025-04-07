@@ -44,7 +44,7 @@ public class StatusKanbanOrderService {
     //Se pone el orden el último. Si no hay nada, el primero por dewfecto
 
     @Transactional
-    public StatusKanbanOrder addStatusToKanban(String color, String description, String nombre, Integer artistId) {
+    public StatusKanbanOrder addStatusToKanban(String color, String description, String nombre, Integer artistId) throws Exception{
         StatusKanbanOrder statusKanbanOrder = new StatusKanbanOrder();
         statusKanbanOrder.setColor(color);
         statusKanbanOrder.setDescription(description);
@@ -65,7 +65,7 @@ public class StatusKanbanOrderService {
     }
 
     @Transactional
-    public StatusKanbanOrder updateKanban(int id, String color, String description, String nombre) {
+    public StatusKanbanOrder updateKanban(int id, String color, String description, String nombre) throws Exception {
         StatusKanbanOrder sk = statusKanbanOrderRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("StatusKanbanOrder", "id", id));
         sk.setColor(color);
@@ -75,7 +75,7 @@ public class StatusKanbanOrderService {
     }
 
     @Transactional
-    public StatusKanbanOrder updateOrder(Long id, Integer order) {
+    public StatusKanbanOrder updateOrder(Long id, Integer order) throws Exception{
         StatusKanbanOrder statusKanban = statusKanbanOrderRepository.findById(id.intValue())
                 .orElseThrow(() -> new ResourceNotFoundException("StatusKanbanOrder", "id", id));
         

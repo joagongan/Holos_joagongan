@@ -43,7 +43,6 @@ public class WorksDoneController {
         return ResponseEntity.ok(createdWork);
     }
 
-    // TODO:  
     @GetMapping
     public ResponseEntity<List<WorksDoneDTO>> getAllWorksDone() {
         try {
@@ -67,7 +66,6 @@ public class WorksDoneController {
         }
     }
 
-    // TODO:  
     @GetMapping("/{id}")
     public ResponseEntity<WorksDoneDTO> getWorksDoneById(@PathVariable Long id) {
         try {
@@ -89,7 +87,6 @@ public class WorksDoneController {
         }
     }
 
-    // TODO:    
     @GetMapping("/artist/{username}")
     public ResponseEntity<List<WorksDoneDTO>> getWorksDoneByArtist(@PathVariable String username) {
         try {
@@ -118,9 +115,12 @@ public class WorksDoneController {
         @PathVariable("artistId") Long artistId,
             @RequestBody @Valid WorksDone worksDone) {
 
-        RestPreconditions.checkNotNull(worksDoneService.getWorksDoneById(worksDoneId), "WorksDone", "ID", worksDoneId);
-
-        return new ResponseEntity<>(worksDoneService.updateWorksDone(worksDone, worksDoneId, artistId), HttpStatus.OK);
+        try{
+            RestPreconditions.checkNotNull(worksDoneService.getWorksDoneById(worksDoneId), "WorksDone", "ID", worksDoneId);
+            return new ResponseEntity<>(worksDoneService.updateWorksDone(worksDone, worksDoneId, artistId), HttpStatus.OK);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        }
     }
     
     @GetMapping("/mostPublicationsArtists")

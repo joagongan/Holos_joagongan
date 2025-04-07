@@ -8,7 +8,6 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.HolosINC.Holos.auth.AuthoritiesRepository;
 import com.HolosINC.Holos.commision.Commision;
 import com.HolosINC.Holos.commision.CommisionRepository;
 import com.HolosINC.Holos.exceptions.ResourceNotFoundException;
@@ -23,15 +22,13 @@ public class ClientService {
 	private BaseUserRepository baseUserRepository;
 	private CommisionRepository commisionRepository;
 	private MilestoneRepository milestoneRepository;
-	private AuthoritiesRepository authoritiesRepository;
 
 	@Autowired
-	public ClientService(ClientRepository clientRepository, BaseUserRepository baseUserRepository, CommisionRepository commisionRepository, MilestoneRepository milestoneRepository, AuthoritiesRepository authoritiesRepository) {
+	public ClientService(ClientRepository clientRepository, BaseUserRepository baseUserRepository, CommisionRepository commisionRepository, MilestoneRepository milestoneRepository) {
 		this.clientRepository = clientRepository;
 		this.baseUserRepository = baseUserRepository;
 		this.commisionRepository = commisionRepository;
 		this.milestoneRepository = milestoneRepository;
-		this.authoritiesRepository = authoritiesRepository;
 	}
 
 	@Transactional

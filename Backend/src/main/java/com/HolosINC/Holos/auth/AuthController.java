@@ -1,8 +1,5 @@
 package com.HolosINC.Holos.auth;
 
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -134,17 +131,25 @@ public class AuthController {
 
 	@PutMapping("/update")
 	public ResponseEntity<MessageResponse> updateUser(@Valid @RequestBody SignupRequest signUpRequest) {
-		if (baseUserService.existsUser(signUpRequest.getUsername()).equals(false)) {
-			return ResponseEntity.badRequest().body(new MessageResponse("Error: Username does not exist!"));
+		try{
+			if (baseUserService.existsUser(signUpRequest.getUsername()).equals(false)) {
+				return ResponseEntity.badRequest().body(new MessageResponse("Error: Username does not exist!"));
+			}
+			authService.updateUser(signUpRequest);
+			return ResponseEntity.ok(new MessageResponse("User updated successfully!"));
+		} catch (Exception e) {
+			return ResponseEntity.badRequest().body(new MessageResponse(e.getMessage()));
 		}
-		authService.updateUser(signUpRequest);
-		return ResponseEntity.ok(new MessageResponse("User updated successfully!"));
 	}
 
 	@DeleteMapping("/delete/{id}")
 	public ResponseEntity<MessageResponse> deleteUser(@RequestParam Long id) {
-		authService.deleteUser(id);
-		return ResponseEntity.ok(new MessageResponse("User deleted successfully!"));
+		try{
+			authService.deleteUser(id);
+			return ResponseEntity.ok(new MessageResponse("User deleted successfully!"));
+		} catch (Exception e) {
+			return ResponseEntity.badRequest().body(new MessageResponse(e.getMessage()));
+		}
 	}
 
 }
