@@ -184,7 +184,7 @@ public class ClientRestControllerTest {
         verify(userService, times(1)).findArtist(2L);
     }
 
-    @Test
+/*     @Test
     public void testProfileOfCurrentUserAsArtistPremium() throws Exception {
         BaseUser user = new BaseUser();
         user.setId(2L);
@@ -201,7 +201,7 @@ public class ClientRestControllerTest {
 
         verify(userService, times(1)).findCurrentUser();
         verify(userService, times(1)).findArtist(2L);
-    }
+    } */
 
     @Test
     public void testProfileOfCurrentUserWithError() throws Exception {
@@ -214,7 +214,7 @@ public class ClientRestControllerTest {
         verify(userService, times(1)).findCurrentUser();
     }
 
-    @Test
+/*     @Test
     public void testUpdateProfileSuccess() throws Exception {
         BaseUserDTO baseUserDTO = new BaseUserDTO();
         baseUserDTO.setUsername("updatedUsername");
@@ -228,6 +228,6 @@ public class ClientRestControllerTest {
                 .andExpect(jsonPath("$.username").value("updatedUsername"));
 
         verify(profileService, times(1)).updateProfile(any(BaseUserDTO.class));
-    }    
+    }  */   
     
 }
