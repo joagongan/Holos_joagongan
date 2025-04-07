@@ -1,6 +1,7 @@
 package com.HolosINC.Holos.search;
 
 import java.util.List;
+import java.util.Map;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -225,6 +226,118 @@ public class SearchControllerTest {
                 .andExpect(jsonPath("$.content").isEmpty());
 
         verify(searchService).searchArtists("nobody", null, 0, 10);
+    }
+
+    @Test
+    public void testSearchWorksByArtistWithDefaultPagination() throws Exception {
+        Page<Work> mockPage = new PageImpl<>(List.of(new Work()), PageRequest.of(0, 10), 1);
+        when(searchService.searchWorksByArtist(1, 0, 10)).thenReturn(mockPage);
+
+        mockMvc.perform(get("/api/v1/search/artists/1/works"))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON));
+
+        verify(searchService).searchWorksByArtist(1, 0, 10);
+    }
+
+    @Test
+    public void testSearchWorksByArtistWithCustomPagination() throws Exception {
+        Page<Work> mockPage = new PageImpl<>(List.of(new Work()), PageRequest.of(2, 5), 15);
+        when(searchService.searchWorksByArtist(2, 2, 5)).thenReturn(mockPage);
+
+        mockMvc.perform(get("/api/v1/search/artists/2/works")
+                .param("page", "2")
+                .param("size", "5"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.number").value(2));
+
+        verify(searchService).searchWorksByArtist(2, 2, 5);
+    }
+
+    @Test
+    public void testSearchWorksByArtistInvalidPage() throws Exception {
+        when(searchService.searchWorksByArtist(3, -1, 10))
+                .thenThrow(new ResourceNotOwnedException("El número de página no puede ser negativo."));
+
+        mockMvc.perform(get("/api/v1/search/artists/3/works")
+                .param("page", "-1"))
+                .andExpect(status().isBadRequest())
+                .andExpect(content().string("Error: El número de página no puede ser negativo."));
+
+        verify(searchService).searchWorksByArtist(3, -1, 10);
+    }
+
+    @Test
+    public void testSearchAllWithAllParams() throws Exception {
+        Map<String, Object> dummyResult = Map.of("type", "work", "title", "obra de prueba");
+        Page<Object> mockPage = new PageImpl<>(List.of(dummyResult), PageRequest.of(0, 10), 1);
+
+        when(searchService.searchAll("arte", 2, 10.0, 200.0, 0, 10)).thenReturn(mockPage);
+
+        mockMvc.perform(get("/api/v1/search/all")
+                .param("query", "arte")
+                .param("minWorksDone", "2")
+                .param("minPrice", "10.0")
+                .param("maxPrice", "200.0")
+                .param("page", "0")
+                .param("size", "10"))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON));
+
+        verify(searchService).searchAll("arte", 2, 10.0, 200.0, 0, 10);
+    }
+
+    @Test
+    public void testSearchAllWithNoParams() throws Exception {
+        Page<Object> mockPage = new PageImpl<>(List.of(), PageRequest.of(0, 10), 0);
+        when(searchService.searchAll(null, null, null, null, 0, 10)).thenReturn(mockPage);
+
+        mockMvc.perform(get("/api/v1/search/all"))
+                .andExpect(status().isOk());
+
+        verify(searchService).searchAll(null, null, null, null, 0, 10);
+    }
+
+    @Test
+    public void testSearchAllWithQueryOnly() throws Exception {
+        Map<String, Object> dummyResult = Map.of("type", "artist", "name", "abstracto");
+        Page<Object> mockPage = new PageImpl<>(List.of(dummyResult), PageRequest.of(0, 10), 1);
+
+        when(searchService.searchAll("abstracto", null, null, null, 0, 10)).thenReturn(mockPage);
+
+        mockMvc.perform(get("/api/v1/search/all")
+                .param("query", "abstracto"))
+                .andExpect(status().isOk());
+
+        verify(searchService).searchAll("abstracto", null, null, null, 0, 10);
+    }
+
+    @Test
+    public void testSearchAllWithInvalidPriceRange() throws Exception {
+        when(searchService.searchAll("x", null, 200.0, 100.0, 0, 10))
+                .thenThrow(new ResourceNotOwnedException("minPrice no puede ser mayor que maxPrice."));
+
+        mockMvc.perform(get("/api/v1/search/all")
+                .param("query", "x")
+                .param("minPrice", "200.0")
+                .param("maxPrice", "100.0"))
+                .andExpect(status().isBadRequest())
+                .andExpect(content().string("Error: minPrice no puede ser mayor que maxPrice."));
+
+        verify(searchService).searchAll("x", null, 200.0, 100.0, 0, 10);
+    }
+
+    @Test
+    public void testSearchAllWithInvalidMinWorksDone() throws Exception {
+        when(searchService.searchAll(null, -5, null, null, 0, 10))
+                .thenThrow(new ResourceNotOwnedException("minWorksDone no puede ser negativo."));
+
+        mockMvc.perform(get("/api/v1/search/all")
+                .param("minWorksDone", "-5"))
+                .andExpect(status().isBadRequest())
+                .andExpect(content().string("Error: minWorksDone no puede ser negativo."));
+
+        verify(searchService).searchAll(null, -5, null, null, 0, 10);
     }
 
 }
