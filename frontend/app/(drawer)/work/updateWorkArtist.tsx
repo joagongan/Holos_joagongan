@@ -127,7 +127,7 @@ await updateWorkdone(
       setInputValue("");
 
       // Redirigimos a la pantalla que prefieras
-      router.push({ pathname: "/explore" });
+      router.push({ pathname: "/" });
     } catch (error) {
       console.error(error);
       popUpMovilWindows(

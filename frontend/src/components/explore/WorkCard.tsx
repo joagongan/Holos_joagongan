@@ -2,18 +2,16 @@ import React from "react";
 import { TouchableOpacity, Image, View, Text } from "react-native";
 import { useRouter } from "expo-router";
 import { BASE_URL } from "@/src/constants/api";
-import ReportDropdown from "@/src/components/report/ReportDropDown";
-import { Work, WorksDoneDTO } from "@/src/constants/ExploreTypes";
+import { WorksDoneDTO } from "@/src/constants/ExploreTypes";
 import { styles } from "@/src/styles/Explore.styles";
+import { DropdownMenu } from "../DropdownMenu";
 
 
 type Props = {
   work: WorksDoneDTO;
-  menuVisibleId: number | null;
-  setMenuVisibleId: (id: number | null) => void;
 };
 
-const WorkCard = ({ work, menuVisibleId, setMenuVisibleId }: Props) => {
+const WorkCard = ({ work }: Props) => {
   const router = useRouter();
   // const { width } = useWindowDimensions();
   // const isDesktop = width > 768;
@@ -54,12 +52,12 @@ const WorkCard = ({ work, menuVisibleId, setMenuVisibleId }: Props) => {
       </TouchableOpacity>
 
       <View style={styles.dropdownOverlay}>
-        <ReportDropdown
-          workId={work.id}
-          menuVisibleId={menuVisibleId}
-          setMenuVisibleId={setMenuVisibleId}
-          isBigScreen={true}
-        />
+      <DropdownMenu
+        actions={[{
+          label: 'Reportar',
+          onPress: () => router.push(`/report/${work.id}`)
+        }]}
+      />
       </View>
     </View>
   );

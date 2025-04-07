@@ -1,10 +1,12 @@
 import React, { useContext, useState } from 'react';
-import { View, Text, TextInput, Button, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, TextInput, StyleSheet, TouchableOpacity } from 'react-native';
+import { Button } from "react-native-paper";
 import * as yup from 'yup';
 import { Formik } from 'formik';
 import { AuthenticationContext } from '@/src/contexts/AuthContext';
 import { showMessage } from 'react-native-flash-message';
 import { useRouter, useLocalSearchParams } from 'expo-router';
+import colors from '@/src/constants/colors';
 
 export default function LoginScreen() {
   const router = useRouter();
@@ -110,7 +112,20 @@ export default function LoginScreen() {
             </Text>
           )}
 
-          <Button onPress={() => handleSubmit()} title="Entrar" disabled={!isValid} />
+          <Button
+            onPress={() => handleSubmit()} 
+            disabled={!isValid}
+            style={styles.loginButton}
+            labelStyle={styles.loginLabel}
+          >
+            Entrar
+          </Button>
+          <Text
+            style={styles.link}
+            onPress={() => {router.push('/signup')}}
+          >
+            ¿Aún no tienes cuenta? ¡Regístrate!
+          </Text>
         </View>
       )}
     </Formik>
@@ -121,29 +136,31 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: 'center',
-    paddingHorizontal: 20,
-    alignSelf: 'center',
-    maxWidth: 1600,
-    minWidth: '60%',
+    paddingHorizontal: '25%',
+    backgroundColor: colors.surfaceMuted
   },
   title: {
     fontSize: 24,
     textAlign: 'center',
     marginBottom: 20,
+    color: colors.contentStrong
   },
   input: {
     borderWidth: 1,
-    borderColor: '#ccc',
-    padding: 10,
+    borderColor: colors.contentStrong,
+    backgroundColor: colors.surfaceMuted,
+    paddingVertical: 12,
+    paddingHorizontal: 16,
     marginBottom: 15,
-    borderRadius: 5,
+    borderRadius: 10,
+    color: colors.contentStrong,
   },
   errorInput: {
-    color: 'red',
+    color: colors.brandPrimary,
     marginBottom: 15,
   },
   backendError: {
-    color: 'red',
+    color: colors.brandPrimary,
     textAlign: 'center',
     marginBottom: 10,
   },
@@ -154,7 +171,25 @@ const styles = StyleSheet.create({
     paddingHorizontal: 8,
   },
   eyeText: {
-    color: '#007BFF',
+    color: colors.brandPrimary,
     fontWeight: 'bold',
   },
+  loginButton: {
+    backgroundColor: "#F05A7E",
+    borderRadius: 12,
+    paddingHorizontal: 20,
+    paddingVertical: 8,
+    color:"#FFF"
+  },
+  loginLabel: {
+    fontSize: 16,
+    color: "#fff",
+  },
+  link: {
+    fontSize:14,
+    fontWeight:'bold',
+    paddingTop:10,
+    color: colors.brandPrimary,
+    textDecorationLine:'underline'
+  }
 });
