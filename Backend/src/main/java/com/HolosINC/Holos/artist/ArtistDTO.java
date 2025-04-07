@@ -18,7 +18,6 @@ public class ArtistDTO {
     private Integer numSlotsOfWork;
     private byte[] tableCommisionsPrice;
     private String description;
-    private String city;
     private String linkToSocialMedia;
 
 }

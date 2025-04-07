@@ -42,7 +42,6 @@ class ArtistRestController {
 					.numSlotsOfWork(artist.getNumSlotsOfWork())
 					.tableCommisionsPrice(artist.getTableCommisionsPrice())
 					.description(artist.getDescription())
-					.city(artist.getCity())
 					.linkToSocialMedia(artist.getLinkToSocialMedia())
 					.build();
 			return new ResponseEntity<>(artistDTO, HttpStatus.OK);

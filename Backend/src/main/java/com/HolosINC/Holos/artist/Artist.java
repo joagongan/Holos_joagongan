@@ -41,9 +41,6 @@ public class Artist{
     @Size(max = 500)
     private String description;
 
-    @Size(max = 50)
-    private String city;
-
     @Size(max = 100)
     private String linkToSocialMedia;
 
