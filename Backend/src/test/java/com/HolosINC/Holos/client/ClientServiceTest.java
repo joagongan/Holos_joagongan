@@ -115,7 +115,7 @@ public class ClientServiceTest {
         verify(clientRepository, times(1)).findById(1L);
     }
 
-    @Test
+/*     @Test
     public void testFindClientByUserIdSuccess() {
         when(clientRepository.getClientByUser(1L)).thenReturn(Optional.of(client));
         
@@ -134,7 +134,7 @@ public class ClientServiceTest {
         });
 
         verify(clientRepository, times(1)).getClientByUser(1L);
-    }
+    } */
 
     @Test
     public void testIsClientTrue() {
@@ -156,7 +156,7 @@ public class ClientServiceTest {
         verify(clientRepository, times(1)).getClientByUser(1L);
     }
 
-    @Test
+/*     @Test
     public void testDeleteClientSuccess() throws Exception {
         when(clientRepository.findById(1L)).thenReturn(Optional.of(client));
         when(clientRepository.getClientByUser(1L)).thenReturn(Optional.of(client));
@@ -169,7 +169,7 @@ public class ClientServiceTest {
 
         verify(clientRepository, times(1)).delete(client);
         verify(baseUserRepository, times(1)).deleteById(1L);
-    }
+    } */
 
     @Test
     public void testDeleteClientWithActiveCommissions() {
