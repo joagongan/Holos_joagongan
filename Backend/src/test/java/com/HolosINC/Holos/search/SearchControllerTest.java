@@ -21,6 +21,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
+import com.HolosINC.Holos.artist.Artist;
+import com.HolosINC.Holos.exceptions.ResourceNotOwnedException;
 import com.HolosINC.Holos.work.Work;
 
 public class SearchControllerTest {
@@ -120,6 +122,109 @@ public class SearchControllerTest {
                 .andExpect(jsonPath("$.number").value(1));
 
         verify(searchService).searchWorks(null, null, null, 1, 10);
+    }
+
+    @Test
+    public void testSearchWorksInvalidPageParam() throws Exception {
+        when(searchService.searchWorks(null, null, null, -1, 10))
+                .thenThrow(new ResourceNotOwnedException("El número de página no puede ser negativo."));
+
+        mockMvc.perform(get("/api/v1/search/works")
+                .param("page", "-1"))
+                .andExpect(status().isBadRequest())
+                .andExpect(content().string("Error: El número de página no puede ser negativo."));
+
+        verify(searchService).searchWorks(null, null, null, -1, 10);
+    }
+
+    @Test
+    public void testSearchArtistsWithAllParams() throws Exception {
+        Page<Artist> mockPage = new PageImpl<>(List.of(new Artist()), PageRequest.of(0, 10), 1);
+        when(searchService.searchArtists("juan", 3, 0, 10)).thenReturn(mockPage);
+
+        mockMvc.perform(get("/api/v1/search/artists")
+                .param("query", "juan")
+                .param("minWorksDone", "3")
+                .param("page", "0")
+                .param("size", "10"))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON));
+
+        verify(searchService).searchArtists("juan", 3, 0, 10);
+    }
+
+    @Test
+    public void testSearchArtistsWithOnlyQuery() throws Exception {
+        Page<Artist> mockPage = new PageImpl<>(List.of(new Artist()), PageRequest.of(0, 10), 1);
+        when(searchService.searchArtists("maria", null, 0, 10)).thenReturn(mockPage);
+
+        mockMvc.perform(get("/api/v1/search/artists")
+                .param("query", "maria"))
+                .andExpect(status().isOk());
+
+        verify(searchService).searchArtists("maria", null, 0, 10);
+    }
+
+    @Test
+    public void testSearchArtistsWithOnlyMinWorksDone() throws Exception {
+        Page<Artist> mockPage = new PageImpl<>(List.of(new Artist()), PageRequest.of(0, 10), 1);
+        when(searchService.searchArtists(null, 5, 0, 10)).thenReturn(mockPage);
+
+        mockMvc.perform(get("/api/v1/search/artists")
+                .param("minWorksDone", "5"))
+                .andExpect(status().isOk());
+
+        verify(searchService).searchArtists(null, 5, 0, 10);
+    }
+
+    @Test
+    public void testSearchArtistsWithDefaultParams() throws Exception {
+        Page<Artist> mockPage = new PageImpl<>(List.of(new Artist()), PageRequest.of(0, 10), 1);
+        when(searchService.searchArtists(null, null, 0, 10)).thenReturn(mockPage);
+
+        mockMvc.perform(get("/api/v1/search/artists"))
+                .andExpect(status().isOk());
+
+        verify(searchService).searchArtists(null, null, 0, 10);
+    }
+
+    @Test
+    public void testSearchArtistsWithInvalidMinWorksDone() throws Exception {
+        when(searchService.searchArtists(null, -1, 0, 10))
+                .thenThrow(new ResourceNotOwnedException("minWorksDone no puede ser negativo."));
+
+        mockMvc.perform(get("/api/v1/search/artists")
+                .param("minWorksDone", "-1"))
+                .andExpect(status().isBadRequest())
+                .andExpect(content().string("Error: minWorksDone no puede ser negativo."));
+
+        verify(searchService).searchArtists(null, -1, 0, 10);
+    }
+
+    @Test
+    public void testSearchArtistsPaginationPage1() throws Exception {
+        Page<Artist> mockPage = new PageImpl<>(List.of(new Artist()), PageRequest.of(1, 10), 11);
+        when(searchService.searchArtists(null, null, 1, 10)).thenReturn(mockPage);
+
+        mockMvc.perform(get("/api/v1/search/artists")
+                .param("page", "1"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.number").value(1));
+
+        verify(searchService).searchArtists(null, null, 1, 10);
+    }
+
+    @Test
+    public void testSearchArtistsEmptyResults() throws Exception {
+        Page<Artist> emptyPage = new PageImpl<>(List.of(), PageRequest.of(0, 10), 0);
+        when(searchService.searchArtists("nobody", null, 0, 10)).thenReturn(emptyPage);
+
+        mockMvc.perform(get("/api/v1/search/artists")
+                .param("query", "nobody"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.content").isEmpty());
+
+        verify(searchService).searchArtists("nobody", null, 0, 10);
     }
 
 }
