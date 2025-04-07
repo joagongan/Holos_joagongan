@@ -473,28 +473,6 @@ INSERT INTO commisions (id, artist_id, name, description, price, client_id, stat
 (195, 20, 'Golden Wheat', 'A field of golden wheat under the setting sun', 240.0, 9, 'ENDED', '2025-08-20', 'FIFTYFIFTY', NULL),
 (196, 20, 'Ocean Breeze', 'A peaceful ocean breeze with gentle waves', 210.0, 10, 'REJECTED', '2025-08-21', 'INITIAL', NULL);
 
-INSERT INTO milestones (id, name, accepted, commision_id) VALUES 
-(1, 'Initial Sketch', TRUE, 6),
-(2, 'Line Art', FALSE, 6),
-(3, 'Coloring Phase 1', TRUE, 7),
-(4, 'Final Touches', FALSE, 7),
-(5, '3D Model Base', TRUE, 8),
-(6, 'Texture Painting', FALSE, 8),
-(7, 'Concept Art Approval', TRUE, 9),
-(8, 'First Revision', FALSE, 9),
-(9, 'Final Rendering', TRUE, 10),
-(10, 'Lighting Adjustments', FALSE, 10),
-(11, 'Sketch Approval', TRUE, 11),
-(12, 'Base Colors', FALSE, 11),
-(13, 'Initial Composition', TRUE, 12),
-(14, 'Details Refinement', FALSE, 12),
-(15, 'Pose Approval', TRUE, 13),
-(16, 'Shading Process', FALSE, 13),
-(17, 'Sculpt Base Form', TRUE, 14),
-(18, 'Final Texture Mapping', FALSE, 14),
-(19, 'Animation Draft', TRUE, 15),
-(20, 'Final Review', FALSE, 15);
-
 INSERT INTO artist_category(id,artist_id,category_id) VALUES
 (1, 1, 1),
 (2, 1, 2),
