@@ -27,10 +27,10 @@ const UserProfileScreen = () => {
       }
     };
     fetchUser();
-  }, [user?.id]);  
+  }, [user?.id]);
 
   useEffect(() => {
-    navigation.setOptions({ title: `${user?.baseUser.username}'s profile` });
+    navigation.setOptions({ title: `Mi perfil` });
   }, [navigation, user]);
 
   if (!user) {

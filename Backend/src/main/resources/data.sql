@@ -4,7 +4,7 @@ INSERT INTO authorities (id, authority) VALUES
 (3, 'ARTIST'),
 (4, 'ARTIST_PREMIUM');
 
-INSERT INTO base_user (id, first_name, username, password, email, phone_number, image_profile, created_user, authority) VALUES
+INSERT INTO base_user (id, name, username, password, email, phone_number, image_profile, created_user, authority) VALUES
 (1, 'client1', 'client1', '$2a$10$bQCIA7E2i4469olxpfn9keJqj22QmiDRZHQ2JbAKWUgYLK7ZgAnae', 'client1@gmail.com', '600619217', NULL, '2025-03-06', 2),
 (2, 'Jeenii', 'jeenni', '$2a$10$Kpe6DPMrQ3cVvUX7InB/C.l556UiudzbjVt/u/fhejE5l.hBW6FZi', 'reinapata20@gmail.com', '123456789', NULL, '2025-03-06', 2),
 (3, 'Emilio', 'emilio', '$2a$10$14GTyUA2jImRAIvh9p9yNe.2DC818K1/y7CX9VP3hWp4L5gnr9oeS', 'emilio.esp99@gmail.com', '123456789', NULL, '2025-03-06', 2),

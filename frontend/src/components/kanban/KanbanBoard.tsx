@@ -69,7 +69,7 @@ export const KanbanBoard: React.FC<KanbanBoardProps> = ({ columns, onMoveBack, o
       const message = typeof raw === 'string'
         ? raw
         : raw?.message || 'No se pudo crear la columna 😿'
-      console.error('Create column failed:', message)
+      console.error('Hubo un error al crear la columna:', message)
       setCreateError(message)
     }
   }  
