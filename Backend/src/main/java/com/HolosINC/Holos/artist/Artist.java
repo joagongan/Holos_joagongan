@@ -1,9 +1,11 @@
 package com.HolosINC.Holos.artist;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.Lob;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
@@ -29,7 +31,13 @@ public class Artist{
     @Min(1)
     private Integer numSlotsOfWork;
 
-    private String tableCommisionsPrice;
+    private String sellerAccountId;
+
+    private String subscriptionId;
+
+    @Lob
+    @Column(name = "tableCommisionsPrice", columnDefinition = "LONGBLOB")
+    private byte[] tableCommisionsPrice;
 
     @OneToOne(optional = true)
     private BaseUser baseUser;

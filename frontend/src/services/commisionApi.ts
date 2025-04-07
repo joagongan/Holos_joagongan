@@ -1,13 +1,14 @@
 import { API_URL } from "@/src/constants/api";
 import api from "@/src/services/axiosInstance";
 import { handleError } from "@/src/utils/handleError";
-import { Commission } from "@/src/constants/CommissionTypes";
+import { Commission, CommissionDTO, CommissionProtected, HistoryCommisionsDTO } from "@/src/constants/CommissionTypes";
 
-const COMMISION_URL = `${API_URL}/commisions`;
+const COMMISSION_URL = `${API_URL}/commisions`;
 
-export const getAllCommisions = async (token:string): Promise<Commission[]> => {
+// Obtener todas las comisiones
+export const getAllCommissions = async (): Promise<Commission[]> => {
   try {
-    const response = await api.get(COMMISION_URL, {headers: { Authorization: `Bearer ${token}`}});
+    const response = await api.get(COMMISSION_URL);
     return response.data;
   } catch (error) {
     handleError(error, "Error fetching commissions");
@@ -15,19 +16,22 @@ export const getAllCommisions = async (token:string): Promise<Commission[]> => {
   }
 };
 
-export const getAllRequestedCommisions = async (token:string): Promise<Commission[]> => {
+// Obtener el historial de comisiones
+export const getAllRequestedCommissions = async (token: string): Promise<HistoryCommisionsDTO> => {
   try {
-    const response = await api.get(`${COMMISION_URL}/requested`, {headers: { Authorization: `Bearer ${token}`}});
+    const response = await api.get(`${COMMISSION_URL}/historyOfCommisions`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
     return response.data;
   } catch (error) {
-    handleError(error, "Error fetching commissions");
+    handleError(error, "Error fetching requested commissions");
     throw error;
   }
 };
 
-export const getCommisionById = async (id: number): Promise<Commission> => {
+export const getCommissionById = async (id: number): Promise<CommissionDTO> => {
   try {
-    const response = await api.get(`${COMMISION_URL}/${id}`);
+    const response = await api.get(`${COMMISSION_URL}/${id}`);
     return response.data;
   } catch (error) {
     handleError(error, "Error fetching commission by ID");
@@ -35,12 +39,20 @@ export const getCommisionById = async (id: number): Promise<Commission> => {
   }
 };
 
-export const createCommision = async (
-  commisionData: Partial<Commission>,
-  artistId: number
-): Promise<Commission> => {
+export const getCommissionByIdDetails = async (id: number): Promise<CommissionProtected> => {
   try {
-    const response = await api.post(`${COMMISION_URL}/${artistId}`, commisionData);
+    const response = await api.get(`${COMMISSION_URL}/${id}`);
+    return response.data;
+  } catch (error) {
+    handleError(error, "Error fetching commission by ID");
+    throw error;
+  }
+};
+
+// Crear una nueva comisión
+export const createCommission = async (commissionData: Partial<Commission>, artistId: number): Promise<Commission> => {
+  try {
+    const response = await api.post(`${COMMISSION_URL}/${artistId}`, commissionData);
     return response.data;
   } catch (error) {
     handleError(error, "Error creating commission");
@@ -48,27 +60,75 @@ export const createCommision = async (
   }
 };
 
-export const updateCommisionStatus = async ( id: number, artistId: number, accept: boolean, token:string): Promise<Commission> => {
+// Aceptar una comisión
+export const acceptCommission = async (id: number, token: string): Promise<void> => {
   try {
-    const response = await api.put(`${COMMISION_URL}/${id}/status`, null, {
-      headers: { Authorization: `Bearer ${token}`},
-      params: { artistId, accept },
+    await api.put(`${COMMISSION_URL}/${id}/accept`, null, {
+      headers: { Authorization: `Bearer ${token}` }, 
     });
-    return response.data;
   } catch (error) {
-    handleError(error, "Error updating commission status");
+    handleError(error, "Error accepting commission");
     throw error;
   }
 };
 
-export const cancelCommision = async (id: number, clientId: number, token:string): Promise<void> => {
+// Rechazar una comisión
+export const rejectCommission = async (id: number, token: string): Promise<void> => {
   try {
-    await api.put(`${COMMISION_URL}/cancel/${id}`, null, {
-      headers: { Authorization: `Bearer ${token}`},
-      params: { clientId },
+    await api.put(`${COMMISSION_URL}/${id}/reject`, null, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+  } catch (error) {
+    handleError(error, "Error rejecting commission");
+    throw error;
+  }
+};
+
+// Cambiar el estado de la comisión a 'espera' (waiting)
+export const waitingCommission = async (id: number, token: string): Promise<void> => {
+  try {
+    await api.put(`${COMMISSION_URL}/${id}/waiting`, null, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+  } catch (error) {
+    handleError(error, "Error setting commission to waiting");
+    throw error;
+  }
+};
+
+// Cambiar el estado de la comisión a 'pago' (toPay)
+export const toPayCommission = async (id: number, token: string): Promise<void> => {
+  try {
+    await api.put(`${COMMISSION_URL}/${id}/toPay`, null, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+  } catch (error) {
+    handleError(error, "Error setting commission to pay");
+    throw error;
+  }
+};
+
+// Cancelar una comisión
+export const cancelCommission = async (id: number, token: string): Promise<void> => {
+  try {
+    await api.put(`${COMMISSION_URL}/${id}/cancel`, null, {
+      headers: { Authorization: `Bearer ${token}` },
     });
   } catch (error) {
     handleError(error, "Error cancelling commission");
     throw error;
   }
 };
+
+export const requestChangesCommission = async (id: number, updatedCommission: CommissionProtected, token: string) => {
+  try {
+    await api.put(`${COMMISSION_URL}/${id}/requestChanges`, updatedCommission, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+  } catch (error) {
+    handleError(error, "Error requesting changes to commission");
+    throw error;
+  }
+};
+
+

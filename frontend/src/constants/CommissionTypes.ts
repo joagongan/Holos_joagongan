@@ -26,6 +26,7 @@ export interface Artist {
     name: string;
     username: string;
     email: string;
+    subscriptionId: string|null;
 }
 
 export type User = Client | Artist;
@@ -34,11 +35,14 @@ export type User = Client | Artist;
 
 export enum StatusCommission {
     REQUESTED = "REQUESTED",
-    IN_WAIT_LIST = "IN_WAIT_LIST",
+    WAITING_CLIENT = "WAITING_CLIENT",
     ACCEPTED = "ACCEPTED",
     REJECTED = "REJECTED",
     CANCELED = "CANCELED",
-    ENDED = "ENDED"
+    WAITING_ARTIST = "WAITING_ARTIST",
+    NOT_PAID_YET = "NOT_PAID_YET",
+    IN_WAIT_LIST = "IN_WAIT_LIST",
+    ENDED = "Finalizado"
 }
 
 export enum PaymentArrangement {
@@ -54,6 +58,7 @@ export interface Work {
     description: string;
     price: number;
     artist: Artist;
+    image: string;
 }
 
 export interface StatusKanbanOrder {
@@ -67,7 +72,7 @@ export interface StatusKanbanOrder {
 
 export interface Commission extends Work {
     status: StatusCommission;
-    numMilestones: number;
+    milestoneDate: String;
     acceptedDateByArtist: string; // Stored as ISO date string
     paymentArrangement: PaymentArrangement;
     statusKanbanOrder: StatusKanbanOrder;
@@ -75,7 +80,6 @@ export interface Commission extends Work {
 }
 
 export interface WorksDone extends Work {
-    image: string;
 }
 
 export interface Category {
@@ -84,4 +88,66 @@ export interface Category {
     description?: string;
     image?: string;
 }
-  
+
+export interface HistoryCommisionsDTO {
+    
+    requested: CommissionProtected[];
+
+    accepted: CommissionInProgress[];
+
+    history: CommissionProtected[];
+
+    error: string;
+}
+
+export interface CommissionProtected {
+    image?: string;
+
+    imageProfile?: string;
+    
+    id: number;
+
+    name: string;
+
+    description: string;
+
+    price: number;
+
+    status: StatusCommission;
+
+    paymentArrangement: PaymentArrangement;
+
+    milestoneDate: Date;
+    
+    artistUsername: string;
+
+    clientUsername: string;
+}
+
+export interface CommissionInProgress {
+    image?: string;
+
+    imageProfile?: string;
+    
+    name: string;
+
+    artistUsername: string;
+
+    currentStep: number;
+
+    totalSteps: number;
+}
+
+export interface CommissionDTO {
+    id: number,
+    name: string,
+    description: string,
+    price: number,
+    status: StatusCommission,
+    paymentArrangement:PaymentArrangement,
+    milestoneDate: Date,
+    artistUsername: string,
+    clientUsername: string,
+    image: string,
+    imageProfile: string
+}

@@ -1,64 +1,62 @@
-import { useState, useContext, useEffect } from "react";
-import { Modal, View, Text, StyleSheet } from "react-native";
-import { Button, Portal, Dialog } from "react-native-paper";
+import { useContext } from "react";
+import { View, Text, StyleSheet } from "react-native";
+import { Button } from "react-native-paper";
 import { AuthenticationContext } from "@/src/contexts/AuthContext";
 import { useRouter } from "expo-router";
 
-export default function LogoutModal() {
-    const { signOut } = useContext(AuthenticationContext);
-    const [visible, setVisible] = useState(false);
-    const router = useRouter();
+export default function LogoutScreen() {
+  const { signOut } = useContext(AuthenticationContext);
+  const router = useRouter();
 
-    const showModal = () => setVisible(true);
-    const hideModal = () => setVisible(false);
+  const handleLogout = () => {
+    signOut(() => console.log("Logged out!"));
+    router.replace("/login");
+  };
 
-    const handleLogout = () => {
-        signOut(() => console.log("Logged out!"));
-        hideModal();
-        router.replace("/login");
-    };
+  return (
+    <View style={styles.screen}>
+      <Text style={styles.heading}>¿Vas a salir ya?</Text>
+      <Text style={styles.subtext}>Te vamos a extrañar...</Text>
 
-    return (
-        <>
-            <Button mode="contained" onPress={showModal} style={styles.logoutButton}>
-                Cerrar Sesión
-            </Button>
-
-            <Portal>
-                <Dialog visible={visible} onDismiss={hideModal}>
-                    <Dialog.Title>¿Salir de Holos?</Dialog.Title>
-                    <Dialog.Content>
-                        <Text style={styles.dialogText}>
-                            ¿Estás seguro de que quieres cerrar sesión? Todos tus datos estarán seguros.
-                        </Text>
-                    </Dialog.Content>
-                    <Dialog.Actions>
-                        <Button onPress={hideModal} style={styles.cancelButton}>Cancelar</Button>
-                        <Button onPress={handleLogout} mode="contained" style={styles.confirmButton}>
-                            Sí, salir
-                        </Button>
-                    </Dialog.Actions>
-                </Dialog>
-            </Portal>
-        </>
-    );
+      <Button
+        mode="contained"
+        onPress={handleLogout}
+        style={styles.logoutButton}
+        labelStyle={styles.logoutLabel}
+      >
+        Cerrar sesión 😿
+      </Button>
+    </View>
+  );
 }
 
 const styles = StyleSheet.create({
-    logoutButton: { 
-        backgroundColor: "#E63946", 
-        borderRadius: 10, 
-        paddingVertical: 5, 
-        width: "100%" 
-    },
-    dialogText: { 
-        fontSize: 16, 
-        color: "#333" 
-    },
-    cancelButton: { 
-        marginRight: 10 
-    },
-    confirmButton: { 
-        backgroundColor: "#E63946" 
-    }
+  screen: {
+    flex: 1,
+    backgroundColor: "#f6f6f6",
+    justifyContent: "center",
+    alignItems: "center",
+    padding: 24,
+  },
+  heading: {
+    fontSize: 20,
+    fontWeight: "600",
+    marginBottom: 4,
+    color: "#444",
+  },
+  subtext: {
+    fontSize: 14,
+    color: "#777",
+    marginBottom: 24,
+  },
+  logoutButton: {
+    backgroundColor: "#F05A7E",
+    borderRadius: 12,
+    paddingHorizontal: 20,
+    paddingVertical: 8,
+  },
+  logoutLabel: {
+    fontSize: 16,
+    color: "#fff",
+  },
 });

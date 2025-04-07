@@ -13,6 +13,8 @@ import com.HolosINC.Holos.model.BaseUserService;
 import com.HolosINC.Holos.work.Work;
 import com.HolosINC.Holos.work.WorkService;
 
+import jakarta.transaction.Transactional;
+
 @Service
 public class ReportService {
     
@@ -67,31 +69,44 @@ public class ReportService {
         return reportTypeRepository.save(reportType);
     }
 
-    public Report deleteReport(Long id) {
-        Report report = reportRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Invalid report id"));
-        reportRepository.delete(report);
-        return report;
+    @Transactional
+    public Report acceptReport(Long reportId) {
+            Report report = getReportByIdOrThrow(reportId);
+    
+            if (report.getStatus() != ReportStatus.PENDING) {
+                throw new IllegalStateException("Solo se pueden aceptar reportes en estado PENDING.");
+            }
+    
+            report.setStatus(ReportStatus.ACCEPTED);
+    
+            return reportRepository.save(report);  
     }
     
-    public Report acceptReport(Long id) {
-        Report report = reportRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Report not found"));
-        if (report.getStatus() == ReportStatus.ACCEPTED) {
-            throw new IllegalArgumentException("Report already accepted");
+    
+    public Report rejectReport(Long reportId) {
+        Report report = getReportByIdOrThrow(reportId);
+    
+        if (report.getStatus() != ReportStatus.PENDING) {
+            throw new IllegalStateException("Solo se pueden rechazar reportes en estado PENDING.");
         }
-        report.setStatus(ReportStatus.ACCEPTED);
+    
+        report.setStatus(ReportStatus.REJECTED);
         return reportRepository.save(report);
     }
 
-    public Report rejectReport(Long id) {
-        Report report = reportRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Report not found"));
-        if (report.getStatus() == ReportStatus.REJECTED) {
-            throw new IllegalArgumentException("Report already rejected");
+    public void deleteReport(Long reportId) {
+        Report report = getReportByIdOrThrow(reportId);
+    
+        if (report.getStatus() != ReportStatus.REJECTED) {
+            throw new IllegalStateException("Solo se pueden eliminar reportes que hayan sido rechazados.");
         }
-        report.setStatus(ReportStatus.REJECTED);
-        return reportRepository.save(report);
+    
+        reportRepository.delete(report);
+    }
+    
+    private Report getReportByIdOrThrow(Long id) {
+        return reportRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Reporte no encontrado con ID: " + id));
     }
 
     public ReportType getReportTypeByType(String type) {
