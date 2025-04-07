@@ -42,6 +42,12 @@ jobs:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: mvn clean install org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -f ./Backend/pom.xml -Dsonar.projectKey=joagongan_Holos_joagongan
 
+      - name: Upload test reports
+        uses: actions/upload-artifact@v2
+        with:
+          name: surefire-reports
+          path: Backend/target/surefire-reports
+
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
