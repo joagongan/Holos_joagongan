@@ -1,15 +1,18 @@
 package com.HolosINC.Holos.commision.DTOs;
 
 import java.util.Date;
-
 import com.HolosINC.Holos.commision.Commision;
 import com.HolosINC.Holos.commision.EnumPaymentArrangement;
+import com.fasterxml.jackson.annotation.JsonCreator;
 
 import lombok.AllArgsConstructor;
+
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Getter
 @AllArgsConstructor
+@NoArgsConstructor
 public class CommisionDTO {
 
     public String name;
