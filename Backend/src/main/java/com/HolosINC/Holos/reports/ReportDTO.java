@@ -1,9 +1,13 @@
 package com.HolosINC.Holos.reports;
 import com.HolosINC.Holos.work.Work;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Getter
+@AllArgsConstructor
+@NoArgsConstructor
 public class ReportDTO {
     
     private String name;
