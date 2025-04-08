@@ -190,6 +190,21 @@
 			<version>9.4.0.54424</version>
 			<scope>provided</scope>
 		</dependency>
+
+		<!-- https://mvnrepository.com/artifact/org.sonarsource.java/sonar-jacoco-listeners -->
+		<dependency>
+			<groupId>org.sonarsource.java</groupId>
+			<artifactId>sonar-jacoco-listeners</artifactId>
+			<version>5.14.0.18788</version>
+			<scope>test</scope>
+		</dependency>
+
+		<!-- https://mvnrepository.com/artifact/org.jacoco/jacoco-maven-plugin -->
+		<dependency>
+			<groupId>org.jacoco</groupId>
+			<artifactId>jacoco-maven-plugin</artifactId>
+			<version>0.8.13</version>
+		</dependency>
 	</dependencies>
 	<dependencyManagement>
 		<dependencies>
@@ -254,6 +269,26 @@
 						</exclude>
 					</excludes>
 				</configuration>
+			</plugin>
+			<plugin>
+			<groupId>org.jacoco</groupId>
+			<artifactId>jacoco-maven-plugin</artifactId>
+			<version>0.8.8</version> <!-- Usa la versión más reciente -->
+			<executions>
+				<execution>
+				<id>prepare-agent</id> <!-- Asigna un id único -->
+				<goals>
+					<goal>prepare-agent</goal> <!-- Configura el agente de cobertura para que capture los datos -->
+				</goals>
+				</execution>
+				<execution>
+				<id>generate-report</id> <!-- Asigna un id único -->
+				<goals>
+					<goal>report</goal> <!-- Genera el informe de cobertura -->
+				</goals>
+				<phase>verify</phase> <!-- Ejecuta este paso después de la fase de verificación -->
+				</execution>
+			</executions>
 			</plugin>
 		</plugins>
 	</build>
