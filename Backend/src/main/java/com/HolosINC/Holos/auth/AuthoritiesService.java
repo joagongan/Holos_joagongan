@@ -125,7 +125,7 @@ public class AuthoritiesService {
 
 		baseUserService.save(user);
 
-		if (user.getAuthority().getAuthority().toUpperCase().equals("ARTIST")) {
+		if (user.getAuthority().getAuthority().toUpperCase().equals("ARTIST ") ||user.getAuthority().getAuthority().toUpperCase().equals("ARTIST_PREMIUM")) {
 			Artist artist = artistService.findArtist(user.getId());
 			artist.setDescription(
 					request.getDescription() != null ? request.getDescription() : artist.getDescription());
@@ -146,7 +146,7 @@ public class AuthoritiesService {
 		} else if (user.getAuthority().getAuthority().equals("ADMIN")) {
 			throw new AccessDeniedException("No puedes eliminar un usuario administrador");
 		}
-		if (user.getAuthority().getAuthority().equals("ARTIST")) {
+		if (user.getAuthority().getAuthority().equals("ARTIST") || user.getAuthority().getAuthority().equals("ARTIST_PREMIUM")) {
 			Artist artist = artistService.findArtist(id);
 			artistService.deleteArtist(artist.getId());
 		} else if (user.getAuthority().getAuthority().equals("CLIENT")) {
