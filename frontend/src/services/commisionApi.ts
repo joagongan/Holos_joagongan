@@ -39,16 +39,6 @@ export const getCommissionById = async (id: number): Promise<CommissionDTO> => {
   }
 };
 
-export const getCommissionByIdDetails = async (id: number): Promise<CommissionProtected> => {
-  try {
-    const response = await api.get(`${COMMISSION_URL}/${id}`);
-    return response.data;
-  } catch (error) {
-    handleError(error, "Error fetching commission by ID");
-    throw error;
-  }
-};
-
 // Crear una nueva comisión
 export const createCommission = async (commissionData: Partial<Commission>, artistId: number): Promise<Commission> => {
   try {
