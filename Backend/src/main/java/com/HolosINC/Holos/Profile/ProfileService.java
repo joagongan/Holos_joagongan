@@ -7,8 +7,6 @@ import com.HolosINC.Holos.model.BaseUserDTO;
 import com.HolosINC.Holos.model.BaseUserService;
 import com.HolosINC.Holos.util.EntityToDTOMapper;
 
-import io.swagger.v3.oas.annotations.parameters.RequestBody;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
