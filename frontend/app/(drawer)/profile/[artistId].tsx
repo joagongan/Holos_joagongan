@@ -128,7 +128,7 @@ export default function ArtistDetailScreen() {
             />
             <View style={styles.profileTextContainer}>
               <Text style={styles.artistName}>
-                {artist?.username || "Eugenia Cohen"}
+                {artist?.username || "Nombre no disponible"}
               </Text>
             </View>
           </View>
@@ -137,10 +137,7 @@ export default function ArtistDetailScreen() {
           <View style={styles.topRight}>
             <Text style={styles.descriptionTitle}>Descripción</Text>
             <Text style={styles.descriptionText}>
-              {`Artista visual apasionada por la expresión a través del color y la textura.
-Su obra fusiona emoción y técnica, explorando desde lo abstracto hasta lo figurativo.
-Con cada pincelada, busca capturar la vida y transmitir historias que invitan a reflexionar
-sobre las realidades cotidianas.`}
+              {artist?.description || "No hay descripción disponible."}
             </Text>
           </View>
         </View>
