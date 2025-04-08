@@ -151,3 +151,15 @@ export interface CommissionDTO {
     image: string,
     imageProfile: string
 }
+export interface ClientCommissionDTO {
+    id: number;
+    image: string | null;
+    imageProfile: string | null;
+    name: string;
+    artistUsername: string;
+    clientUsername: string;   
+    currentStep: number;
+    totalSteps: number;
+  }
+  
+  

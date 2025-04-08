@@ -28,13 +28,17 @@ public interface CommisionRepository extends JpaRepository<Commision, Long>{
     " FROM Commision c WHERE c.client.baseUser.id = :clientId AND c.status IN :permitted")
     List<CommissionDTO> findCommisionsFilteredByClientIdAndPermittedStatus(Long clientId, List<StatusCommision> permitted);
 
-    @Query(" SELECT new com.HolosINC.Holos.commision.DTOs.ClientCommissionDTO(c.image, c.name, c.artist.baseUser.username, c.statusKanbanOrder.order,0, c.artist.baseUser.imageProfile)"+
-        "FROM Commision c WHERE c.client.baseUser.id = :clientId")
-    List<ClientCommissionDTO> findCommissionsInProgressByClient(Long clientId);
+    @Query("SELECT new com.HolosINC.Holos.commision.DTOs.ClientCommissionDTO(" +
+       "c.id, c.image, c.name, c.artist.baseUser.username, c.statusKanbanOrder.order, " +
+       "0, c.client.baseUser.imageProfile, c.client.baseUser.username) " +
+       "FROM Commision c WHERE c.client.baseUser.id = :clientId")
+    List<ClientCommissionDTO> findCommissionsInProgressByClient(Long clientId);//Cambio backend: he añadido el id y el username de artista o cliente
 
-    @Query(" SELECT new com.HolosINC.Holos.commision.DTOs.ClientCommissionDTO(c.image, c.name, c.artist.baseUser.username, c.statusKanbanOrder.order,0, c.client.baseUser.imageProfile)"+
-        "FROM Commision c WHERE c.artist.baseUser.id = :artistId")
-    List<ClientCommissionDTO> findCommissionsInProgressByArtist(Long artistId);
+    @Query("SELECT new com.HolosINC.Holos.commision.DTOs.ClientCommissionDTO(" +
+       "c.id, c.image, c.name, c.artist.baseUser.username, c.statusKanbanOrder.order, " +
+       "0, c.client.baseUser.imageProfile, c.client.baseUser.username) " +
+       "FROM Commision c WHERE c.artist.baseUser.id = :artistId")
+    List<ClientCommissionDTO> findCommissionsInProgressByArtist(Long artistId);//Cambio backend: he añadido el id y el username de artista o cliente
 
     @Query("SELECT c FROM Commision c WHERE c.client.id = :clientId")
     List<Commision> findAllByClientId(Long clientId);

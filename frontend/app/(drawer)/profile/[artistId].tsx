@@ -81,17 +81,7 @@ export default function ArtistDetailScreen() {
             </TouchableOpacity>
 
           
-          <TouchableOpacity
-            style={styles.button}
-            onPress={() =>
-              router.push({
-                pathname: "/chats/[toUserId]",
-                params: { toUserId: String(artist?.baseUser?.id) },
-              })
-            }
-          >
-            <Text style={styles.buttonText}>Enviar un mensaje</Text>
-          </TouchableOpacity>
+          
           </View>
 
         {/* Obras del artista */}

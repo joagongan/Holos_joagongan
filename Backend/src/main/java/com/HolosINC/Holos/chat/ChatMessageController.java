@@ -29,7 +29,7 @@ public class ChatMessageController {
     @PostMapping
     public ResponseEntity<ChatMessage> createChatMessage(
         @RequestPart("chatMessage") String chatMessageJson,
-        @RequestPart("image") MultipartFile imageFile) {
+        @RequestPart(value = "image", required = false) MultipartFile imageFile) { //Cambio Backend: He puesto el image a required false
         try {
             ObjectMapper mapper = new ObjectMapper();
             ChatMessage chatMessage = mapper.readValue(chatMessageJson, ChatMessage.class);
