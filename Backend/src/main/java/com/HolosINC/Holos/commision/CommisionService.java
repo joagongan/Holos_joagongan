@@ -4,7 +4,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -70,7 +69,6 @@ public class CommisionService {
     public Commision requestChangesCommision(CommissionDTO commisionDTO, Long commisionId) throws Exception {
         try {
             BaseUser user = userService.findCurrentUser();
-            Commision commisionUpdated = commisionDTO.createCommision();
             Commision commisionInBDD = commisionRepository.findById(commisionId)
                     .orElseThrow(() -> new ResourceNotFoundException("No existe la comisión que se quiere cambiar"));
 
@@ -78,31 +76,39 @@ public class CommisionService {
                     user.getId().equals(commisionInBDD.getArtist().getBaseUser().getId())))
                 throw new IllegalArgumentException("No puedes editar una comisión que no te pertenece");
 
-            if (user.hasAuthority("ARTIST"))
-                commisionUpdated.setStatus(StatusCommision.WAITING_CLIENT);
-            if (user.hasAuthority("CLIENT"))
-                commisionUpdated.setStatus(StatusCommision.WAITING_ARTIST);
-
-            BeanUtils.copyProperties(commisionUpdated, commisionInBDD);
-
+            commisionInBDD.setPrice(commisionDTO.getPrice());
             return commisionRepository.save(commisionInBDD);
-        } catch (ResourceNotFoundException e) {
-            throw e;
-        } catch (IllegalArgumentException e) {
+        } catch (ResourceNotFoundException | IllegalArgumentException e) {
             throw e;
         } catch (Exception e) {
-            throw e;
+            throw new Exception(e);
         }
     }
 
-    public CommissionDTO getCommisionById(Long id) {
-        CommissionDTO commission = new CommissionDTO(commisionRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Commision", "id", id)));
-        return commission;
+    @Transactional
+    public CommissionDTO getCommisionById(Long commisionId) throws Exception {
+        try {
+            BaseUser user = userService.findCurrentUser();
+
+            Commision commisionInBDD = commisionRepository.findById(commisionId)
+                    .orElseThrow(() -> new ResourceNotFoundException("No existe la comisión con el ID proporcionado"));
+
+            if (!(user.getId().equals(commisionInBDD.getClient().getBaseUser().getId()) ||
+                    user.getId().equals(commisionInBDD.getArtist().getBaseUser().getId())))
+                throw new IllegalArgumentException("No tienes permiso para acceder a esta comisión");
+
+            return new CommissionDTO(commisionInBDD);
+            
+        } catch (ResourceNotFoundException | IllegalArgumentException e) {
+            throw e; 
+        } catch (Exception e) {
+            throw new Exception("Error al obtener la comisión: " + e.getMessage(), e);
+        }
     }
 
+
     @Transactional
-    public Commision updateCommisionStatus(Long commisionId, boolean accept) {
+    public Commision updateCommisionStatus(Long commisionId, boolean accept) throws Exception {
         Commision commision = commisionRepository.findById(commisionId)
                 .orElseThrow(() -> new ResourceNotFoundException("Commision", "id", commisionId));
 
@@ -136,7 +142,7 @@ public class CommisionService {
     }
 
     @Transactional
-    public void waitingCommission(Long commisionId) {
+    public void waitingCommission(Long commisionId) throws Exception {
         Commision commision = commisionRepository.findById(commisionId)
                 .orElseThrow(() -> new ResourceNotFoundException("Commision", "id", commisionId));
         Long id = userService.findCurrentUser().getId();
@@ -165,7 +171,7 @@ public class CommisionService {
     }
 
     @Transactional
-    public void toPayCommission(Long commisionId) {
+    public void toPayCommission(Long commisionId) throws Exception {
         Commision commision = commisionRepository.findById(commisionId)
                 .orElseThrow(() -> new ResourceNotFoundException("Commision", "id", commisionId));
         Long id = userService.findCurrentUser().getId();
@@ -196,7 +202,7 @@ public class CommisionService {
     }
 
     @Transactional
-    public void rejectCommission(Long commisionId) {
+    public void rejectCommission(Long commisionId) throws Exception {
         Commision commision = commisionRepository.findById(commisionId)
                 .orElseThrow(() -> new ResourceNotFoundException("Commision", "id", commisionId));
         Long id = userService.findCurrentUser().getId();
@@ -312,14 +318,14 @@ public class CommisionService {
         historyCommisionsDTO.setRequested(
                 commisionRepository.findCommisionsFilteredByClientIdAndPermittedStatus(
                         userId,
-                        List.of(StatusCommision.WAITING_ARTIST, StatusCommision.WAITING_CLIENT)));
+                        List.of(StatusCommision.REQUESTED, StatusCommision.WAITING_ARTIST, StatusCommision.WAITING_CLIENT, StatusCommision.NOT_PAID_YET)));
 
         historyCommisionsDTO.setAccepted(commisionRepository.findCommissionsInProgressByClient(userId));
 
         historyCommisionsDTO.setHistory(
                 commisionRepository.findCommisionsFilteredByClientIdAndPermittedStatus(
                         userId,
-                        List.of(StatusCommision.REJECTED, StatusCommision.NOT_PAID_YET, StatusCommision.IN_WAIT_LIST,
+                        List.of(StatusCommision.REJECTED, StatusCommision.IN_WAIT_LIST,
                                 StatusCommision.CANCELED, StatusCommision.ENDED)));
     }
 

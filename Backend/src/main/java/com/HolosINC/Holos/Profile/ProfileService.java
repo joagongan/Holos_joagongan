@@ -1,7 +1,5 @@
 package com.HolosINC.Holos.Profile;
 
-import com.HolosINC.Holos.client.Client;
-import com.HolosINC.Holos.client.ClientService;
 import com.HolosINC.Holos.artist.Artist;
 import com.HolosINC.Holos.artist.ArtistService;
 import com.HolosINC.Holos.model.BaseUser;
@@ -23,11 +21,8 @@ public class ProfileService {
     @Autowired
     private ArtistService artistService;
 
-    @Autowired
-    private ClientService clientService;
-
     @Transactional
-    public BaseUserDTO updateProfile(@RequestBody BaseUserDTO baseUserDTO) {
+    public BaseUserDTO updateProfile(BaseUserDTO baseUserDTO) throws Exception {
         BaseUser currentUser = baseUserService.findCurrentUser();
         Artist artist = artistService.findArtist(currentUser.getId());
 
@@ -41,20 +36,6 @@ public class ProfileService {
             return EntityToDTOMapper.toArtistDTO(artist);
         }
 
-        // Si no es un artista, intentamos encontrarlo como cliente
-        Client client = clientService.findClient(currentUser.getId());
-        if (client != null) {
-            // Si encontramos al cliente, actualizamos los datos del cliente
-            client.getBaseUser().setName(baseUserDTO.getName());
-            client.getBaseUser().setEmail(baseUserDTO.getEmail());
-            client.getBaseUser().setPhoneNumber(baseUserDTO.getPhoneNumber());
-            client.getBaseUser().setImageProfile(baseUserDTO.getImageProfile());
-
-            clientService.saveClient(client);
-            return EntityToDTOMapper.toClientDTO(
-                    client);
-        }
-
-        throw new RuntimeException("User type is not recognized.");
+        return EntityToDTOMapper.toBaseUserDTO(currentUser);
     }
 }

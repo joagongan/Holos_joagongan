@@ -19,7 +19,7 @@ const KanbanScreen: React.FC = () => {
         const result = await fetchStatusesWithCommissions(loggedInUser.token);
         setColumns(result);
       } catch (err) {
-        Alert.alert('Error', 'Failed to load Kanban data.');
+        Alert.alert('Error', 'No se pudieron cargar los datos del kanban.');
       } finally {
         setLoading(false);
       }
@@ -36,7 +36,7 @@ const KanbanScreen: React.FC = () => {
       const result = await fetchStatusesWithCommissions(loggedInUser.token);
       setColumns(result);
     } catch (err) {
-      console.error('Failed to refresh columns', err);
+      console.error('No se pudieron refrescar las columnas.', err);
     }
   };
   
@@ -46,7 +46,7 @@ const KanbanScreen: React.FC = () => {
       await moveCommissionBack(commissionId, loggedInUser.token);
       refresh();
     } catch (err) {
-      Alert.alert('Error', 'Could not move commission backward.');
+      Alert.alert('Error', 'No se pudo mover la comisión atrás.');
     }
   };
 
@@ -55,13 +55,20 @@ const KanbanScreen: React.FC = () => {
       await moveCommissionForward(commissionId, loggedInUser.token);
       refresh();
     } catch (err) {
-      Alert.alert('Error', 'Could not move commission forward.');
+      Alert.alert('Error', 'No se pudo mover la comisión adelante.');
     }
   };
 
   const handleUpdateColumn = (updated: StatusKanbanUpdateDTO) => {
     setColumns(prev => prev.map(columna => columna.status.id === updated.id ? 
-        { ...columna, status: { ...columna.status, name: updated.nombre, description: updated.description, color: updated.color }} 
+        { ...columna,
+          status: { 
+            ...columna.status,
+            name: updated.nombre,
+            description: updated.description,
+            color: updated.color
+          }
+        } 
         : columna
       )
     )

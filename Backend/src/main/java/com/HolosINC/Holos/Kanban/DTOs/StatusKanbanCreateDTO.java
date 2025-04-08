@@ -23,5 +23,5 @@ public class StatusKanbanCreateDTO {
         regexp = "^(?!\\d+$).+",
         message = "El campo 'nombre' no puede ser únicamente numérico"
     )
-    private String nombre;
+    private String name;
 }
