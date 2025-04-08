@@ -1,4 +1,4 @@
-package com.HolosINC.Holos.ReportController;
+package com.HolosINC.Holos.report;
 
 import com.HolosINC.Holos.reports.Report;
 import com.HolosINC.Holos.reports.ReportController;
