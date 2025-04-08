@@ -16,7 +16,7 @@ import { getArtistById } from "@/src/services/artistApi";
 import { getWorksDoneByArtist } from "@/src/services/WorksDoneApi";
 import LoadingScreen from "@/src/components/LoadingScreen";
 
-import { Artist } from "@/src/constants/ExploreTypes";
+import { ArtistDTO } from "@/src/constants/ExploreTypes";
 import { decodeImagePath } from "@/src/services/ExploreWorkHelpers";
 import styles from "@/src/styles/ArtistDetail.styles";
 
@@ -55,7 +55,7 @@ export default function ArtistDetailScreen() {
   const navigation = useNavigation();
   const { artistId } = useLocalSearchParams<{ artistId: string }>();
 
-  const [artist, setArtist] = useState<Artist | null>(null);
+  const [artist, setArtist] = useState<ArtistDTO | null>(null);
   const [works, setWorks] = useState<Artwork[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [menuVisibleId, setMenuVisibleId] = useState<number | null>(null);
@@ -70,11 +70,11 @@ export default function ArtistDetailScreen() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const artistData: Artist = await getArtistById(Number(artistId));
+        const artistData: ArtistDTO = await getArtistById(Number(artistId));
         setArtist(artistData);
 
         const worksData: Artwork[] = await getWorksDoneByArtist(
-          artistData.baseUser?.username || ""
+          artistData.username || ""
         );
         setWorks(worksData);
       } catch (error) {
@@ -121,14 +121,14 @@ export default function ArtistDetailScreen() {
           <View style={styles.profileContainer}>
             <ProfileImage
               uri={
-                artist?.baseUser?.imageProfile
-                  ? decodeImagePath(artist.baseUser.imageProfile)
+                artist?.imageProfile
+                  ? decodeImagePath(artist.imageProfile)
                   : "https://via.placeholder.com/150"
               }
             />
             <View style={styles.profileTextContainer}>
               <Text style={styles.artistName}>
-                {artist?.baseUser?.username || "Eugenia Cohen"}
+                {artist?.username || "Eugenia Cohen"}
               </Text>
             </View>
           </View>
@@ -149,7 +149,7 @@ sobre las realidades cotidianas.`}
         <TouchableOpacity
           style={styles.button}
           onPress={() =>
-            router.push(`/commissions/request/${artist?.baseUser?.username}`)
+            router.push(`/commissions/request/${artist?.username}`)
           }
         >
           <Text style={styles.buttonText}>Solicitar Trabajo Personalizado</Text>

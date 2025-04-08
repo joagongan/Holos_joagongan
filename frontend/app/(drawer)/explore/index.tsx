@@ -144,9 +144,6 @@ export default function ExploreScreen() {
                   />
                   <View style={styles.artistTextContainer}>
                     <Text style={styles.artistName}>{artist.name}</Text>
-                    <Text style={styles.artistLocation}>
-                      Painter, Amsterdam
-                    </Text>
                   </View>
                 </TouchableOpacity>
               );

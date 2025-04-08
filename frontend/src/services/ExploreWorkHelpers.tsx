@@ -1,7 +1,7 @@
 // src/services/ExploreWorkHelpers.ts
 
 import { getAllWorksDoneDTO } from "@/src/services/WorksDoneApi";
-import { WorksDoneDTO, Artist } from "@/src/constants/ExploreTypes";
+import { WorksDoneDTO, ArtistDTO } from "@/src/constants/ExploreTypes";
 import { BASE_URL } from "@/src/constants/api";
 import { getArtistById } from "@/src/services/artistApi";
 import { getMostPublicationsArtists } from "@/src/services/WorksDoneApi"; // Nuevo import
@@ -42,6 +42,7 @@ export interface ArtistMin {
   id: number;
   name: string;
   baseUserid?: number;
+  location?: string;
   imageProfile?: string;
 }
 
@@ -50,15 +51,16 @@ export interface ArtistMin {
  */
 export async function getTopThreeArtists(): Promise<ArtistMin[]> {
   try {
-    const artists: Artist[] = await getMostPublicationsArtists();
-    // Se extraen los tres primeros artistas y se mapean al tipo ArtistMin.
-    return artists.slice(0, 3).map((artist) => ({
-      id: artist.id,
-      // Se usa el nombre de baseUser si existe; en caso contrario, se usa artist.name
-      name: artist.baseUser?.name || artist.name,
-      imageProfile: artist.baseUser?.imageProfile,
-      baseUserid: artist.baseUser?.id,
-    }));
+    const artists: ArtistMin[] = (await getMostPublicationsArtists()).map(
+      (artist) => ({
+        id: artist.id,
+        baseUserid: artist?.baseUser.id,
+        description: artist?.description,
+        imageProfile: artist?.baseUser?.imageProfile,
+        name: artist.baseUser?.name,
+      })
+    );
+    return artists;
   } catch (error) {
     console.error("Error fetching top three artists:", error);
     throw error;
