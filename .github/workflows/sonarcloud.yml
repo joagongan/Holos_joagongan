@@ -10,12 +10,6 @@ jobs:
   build:
     name: Build and analyze
     runs-on: ubuntu-latest
-    env:
-      SERVER_HOST: "localhost"
-      PORT: 8080
-      SPRING_DATASOURCE_URL: "jdbc:mysql://localhost:3306/holos_db"
-      SPRING_DATASOURCE_USERNAME: "H0l0s_DB"
-      SPRING_DATASOURCE_PASSWORD: "H0l0s1$PP"
     steps:
       - uses: actions/checkout@v4
         with:
@@ -41,7 +35,6 @@ jobs:
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -f ./Backend/pom.xml -Dsonar.projectKey=joagongan_Holos_joagongan -X
-        
 
       - name: Set up Node.js
         uses: actions/setup-node@v3
@@ -58,5 +51,4 @@ jobs:
           cd ./frontend
           npx sonar-scanner  -Dsonar.organization=joagongan -Dsonar.projectKey=joagongan_Holos_joagongan_frontend -Dsonar.sources=app -Dsonar.host.url=https://sonarcloud.io -Dsonar.token=${{ secrets.SONAR_TOKEN }}
 
-        
         
