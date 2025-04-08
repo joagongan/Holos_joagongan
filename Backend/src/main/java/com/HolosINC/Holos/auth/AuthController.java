@@ -29,6 +29,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.HolosINC.Holos.auth.payload.request.LoginRequest;
 import com.HolosINC.Holos.auth.payload.request.SignupRequest;
+import com.HolosINC.Holos.auth.payload.request.UpdateRequest;
 import com.HolosINC.Holos.auth.payload.response.JwtResponse;
 import com.HolosINC.Holos.auth.payload.response.MessageResponse;
 import com.HolosINC.Holos.configuration.jwt.JwtUtils;
@@ -113,24 +114,21 @@ public class AuthController {
 
 			// Validar y asignar la imagen del precio del tablero de comisiones
 			if (tableCommissionsPrice != null && !tableCommissionsPrice.isEmpty()) {
-				signupRequest.setTableCommissionsPrice(tableCommissionsPrice);
+				signupRequest.setTableCommisionsPrice(tableCommissionsPrice);
 			}
 
 			// Registrar usuario
 			authService.createUser(signupRequest);
-			return ResponseEntity.ok(new MessageResponse("User registered successfully!"));
+			
+			return ResponseEntity.ok().body(new MessageResponse("Username: " + signupRequest.getUsername() + ", Password: " + signupRequest.getPassword()));
 
-		} catch (IllegalArgumentException e) {
-			return ResponseEntity.badRequest().body(e.getMessage());
 		} catch (Exception e) {
-			e.printStackTrace(); // Para ver el error en consola
-			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-					.body(new MessageResponse("Error during registration: " + e.getMessage()));
+			return ResponseEntity.badRequest().body(e.getMessage());
 		}
 	}
 
 	@PutMapping("/update")
-	public ResponseEntity<MessageResponse> updateUser(@Valid @RequestBody SignupRequest signUpRequest) {
+	public ResponseEntity<MessageResponse> updateUser(@Valid @RequestBody UpdateRequest signUpRequest) {
 		try{
 			if (baseUserService.existsUser(signUpRequest.getUsername()).equals(false)) {
 				return ResponseEntity.badRequest().body(new MessageResponse("Error: Username does not exist!"));

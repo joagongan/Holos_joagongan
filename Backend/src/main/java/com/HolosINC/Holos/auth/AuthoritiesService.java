@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import com.HolosINC.Holos.artist.Artist;
 import com.HolosINC.Holos.artist.ArtistService;
 import com.HolosINC.Holos.auth.payload.request.SignupRequest;
+import com.HolosINC.Holos.auth.payload.request.UpdateRequest;
 import com.HolosINC.Holos.client.Client;
 import com.HolosINC.Holos.client.ClientService;
 import com.HolosINC.Holos.exceptions.AccessDeniedException;
@@ -54,7 +55,7 @@ public class AuthoritiesService {
 	}
 
 	@Transactional
-	public void createUser(@Valid SignupRequest request) throws IllegalArgumentException, Exception {
+	public void createUser(@Valid SignupRequest request) throws Exception {
 
 		try {
 			if(authoritiesRepository.existsBaseUserByUsername(request.getUsername()))
@@ -62,7 +63,6 @@ public class AuthoritiesService {
 			if(authoritiesRepository.existsBaseUserByUsername(request.getEmail()))
 			throw new IllegalArgumentException("Email ya existente en la base de datos.");
 			
-			// Crear el usuario base
 			BaseUser user = new BaseUser();
 			user.setUsername(request.getUsername());
 			user.setName(request.getFirstName());
@@ -71,68 +71,70 @@ public class AuthoritiesService {
 			user.setEmail(request.getEmail());
 			user.setPhoneNumber(request.getPhoneNumber());
 	
-			// Procesar la imagen de perfil
 			if (request.getImageProfile() != null) {
 				user.setImageProfile(imageHandler.getBytes(request.getImageProfile()));
 			}
 	
-			// Asignar el rol al usuario
 			String strRoles = request.getAuthority().toUpperCase();
 			Authorities role = findByAuthority(strRoles);
 			user.setAuthority(role);
-	
-			// Si el rol es ARTIST, crear un artista asociado
+
 			if (strRoles.equals("ARTIST")) {
 				baseUserService.save(user);
 	
 				Artist artist = new Artist();
-				artist.setBaseUser(user);
-	
-				// Procesar la imagen del precio del tablero de comisiones
-				if (request.getTableCommissionsPrice() != null) {
-					artist.setTableCommisionsPrice(imageHandler.getBytes(request.getTableCommissionsPrice()));
+				if (request.getTableCommisionsPrice() != null) {
+					if(request.getTableCommisionsPrice().getSize() > 0) {
+						artist.setTableCommisionsPrice(imageHandler.getBytes(request.getTableCommisionsPrice()));
+					} else {
+						throw new IllegalArgumentException("No se ha subido la tabla de comisiones.");
+					}
 				}
+
+				artist.setDescription(request.getDescription());
+				artist.setLinkToSocialMedia(request.getLinkToSocialMedia());
+				artist.setNumSlotsOfWork(7);
+				artist.setTableCommisionsPrice(request.getTableCommisionsPrice().getBytes());
+				artist.setBaseUser(user);
 	
 				artistService.saveArtist(artist);
 	
 			} else if (strRoles.equals("CLIENT")) {
-				// Si el rol es CLIENT, crear un cliente asociado
 				Client client = new Client();
 				baseUserService.save(user);
 				client.setBaseUser(user);
+
 				clientService.saveClient(client);
-	
 			} else {
-				// Guardar el usuario base si no es ARTIST ni CLIENT
 				baseUserService.save(user);
 			}
-		} catch (IllegalArgumentException e) {
-			throw e;
 		} catch (Exception e) {
 			throw e;
 		}
 	}
 
 	@Transactional
-	public void updateUser(@Valid SignupRequest request) throws Exception{
+	public void updateUser(@Valid UpdateRequest request) throws Exception{
 		BaseUser user = baseUserService.findCurrentUser();
-		user.setUsername(request.getUsername());
-		user.setName(request.getFirstName());
+		user.setUsername(request.getUsername() != null ? request.getUsername() : user.getUsername());
+		user.setName(request.getFirstName() != null ? request.getFirstName() : user.getName());
 		user.setUpdatedUser(Date.from(Instant.now()));
-		user.setPassword(encoder.encode(request.getPassword()));
-		user.setEmail(request.getEmail());
-		user.setPhoneNumber(request.getPhoneNumber());
-		user.setImageProfile(imageHandler.getBytes(request.getImageProfile()));
+		user.setEmail(request.getEmail() != null ? request.getEmail() : user.getEmail());
+		user.setPhoneNumber(request.getPhoneNumber() != null ? request.getPhoneNumber() : user.getPhoneNumber());
+		user.setImageProfile(request.getImageProfile() != null ? imageHandler.getBytes(request.getImageProfile()) : user.getImageProfile());
 
-		if (request.getAuthority().toUpperCase() == "ARTIST") {
+		baseUserService.save(user);
+
+		if (user.getAuthority().getAuthority().toUpperCase().equals("ARTIST")) {
 			Artist artist = artistService.findArtist(user.getId());
-			artist.setBaseUser(user);
+			artist.setDescription(
+					request.getDescription() != null ? request.getDescription() : artist.getDescription());
+			artist.setLinkToSocialMedia(request.getLinkToSocialMedia() != null ? request.getLinkToSocialMedia()
+					: artist.getLinkToSocialMedia());
+			artist.setTableCommisionsPrice(
+					request.getTableCommissionsPrice() != null ? request.getTableCommissionsPrice().getBytes()
+							: artist.getTableCommisionsPrice());
 			artistService.saveArtist(artist);
-		} else if (request.getAuthority().toUpperCase() == "CLIENT") {
-			Client client = clientService.findClient(user.getId());
-			client.setBaseUser(user);
-		} else {
-			baseUserService.save(user);
 		}
 	}
 
