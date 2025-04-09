@@ -85,7 +85,7 @@ public class StripeConnectServiceTest {
 
         assertNull(artist.getSellerAccountId());
 
-        MockedStatic<Account> mockedAccount = mockStatic(Account.class);
+        try (MockedStatic<Account> mockedAccount = mockStatic(Account.class)){
         mockedAccount
             .when(() -> Account.create(Mockito.any(AccountCreateParams.class)))
             .thenReturn(account);
@@ -95,7 +95,7 @@ public class StripeConnectServiceTest {
         assertEquals(account.getId(), newAccountId);
         assertEquals(newAccountId, artist.getSellerAccountId());
         verify(artistRepository).save(artist);
-
+        }
     }
 
     @Test
@@ -106,7 +106,7 @@ public class StripeConnectServiceTest {
         artist.setSellerAccountId(account.getId());
         assertNotNull(artist.getSellerAccountId());
 
-        MockedStatic<Account> mockedAccount = mockStatic(Account.class);
+        try (MockedStatic<Account> mockedAccount = mockStatic(Account.class)){
         mockedAccount
             .when(() -> Account.create(Mockito.any(AccountCreateParams.class)))
             .thenReturn(account);
@@ -116,6 +116,7 @@ public class StripeConnectServiceTest {
         assertEquals(account.getId(), newAccountId);
         assertEquals(newAccountId, artist.getSellerAccountId());
         verify(artistRepository, never()).save(artist);
+        }
     }
 
     @Test
