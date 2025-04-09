@@ -78,7 +78,7 @@ public class StripeConnectServiceTest {
     }
 
     @Test
-    public void testCreateConnectedAccountWhenArtistDoesNotHaveAccount() throws StripeException {
+    public void testCreateConnectedAccountWhenArtistDoesNotHaveAccount() throws Exception {
         when(userService.findCurrentUser()).thenReturn(baseUser);
         
         when(artistRepository.findArtistByUser(1L)).thenReturn(Optional.of(artist));
@@ -99,7 +99,7 @@ public class StripeConnectServiceTest {
     }
 
     @Test
-    public void testCreateConnectedAccountWhenArtistAlreadyHasAccount() throws StripeException {
+    public void testCreateConnectedAccountWhenArtistAlreadyHasAccount() throws Exception {
         when(userService.findCurrentUser()).thenReturn(baseUser);
         when(artistRepository.findArtistByUser(1L)).thenReturn(Optional.of(artist));
 
