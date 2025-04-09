@@ -129,7 +129,7 @@ export default function ArtistRequestOrders({ route, navigation }: any) {
                 <View style={styles.profileContainer}>
                   <Image
                     source={{
-                      uri: comm.imageProfile || "URL_DE_IMAGEN_POR_DEFECTO",
+                      uri: comm.image || "URL_DE_IMAGEN_POR_DEFECTO",
                     }}
                     style={styles.profileImage}
                   />
@@ -174,7 +174,7 @@ export default function ArtistRequestOrders({ route, navigation }: any) {
                 <View style={styles.profileContainer}>
                   <Image
                     source={{
-                      uri: comm.imageProfile || "URL_DE_IMAGEN_POR_DEFECTO",
+                      uri: comm.image || "URL_DE_IMAGEN_POR_DEFECTO",
                     }}
                     style={styles.profileImage}
                   />

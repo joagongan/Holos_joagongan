@@ -108,14 +108,18 @@ export default function CommissionDetailsScreen() {
   if (!commission) return <WIPPlaceholder />;
   if (!loggedInUser) return <LoadingScreen />;
 
-  const yourTurn =
-    (commission.artistUsername === loggedInUser.username &&
-      (commission.status === StatusCommission.WAITING_ARTIST ||
-        commission.status === StatusCommission.REQUESTED)) ||
-    (commission.clientUsername === loggedInUser.username &&
-      commission.status === StatusCommission.WAITING_CLIENT);
+  const isArtist = commission.artistUsername === loggedInUser.username;
+  const isClient = commission.clientUsername === loggedInUser.username;
 
-  const isClient = loggedInUser.username === commission.clientUsername;
+  const yourTurn =
+    (isArtist &&
+      [StatusCommission.WAITING_ARTIST, StatusCommission.REQUESTED].includes(
+        commission.status
+      )) ||
+    (isClient &&
+      [StatusCommission.WAITING_CLIENT, StatusCommission.NOT_PAID_YET].includes(
+        commission.status
+      ));
 
   const basePrice = commission.price;
   const displayedPrice = isClient
@@ -137,10 +141,16 @@ export default function CommissionDetailsScreen() {
       <View style={styles.sides}>
         <View style={[styles.card, { maxHeight: "70%" }]}>
           <View style={{ flexDirection: "row" }}>
-            {/* <UserPanel user={commission.client} />
-            <UserPanel user={commission.artist} /> */}
+            <Text>{commission.status}</Text>
+            <UserPanel
+              username={commission.clientUsername}
+              image={commission.imageProfileC}
+            />
+            <UserPanel
+              username={commission.artistUsername}
+              image={commission.imageProfileA}
+            />
           </View>
-          <WIPPlaceholder subtitle="Aquí estará algo que muestre a quién le toca pagar" />
         </View>
         {showEditCard ? (
           <View style={[styles.card, { alignItems: "center" }]}>

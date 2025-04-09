@@ -6,32 +6,16 @@ import { Image, Pressable } from "react-native";
 import { Text, View } from "react-native";
 
 interface RequestFormProps {
-  user: BaseUserDTO;
+  username: string;
+  image: string;
 }
 
-export default function UserPanel({ user }: RequestFormProps) {
+export default function UserPanel({ username, image }: RequestFormProps) {
   const router = useRouter();
   return (
     <View style={{ flex: 1, alignItems: "center" }}>
-      <Text
-        style={{
-          fontWeight: "bold",
-          fontSize: 18,
-          color: colors.contentStrong,
-          marginBottom: 8,
-        }}
-      >
-        {user.name}
-      </Text>
-
       <Image
-        source={
-          user.imageProfile
-            ? {
-                uri: `${BASE_URL}${atob(user.imageProfile)}`,
-              }
-            : undefined
-        }
+        source={image ? { uri: `${BASE_URL}${atob(image)}` } : undefined}
         style={{ width: 65, height: 65, borderRadius: 100 }}
         resizeMode="cover"
       />
@@ -54,7 +38,7 @@ export default function UserPanel({ user }: RequestFormProps) {
             textAlign: "center",
           }}
         >
-          @{user.username}
+          @{username}
         </Text>
       </Pressable>
     </View>
