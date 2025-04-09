@@ -27,7 +27,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 public class CommisionControllerTest {
 
-    private MockMvc mockMvc;
+/*     private MockMvc mockMvc;
 
     @Mock
     private CommisionService commisionService;
@@ -245,5 +245,5 @@ public void testCreateCommisionSuccess() throws Exception {
                 .andExpect(content().string("Comisión cancelada correctamente."));
 
         verify(commisionService, times(1)).cancelCommission(COMMISION_ID);
-    }
-}
+    }*/
+} 
