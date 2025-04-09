@@ -6,6 +6,7 @@ import LoadingScreen from "@/src/components/LoadingScreen";
 import CustomDrawer from "@/src/components/menu/CustomDrawer";
 import { getUser } from "@/src/services/userApi";
 import { BaseUser } from "./admin/report-management";
+import ProfileIcon from "@/assets/svgs/ProfileIcon";
 
 export default function DrawerLayout() {
   const { loggedInUser, isAuthenticated,isAdmin, isArtist, isClient, loading } = useAuth();
@@ -48,8 +49,8 @@ export default function DrawerLayout() {
         initialRouteName="index"
         screenOptions={{ drawerHideStatusBarOnOpen:true, headerShown: true, drawerItemStyle: { display: 'none', height: 0 }}}>
         <Drawer.Screen name="index" options={{ drawerLabel: "Inicio", title: "🏠 Inicio", drawerIcon:() => <Text style={{ fontSize: 22 }}>🏠</Text>, drawerItemStyle: { display: 'flex', height: 'auto' } }} />
-        <Drawer.Screen name="profile/indexArtist" options={{ drawerLabel: "Mi perfil", drawerIcon: () => <Text style={{ fontSize: 22 }}>👤</Text>, drawerItemStyle: { display: !isAdmin && !isClient ? 'flex':'none', height: 'auto' } }} />
-        <Drawer.Screen name="profile/indexClient" options={{ drawerLabel: "Mi perfil", drawerIcon: () => <Text style={{ fontSize: 22 }}>👤</Text>, drawerItemStyle: { display: !isAdmin && isClient ? 'flex':'none', height: 'auto' } }} />
+        <Drawer.Screen name="profile/indexArtist" options={{ drawerLabel: "Mi perfil", title: "Perfil", drawerIcon: () => <Text style={{ fontSize: 22 }}>👤</Text>, drawerItemStyle: { display: !isAdmin && !isClient ? 'flex':'none', height: 'auto' } }} />
+        <Drawer.Screen name="profile/indexClient" options={{ drawerLabel: "Mi perfil", title: "Perfil", drawerIcon: () => <Text style={{ fontSize: 22 }}>👤</Text>, drawerItemStyle: { display: !isAdmin && isClient ? 'flex':'none', height: 'auto' } }} />
         <Drawer.Screen name="login" options={{ drawerLabel: "Inicio de sesión", drawerIcon: ProfileIcon, drawerItemStyle: { display: isAuthenticated?'none':'flex', height: 'auto' } }} />
         <Drawer.Screen name="search/index" options={{ drawerLabel: "Buscar", title: "🔍 Buscar", drawerIcon: () => <Text style={{ fontSize: 22 }}>🔍</Text>, drawerItemStyle: { display: 'flex', height: 'auto' } }} />
         <Drawer.Screen name="kanban/index" options={{ drawerLabel: "Encargos",title: "🎨 Mis encargos", drawerIcon: () => <Text style={{ fontSize: 22 }}>🎨</Text>, drawerItemStyle: { display: isArtist ? 'flex' : 'none', height: isArtist ? 'auto' : 0 } }} />

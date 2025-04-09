@@ -55,7 +55,7 @@ const WorkCard = ({ work }: Props) => {
       <DropdownMenu
         actions={[{
           label: 'Reportar',
-          onPress: () => router.push(`/report/${work.id}`)
+          onPress: () => router.push({ pathname: "/report/[reportId]", params: { reportId: String(work.id) } })
         }]}
       />
       </View>

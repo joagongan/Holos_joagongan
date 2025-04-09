@@ -132,7 +132,6 @@ const userArtistProfileScreen = () => {
           imageProfile: artist.imageProfile,
           numSlotsOfWork: artist.numSlotsOfWork,
         }}
-        validationSchema={validationSchema}
         onSubmit={(values, { resetForm }) => sendWork(values, resetForm)}
       >
         {({ handleChange, handleBlur, handleSubmit, values, errors, touched, setFieldValue }) => (

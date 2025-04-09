@@ -122,11 +122,11 @@ INSERT INTO categories (id, name, description, image) VALUES
 
 
 INSERT INTO works_done(id, artist_id, name, description, price, image) VALUES 
-(25, 1, 'Sunset Painting', 'A beautiful sunset painting', 150.0, '/images/sunset_painting.jpg'), 
-(26, 1, 'Ocean Waves', 'A calming ocean scene with waves', 200.0, '/images/ocean_waves.jpg'), 
-(27, 1, 'Starry Night Replica', 'Inspired by Van Gogh`s Starry Night', 300.0, '/images/starry_night_replica.jpg'), 
-(28, 1, 'Abstract Art', 'A modern abstract composition', 180.0, '/images/abstract_art.jpg'),
-(29, 1, 'Forest Path', 'A peaceful forest pathway', 120.0, '/images/abstract_art.jpg');
+(200, 1, 'Sunset Painting', 'A beautiful sunset painting', 150.0, '/images/sunset_painting.jpg'), 
+(201, 1, 'Ocean Waves', 'A calming ocean scene with waves', 200.0, '/images/ocean_waves.jpg'), 
+(202, 1, 'Starry Night Replica', 'Inspired by Van Gogh`s Starry Night', 300.0, '/images/starry_night_replica.jpg'), 
+(203, 1, 'Abstract Art', 'A modern abstract composition', 180.0, '/images/abstract_art.jpg'),
+(204, 1, 'Forest Path', 'A peaceful forest pathway', 120.0, '/images/abstract_art.jpg');
 
 INSERT INTO status_kanban_order (id, artist_id, name, order_in_kanban, description, color) VALUES 
 (1, 1, 'To Do', 1, 'Tasks that need to be started', '#FF5733'),
@@ -499,13 +499,6 @@ INSERT INTO report_types (id, type) VALUES
 (3, 'Customer Feedback'),
 (4, 'Technical Review'),
 (5, 'Annual Summary');
-
-INSERT INTO works (id, name, description, price, artist_id) VALUES 
-(1, 'Sunset Painting', 'A beautiful sunset painting', 150.00, 1),
-(2, 'Abstract Vibes', 'Modern abstract artwork', 200.50, 2),
-(3, 'Cityscape', 'A detailed cityscape at night', 300.00, 3),
-(4, 'Portrait of a Woman', 'Realistic portrait painting', 250.75, 1),
-(5, 'Sculpture: The Thinker', 'Bronze sculpture inspired by Rodin', 500.00, 4);
 
 
 INSERT INTO reports (id, name, description, status, made_by_id, reported_user_id, work_id, report_type_id) VALUES 
