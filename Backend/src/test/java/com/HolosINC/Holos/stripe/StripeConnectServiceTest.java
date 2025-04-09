@@ -120,7 +120,7 @@ public class StripeConnectServiceTest {
     }
 
     @Test
-    void testCreateConnectedAccountArtistNotFoundT() {
+    void testCreateConnectedAccountArtistNotFound() {
         
         when(userService.findCurrentUser()).thenReturn(baseUser);
         when(artistRepository.findArtistByUser(1L)).thenReturn(Optional.empty());
