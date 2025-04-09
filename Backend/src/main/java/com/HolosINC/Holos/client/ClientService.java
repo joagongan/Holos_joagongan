@@ -1,5 +1,6 @@
 package com.HolosINC.Holos.client;
 
+import java.nio.file.AccessDeniedException;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -7,8 +8,11 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import com.HolosINC.Holos.auth.AuthoritiesRepository;
+import com.HolosINC.Holos.commision.Commision;
+import com.HolosINC.Holos.commision.CommisionRepository;
 import com.HolosINC.Holos.exceptions.ResourceNotFoundException;
-import com.HolosINC.Holos.model.BaseUser;
 import com.HolosINC.Holos.model.BaseUserRepository;
 import com.HolosINC.Holos.reports.Report;
 import com.HolosINC.Holos.reports.ReportRepository;
@@ -18,12 +22,17 @@ public class ClientService {
 
 	private final ClientRepository clientRepository;
 	private BaseUserRepository baseUserRepository;
+	private CommisionRepository commisionRepository;
+	@SuppressWarnings("unused")
+	private AuthoritiesRepository authoritiesRepository;
 	private ReportRepository reportRepository;
 
 	@Autowired
-	public ClientService(ClientRepository clientRepository, BaseUserRepository baseUserRepository,ReportRepository reportRepository) {
+	public ClientService(ClientRepository clientRepository, BaseUserRepository baseUserRepository, CommisionRepository commisionRepository, AuthoritiesRepository authoritiesRepository,ReportRepository reportRepository) {
 		this.clientRepository = clientRepository;
 		this.baseUserRepository = baseUserRepository;
+		this.commisionRepository = commisionRepository;
+		this.authoritiesRepository = authoritiesRepository;
 		this.reportRepository = reportRepository;
 	}
 
@@ -42,7 +51,7 @@ public class ClientService {
 
 	@Transactional(readOnly = true)
 	public Client findClientByUserId(Long userId) {
-		return clientRepository.findById(userId)
+		return clientRepository.getClientByUser(userId)
 				.orElseThrow(() -> new ResourceNotFoundException("Client", "userId", userId));
 	}
 
@@ -57,31 +66,31 @@ public class ClientService {
 	}
 
 	@Transactional
-	public void deleteClient(Long userId) {
+	public void deleteClient(Long userId) throws Exception{
 		try {
-			Client client = clientRepository.findById(userId)
-				.orElseThrow(() -> new ResourceNotFoundException("Client", "id", userId));
-			Long clientId = client.id;
-			BaseUser user = baseUserRepository.findById(userId)
-				.orElseThrow(() -> new ResourceNotFoundException("Client", "id", userId));;
-			boolean hasActiveCommissions = clientRepository.hasActiveCommisions(clientId);
+			Client client = clientRepository.getClientByUser(userId)
+				.orElseThrow(() -> new ResourceNotFoundException("Client", "userId", userId));
+			boolean hasActiveCommissions = clientRepository.hasActiveCommisions(client.getId());
 			if (hasActiveCommissions) {
-				throw new IllegalStateException("No se puede eliminar el cliente " + user.getName() + 
+				throw new AccessDeniedException("No se puede eliminar el cliente " + client.getBaseUser().getUsername()+ 
 												" porque tiene comisiones activas.");
 			}
 	
-			List<Report> reportsReceived = reportRepository.findAllByReportedUserId(clientId);
+			List<Report> reportsReceived = reportRepository.findAllByReportedUserId(client.getId());
 			reportRepository.deleteAll(reportsReceived);
 
-			List<Report> reportsMade = reportRepository.findAllByMadeById(clientId);
+			List<Report> reportsMade = reportRepository.findAllByMadeById(client.getId());
 			reportRepository.deleteAll(reportsMade);
+	
+			List<Commision> commissions = commisionRepository.findAllByClientId(client.getId());
+			commisionRepository.deleteAll(commissions);
 	
 			if (client.getBaseUser() != null) {
 				baseUserRepository.deleteById(client.getBaseUser().getId());
 			}
 	
 			clientRepository.delete(client);
-	
+
 		} catch (IllegalStateException e) {
 			throw e;
 		} catch (ResourceNotFoundException e) {
@@ -91,6 +100,6 @@ public class ClientService {
 									" porque tiene datos relacionados.");
 		} catch (Exception e) {
 			throw new RuntimeException("Error interno al eliminar el cliente con ID " + userId);
-		}
+		} 
 	}
 }

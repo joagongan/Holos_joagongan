@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.HolosINC.Holos.Profile.ProfileService;
-import com.HolosINC.Holos.auth.payload.response.MessageResponse;
 import com.HolosINC.Holos.exceptions.ResourceNotFoundException;
 import com.HolosINC.Holos.model.BaseUser;
 import com.HolosINC.Holos.model.BaseUserDTO;
@@ -27,30 +26,25 @@ class ClientRestController {
 
 	private final ClientService clientService;
 	private final BaseUserService baseUserService;
-
-	@Autowired
-    private ProfileService profileService;
-
-    @PutMapping("/update")
-    public ResponseEntity<?> updateProfile(@RequestBody BaseUserDTO baseUserDTO){
-        try{
-            BaseUserDTO updatedUserDTO = profileService.updateProfile(baseUserDTO);
-            return ResponseEntity.ok(updatedUserDTO);
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body(new MessageResponse(e.getMessage()));
-        }
-    }
+    private final ProfileService profileService;
 	
 	@Autowired
-	public ClientRestController(ClientService clientService, BaseUserService baseUserService) {
+	public ClientRestController(ClientService clientService, BaseUserService baseUserService, ProfileService profileService) {
 		this.clientService = clientService;
 		this.baseUserService = baseUserService;
+        this.profileService = profileService;
 	}
 
 	@GetMapping(value = "{id}")
 	public ResponseEntity<Client> findById(@PathVariable("id") Long id) {
 		return new ResponseEntity<>(clientService.findClient(id), HttpStatus.OK);
 	}
+
+    @PutMapping("/update")
+    public ResponseEntity<BaseUserDTO> updateProfile(@RequestBody BaseUserDTO baseUserDTO) throws Exception {
+        BaseUserDTO updatedUserDTO = profileService.updateProfile(baseUserDTO);
+        return ResponseEntity.ok(updatedUserDTO);
+    }
 
 	@GetMapping("/profile")
 	public ResponseEntity<?> profileOfCurrentUser() {
@@ -59,20 +53,17 @@ class ClientRestController {
 			Object endUser = null;
 			if(user.hasAuthority("CLIENT"))
 				endUser = baseUserService.findClient(user.getId());
-			if(user.hasAuthority("ARTIST"))
+			if(user.hasAuthority("ARTIST")||user.hasAuthority("ARTIST_PREMIUM"))
 				endUser = baseUserService.findArtist(user.getId());
 			return ResponseEntity.ok().body(endUser);
 		} catch (Exception e) {
 			return ResponseEntity.badRequest().body("No tienes perfil, tienes que loguearte");
 		}
 	}
+
 	@GetMapping("/byBaseUser/{baseUserId}")
-public ResponseEntity<Client> getClientByBaseUser(@PathVariable Long baseUserId) {
-    Client client = clientService.findClientByUserId(baseUserId);
-    if(client == null) {
-        return ResponseEntity.notFound().build();
-    }
-    return ResponseEntity.ok(client);
+    public ResponseEntity<Client> getClientByBaseUser(@PathVariable Long baseUserId) {
+        return new ResponseEntity<Client>(clientService.findClientByUserId(baseUserId), HttpStatus.OK);
 }
 
 
