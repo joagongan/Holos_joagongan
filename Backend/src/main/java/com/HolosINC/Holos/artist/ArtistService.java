@@ -13,8 +13,6 @@ import com.HolosINC.Holos.commision.Commision;
 import com.HolosINC.Holos.commision.CommisionRepository;
 import com.HolosINC.Holos.commision.StatusCommision;
 import com.HolosINC.Holos.exceptions.ResourceNotFoundException;
-import com.HolosINC.Holos.milestone.Milestone;
-import com.HolosINC.Holos.milestone.MilestoneService;
 import com.HolosINC.Holos.model.BaseUserRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,19 +25,17 @@ import org.springframework.transaction.annotation.Transactional;
 public class ArtistService {
 
 	private final ArtistRepository artistRepository;
-	private BaseUserRepository baseUserRepository;
+	private final BaseUserRepository baseUserRepository;
 
-	private CommisionRepository commisionRepository;
-	private MilestoneService milestoneService;
-	private StatusKanbanOrderService statusKanbanOrderService;
-	private ArtistCategoryRepository artistCategoryRepository;
+	private final CommisionRepository commisionRepository;
+	private final StatusKanbanOrderService statusKanbanOrderService;
+	private final ArtistCategoryRepository artistCategoryRepository;
 
 	@Autowired
-	public ArtistService(ArtistRepository artistRepository, BaseUserRepository baseUserRepository, CommisionRepository commisionRepository, MilestoneService milestoneService, @Lazy StatusKanbanOrderService statusKanbanOrderService, ArtistCategoryRepository artistCategoryRepository) {
+	public ArtistService(ArtistRepository artistRepository, BaseUserRepository baseUserRepository, CommisionRepository commisionRepository, @Lazy StatusKanbanOrderService statusKanbanOrderService, ArtistCategoryRepository artistCategoryRepository) {
 		this.artistRepository = artistRepository;
 		this.baseUserRepository = baseUserRepository;
 		this.commisionRepository = commisionRepository;
-		this.milestoneService = milestoneService;
 		this.statusKanbanOrderService = statusKanbanOrderService;
 		this.artistCategoryRepository = artistCategoryRepository;
 	}
@@ -68,6 +64,11 @@ public class ArtistService {
 				.orElseThrow(() -> new ResourceNotFoundException("Artist", "username", username));
 	}
 
+	@Transactional(readOnly = true)
+	public boolean isArtist(Long userId) throws Exception {
+		return !(artistRepository.findByUserId(userId).isEmpty());
+	}
+
 	@Transactional
 	public void deleteArtist(Long userId) throws Exception {
 		try {
@@ -88,13 +89,6 @@ public class ArtistService {
 
 			if (hasAccepted) {
 				throw new IllegalStateException("No se puede eliminar al artista porque tiene comisiones en estado ACCEPTED.");
-			}
-
-			for (Commision c : commisions) {
-				List<Milestone> milestones = milestoneService.getByCommisionId(c.getId());
-				for (Milestone m : milestones) {
-					milestoneService.delete(m.getId());
-				}
 			}
 
 			commisionRepository.deleteAll(commisions);
@@ -118,4 +112,9 @@ public class ArtistService {
 			throw new RuntimeException("Error al eliminar el artista con ID " + userId + ": " + e.getMessage());
 		}
 	}
+	
+	@Transactional
+	public Optional<Artist> findByBaseUserId(Long baseUserId) throws Exception {
+        return artistRepository.findByUserId(baseUserId);
+    }
 }

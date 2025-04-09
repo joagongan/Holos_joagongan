@@ -34,6 +34,8 @@ public class Artist{
 
     private String sellerAccountId;
 
+    private String subscriptionId;
+
     @Lob
     @Column(name = "tableCommisionsPrice", columnDefinition = "LONGBLOB")
     private byte[] tableCommisionsPrice;

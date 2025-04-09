@@ -17,6 +17,16 @@ export const getAllWorksDone = async (): Promise<WorksDoneDTO[]> => {
   }
 };
 
+export const fetchWorksDone = async (): Promise<WorksDoneDTO[]> => {
+  try {
+    const response = await api.get(WORKS_DONE_URL);
+    return response.data; // Aquí será un array de WorksDoneDTO
+  } catch (error) {
+    handleError(error, "Error fetching works done");
+    throw error;
+  }
+};
+
 export const getWorksDoneById = async (id: number): Promise<WorksDone> => {
   try {
     const response = await api.get(`${WORKS_DONE_URL}/${id}`);

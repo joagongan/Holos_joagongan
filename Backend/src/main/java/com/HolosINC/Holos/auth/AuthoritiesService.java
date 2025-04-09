@@ -14,7 +14,6 @@ import org.springframework.stereotype.Service;
 import com.HolosINC.Holos.artist.Artist;
 import com.HolosINC.Holos.artist.ArtistService;
 import com.HolosINC.Holos.auth.payload.request.SignupRequest;
-import com.HolosINC.Holos.auth.payload.request.UpdateRequest;
 import com.HolosINC.Holos.client.Client;
 import com.HolosINC.Holos.client.ClientService;
 import com.HolosINC.Holos.exceptions.AccessDeniedException;
@@ -114,7 +113,7 @@ public class AuthoritiesService {
 	}
 
 	@Transactional
-	public void updateUser(@Valid UpdateRequest request) throws Exception{
+	public void updateUser(@Valid SignupRequest request) throws Exception{
 		BaseUser user = baseUserService.findCurrentUser();
 		user.setUsername(request.getUsername() != null ? request.getUsername() : user.getUsername());
 		user.setName(request.getFirstName() != null ? request.getFirstName() : user.getName());
@@ -132,7 +131,7 @@ public class AuthoritiesService {
 			artist.setLinkToSocialMedia(request.getLinkToSocialMedia() != null ? request.getLinkToSocialMedia()
 					: artist.getLinkToSocialMedia());
 			artist.setTableCommisionsPrice(
-					request.getTableCommissionsPrice() != null ? request.getTableCommissionsPrice().getBytes()
+					request.getTableCommisionsPrice() != null ? request.getTableCommisionsPrice().getBytes()
 							: artist.getTableCommisionsPrice());
 			artistService.saveArtist(artist);
 		}
