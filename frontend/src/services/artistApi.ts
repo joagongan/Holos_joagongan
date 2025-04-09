@@ -51,18 +51,16 @@ export const updateUserArtist = async (
 
   const formData = new FormData();
 
+  const { imageProfile, tableCommissionsPrice, ...restOfUser } = user;
 
+  formData.append("updateUser", JSON.stringify(restOfUser)); 
 
   const imageProfileData = base64ToFile(user.imageProfile, "image.png");
   const tableCommissionsPriceData = base64ToFile(user.tableCommissionsPrice, "image.png");
   formData.append("imageProfile", imageProfileData);
   formData.append("tableCommissionsPrice", tableCommissionsPriceData);
 
-  const { imageProfile, tableCommissionsPrice, ...restOfUser } = user;
-
-  Object.entries(restOfUser).forEach(([key, value]) => {
-    formData.append(key, String(value));
-  });
+ 
 
 
   const response = await api.put(`${API_URL}/auth/update`, formData, {
