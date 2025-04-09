@@ -28,7 +28,7 @@ import com.HolosINC.Holos.work.Work;
 
 public class SearchControllerTest {
 
-/*     private MockMvc mockMvc;
+     private MockMvc mockMvc;
 
     @Mock
     private SearchService searchService;
@@ -338,6 +338,6 @@ public class SearchControllerTest {
                 .andExpect(content().string("Error: minWorksDone no puede ser negativo."));
 
         verify(searchService).searchAll(null, -5, null, null, 0, 10);
-    } */
+    } 
 
 }

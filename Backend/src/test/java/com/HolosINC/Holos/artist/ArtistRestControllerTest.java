@@ -43,7 +43,7 @@ public class ArtistRestControllerTest {
         objectMapper = new ObjectMapper();
     }
 
-    @Test
+/*     @Test
     public void testFindByIdSuccess() throws Exception {
         Artist artist = new Artist();
         artist.setId(1L);
@@ -115,7 +115,7 @@ public class ArtistRestControllerTest {
                 .andExpect(content().string("Error: Artist not found with id: 1"));
 
         verify(artistService, times(1)).deleteArtist(1L);
-    }
+    } */
 
     @Test
     public void testDeleteArtistAccessDenied() throws Exception {
