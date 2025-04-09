@@ -9,26 +9,27 @@ import {
   TouchableWithoutFeedback,
   useWindowDimensions,
 } from "react-native";
+import { getWorksDoneById } from "@/src/services/WorksDoneApi";
 import { useNavigation, useLocalSearchParams, useRouter } from "expo-router";
 import { BASE_URL } from "@/src/constants/api";
 import { useFonts } from "expo-font";
-import { WorksDoneDTO } from "@/src/constants/ExploreTypes";
+import { Work } from "@/src/constants/ExploreTypes";
 import { mobileStyles, desktopStyles } from "@/src/styles/WorkDetail.styles";
 
-// Importa el nuevo endpoint que retorna el DTO
-import { getWorksDoneByIdDTO } from "@/src/services/WorksDoneApi";
-
-// Función para decodificar la imagen (asegúrate de tenerla implementada en tu helper)
-import { decodeImagePath } from "@/src/services/ExploreWorkHelpers";
+// >>> Importa el componente que muestra el menú de reporte <<<
+import ReportDropdown from "@/src/components/report/ReportDropDown";
 
 export default function WorkDetailScreen() {
   const router = useRouter();
   const navigation = useNavigation();
   const { workId } = useLocalSearchParams();
-  const [work, setWork] = useState<WorksDoneDTO | null>(null);
+  const [work, setWork] = useState<Work | null>(null);
   const [loading, setLoading] = useState(true);
   const { width } = useWindowDimensions();
   const styles = width > 768 ? desktopStyles : mobileStyles;
+
+  // >>> Estado para controlar el menú de reporte <<<
+  const [menuVisibleId, setMenuVisibleId] = useState<number | null>(null);
 
   const [fontsLoaded] = useFonts({
     "Merriweather-Regular": require("../../../assets/fonts/Merriweather_24pt-Regular.ttf"),
@@ -40,7 +41,7 @@ export default function WorkDetailScreen() {
   useEffect(() => {
     const fetchWork = async () => {
       try {
-        const data = await getWorksDoneByIdDTO(Number(workId));
+        const data = (await getWorksDoneById(Number(workId))) as Work;
         setWork(data);
       } catch (error) {
         console.error("Error fetching work details:", error);
@@ -72,21 +73,59 @@ export default function WorkDetailScreen() {
     );
   }
 
+  const isBase64Path = (base64: string): boolean => {
+    try {
+      const decoded = atob(base64);
+      return decoded.startsWith("/images/");
+    } catch (e) {
+      return false;
+    }
+  };
+
   return (
-    <TouchableWithoutFeedback>
+    // >>> Usamos un TouchableWithoutFeedback para poder cerrar el menú al pulsar fuera <<<
+    <TouchableWithoutFeedback
+      onPress={() => {
+        if (menuVisibleId !== null) {
+          setMenuVisibleId(null);
+        }
+      }}
+    >
       <View style={styles.container}>
-        {/* Columna izquierda con la imagen */}
         <View style={styles.leftColumn}>
-          <Image
-            source={{ uri: decodeImagePath(work.image) }}
-            style={styles.imageStyle}
-          />
+          {work.image ? (
+            <Image
+              source={{
+                uri: isBase64Path(work.image)
+                  ? `${BASE_URL}${atob(work.image)}`
+                  : `data:image/jpeg;base64,${work.image}`,
+              }}
+              style={styles.imageStyle}
+              resizeMode="cover"
+              onError={() => console.log("Error cargando imagen:", work.image)}
+            />
+          ) : (
+            <View style={styles.placeholderContainer}>
+              <Text>Sin imagen</Text>
+            </View>
+          )}
+
+          {/* >>> Aquí se muestra el botón/desplegable de reporte <<< */}
+          {work.image && (
+            <View style={{ position: "absolute", top: 10, right: 10 }}>
+              <ReportDropdown
+                workId={work.id}
+                menuVisibleId={menuVisibleId}
+                setMenuVisibleId={setMenuVisibleId}
+                isBigScreen={width > 768}
+              />
+            </View>
+          )}
         </View>
 
-        {/* Columna derecha con la información */}
         <ScrollView style={styles.rightColumn}>
           <TouchableOpacity
-            onPress={() => router.push(`/explore`)}
+            onPress={() => router.push(`/`)}
             style={styles.backButton}
           >
             <Text style={styles.backArrow}>←</Text>
@@ -99,10 +138,16 @@ export default function WorkDetailScreen() {
             </Text>
 
             <Text
-              onPress={() => router.push(`/profile/${work.artistId}`)}
+              onPress={() => {
+                if (work.artist && work.artist.id) {
+                  router.push(`/profile/${work.artist.id}`);
+                } else {
+                  console.warn("No se encontró el artista");
+                }
+              }}
               style={styles.artistText}
             >
-              {work.artistName}
+              {work.artist.baseUser?.username || "Artista desconocido"}
             </Text>
 
             <Text style={styles.infoText}>
@@ -110,23 +155,9 @@ export default function WorkDetailScreen() {
             </Text>
 
             <View style={styles.separator} />
-
-            {/* Contenedor para el precio y el botón de reportar */}
-            <View style={styles.priceContainer}>
-              <Text style={styles.price}>
-                {work.price ? `${work.price} €` : "No disponible"}
-              </Text>
-              <TouchableOpacity
-                onPress={() =>
-                  router.push({
-                    pathname: "/report/[reportId]",
-                    params: { reportId: String(workId) },
-                  })
-                }
-              >
-                <Text style={styles.reportButtonText}>REPORTAR</Text>
-              </TouchableOpacity>
-            </View>
+            <Text style={styles.price}>
+              {work.price ? `${work.price} €` : "No disponible"}
+            </Text>
           </View>
         </ScrollView>
       </View>

@@ -1,11 +1,13 @@
 package com.HolosINC.Holos.worksdone;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
-@Getter
-@Setter
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
 @Builder
 public class WorksDoneDTO {
     
@@ -18,4 +20,23 @@ public class WorksDoneDTO {
     private Long baseUserId;
     private String artistName;
     private String artistSurname;
+
+    public static WorksDoneDTO createDTO(WorksDone worksDone) {
+        WorksDoneDTO dto = new WorksDoneDTO();
+        dto.setId(worksDone.getId());
+        dto.setName(worksDone.getName());
+        dto.setDescription(worksDone.getDescription());
+        dto.setPrice(worksDone.getPrice());
+        dto.setImage(worksDone.getImage());
+        return dto;
+    }
+
+    public WorksDone createWorksDone() {
+        WorksDone worksDone = new WorksDone();
+        worksDone.setName(this.name);
+        worksDone.setDescription(this.description);
+        worksDone.setPrice(this.price);
+        worksDone.setImage(this.image);
+        return worksDone;
+    }
 }

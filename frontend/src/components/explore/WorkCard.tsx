@@ -1,56 +1,85 @@
-import React from "react";
-import { TouchableOpacity, Image, View, Text } from "react-native";
-import { useRouter } from "expo-router";
-import { BASE_URL } from "@/src/constants/api";
-import ReportDropdown from "@/src/components/report/ReportDropDown";
-import { Work } from "@/src/constants/ExploreTypes";
-import { styles } from "@/src/styles/Explore.styles";
+import React, { useState, useEffect, useMemo } from "react";
+import { Text, ScrollView, View, TouchableWithoutFeedback   } from "react-native";
+import { desktopStyles } from "@/src/styles/Explore.styles";
+import { WorksDoneDTO } from "@/src/constants/ExploreTypes";
+import { getTopThreeArtists } from "@/src/services/ExploreWorkHelpers";
+import WorkCard from "@/src/components/explore/WorkCard";
+import { fetchWorksDone } from "@/src/services/WorksDoneApi";
 
+export default function ExploreScreen() {
+  const [works, setWorks] = useState<WorksDoneDTO[]>([]);
+  const [menuVisibleId, setMenuVisibleId] = useState<number | null>(null);
 
-type Props = {
-  work: Work;
-  menuVisibleId: number | null;
-  setMenuVisibleId: (id: number | null) => void;
-};
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const works = await fetchWorksDone();
+        setWorks(works);
+      } catch (error) {
+        console.error("Error fetching works:", error);
+      }
+    };
 
-const WorkCard = ({ work, menuVisibleId, setMenuVisibleId }: Props) => {
-  const router = useRouter();
-  // const { width } = useWindowDimensions();
-  // const isDesktop = width > 768;
-  // const styles = isDesktop ? desktopStyles : mobileStyles;
+    fetchData();
+  }, []);
+
+  const firstThreeArtists = useMemo(() => getTopThreeArtists(), [works]);
 
   return (
-    <View style={styles.cardWrapper}>
-      <TouchableOpacity
-        style={styles.cardContainer}
-        onPress={() => router.push({ pathname: "/work/[workId]", params: { workId: String(work.id) } })}
-      >
-        <Image
-          source={{ uri: `${BASE_URL}${atob(work.image)}` }}
-          style={styles.image}
-          resizeMode="cover"
-          onError={() => console.log("Error cargando imagen:", atob(work.image))}
-        />
 
+    <TouchableWithoutFeedback onPress={() => {
+      if (menuVisibleId !== null) {
+        setMenuVisibleId(null); // Cierra el menú al tocar fuera
+      }
+    }}>
 
-        <View style={styles.textContainer}>
-          <Text style={styles.title}>{work.name}</Text>
-          <Text style={styles.artist}>by @{work.artist?.baseUser?.username ?? "Artista desconocido"} </Text>
-          <Text style={styles.description}>{work.description}</Text>
+   
+    <ScrollView style={{ flex: 1, backgroundColor: "#fff" }} contentContainerStyle={{ flexGrow: 1 }}>
+      <View style={desktopStyles.container}>
+
+        {/* Sección superior */}
+        <View style={desktopStyles.topSection}>
+          <Text style={desktopStyles.topSectionText}>Obras</Text>
         </View>
-      </TouchableOpacity>
 
-      <View style={styles.dropdownOverlay}>
-        <ReportDropdown
-          workId={work.id}
-          menuVisibleId={menuVisibleId}
-          setMenuVisibleId={setMenuVisibleId}
-          isBigScreen={true}
-        />
+        {/* Sección del medio: Obras */}
+        <View style={desktopStyles.middleSection}>
+          <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+            {works.map((work) => (
+              <WorkCard
+                key={work.id}
+                work={work}
+              />
+            ))}
+          </ScrollView>
+        </View>
+
+        {/* Sección inferior: Artistas */}
+        <View style={desktopStyles.bottomSection}>
+          <View style={desktopStyles.bottomSectionHeader}>
+            <Text style={desktopStyles.bottomSectionHeaderText}>ARTISTAS</Text>
+          </View>
+          <View style={desktopStyles.artistsContainer}>
+          {/* {firstThreeArtists.map((artist:any) => (
+            <View key={artist.id}>
+              <TouchableOpacity
+                style={styles.artistCard}
+                onPress={() => router.push({ pathname: "/profile/[artistId]", params: { artistId: String(artist.id) }})}
+              >
+                <Image
+                  source={{ uri: ${BASE_URL}${artist.baseUser?.imageProfile}}}
+                  style={styles.artistImage}
+                />
+                <View style={styles.artistTextContainer}>
+                  <Text style={styles.artistName}>{artist.username}</Text>
+                </View>
+              </TouchableOpacity>
+            </View>
+          ))} */}
+          </View>
+        </View>
       </View>
-    </View>
+    </ScrollView>
+    </TouchableWithoutFeedback>
   );
-};
-
-export default WorkCard;
-
+}

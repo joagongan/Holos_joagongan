@@ -14,4 +14,6 @@ public interface WorksDoneRepository extends JpaRepository<WorksDone, Long> {
     // Los 3 artistas con mas publicaciones
     @Query("SELECT w.artist FROM WorksDone w GROUP BY w.artist ORDER BY COUNT(w) DESC LIMIT 3")
     List<Artist> findTop3ArtistsByWorksDone();
+
+    Long countByArtistId(Long artistId);
 }

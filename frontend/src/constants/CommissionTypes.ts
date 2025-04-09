@@ -28,6 +28,7 @@ export interface Artist {
   email: string;
   description: string;
   location: string;
+  subscriptionId: string|null;
 }
 
 export type User = Client | Artist;
@@ -135,4 +136,18 @@ export interface CommissionInProgress {
   currentStep: number;
 
   totalSteps: number;
+}
+
+export interface CommissionDTO {
+    id: number,
+    name: string,
+    description: string,
+    price: number,
+    status: StatusCommission,
+    paymentArrangement:PaymentArrangement,
+    milestoneDate: Date,
+    artistUsername: string,
+    clientUsername: string,
+    image: string,
+    imageProfile: string
 }

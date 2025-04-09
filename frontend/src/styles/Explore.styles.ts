@@ -138,6 +138,48 @@ export const mobileStyles = StyleSheet.create({
 });
 
 export const desktopStyles = StyleSheet.create({
+  cardWrapper: {
+    width: 400,
+    height: 300,
+    margin: 16,
+  },
+  cardContainer: {
+    flex: 1,
+    borderRadius: 12,
+    overflow: "hidden",
+    backgroundColor: "#fff",
+    shadowColor: "#000",
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 2,
+  },
+
+  image: {
+    width: "100%",
+    height: "70%",
+  },
+  textContainer: {
+    padding: 10,
+    flex: 1,
+    justifyContent: "space-between",
+  },
+
+  title: {
+    fontSize: 16,
+    fontWeight: "bold",
+    marginBottom: 4,
+    color: "#333"
+  },  
+  description: {
+    fontSize: 12,
+    color: "#666",
+  },
+  dropdownOverlay: {
+    position: "absolute",
+    top: 8,
+    right: 8,
+    zIndex: 10,
+  }, 
   container: {
     flex: 1,
     backgroundColor: "#FFFFFF",
