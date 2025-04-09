@@ -1,4 +1,4 @@
-package com.HolosINC.Report;
+package com.HolosINC.Holos.report;
 
 import com.HolosINC.Holos.artist.Artist;
 import com.HolosINC.Holos.exceptions.ResourceNotFoundException;
