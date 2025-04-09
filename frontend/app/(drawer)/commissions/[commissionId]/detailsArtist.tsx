@@ -12,7 +12,7 @@ import * as yup from 'yup';
 export default function CommissionDetailsScreen() {
   const { commissionId } = useLocalSearchParams();
   const router = useRouter();
-const [commission, setCommission] = useState<CommissionProtected | null>(null);
+  const [commission, setCommission] = useState<CommissionProtected | null>(null);
   const [loading, setLoading] = useState(true);
   const [isEditingPrice, setIsEditingPrice] = useState(false);
   const [newPrice, setNewPrice] = useState<string>("");

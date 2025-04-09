@@ -87,7 +87,7 @@ export default function UploadWorkArtist() {
       resetForm();
       setInputValue("");
       setSelectedImage(null); 
-      router.push({ pathname: "/explore" });
+      router.push({ pathname: "/" });
     } catch (error: any) {
       console.log(error)
       popUpMovilWindows("Error", "No se pudo enviar el reporte. Intentelo de nuevo más tarde");

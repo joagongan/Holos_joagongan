@@ -15,7 +15,9 @@ public class ArtistDTO extends BaseUserDTO {
     @Min(1)
     private Integer numSlotsOfWork;
 
-    private byte[] tableCommisionsPrice;
+    private String sellerAccountId;
 
+    private byte[] tableCommisionsPrice;
     
+    private Long artistId;
 }
