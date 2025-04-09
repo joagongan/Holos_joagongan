@@ -69,7 +69,6 @@ const PaymentForm: React.FC<PaymentFormProps> = ({
 
   return (
     <>
-      <Text>{status}</Text>
       <PaymentFormLayout
         title="Tarjetas aceptadas:"
         onPress={handlePayPress}

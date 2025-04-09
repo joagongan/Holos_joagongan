@@ -1,6 +1,5 @@
 import { BASE_URL } from "@/src/constants/api";
 import colors from "@/src/constants/colors";
-import { BaseUserDTO } from "@/src/constants/CommissionTypes";
 import { useRouter } from "expo-router";
 import { Image, Pressable } from "react-native";
 import { Text, View } from "react-native";
