@@ -1,32 +1,37 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { View, Text, TextInput, FlatList, TouchableOpacity, Image, ScrollView, useWindowDimensions } from "react-native";
 import { useRouter } from "expo-router";
 import { BASE_URL } from "@/src/constants/api";
 import { mobileStyles } from "@/src/styles/Search.styles";
 import { Work, Artist } from "@/src/constants/ExploreTypes"; // Añadir tipo Artist
 
-const SearchScreen = () => {
-  const [query, setQuery] = useState("");
+const SearchScreen = ({ query }: { query: string }) => {
   const [workResults, setWorkResults] = useState<Work[]>([]);
-  const [artistResults, setArtistResults] = useState<Artist[]>([]); // Nuevo estado para artistas
+  const [artistResults, setArtistResults] = useState<Artist[]>([]);
   const router = useRouter();
   const { width } = useWindowDimensions(); // Obtener el ancho de la pantalla
 
-  const handleSearch = async () => {
-    try {
-      // Buscar trabajos
-      const worksResponse = await fetch(`${BASE_URL}/api/v1/search/works?query=${query}`);
-      const worksData = await worksResponse.json();
-      setWorkResults(worksData.content || []);
+  useEffect(() => {
+    const handleSearch = async () => {
+      try {
+        const worksResponse = await fetch(
+          `${BASE_URL}/api/v1/search/works?query=${query || ""}` // Si query está vacío, busca todo
+        );
+        const worksData = await worksResponse.json();
+        setWorkResults(worksData.content || []);
 
-      // Buscar artistas
-      const artistsResponse = await fetch(`${BASE_URL}/api/v1/search/artists?query=${query}`);
-      const artistsData = await artistsResponse.json();
-      setArtistResults(artistsData.content || []);
-    } catch (error) {
-      console.error("Error fetching works or artists:", error);
-    }
-  };
+        const artistsResponse = await fetch(
+          `${BASE_URL}/api/v1/search/artists?query=${query || ""}` // Si query está vacío, busca todo
+        );
+        const artistsData = await artistsResponse.json();
+        setArtistResults(artistsData.content || []);
+      } catch (error) {
+        console.error("Error fetching works or artists:", error);
+      }
+    };
+
+    handleSearch();
+  }, [query]);
 
   const getNumColumns = () => {
     if (width > 1200) {
@@ -49,21 +54,14 @@ const SearchScreen = () => {
 
   return (
     <ScrollView style={mobileStyles.container}>
-      {/* Input de búsqueda */}
       <View style={mobileStyles.topSection}>
-        <Text style={mobileStyles.topSectionText}>Buscar Trabajos y Artistas</Text>
+        <Text style={mobileStyles.topSectionText}>
+          {query.trim() === "" ? "Todos los resultados" : `Resultados para "${query}"`}
+        </Text>
       </View>
 
-      <TextInput
-        style={mobileStyles.input}
-        placeholder="Buscar por nombre..."
-        value={query}
-        onChangeText={setQuery}
-        onSubmitEditing={handleSearch}
-      />
-
       {/* Verificar si hay resultados */}
-      {workResults.length === 0 && artistResults.length === 0 && query ? (
+      {workResults.length === 0 && artistResults.length === 0 ? (
         <Text style={mobileStyles.noResultsText}>Sin resultados</Text>
       ) : (
         <>
