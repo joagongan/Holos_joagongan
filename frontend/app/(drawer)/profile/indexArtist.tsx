@@ -198,16 +198,11 @@ const userArtistProfileScreen = () => {
                     editable={isEditing}
                   />
                   {touched.firstName && errors.firstName && <Text style={styles.error}>{errors.firstName}</Text>}
-  
+            
                   <Text style={styles.label}>Usuario</Text>
-                  <TextInput
-                    style={styles.input}
-                    value={values.username}
-                    onChangeText={handleChange("username")}
-                    onBlur={handleBlur("username")}
-                    editable={isEditing}
-                  />
-                  {touched.username && errors.username && <Text style={styles.error}>{errors.username}</Text>}
+                  <View style={styles.readOnlyBox}>
+                    <Text style={styles.readOnlyText}>{artist.username}</Text>
+                  </View>
   
                   <Text style={styles.label}>Correo Electrónico</Text>
                   <TextInput

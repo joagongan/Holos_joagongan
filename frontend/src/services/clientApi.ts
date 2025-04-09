@@ -8,10 +8,10 @@ const CLIENT_URL = `${API_URL}/users`;
 
 export const getClientById = async (id: number): Promise<Client> => {
   try {
-    const response = await axios.get(`/clients/byBaseUser/${baseUserId}`);
+    const response = await axios.get(`/clients/byBaseUser/${id}`);
     return response.data;
   } catch (error) {
-    console.error(`Error obteniendo cliente con baseUserId ${baseUserId}:`, error);
+    console.error(`Error obteniendo cliente con baseUserId ${id}:`, error);
     throw error;
   }
   

@@ -36,6 +36,7 @@ const userClientProfileScreen = () => {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [imageProfile, setImageProfile] = useState<string | null>(null);
+  const [isEditing, setIsEditing] = useState(false);
 
   const [fontsLoaded] = useFonts({
     "Merriweather-Bold": require("../../../assets/fonts/Merriweather_24pt-Bold.ttf"),
@@ -108,77 +109,143 @@ const userClientProfileScreen = () => {
   };
 
   return (
-    <ScrollView style={styles.scrollView}>
-    <View style={styles.container}>
-      <Formik
-        initialValues={{
-          firstName: user.baseUser.name,
-          username: user.baseUser.username,
-          email: user.baseUser.email,
-          phoneNumber: user.baseUser.phoneNumber ?? "666666666",
-          description: undefined,
-          linkToSocialMedia: undefined,
-          tableCommissionsPrice: undefined,
-          imageProfile: user.baseUser.imageProfile ,
-          numSlotsOfWork: undefined,
-        }}
-        validationSchema={validationSchema}
-        onSubmit={(values, { resetForm }) => sendWork(values, resetForm)}
-      >
-        {({ handleChange, handleBlur, handleSubmit, values, errors, touched, setFieldValue }) => (
-          <>
-            <View style={styles.headerRow}>
-              <View style={styles.imageSection}>
-                <Image
-                  source={
-                    imageProfile
-                      ? { uri: imageProfile }
-                      : user.baseUser.imageProfile
-                      ? { uri: `${BASE_URL}${atob(user.baseUser.imageProfile)}` }
-                      : undefined
-                  }
-                  style={styles.imageProfile}
-                />
-                <TouchableOpacity
-                  onPress={() => pickImage(setFieldValue, "imageProfile")}
-                  style={styles.stripeButtonSmall}
-                >
-                  <Text style={styles.stripeButtonText}>Cambiar Foto de Perfil</Text>
-                </TouchableOpacity>
-              </View>
-
-              <View style={styles.formSection}>
-                <Text style={styles.title}>Editar Perfil de Cliente</Text>
-
-                <Text style={styles.label}>Nombre</Text>
-                <TextInput style={styles.input} value={values.firstName} onChangeText={handleChange("name")} onBlur={handleBlur("name")} />
-                {touched.firstName && errors.firstName && <Text style={styles.error}>{errors.firstName}</Text>}
-
-                <Text style={styles.label}>Usuario</Text>
-                <TextInput style={styles.input} value={values.username} onChangeText={handleChange("username")} onBlur={handleBlur("username")} />
-                {touched.username && errors.username && <Text style={styles.error}>{errors.username}</Text>}
-
-                <Text style={styles.label}>Correo Electrónico</Text>
-                <TextInput style={styles.input} value={values.email} onChangeText={handleChange("email")} onBlur={handleBlur("email")} keyboardType="email-address" />
-                {touched.email && errors.email && <Text style={styles.error}>{errors.email}</Text>}
-
-                <Text style={styles.label}>Teléfono</Text>
-                <TextInput style={styles.input} value={values.phoneNumber} onChangeText={handleChange("phoneNumber")} onBlur={handleBlur("phoneNumber")} keyboardType="phone-pad" />
-                {touched.phoneNumber && errors.phoneNumber && <Text style={styles.error}>{errors.phoneNumber}</Text>}
-
-             <View style={styles.buttonContainer}>
-                <TouchableOpacity onPress={() => handleSubmit()} style={styles.stripeButton}>
-                  <Text style={styles.stripeButtonText}>Guardar Cambios</Text>
-                </TouchableOpacity>
-
+    <Formik
+      initialValues={{
+        firstName: user.baseUser.name,
+        username: user.baseUser.username,
+        email: user.baseUser.email,
+        phoneNumber: user.baseUser.phoneNumber ?? "0000000000",
+        description: undefined,
+        linkToSocialMedia: undefined,
+        tableCommissionsPrice: undefined,
+        imageProfile: user.baseUser.imageProfile,
+        numSlotsOfWork: undefined,
+      }}
+      validationSchema={validationSchema}
+      onSubmit={(values, { resetForm }) => sendWork(values, resetForm)}
+    >
+      {({
+        handleChange,
+        handleBlur,
+        handleSubmit,
+        values,
+        errors,
+        touched,
+        setFieldValue,
+        setValues,
+        setErrors,
+        setTouched
+      }) => {
+        const cancelChange = () => {
+          if (!user) return;
+  
+          const originalValues = {
+            firstName: user.baseUser.name,
+            username: user.baseUser.username,
+            email: user.baseUser.email,
+            phoneNumber: user.baseUser.phoneNumber ?? "0000000000",
+            description: undefined,
+            linkToSocialMedia: undefined,
+            tableCommissionsPrice: undefined,
+            imageProfile: user.baseUser.imageProfile,
+            numSlotsOfWork: undefined,
+          };
+  
+          setValues(originalValues);
+          setErrors({});
+          setTouched({});
+          setImageProfile(null);
+          setIsEditing(false);
+        };
+  
+        return (
+          <ScrollView style={styles.scrollView}>
+            <View style={styles.container}>
+              <View style={styles.headerRow}>
+                <View style={styles.imageSection}>
+                  <Image
+                    source={
+                      imageProfile
+                        ? { uri: imageProfile }
+                        : user.baseUser.imageProfile
+                        ? { uri: `${BASE_URL}${atob(user.baseUser.imageProfile)}` }
+                        : undefined
+                    }
+                    style={styles.imageProfile}
+                  />
+                  {isEditing?
+                  <TouchableOpacity
+                    onPress={() => pickImage(setFieldValue, "imageProfile")}
+                    style={styles.stripeButtonSmall}
+                  >
+                    <Text style={styles.stripeButtonText}>Cambiar Foto de Perfil</Text>
+                  </TouchableOpacity>
+                  : <></>}
+                </View>
+  
+                <View style={styles.formSection}>
+                  <Text style={styles.title}>Editar Perfil de Cliente</Text>
+  
+                  <Text style={styles.label}>Nombre</Text>
+                  <TextInput
+                    style={styles.input}
+                    value={values.firstName}
+                    onChangeText={handleChange("firstName")}
+                    onBlur={handleBlur("firstName")}
+                  />
+                  {touched.firstName && errors.firstName && <Text style={styles.error}>{errors.firstName}</Text>}
+  
+                 <Text style={styles.label}>Usuario</Text>
+                <View style={styles.readOnlyBox}>
+                  <Text style={styles.readOnlyText}>{user.baseUser.username}</Text>
+                 </View>
+  
+                  <Text style={styles.label}>Correo Electrónico</Text>
+                  <TextInput
+                    style={styles.input}
+                    value={values.email}
+                    onChangeText={handleChange("email")}
+                    onBlur={handleBlur("email")}
+                    keyboardType="email-address"
+                  />
+                  {touched.email && errors.email && <Text style={styles.error}>{errors.email}</Text>}
+  
+                  <Text style={styles.label}>Teléfono</Text>
+                  <TextInput
+                    style={styles.input}
+                    value={values.phoneNumber}
+                    onChangeText={handleChange("phoneNumber")}
+                    onBlur={handleBlur("phoneNumber")}
+                    keyboardType="phone-pad"
+                  />
+                  {touched.phoneNumber && errors.phoneNumber && (
+                    <Text style={styles.error}>{errors.phoneNumber}</Text>
+                  )}
+  
+                  <View style={styles.buttonContainer}>
+                    {isEditing ? (
+                      <>
+                      <TouchableOpacity onPress={() => handleSubmit()} style={styles.stripeButton}>
+                        <Text style={styles.stripeButtonText}>Guardar Cambios</Text>
+                      </TouchableOpacity>
+                      
+                      <TouchableOpacity onPress={cancelChange} style={styles.stripeButton}>
+                        <Text style={styles.stripeButtonText}>Cancelar los cambios</Text>
+                      </TouchableOpacity>
+                        </>
+                      ) : (
+                     <TouchableOpacity onPress={() => setIsEditing(true)} style={styles.stripeButton}>
+                      <Text style={styles.stripeButtonText}>Editar Perfil</Text>
+                      </TouchableOpacity>
+                      )}
+                  </View>
                 </View>
               </View>
             </View>
-          </>
-        )}
-      </Formik>
-    </View>
-  </ScrollView>
+          </ScrollView>
+        );
+      }}
+    </Formik>
   );
 };
 
