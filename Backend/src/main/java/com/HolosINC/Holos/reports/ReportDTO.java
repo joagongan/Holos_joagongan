@@ -1,9 +1,11 @@
 package com.HolosINC.Holos.reports;
 import com.HolosINC.Holos.work.Work;
 
+import lombok.Builder;
 import lombok.Getter;
 
 @Getter
+@Builder
 public class ReportDTO {
     
     private String name;

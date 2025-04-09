@@ -32,7 +32,7 @@ public class StripeConnectController {
             List<Account> accounts = stripeConnectService.getAllConnectedAccounts();
             return new ResponseEntity<>(accounts, HttpStatus.OK);
         } catch (StripeException e) {
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     }
 
@@ -55,7 +55,7 @@ public class StripeConnectController {
         } catch (StripeException e) {
             return new ResponseEntity<String>(e.getMessage(), HttpStatus.BAD_REQUEST);
         } catch (Exception e) {
-            return new ResponseEntity<String>(e.getMessage(), HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
         
     }
@@ -68,7 +68,7 @@ public class StripeConnectController {
         } catch (StripeException e) {
             return new ResponseEntity<String>(e.getMessage(), HttpStatus.BAD_REQUEST);
         } catch (Exception e) {
-            return new ResponseEntity<String>(e.getMessage(), HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     }
 

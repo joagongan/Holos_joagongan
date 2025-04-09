@@ -1,6 +1,5 @@
 package com.HolosINC.Holos.stripe;
 
-import com.HolosINC.Holos.exceptions.ResourceNotFoundException;
 import com.stripe.exception.StripeException;
 import com.stripe.model.PaymentIntent;
 import com.stripe.model.PaymentIntentCollection;
@@ -47,12 +46,10 @@ public ResponseEntity<?> createPayment(@RequestBody PaymentDTO paymentDTO, @Path
     try {
         String paymentIntent = paymentService.createPayment(paymentDTO, commissionId);
         return new ResponseEntity<>(paymentIntent, HttpStatus.OK);
-    } catch (ResourceNotFoundException e) {
-        return ResponseEntity.badRequest().body("Error: " + e.getMessage());
     } catch (StripeException e) {
         return ResponseEntity.badRequest().body("Error procesando el pago: " + e.getMessage());
     } catch (Exception e) {
-        return ResponseEntity.internalServerError().body("Error inesperado: " + e.getMessage());
+        return ResponseEntity.badRequest().body("Error inesperado: " + e.getMessage());
     }
 }
 
