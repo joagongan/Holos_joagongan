@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.HolosINC.Holos.Profile.ProfileService;
 import com.HolosINC.Holos.auth.payload.response.MessageResponse;
 import com.HolosINC.Holos.model.BaseUserDTO;
+import com.HolosINC.Holos.util.EntityToDTOMapper;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -46,10 +47,11 @@ class ArtistRestController {
 	
 	@GetMapping(value = "/{id}")
 	@Operation(summary = "Get artist", description = "Retrieve a list of all artists")
-	public ResponseEntity<MessageResponse> findById(@PathVariable("id") Long id) {
+	public ResponseEntity<?> findById(@PathVariable("id") Long id) {
 		try{
             Artist artist = artistService.findArtist(id);
-            return ResponseEntity.ok().body(new MessageResponse(artist.toString()));
+            ArtistDTO artistDTO = EntityToDTOMapper.toArtistDTO(artist);
+            return ResponseEntity.ok().body(artistDTO);
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(new MessageResponse(e.getMessage()));
         }

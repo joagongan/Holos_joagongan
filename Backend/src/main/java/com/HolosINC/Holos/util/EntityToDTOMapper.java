@@ -18,6 +18,8 @@ public class EntityToDTOMapper {
         artistDTO.setPhoneNumber(artist.getBaseUser().getPhoneNumber());
         artistDTO.setImageProfile(artist.getBaseUser().getImageProfile());
         artistDTO.setTableCommissionsPrice(artist.getTableCommisionsPrice());
+        artistDTO.setArtistId(artist.getId());
+        artistDTO.setSellerAccountId(artist.getSellerAccountId());
         artistDTO.setNumSlotsOfWork(artist.getNumSlotsOfWork());
         return artistDTO;
     }
