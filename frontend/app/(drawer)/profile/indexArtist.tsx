@@ -26,8 +26,8 @@ const validationSchema = Yup.object().shape({
   email: Yup.string().trim("El correo no puede tener solo espacios").email("Formato de correo inválido").required("El correo es obligatorio"),
   phoneNumber: Yup.string().trim("El teléfono no puede tener solo espacios").matches(/^[0-9]+$/, "Solo se permiten números").min(9, "Debe tener al menos 7 dígitos").max(12, "Debe tener como máximo 12 dígitos").required("El teléfono es obligatorio"),
   description: Yup.string().notRequired(),
-  imageProfile: Yup.string().trim().required("Debe subir para poder guardar los cambios una imagen para el perfil"),
-  tableCommissionsPrice: Yup.string().trim().required("Debe subir para poder guardar los cambios una imagen para el perfil"),
+  imageProfile: Yup.string().notRequired(),
+  tableCommissionsPrice: Yup.string().notRequired(),
   numSlotsOfWork: Yup.number().required()
 
 });
@@ -39,6 +39,7 @@ const userArtistProfileScreen = () => {
   const [loading, setLoading] = useState<boolean>(true);
   const [imageProfile, setImageProfile] = useState<string | null>(null);
   const [tableCommisionsPrice, setTableCommisionsPrice] = useState<string | null>(null);
+  const [isEditing, setIsEditing] = useState(false);
 
   const [fontsLoaded] = useFonts({
     "Merriweather-Bold": require("../../../assets/fonts/Merriweather_24pt-Bold.ttf"),
@@ -117,111 +118,204 @@ const userArtistProfileScreen = () => {
     }
   };
 
+
+
+
   return (
-    <ScrollView style={styles.scrollView}>
-    <View style={styles.container}>
-      <Formik
-        initialValues={{
-          firstName: artist.name,
-          username: artist.username,
-          email: artist.email,
-          phoneNumber: artist.phoneNumber,
-          description: artist.description,
-          linkToSocialMedia: artist.linkToSocialMedia,
-          tableCommissionsPrice: artist.tableCommisionsPrice,
-          imageProfile: artist.imageProfile,
-          numSlotsOfWork: artist.numSlotsOfWork,
-        }}
-        validationSchema={validationSchema}
-        onSubmit={(values, { resetForm }) => sendWork(values, resetForm)}
-      >
-        {({ handleChange, handleBlur, handleSubmit, values, errors, touched, setFieldValue }) => (
-          <>
-            <View style={styles.headerRow}>
-              <View style={styles.imageSection}>
-                <Image
-                  source={
-                    imageProfile
-                      ? { uri: imageProfile }
-                      : artist?.imageProfile
-                      ? { uri: `${BASE_URL}${atob(artist.imageProfile)}` }
-                      : undefined
-                  }
-                  style={styles.imageProfile}
-                />
-                <TouchableOpacity
-                  onPress={() => pickImage(setFieldValue, "imageProfile")}
-                  style={styles.stripeButtonSmall}
-                >
-                  <Text style={styles.stripeButtonText}>Cambiar Foto de Perfil</Text>
-                </TouchableOpacity>
-              </View>
+    <Formik
+      initialValues={{
+        firstName: artist.name,
+        username: artist.username,
+        email: artist.email,
+        phoneNumber: artist.phoneNumber,
+        description: artist.description,
+        linkToSocialMedia: artist.linkToSocialMedia,
+        tableCommissionsPrice: artist.tableCommisionsPrice,
+        imageProfile: artist.imageProfile,
+        numSlotsOfWork: artist.numSlotsOfWork,
+      }}
+      validationSchema={validationSchema}
+      onSubmit={(values, { resetForm }) => sendWork(values, resetForm)}
+    >
+      {({ handleChange, handleBlur, handleSubmit,values, errors, touched, setFieldValue, setValues, setErrors, setTouched }) => {
+        const cancelChange = () => {
+          if (!artist) return;
+  
+          const originalValues = {
+            firstName: artist.name,
+            username: artist.username,
+            email: artist.email,
+            phoneNumber: artist.phoneNumber,
+            description: artist.description,
+            linkToSocialMedia: artist.linkToSocialMedia,
+            tableCommissionsPrice: artist.tableCommisionsPrice,
+            imageProfile: artist.imageProfile,
+            numSlotsOfWork: artist.numSlotsOfWork,
+          };
+  
+          setValues(originalValues);
+          setErrors({});
+          setTouched({});
+          setImageProfile(null);
+          setTableCommisionsPrice(null);
+          setIsEditing(false);
+        };
+  
+        return (
+          <ScrollView style={styles.scrollView}>
+            <View style={styles.container}>
+              <View style={styles.headerRow}>
+                <View style={styles.imageSection}>
+                  <Image
+                    source={
+                      imageProfile
+                        ? { uri: imageProfile }
+                        : artist?.imageProfile
+                        ? { uri: `${BASE_URL}${atob(artist.imageProfile)}` }
+                        : undefined
+                    }
+                    style={styles.imageProfile}
+                  />
 
-              <View style={styles.formSection}>
-                <Text style={styles.title}>Editar Perfil de Artista</Text>
-
-                <Text style={styles.label}>Nombre</Text>
-                <TextInput style={styles.input} value={values.firstName} onChangeText={handleChange("name")} onBlur={handleBlur("name")} />
-                {touched.firstName && errors.firstName && <Text style={styles.error}>{errors.firstName}</Text>}
-
-                <Text style={styles.label}>Usuario</Text>
-                <TextInput style={styles.input} value={values.username} onChangeText={handleChange("username")} onBlur={handleBlur("username")} />
-                {touched.username && errors.username && <Text style={styles.error}>{errors.username}</Text>}
-
-                <Text style={styles.label}>Correo Electrónico</Text>
-                <TextInput style={styles.input} value={values.email} onChangeText={handleChange("email")} onBlur={handleBlur("email")} keyboardType="email-address" />
-                {touched.email && errors.email && <Text style={styles.error}>{errors.email}</Text>}
-
-                <Text style={styles.label}>Teléfono</Text>
-                <TextInput style={styles.input} value={values.phoneNumber} onChangeText={handleChange("phoneNumber")} onBlur={handleBlur("phoneNumber")} keyboardType="phone-pad" />
-                {touched.phoneNumber && errors.phoneNumber && <Text style={styles.error}>{errors.phoneNumber}</Text>}
-
-                <Text style={styles.label}>Descripción</Text>
-                <TextInput style={[styles.input, { height: 80 }]} multiline value={values.description} onChangeText={handleChange("description")} onBlur={handleBlur("description")} />
-                {touched.description && errors.description && <Text style={styles.error}>{errors.description}</Text>}
-
-                <Text style={styles.label}>Redes Sociales</Text>
-                <TextInput style={styles.input} value={values.linkToSocialMedia} onChangeText={handleChange("linkToSocialMedia")} onBlur={handleBlur("linkToSocialMedia")} />
-                {touched.linkToSocialMedia && errors.linkToSocialMedia && <Text style={styles.error}>{errors.linkToSocialMedia}</Text>}
-
-                <Text style={styles.label}>Slots de trabajo disponibles</Text>
-                <View style={styles.readOnlyBox}>
-                  <Text style={styles.readOnlyText}>{artist.numSlotsOfWork}</Text>
+                  {isEditing ?
+                  <TouchableOpacity
+                    onPress={() => pickImage(setFieldValue, "imageProfile")}
+                    style={styles.stripeButtonSmall}
+                  >
+                    <Text style={styles.stripeButtonText}>Cambiar Foto de Perfil</Text>
+                  </TouchableOpacity> : <></>}
                 </View>
-
-                <Text style={styles.label}>Tabla de Precios</Text>
-                <Image
-                  source={
-                tableCommisionsPrice
-                ? { uri: tableCommisionsPrice }
-                : artist?.tableCommisionsPrice
-              ? { uri: `${BASE_URL}${atob(artist.tableCommisionsPrice)}` }
-               : undefined
-             }
-             style={styles.priceImage}/>
-
-                {touched.tableCommissionsPrice && errors.tableCommissionsPrice && (<Text style={styles.error}>{errors.tableCommissionsPrice}</Text>)}
-                <TouchableOpacity onPress={() => pickImage(setFieldValue, "tableCommisionsPrice")} style={styles.stripeButton}>
-                  <Text style={styles.stripeButtonText}>Cambiar Imagen de Precios</Text>
-                </TouchableOpacity>
-             <View style={styles.buttonContainer}>
-              
-             <TouchableOpacity onPress={() => navigation.navigate("profile/stripe-setup")} style={styles.stripeButton}>
-                  <Text style={styles.stripeButtonText}>Conectate con Stripe</Text>
-                </TouchableOpacity>
-                <TouchableOpacity onPress={() => handleSubmit()} style={styles.stripeButton}>
-                  <Text style={styles.stripeButtonText}>Guardar Cambios</Text>
-                </TouchableOpacity>
-
+  
+                <View style={styles.formSection}>
+                  <Text style={styles.title}>Editar Perfil de Artista</Text>
+  
+                  <Text style={styles.label}>Nombre</Text>
+                  <TextInput
+                    style={styles.input}
+                    value={values.firstName}
+                    onChangeText={handleChange("firstName")}
+                    onBlur={handleBlur("firstName")}
+                    editable={isEditing}
+                  />
+                  {touched.firstName && errors.firstName && <Text style={styles.error}>{errors.firstName}</Text>}
+  
+                  <Text style={styles.label}>Usuario</Text>
+                  <TextInput
+                    style={styles.input}
+                    value={values.username}
+                    onChangeText={handleChange("username")}
+                    onBlur={handleBlur("username")}
+                    editable={isEditing}
+                  />
+                  {touched.username && errors.username && <Text style={styles.error}>{errors.username}</Text>}
+  
+                  <Text style={styles.label}>Correo Electrónico</Text>
+                  <TextInput
+                    style={styles.input}
+                    value={values.email}
+                    onChangeText={handleChange("email")}
+                    onBlur={handleBlur("email")}
+                    editable={isEditing}
+                    keyboardType="email-address"
+                  />
+                  {touched.email && errors.email && <Text style={styles.error}>{errors.email}</Text>}
+  
+                  <Text style={styles.label}>Teléfono</Text>
+                  <TextInput
+                    style={styles.input}
+                    value={values.phoneNumber}
+                    onChangeText={handleChange("phoneNumber")}
+                    onBlur={handleBlur("phoneNumber")}
+                    editable={isEditing}
+                    keyboardType="phone-pad"
+                  />
+                  {touched.phoneNumber && errors.phoneNumber && <Text style={styles.error}>{errors.phoneNumber}</Text>}
+  
+                  <Text style={styles.label}>Descripción</Text>
+                  <TextInput
+                    style={[styles.input, { height: 80 }]}
+                    multiline
+                    value={values.description}
+                    onChangeText={handleChange("description")}
+                    onBlur={handleBlur("description")}
+                    editable={isEditing}
+                  />
+                  {touched.description && errors.description && <Text style={styles.error}>{errors.description}</Text>}
+  
+                  <Text style={styles.label}>Redes Sociales</Text>
+                  <TextInput
+                    style={styles.input}
+                    value={values.linkToSocialMedia}
+                    onChangeText={handleChange("linkToSocialMedia")}
+                    onBlur={handleBlur("linkToSocialMedia")}
+                    editable={isEditing}
+                  />
+                  {touched.linkToSocialMedia && errors.linkToSocialMedia && <Text style={styles.error}>{errors.linkToSocialMedia}</Text>}
+  
+                  <Text style={styles.label}>Slots de trabajo disponibles</Text>
+                  <View style={styles.readOnlyBox}>
+                    <Text style={styles.readOnlyText}>{artist.numSlotsOfWork}</Text>
+                  </View>
+  
+                  <Text style={styles.label}>Tabla de Precios</Text>
+                  <Image
+                    source={
+                      tableCommisionsPrice
+                        ? { uri: tableCommisionsPrice }
+                        : artist.tableCommisionsPrice
+                        ? { uri: `${BASE_URL}${atob(artist.tableCommisionsPrice)}` }
+                        : undefined
+                    }
+                    style={styles.priceImage}
+                  />
+                  {isEditing && (
+                    <>
+                      {touched.tableCommissionsPrice && errors.tableCommissionsPrice && (
+                        <Text style={styles.error}>{errors.tableCommissionsPrice}</Text>
+                      )}
+                      <TouchableOpacity
+                        onPress={() => pickImage(setFieldValue, "tableCommisionsPrice")}
+                        style={styles.stripeButton}
+                      >
+                        <Text style={styles.stripeButtonText}>Cambiar Imagen de Precios</Text>
+                      </TouchableOpacity>
+                    </>
+                  )}
+  
+                  <View style={styles.buttonContainer}>
+                    <TouchableOpacity
+                      onPress={() => navigation.navigate("profile/stripe-setup")}
+                      style={styles.stripeButton}
+                    >
+                      <Text style={styles.stripeButtonText}>Conectate con Stripe</Text>
+                    </TouchableOpacity>
+  
+                    {isEditing ? (
+                      <>
+                        <TouchableOpacity onPress={() => handleSubmit()} style={styles.stripeButton}>
+                          <Text style={styles.stripeButtonText}>Guardar Cambios</Text>
+                        </TouchableOpacity>
+  
+                        <TouchableOpacity onPress={cancelChange} style={styles.stripeButton}>
+                          <Text style={styles.stripeButtonText}>Cancelar los cambios</Text>
+                        </TouchableOpacity>
+                      </>
+                    ) : (
+                      <TouchableOpacity onPress={() => setIsEditing(true)} style={styles.stripeButton}>
+                        <Text style={styles.stripeButtonText}>Editar Perfil</Text>
+                      </TouchableOpacity>
+                    )}
+                  </View>
                 </View>
               </View>
             </View>
-          </>
-        )}
-      </Formik>
-    </View>
-  </ScrollView>
+          </ScrollView>
+        );
+      }}
+    </Formik>
   );
+    
+ 
 };
 
 export default userArtistProfileScreen;
