@@ -130,7 +130,7 @@ export default function SignupScreen() {
       }
 
       Alert.alert("Registro exitoso", "Usuario registrado correctamente");
-      router.push(`/(drawer)/explore`);
+      router.push(`/login`);
     } catch (error) {
       console.error("Error en la petición:", error);
       Alert.alert("Error", String(error));

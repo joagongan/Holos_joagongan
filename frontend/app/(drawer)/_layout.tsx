@@ -15,7 +15,8 @@ export default function DrawerLayout() {
     <Suspense fallback={<LoadingScreen />}>
       {loading ? ( <LoadingScreen />) : (<Drawer key={isArtist ? "artist" : "client"} initialRouteName="index" screenOptions={{ headerShown: true, drawerItemStyle: { display: 'none', height: 0 } }}>
         <Drawer.Screen name="index" options={{ drawerLabel: "Inicio", title: "🏠 Inicio", drawerIcon:() => <Text style={{ fontSize: 22 }}>🏠</Text>, drawerItemStyle: { display: 'flex', height: 'auto' } }} />
-        <Drawer.Screen name="profile/index" options={{ drawerLabel: "Mi perfil", drawerIcon: () => <Text style={{ fontSize: 22 }}>👤</Text>, drawerItemStyle: { display: !isAdmin && isAuthenticated ? 'flex':'none', height: 'auto' } }} />
+        <Drawer.Screen name="profile/indexArtist" options={{ drawerLabel: "Mi perfil", drawerIcon: () => <Text style={{ fontSize: 22 }}>👤</Text>, drawerItemStyle: { display: !isAdmin && !isClient ? 'flex':'none', height: 'auto' } }} />
+        <Drawer.Screen name="profile/indexClient" options={{ drawerLabel: "Mi perfil", drawerIcon: () => <Text style={{ fontSize: 22 }}>👤</Text>, drawerItemStyle: { display: !isAdmin && isClient ? 'flex':'none', height: 'auto' } }} />
         <Drawer.Screen name="login" options={{ drawerLabel: "Inicio de sesión", drawerIcon: ProfileIcon, drawerItemStyle: { display: isAuthenticated?'none':'flex', height: 'auto' } }} />
         <Drawer.Screen name="search/index" options={{ drawerLabel: "Buscar", title: "🔍 Buscar", drawerIcon: () => <Text style={{ fontSize: 22 }}>🔍</Text>, drawerItemStyle: { display: 'flex', height: 'auto' } }} />
         <Drawer.Screen name="signup" options={{ drawerLabel: "Registrar", drawerIcon: ProfileIcon, drawerItemStyle: { display: isAuthenticated?'none':'flex', height: 'auto' } }} />
