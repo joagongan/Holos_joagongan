@@ -58,9 +58,11 @@ public class AuthoritiesService {
 
 		try {
 			if(authoritiesRepository.existsBaseUserByUsername(request.getUsername()))
-			throw new IllegalArgumentException("Nombre de usuario ya existente en la base de datos.");
+				throw new IllegalArgumentException("Nombre de usuario ya existente en la base de datos.");
 			if(authoritiesRepository.existsBaseUserByUsername(request.getEmail()))
-			throw new IllegalArgumentException("Email ya existente en la base de datos.");
+				throw new IllegalArgumentException("Email ya existente en la base de datos.");
+			if (request.getImageProfile().getSize() > 5 * 1024 * 1024) 
+				throw new IllegalArgumentException("La imagen de perfil no puede ser mayor a 5MB.");
 			
 			BaseUser user = new BaseUser();
 			user.setUsername(request.getUsername());
@@ -69,6 +71,7 @@ public class AuthoritiesService {
 			user.setPassword(encoder.encode(request.getPassword()));
 			user.setEmail(request.getEmail());
 			user.setPhoneNumber(request.getPhoneNumber());
+			user.setImageProfile(imageHandler.getBytes(request.getImageProfile()));
 	
 			if (request.getImageProfile() != null) {
 				user.setImageProfile(imageHandler.getBytes(request.getImageProfile()));
