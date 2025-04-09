@@ -107,13 +107,6 @@ public class AuthoritiesService {
 	public BaseUser updateUser(@Valid SignupRequest request) throws Exception{
 		try{
 			BaseUser user = baseUserService.findCurrentUser();
-			user.setUsername(request.getUsername());
-			user.setName(request.getFirstName());
-			user.setUpdatedUser(Date.from(Instant.now()));
-			user.setPassword(encoder.encode(request.getPassword()));
-			user.setEmail(request.getEmail());
-			user.setPhoneNumber(request.getPhoneNumber());
-			user.setImageProfile(imageHandler.getBytes(request.getImageProfile()));
 
 			if (request.getTableCommissionsPrice() != null && request.getTableCommissionsPrice().getSize() > 5 * 1024 * 1024) {
 				throw new IllegalArgumentException("La tabla de comisiones no puede ser mayor a 5MB.");
