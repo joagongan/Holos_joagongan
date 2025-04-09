@@ -78,49 +78,49 @@ public class StripeConnectServiceTest {
     }
 
     @Test
-    public void testCreateConnectedAccountWhenArtistDoesNotHaveAccount() throws Exception {
+    public void testCreateConnectedAccountWhenArtistDoesNotHaveAccount() throws StripeException, Exception {
         when(userService.findCurrentUser()).thenReturn(baseUser);
         
         when(artistRepository.findArtistByUser(1L)).thenReturn(Optional.of(artist));
 
         assertNull(artist.getSellerAccountId());
 
-        try (MockedStatic<Account> mockedAccount = mockStatic(Account.class)) {
-            mockedAccount
-                .when(() -> Account.create(Mockito.any(AccountCreateParams.class)))
-                .thenReturn(account);
+        try (MockedStatic<Account> mockedAccount = mockStatic(Account.class)){
+        mockedAccount
+            .when(() -> Account.create(Mockito.any(AccountCreateParams.class)))
+            .thenReturn(account);
     
-            String newAccountId = stripeConnectService.createConnectedAccount();
+        String newAccountId = stripeConnectService.createConnectedAccount();
     
-            assertEquals(account.getId(), newAccountId);
-            assertEquals(newAccountId, artist.getSellerAccountId());
-            verify(artistRepository).save(artist);
+        assertEquals(account.getId(), newAccountId);
+        assertEquals(newAccountId, artist.getSellerAccountId());
+        verify(artistRepository).save(artist);
         }
     }
 
     @Test
-    public void testCreateConnectedAccountWhenArtistAlreadyHasAccount() throws Exception {
+    public void testCreateConnectedAccountWhenArtistAlreadyHasAccount() throws StripeException, Exception {
         when(userService.findCurrentUser()).thenReturn(baseUser);
         when(artistRepository.findArtistByUser(1L)).thenReturn(Optional.of(artist));
 
         artist.setSellerAccountId(account.getId());
         assertNotNull(artist.getSellerAccountId());
 
-        try (MockedStatic<Account> mockedAccount = mockStatic(Account.class)) {
-            mockedAccount
-                .when(() -> Account.create(Mockito.any(AccountCreateParams.class)))
-                .thenReturn(account);
+        try (MockedStatic<Account> mockedAccount = mockStatic(Account.class)){
+        mockedAccount
+            .when(() -> Account.create(Mockito.any(AccountCreateParams.class)))
+            .thenReturn(account);
     
-            String newAccountId = stripeConnectService.createConnectedAccount();
+        String newAccountId = stripeConnectService.createConnectedAccount();
     
-            assertEquals(account.getId(), newAccountId);
-            assertEquals(newAccountId, artist.getSellerAccountId());
-            verify(artistRepository, never()).save(artist);
+        assertEquals(account.getId(), newAccountId);
+        assertEquals(newAccountId, artist.getSellerAccountId());
+        verify(artistRepository, never()).save(artist);
         }
     }
 
     @Test
-    void testCreateConnectedAccountArtistNotFoundT() {
+    void testCreateConnectedAccountArtistNotFound() {
         
         when(userService.findCurrentUser()).thenReturn(baseUser);
         when(artistRepository.findArtistByUser(1L)).thenReturn(Optional.empty());

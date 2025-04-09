@@ -41,11 +41,7 @@ public class StatusKanbanOrderController {
     @Operation(summary = "Crea un nuevo estado Kanban para el artista autenticado")
     public ResponseEntity<?> addStatusToKanban(@Valid @RequestBody StatusKanbanCreateDTO dto) {
         try {
-            statusKanbanOrderService.addStatusToKanban(
-                dto.getColor(),
-                dto.getDescription(),
-                dto.getName()
-            );
+            statusKanbanOrderService.addStatusToKanban(dto);
             return ResponseEntity.status(HttpStatus.CREATED).build();
         } catch (DataIntegrityViolationException e) {
             return ResponseEntity
@@ -87,15 +83,12 @@ public class StatusKanbanOrderController {
     @GetMapping
     @Operation(summary = "Obtiene todos los estados Kanban del artista junto con sus comisiones asociadas")
     public ResponseEntity<StatusKanbanFullResponseDTO> getAllStatusKanban() {
-        Pair<List<StatusKanbanDTO>, List<StatusKanbanWithCommisionsDTO>> data =
-                statusKanbanOrderService.getAllStatusFromArtist();
-
-        StatusKanbanFullResponseDTO response = new StatusKanbanFullResponseDTO(
-                data.getFirst(),
-                data.getSecond()
-        );
-
-        return ResponseEntity.ok(response);
+        try {
+            StatusKanbanFullResponseDTO response = statusKanbanOrderService.getAllStatusFromArtist();
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().build();
+        }
     }
 
     @PutMapping("/{id}/next")

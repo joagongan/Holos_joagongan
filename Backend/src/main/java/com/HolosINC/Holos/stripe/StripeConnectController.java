@@ -10,6 +10,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import com.HolosINC.Holos.exceptions.ResourceNotFoundException;
+import com.stripe.exception.StripeException;
+
 @RestController
 @RequestMapping("/api/v1/stripe-account")
 @SecurityRequirement(name = "bearerAuth")
@@ -28,18 +31,26 @@ public class StripeConnectController {
         try {
             String accountId = stripeConnectService.createConnectedAccount();
             return new ResponseEntity<String>(accountId, HttpStatus.OK);
+        } catch (ResourceNotFoundException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND); 
+        } catch (StripeException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_GATEWAY);
         } catch (Exception e) {
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
-    @GetMapping("/create-link")
+    @PostMapping("/create-link")
     public ResponseEntity<String> createAccountLink(){
         try {
             String accountLinkUrl = stripeConnectService.createAccountLink();
             return new ResponseEntity<String>(accountLinkUrl, HttpStatus.OK);
+        } catch (ResourceNotFoundException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND); 
+        } catch (StripeException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_GATEWAY);
         } catch (Exception e) {
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
