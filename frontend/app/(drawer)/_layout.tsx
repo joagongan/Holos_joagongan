@@ -48,7 +48,9 @@ export default function DrawerLayout() {
         initialRouteName="index"
         screenOptions={{ drawerHideStatusBarOnOpen:true, headerShown: true, drawerItemStyle: { display: 'none', height: 0 }}}>
         <Drawer.Screen name="index" options={{ drawerLabel: "Inicio", title: "🏠 Inicio", drawerIcon:() => <Text style={{ fontSize: 22 }}>🏠</Text>, drawerItemStyle: { display: 'flex', height: 'auto' } }} />
-        <Drawer.Screen name="login" options={{ drawerLabel: "Inicio de sesión", title: "👤 Inicio de sesión", drawerIcon: () => <Text style={{ fontSize: 22 }}>👤</Text>, drawerItemStyle: { display: isAuthenticated?'none':'flex', height: 'auto' } }} />
+        <Drawer.Screen name="profile/indexArtist" options={{ drawerLabel: "Mi perfil", drawerIcon: () => <Text style={{ fontSize: 22 }}>👤</Text>, drawerItemStyle: { display: !isAdmin && !isClient ? 'flex':'none', height: 'auto' } }} />
+        <Drawer.Screen name="profile/indexClient" options={{ drawerLabel: "Mi perfil", drawerIcon: () => <Text style={{ fontSize: 22 }}>👤</Text>, drawerItemStyle: { display: !isAdmin && isClient ? 'flex':'none', height: 'auto' } }} />
+        <Drawer.Screen name="login" options={{ drawerLabel: "Inicio de sesión", drawerIcon: ProfileIcon, drawerItemStyle: { display: isAuthenticated?'none':'flex', height: 'auto' } }} />
         <Drawer.Screen name="search/index" options={{ drawerLabel: "Buscar", title: "🔍 Buscar", drawerIcon: () => <Text style={{ fontSize: 22 }}>🔍</Text>, drawerItemStyle: { display: 'flex', height: 'auto' } }} />
         <Drawer.Screen name="kanban/index" options={{ drawerLabel: "Encargos",title: "🎨 Mis encargos", drawerIcon: () => <Text style={{ fontSize: 22 }}>🎨</Text>, drawerItemStyle: { display: isArtist ? 'flex' : 'none', height: isArtist ? 'auto' : 0 } }} />
         <Drawer.Screen name="admin/index" options={{ drawerLabel: "Panel Admin", drawerIcon: () => <Text style={{ fontSize: 22 }}>⚙️</Text>, drawerItemStyle: { display: isAdmin ? 'flex' : 'none', height: isAdmin ? 'auto' : 0 } }} />
