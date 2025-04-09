@@ -4,7 +4,6 @@ import { createContext, useEffect, useState } from 'react';
 import { login } from "@/src/services/AuthEndpoints";
 import { Platform } from 'react-native';
 import api, { setAuthToken } from '../services/axiosInstance';
-import axios from 'axios';
 
 const AuthenticationContext = createContext();
 
@@ -14,8 +13,6 @@ export default function AuthenticationContextProvider(props) {
 
     const signOut = async (onSuccess = null, onError = null) => {
         try {
-            await axios.post('/logout').catch(console.log);
-
             setLoggedInUser(null);
             setAuthToken(null);
             console.log("Auth header after signOut:", api.defaults.headers.common['Authorization']);

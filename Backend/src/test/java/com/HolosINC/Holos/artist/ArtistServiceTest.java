@@ -20,7 +20,6 @@ import com.HolosINC.Holos.commision.Commision;
 import com.HolosINC.Holos.commision.CommisionRepository;
 import com.HolosINC.Holos.commision.StatusCommision;
 import com.HolosINC.Holos.exceptions.ResourceNotFoundException;
-import com.HolosINC.Holos.milestone.MilestoneService;
 import com.HolosINC.Holos.model.BaseUser;
 import com.HolosINC.Holos.model.BaseUserRepository;
 
@@ -34,9 +33,6 @@ public class ArtistServiceTest {
 
     @Mock
     private CommisionRepository commisionRepository;
-
-    @Mock
-    private MilestoneService milestoneService;
 
     @Mock
     private StatusKanbanOrderService statusKanbanOrderService;
@@ -81,7 +77,7 @@ public class ArtistServiceTest {
     }
 
     @Test
-    public void testFindArtistByIdSuccess() {
+    public void testFindArtistByIdSuccess() throws Exception{
         when(artistRepository.findById(1L)).thenReturn(Optional.of(artist));
 
         Artist foundArtist = artistService.findArtist(1L);
@@ -125,7 +121,7 @@ public class ArtistServiceTest {
     }
 
     @Test
-    public void testIsArtistTrue() {
+    public void testIsArtistTrue() throws Exception{
         when(artistRepository.findByUserId(1L)).thenReturn(Optional.of(artist));
 
         boolean isArtist = artistService.isArtist(1L);
@@ -135,7 +131,7 @@ public class ArtistServiceTest {
     }
 
     @Test
-    public void testIsArtistFalse() {
+    public void testIsArtistFalse() throws Exception{
         when(artistRepository.findByUserId(1L)).thenReturn(Optional.empty());
 
         boolean isArtist = artistService.isArtist(1L);
@@ -185,7 +181,7 @@ public class ArtistServiceTest {
     }
 
     @Test
-    public void testFindByBaseUserIdSuccess() {
+    public void testFindByBaseUserIdSuccess() throws Exception{
         when(artistRepository.findByUserId(1L)).thenReturn(Optional.of(artist));
 
         Optional<Artist> foundArtist = artistService.findByBaseUserId(1L);
@@ -196,7 +192,7 @@ public class ArtistServiceTest {
     }
 
     @Test
-    public void testFindByBaseUserIdNotFound() {
+    public void testFindByBaseUserIdNotFound() throws Exception{
         when(artistRepository.findByUserId(1L)).thenReturn(Optional.empty());
 
         Optional<Artist> foundArtist = artistService.findByBaseUserId(1L);

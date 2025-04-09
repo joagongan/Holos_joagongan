@@ -2,22 +2,30 @@ import React from "react";
 import { TouchableOpacity, Image, View, Text } from "react-native";
 import { useRouter } from "expo-router";
 import { BASE_URL } from "@/src/constants/api";
-import ReportDropdown from "@/src/components/report/ReportDropDown";
-import { Work, WorksDoneDTO } from "@/src/constants/ExploreTypes";
+import { WorksDoneDTO } from "@/src/constants/ExploreTypes";
 import { styles } from "@/src/styles/Explore.styles";
+import { DropdownMenu } from "../DropdownMenu";
 
 
 type Props = {
   work: WorksDoneDTO;
-  menuVisibleId: number | null;
-  setMenuVisibleId: (id: number | null) => void;
 };
 
-const WorkCard = ({ work, menuVisibleId, setMenuVisibleId }: Props) => {
+const WorkCard = ({ work }: Props) => {
   const router = useRouter();
   // const { width } = useWindowDimensions();
   // const isDesktop = width > 768;
   // const styles = isDesktop ? desktopStyles : mobileStyles;
+
+  const isBase64Path = (base64: string): boolean => {
+    try {
+      const decoded = atob(base64);
+      return decoded.startsWith("/images/");
+    } catch (e) {
+      return false;
+    }
+  };
+
 
   return (
     <View style={styles.cardWrapper}>
@@ -26,12 +34,15 @@ const WorkCard = ({ work, menuVisibleId, setMenuVisibleId }: Props) => {
         onPress={() => router.push({ pathname: "/work/[workId]", params: { workId: String(work.id) } })}
       >
         <Image
-          source={{ uri: `${BASE_URL}${atob(work?.image)}` }}
+          source={{
+            uri: isBase64Path(work.image)
+              ? `${BASE_URL}${atob(work.image)}`
+              : `data:image/jpeg;base64,${work.image}`,
+          }}
           style={styles.image}
           resizeMode="cover"
-          onError={() => console.log("Error cargando imagen:", atob(work.image))}
+          onError={() => console.log("Error cargando imagen:", work.image)}
         />
-
 
         <View style={styles.textContainer}>
           <Text style={styles.title}>{work.name}</Text>
@@ -41,12 +52,12 @@ const WorkCard = ({ work, menuVisibleId, setMenuVisibleId }: Props) => {
       </TouchableOpacity>
 
       <View style={styles.dropdownOverlay}>
-        <ReportDropdown
-          workId={work.id}
-          menuVisibleId={menuVisibleId}
-          setMenuVisibleId={setMenuVisibleId}
-          isBigScreen={true}
-        />
+      <DropdownMenu
+        actions={[{
+          label: 'Reportar',
+          onPress: () => router.push(`/report/${work.id}`)
+        }]}
+      />
       </View>
     </View>
   );

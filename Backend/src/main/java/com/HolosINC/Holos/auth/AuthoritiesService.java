@@ -112,7 +112,7 @@ public class AuthoritiesService {
 	}
 
 	@Transactional
-	public void updateUser(@Valid SignupRequest request) {
+	public void updateUser(@Valid SignupRequest request) throws Exception{
 		BaseUser user = baseUserService.findCurrentUser();
 		user.setUsername(request.getUsername());
 		user.setName(request.getFirstName());

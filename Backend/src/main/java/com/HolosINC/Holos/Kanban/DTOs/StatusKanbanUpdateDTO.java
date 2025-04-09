@@ -14,7 +14,7 @@ public class StatusKanbanUpdateDTO {
 
     @NotBlank(message = "El campo 'nombre' es obligatorio")
     @Pattern(regexp = "^(?!\\d+$).+", message = "El campo 'nombre' no puede ser solo numérico")
-    private String nombre;
+    private String name;
 
     @NotBlank(message = "El campo 'color' no puede estar vacío")
     @Pattern(

@@ -5,8 +5,6 @@ import java.util.stream.Collectors;
 
 import jakarta.validation.Valid;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -44,9 +42,6 @@ import org.springframework.security.authentication.BadCredentialsException;
 @RequestMapping("/api/v1/auth")
 @Tag(name = "Authentication", description = "The Authentication API based on JWT")
 public class AuthController {
-
-	private static final Logger logger = LoggerFactory.getLogger(AuthController.class);
-
 	private final AuthenticationManager authenticationManager;
 	private final BaseUserService baseUserService;
 	private final JwtUtils jwtUtils;
@@ -81,11 +76,9 @@ public class AuthController {
 			return ResponseEntity.ok()
 					.body(new JwtResponse(jwt, userDetails.getId(), userDetails.getUsername(), roles));
 		} catch (BadCredentialsException exception) {
-			logger.error("Bad credentials for user: {}", loginRequest.getUsername(), exception);
-			return ResponseEntity.badRequest().body("Bad Credentials!");
+			return ResponseEntity.badRequest().body("Credenciales incorrectas!");
 		} catch (Exception exception) {
-			logger.error("Authentication failed for user: {}", loginRequest.getUsername(), exception);
-			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Authentication failed!");
+			return ResponseEntity.badRequest().body("Fallo de autenticacion!");
 		}
 	}
 
@@ -122,11 +115,15 @@ public class AuthController {
 
 	@PutMapping("/update")
 	public ResponseEntity<MessageResponse> updateUser(@Valid @RequestBody SignupRequest signUpRequest) {
-		if (baseUserService.existsUser(signUpRequest.getUsername()).equals(false)) {
-			return ResponseEntity.badRequest().body(new MessageResponse("Error: Username does not exist!"));
+		try{
+			if (baseUserService.existsUser(signUpRequest.getUsername()).equals(false)) {
+				return ResponseEntity.badRequest().body(new MessageResponse("Error: Usuario no encontrado!"));
+			}
+			authService.updateUser(signUpRequest);
+			return ResponseEntity.ok(new MessageResponse("Usuario editado con exito!"));
+		} catch (Exception e) {
+			return ResponseEntity.badRequest().body(new MessageResponse(e.getMessage()));
 		}
-		authService.updateUser(signUpRequest);
-		return ResponseEntity.ok(new MessageResponse("User updated successfully!"));
 	}
 
 	@DeleteMapping("/delete/{id}")

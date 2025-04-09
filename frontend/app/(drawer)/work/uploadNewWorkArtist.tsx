@@ -1,6 +1,6 @@
-import React, { useState, useEffect, useContext } from "react";
+import React, { useState, useEffect, useContext, useCallback } from "react";
 import { View, Text, TextInput, TouchableOpacity, Image, ScrollView } from "react-native";
-import { postWorkdone } from "@/src/services/uploadNewWorkArtist";
+import { postWorkdone, getAbilityPost } from "@/src/services/uploadNewWorkArtist";
 import { AuthenticationContext } from "@/src/contexts/AuthContext";
 import { useRouter, useNavigation } from "expo-router";
 import {styles} from "@/src/styles/UploadNewWorkArtist";
@@ -11,6 +11,7 @@ import { Formik } from "formik";
 import * as ImagePicker from "expo-image-picker"; 
 import ProtectedRoute from "@/src/components/ProtectedRoute";
 import {newWorkArtist } from "@/src/constants/uploadNewWorkArtist";
+import { useFocusEffect } from '@react-navigation/native';
 
 const cameraIcon = "photo-camera";
 
@@ -19,11 +20,26 @@ export default function UploadWorkArtist() {
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const router = useRouter();
   const navigation = useNavigation();
-  const [inputValue, setInputValue] = useState("");
+  const [inputValue, setInputValue] = useState<string>("");
+  const [abilityPost, setabilityPost] = useState<Boolean>(false);
 
   useEffect(() => {
     navigation.setOptions("Subir una nueva obra al portafolio");
   }, [navigation]);
+
+  useFocusEffect(
+    useCallback(() => {
+      const fetchAbilityPost = async () => {
+        try {
+          const data = await getAbilityPost(loggedInUser.token);
+          setabilityPost(data);
+        } catch (error) {
+          console.error("Error fetching whether the artist is allowed to post:", error);
+        }
+      };
+       fetchAbilityPost();
+    }, []) 
+  );
 
 
   const uploadNewWorkValidationSchema = object({
@@ -71,7 +87,7 @@ export default function UploadWorkArtist() {
       resetForm();
       setInputValue("");
       setSelectedImage(null); 
-      router.push({ pathname: "/explore" });
+      router.push({ pathname: "/" });
     } catch (error: any) {
       console.log(error)
       popUpMovilWindows("Error", "No se pudo enviar el reporte. Intentelo de nuevo más tarde");
@@ -102,7 +118,7 @@ export default function UploadWorkArtist() {
               />
               {errors.name && touched.name && (<Text style={styles.errorText}>{errors.name}</Text>)}
 
-              <Text style={styles.formLabel}>Dalé una descripción a tu obra</Text>
+              <Text style={styles.formLabel}>Dale una descripción a tu obra</Text>
               <View style={styles.inputDescriptionBox}>
               <TextInput
                 style={styles.inputDescriptionWork}
@@ -115,7 +131,6 @@ export default function UploadWorkArtist() {
               </View>
               {errors.description && touched.description && (<Text style={styles.errorText}>{errors.description}</Text>)}
 
-              <Text style={styles.formLabel}>¿Cuál es el precio de la obra?</Text>
               <Text style={styles.formLabel}>¿Cuál es el precio de la obra?</Text>
               <TextInput
                 style={styles.inputCostWork}
@@ -172,13 +187,10 @@ export default function UploadWorkArtist() {
     );
   };
 
-
-  // isArtist se deberá  modificar por un booleano que indique si el usuario puede subir una obra o no, en base  si tiene o no
-  //  una cuenta gratuita y si ya ha subido más de 7 obras en el caso de que no tenga cuenta premium
   return (
     <View style={styles.container}>
       <ProtectedRoute allowedRoles={["ARTIST"]}>
-      {!isArtist ? enableUpload() : unableUpload()}  
+      {abilityPost ? enableUpload() : unableUpload()}  
 
       </ProtectedRoute>
     </View>

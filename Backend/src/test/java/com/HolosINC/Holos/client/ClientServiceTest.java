@@ -21,13 +21,11 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.dao.DataAccessException;
-import org.springframework.dao.DataIntegrityViolationException;
 
 import com.HolosINC.Holos.Kanban.StatusKanbanOrderService;
 import com.HolosINC.Holos.commision.Commision;
 import com.HolosINC.Holos.commision.CommisionRepository;
 import com.HolosINC.Holos.exceptions.ResourceNotFoundException;
-import com.HolosINC.Holos.milestone.MilestoneService;
 import com.HolosINC.Holos.model.BaseUser;
 import com.HolosINC.Holos.model.BaseUserRepository;
 
@@ -43,9 +41,6 @@ public class ClientServiceTest {
 
     @Mock
     private CommisionRepository commisionRepository;
-
-    @Mock
-    private MilestoneService milestoneService;
 
     @Mock
     private StatusKanbanOrderService statusKanbanOrderService;
