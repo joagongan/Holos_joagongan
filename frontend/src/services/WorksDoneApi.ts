@@ -27,7 +27,7 @@ export const fetchWorksDone = async (): Promise<WorksDoneDTO[]> => {
   }
 };
 
-export const getWorksDoneById = async (id: number): Promise<WorksDone> => {
+export const getWorksDoneById = async (id: number): Promise<WorksDoneDTO> => {
   try {
     const response = await api.get(`${WORKS_DONE_URL}/${id}`);
     return response.data;

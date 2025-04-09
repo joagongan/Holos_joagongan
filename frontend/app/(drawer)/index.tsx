@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useMemo } from "react";
 import { Text, ScrollView, View, TouchableWithoutFeedback   } from "react-native";
 import { desktopStyles } from "@/src/styles/Explore.styles";
@@ -68,7 +67,7 @@ export default function ExploreScreen() {
                 onPress={() => router.push({ pathname: "/profile/[artistId]", params: { artistId: String(artist.id) }})}
               >
                 <Image
-                  source={{ uri: `${BASE_URL}${artist.baseUser?.imageProfile}`}}
+                  source={{ uri: ${BASE_URL}${artist.baseUser?.imageProfile}}}
                   style={styles.artistImage}
                 />
                 <View style={styles.artistTextContainer}>
