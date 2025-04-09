@@ -37,10 +37,8 @@ public class ReportController {
         try {
             List<Report> reports = reportService.getReports();
             return ResponseEntity.ok(reports);
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
         } catch (Exception e) {
-            return ResponseEntity.internalServerError().body(e.getMessage());
+            return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
 
@@ -49,12 +47,8 @@ public class ReportController {
         try {
             Report report = reportService.createReport(reportDTO);
             return ResponseEntity.ok(report);
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
-        } catch (ResponseStatusException e) {
-            return ResponseEntity.status(e.getStatusCode()).body(e.getReason());
         } catch (Exception e) {
-            return ResponseEntity.internalServerError().body("Ha ocurrido un error inesperado.");
+            return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
 
@@ -64,10 +58,8 @@ public class ReportController {
         try {
             Report accepted = reportService.acceptReport(id);
             return ResponseEntity.ok(accepted);
-        } catch (IllegalStateException | IllegalArgumentException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
         } catch (Exception e) {
-            return ResponseEntity.internalServerError().body("Error interno al aceptar el reporte");
+            return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
 
@@ -76,10 +68,8 @@ public class ReportController {
         try {
             Report accepted = reportService.rejectReport(id);
             return ResponseEntity.ok(accepted);
-        } catch (IllegalStateException | IllegalArgumentException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
         } catch (Exception e) {
-            return ResponseEntity.internalServerError().body("Error interno al rechazar el reporte");
+            return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
 
@@ -88,10 +78,8 @@ public class ReportController {
         try {
             reportService.deleteReport(id);
             return ResponseEntity.ok("Reporte eliminado correctamente.");
-        } catch (IllegalStateException | IllegalArgumentException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
         } catch (Exception e) {
-            return ResponseEntity.internalServerError().body("Error interno al eliminar el reporte");
+            return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
 
@@ -101,7 +89,7 @@ public class ReportController {
             List<ReportType> reportTypes = reportService.getReportTypes();
             return ResponseEntity.ok(reportTypes);
         } catch (Exception e) {
-            return ResponseEntity.internalServerError().body(e.getMessage());
+            return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
 
@@ -110,10 +98,8 @@ public class ReportController {
         try {
             ReportType newReportType = reportService.addReportType(reportType);
             return ResponseEntity.ok(newReportType);
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
         } catch (Exception e) {
-            return ResponseEntity.internalServerError().body(e.getMessage());
+            return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
 }
