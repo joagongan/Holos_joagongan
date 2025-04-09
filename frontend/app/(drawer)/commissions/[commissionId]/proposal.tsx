@@ -135,12 +135,12 @@ export default function CommissionDetailsScreen() {
         <PaymentDetails commission={commission} />
       </View>
       <View style={styles.sides}>
-        <View style={styles.card}>
+        <View style={[styles.card, { maxHeight: "70%" }]}>
           <View style={{ flexDirection: "row" }}>
             {/* <UserPanel user={commission.client} />
             <UserPanel user={commission.artist} /> */}
           </View>
-          <View style={{ flex: 1, alignItems: "center" }}>TODO</View>
+          <WIPPlaceholder subtitle="Aquí estará algo que muestre a quién le toca pagar" />
         </View>
         {showEditCard ? (
           <View style={[styles.card, { alignItems: "center" }]}>
