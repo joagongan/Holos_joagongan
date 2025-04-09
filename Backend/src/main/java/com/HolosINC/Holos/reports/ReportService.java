@@ -1,11 +1,11 @@
 package com.HolosINC.Holos.reports;
 
-import java.nio.file.AccessDeniedException;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.HolosINC.Holos.exceptions.AccessDeniedException;
 import com.HolosINC.Holos.exceptions.ResourceNotFoundException;
 import com.HolosINC.Holos.model.BaseUser;
 import com.HolosINC.Holos.model.BaseUserService;
@@ -19,14 +19,14 @@ public class ReportService {
     
     private final ReportRepository reportRepository;
     private final ReportTypeRepository reportTypeRepository;
-    private final WorkService workService;
+    private final WorkService worskService;
     private final BaseUserService baseUserService;
 
     @Autowired
-    public ReportService(ReportRepository reportRepository, ReportTypeRepository reportTypeRepository, WorkService workService, BaseUserService baseUserService) {
+    public ReportService(ReportRepository reportRepository, ReportTypeRepository reportTypeRepository, WorkService worskService, BaseUserService baseUserService) {
         this.reportRepository = reportRepository;
         this.reportTypeRepository = reportTypeRepository;
-        this.workService = workService;
+        this.worskService = worskService;
         this.baseUserService = baseUserService;
     }
 
@@ -38,37 +38,30 @@ public class ReportService {
         return reportRepository.findAll();
     }
 
-    public Report createReport(ReportDTO reportDTO) throws Exception {
-        try {
-            Work work = workService.getWorkById(reportDTO.getWorkId());
-            if (work == null) {
-                throw new ResourceNotFoundException("Work not found with ID: " + reportDTO.getWorkId());
-            }
+    public Report createReport(ReportDTO reportDTO) throws Exception{
+        Work work = worskService.getWorkById(reportDTO.getWorkId());
+        ReportType reportType = reportTypeRepository
+            .findByType(reportDTO.getReportType())
+            .orElseThrow(() -> new AccessDeniedException("Invalid report type"));
+        BaseUser baseUser = baseUserService.findCurrentUser();
 
-            ReportType reportType = reportTypeRepository.findByType(reportDTO.getReportType())
-                .orElseThrow(() -> new ResourceNotFoundException("Report type not found"));
-            BaseUser baseUser = baseUserService.findCurrentUser();
+        boolean alreadyReported = reportRepository.existsByMadeByIdAndWorkIdAndReportTypeId(baseUser.getId(), work.getId(), reportType.getId());
 
-            boolean alreadyReported = reportRepository.existsByMadeByIdAndWorkIdAndReportTypeId(baseUser.getId(), work.getId(), reportType.getId());
-
-            if (alreadyReported) {
-                throw new AccessDeniedException("¡Ya has reportado esta obra!");
-            }
-
-            Report report = reportDTO.createReport(work, reportType);
-
-            report.setStatus(ReportStatus.PENDING);
-            report.setMadeBy(baseUser);
-            report.setReportedUser(work.getArtist().getBaseUser());
-            report.setWork(work);
-        
-            return reportRepository.save(report);
-        } catch (Exception e) {
-            throw new Exception("Error al crear el reporte: " + e.getMessage());
+        if (alreadyReported) {
+            throw new AccessDeniedException("¡Ya has reportado esta obra!");
         }
+
+        Report report = reportDTO.createReport(work, reportType);
+
+        report.setStatus(ReportStatus.PENDING);
+        report.setMadeBy(baseUser);
+        report.setReportedUser(work.getArtist().getBaseUser());
+        report.setWork(work);
+    
+        return reportRepository.save(report);
     }
 
-    public ReportType addReportType(ReportType reportType) throws Exception {
+    public ReportType addReportType(ReportType reportType) throws Exception{
         if (reportTypeRepository.findByType(reportType.getType()).isPresent()) {
             throw new IllegalArgumentException("Report type name already exists");
         }
@@ -76,7 +69,7 @@ public class ReportService {
     }
 
     @Transactional
-    public Report acceptReport(Long reportId) throws Exception {
+    public Report acceptReport(Long reportId) throws Exception{
             Report report = getReportByIdOrThrow(reportId);
     
             if (report.getStatus() != ReportStatus.PENDING) {
@@ -89,7 +82,7 @@ public class ReportService {
     }
     
     
-    public Report rejectReport(Long reportId) throws Exception {
+    public Report rejectReport(Long reportId) throws Exception{
         Report report = getReportByIdOrThrow(reportId);
     
         if (report.getStatus() != ReportStatus.PENDING) {
