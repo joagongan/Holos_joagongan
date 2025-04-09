@@ -42,11 +42,6 @@ public class StatusKanbanOrderController {
         return new ResponseEntity<>(sk, HttpStatus.OK);
     }
 
-    @PutMapping("/update")
-    public StatusKanbanOrder updateStatusKanbanOrder(@RequestBody StatusKanbanOrder statusKanbanOrder) {
-        return statusKanbanOrderService.updateStatusKanbanOrder(statusKanbanOrder);
-    }
-
     //Cambiar color o descripción ¿Añadir nombre?
 
     @PutMapping("/{id}/updateKanban")
@@ -72,8 +67,6 @@ public class StatusKanbanOrderController {
         try {
             statusKanbanOrderService.updateStatusKanban(dto);
             return ResponseEntity.ok().build();
-        } catch (BadRequestException | ResourceNotFoundException e) {
-            throw e;
         } catch (Exception e) {
             throw new BadRequestException("Error inesperado al actualizar el estado Kanban: " + e.getMessage());
         }

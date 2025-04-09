@@ -1,9 +1,9 @@
 
 import React, { useState, useEffect, useMemo } from "react";
 import { Text, ScrollView, View, TouchableWithoutFeedback   } from "react-native";
-import { styles } from "@/src/styles/Explore.styles";
+import { desktopStyles } from "@/src/styles/Explore.styles";
 import { WorksDoneDTO } from "@/src/constants/ExploreTypes";
-import { getFirstThreeArtists } from "@/src/services/ExploreWorkHelpers";
+import { getTopThreeArtists } from "@/src/services/ExploreWorkHelpers";
 import WorkCard from "@/src/components/explore/WorkCard";
 import { fetchWorksDone } from "@/src/services/WorksDoneApi";
 
@@ -24,7 +24,7 @@ export default function ExploreScreen() {
     fetchData();
   }, []);
 
-  const firstThreeArtists = useMemo(() => getFirstThreeArtists(works), [works]);
+  const firstThreeArtists = useMemo(() => getTopThreeArtists(), [works]);
 
   return (
 
@@ -36,15 +36,15 @@ export default function ExploreScreen() {
 
    
     <ScrollView style={{ flex: 1, backgroundColor: "#fff" }} contentContainerStyle={{ flexGrow: 1 }}>
-      <View style={styles.container}>
+      <View style={desktopStyles.container}>
 
         {/* Sección superior */}
-        <View style={styles.topSection}>
-          <Text style={styles.topSectionText}>Obras</Text>
+        <View style={desktopStyles.topSection}>
+          <Text style={desktopStyles.topSectionText}>Obras</Text>
         </View>
 
         {/* Sección del medio: Obras */}
-        <View style={styles.middleSection}>
+        <View style={desktopStyles.middleSection}>
           <ScrollView horizontal showsHorizontalScrollIndicator={false}>
             {works.map((work) => (
               <WorkCard
@@ -56,11 +56,11 @@ export default function ExploreScreen() {
         </View>
 
         {/* Sección inferior: Artistas */}
-        <View style={styles.bottomSection}>
-          <View style={styles.bottomSectionHeader}>
-            <Text style={styles.bottomSectionHeaderText}>ARTISTAS</Text>
+        <View style={desktopStyles.bottomSection}>
+          <View style={desktopStyles.bottomSectionHeader}>
+            <Text style={desktopStyles.bottomSectionHeaderText}>ARTISTAS</Text>
           </View>
-          <View style={styles.artistsContainer}>
+          <View style={desktopStyles.artistsContainer}>
           {/* {firstThreeArtists.map((artist:any) => (
             <View key={artist.id}>
               <TouchableOpacity

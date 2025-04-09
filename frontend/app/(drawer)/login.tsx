@@ -30,16 +30,7 @@ export default function LoginScreen() {
   const loginValidationSchema = yup.object().shape({
     username: yup
       .string()
-      .required("Nombre de usuario obligatorio")
-    password: yup.string().required("Contraseña obligatoria"),
-      .test(
-        'not-empty',
-        'El nombre de usuario no puede estar vacío o ser solo espacios',
-        value => typeof value === 'string' && value.trim().length > 0
-      )
-      .min(3, ({ min }) => `El nombre de usuario debe ser de mínimo ${min} caracteres`)
-      .required('Nombre de usuario obligatorio'),
-  
+      .required("Nombre de usuario obligatorio"),
     password: yup
       .string()
       .test(
