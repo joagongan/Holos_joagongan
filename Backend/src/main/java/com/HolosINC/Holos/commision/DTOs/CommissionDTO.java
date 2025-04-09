@@ -38,7 +38,10 @@ public class CommissionDTO {
 
     private byte[] image;
 
-    private byte[] imageProfile;
+    private byte[] imageProfileA;
+
+    private byte[] imageProfileC;
+
 
     public CommissionDTO(Commision commision){
         this.id = commision.getId();
@@ -51,7 +54,9 @@ public class CommissionDTO {
         this.artistUsername = commision.getArtist().getBaseUser().getUsername();
         this.clientUsername = commision.getClient().getBaseUser().getUsername();
         this.image = commision.getImage();
-        this.imageProfile = commision.getArtist().getBaseUser().getImageProfile();
+        this.imageProfileA = commision.getArtist().getBaseUser().getImageProfile();
+        this.imageProfileC = commision.getClient().getBaseUser().getImageProfile();
+
     }
 
     public Commision createCommision() {
