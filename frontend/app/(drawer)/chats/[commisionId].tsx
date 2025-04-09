@@ -14,6 +14,8 @@ import * as ImagePicker from "expo-image-picker";
 import { useLocalSearchParams } from "expo-router";
 import { getConversation, sendMessage, ChatMessage } from "@/src/services/chatService";
 import { AuthenticationContext } from "@/src/contexts/AuthContext";
+import { styles } from "@/src/styles/Chat.styles";
+
 
 type ExtendedChatMessage = ChatMessage & { sentByMe?: boolean };
 
@@ -24,27 +26,15 @@ export default function ChatScreen() {
     commisionId?: string;
     otherUsername?: string;
   };
-  console.log("Parámetros recibidos:", params);
-
   const { commisionId, otherUsername } = params;
-  if (!commisionId || commisionId === "undefined") {
-    console.error("Error: 'commisionId' es inválido. Verifica que la navegación esté enviando el ID correcto.");
-    return (
-      <View style={styles.centered}>
-        <Text>Error: no se encontró un 'commisionId' válido.</Text>
-      </View>
-    );
-  }
 
   const { loggedInUser } = useContext(AuthenticationContext);
-  console.log("LoggedInUser:", loggedInUser);
 
   const [messages, setMessages] = useState<ExtendedChatMessage[]>([]);
   const [text, setText] = useState("");
   const [selectedImage, setSelectedImage] = useState<{ uri: string; type: string; name: string } | null>(null);
   const [loading, setLoading] = useState(true);
 
-  // Guardar IDs de mensajes enviados con la clave que depende del usuario y la comisión
   const saveSentMessageId = (msgId: number) => {
     try {
       const key = STORAGE_KEY(commisionId!, loggedInUser.id.toString());
@@ -76,10 +66,9 @@ export default function ChatScreen() {
   };
 
   const fetchMessages = async () => {
-    console.log("Fetching messages for commisionId:", commisionId);
+    if (!commisionId) return;
     try {
       const conv = await getConversation(Number(commisionId), loggedInUser.token);
-      console.log("Fetched messages:", conv);
       setMessages(markMessages(conv));
     } catch (error) {
       console.error("Error fetching messages:", error);
@@ -89,30 +78,20 @@ export default function ChatScreen() {
   };
 
   useEffect(() => {
-    console.log("ChatScreen montada con commisionId:", commisionId);
+    if (!commisionId) return;
     fetchMessages();
     const interval = setInterval(() => {
-      console.log("Refrescando mensajes para commisionId:", commisionId);
       fetchMessages();
     }, 5000);
-    return () => {
-      clearInterval(interval);
-      console.log("ChatScreen desmontada, intervalo limpiado.");
-    };
+    return () => clearInterval(interval);
   }, [commisionId]);
 
   const handleSend = async () => {
-    console.log("Enviando mensaje. Texto:", text, "Imagen:", selectedImage);
-    if (text.trim().length === 0 && !selectedImage) {
-      console.log("No se proporcionó texto ni imagen. Abortando envío.");
-      return;
-    }
+    if (text.trim().length === 0 && !selectedImage) return;
     try {
       const newMsg = await sendMessage(Number(commisionId), text, selectedImage || undefined, loggedInUser.token);
-      console.log("Mensaje enviado correctamente:", newMsg);
       saveSentMessageId(newMsg.id);
-      const extendedMsg: ExtendedChatMessage = { ...newMsg, sentByMe: true };
-      setMessages((prev) => [extendedMsg, ...prev]);
+      setMessages((prev) => [{ ...newMsg, sentByMe: true }, ...prev]);
       setText("");
       setSelectedImage(null);
     } catch (error) {
@@ -121,7 +100,6 @@ export default function ChatScreen() {
   };
 
   const pickImage = async () => {
-    console.log("Lanzando selector de imágenes...");
     try {
       const result = await ImagePicker.launchImageLibraryAsync({
         mediaTypes: ImagePicker.MediaTypeOptions.Images,
@@ -130,10 +108,7 @@ export default function ChatScreen() {
       });
       if (!result.canceled) {
         const asset = result.assets[0];
-        console.log("Imagen seleccionada:", asset);
         setSelectedImage({ uri: asset.uri, type: "image/jpeg", name: asset.fileName || "photo.jpg" });
-      } else {
-        console.log("Selección de imagen cancelada.");
       }
     } catch (error) {
       console.error("Error al seleccionar imagen:", error);
@@ -141,15 +116,26 @@ export default function ChatScreen() {
   };
 
   const renderItem = ({ item }: { item: ExtendedChatMessage }) => {
-    console.log("Renderizando mensaje:", item);
     const isSentByMe = item.sentByMe === true;
     return (
-      <View style={[styles.messageContainer, isSentByMe ? styles.messageContainerMe : styles.messageContainerOther]}>
-        <Text style={styles.messageText}>{item.text}</Text>
-        {item.image && (
-          <Image source={{ uri: `data:image/jpeg;base64,${item.image}` }} style={styles.messageImage} />
-        )}
-        <Text style={styles.messageDate}>{new Date(item.creationDate).toLocaleString()}</Text>
+      <View style={styles.messageRow}>
+        <View
+          style={[
+            styles.messageBubble,
+            isSentByMe ? styles.messageBubbleMe : styles.messageBubbleOther,
+          ]}
+        >
+          {item.text ? <Text style={styles.messageText}>{item.text}</Text> : null}
+          {item.image && (
+            <Image
+              source={{ uri: `data:image/jpeg;base64,${item.image}` }}
+              style={styles.messageImage}
+            />
+          )}
+          <Text style={styles.messageDate}>
+            {new Date(item.creationDate).toLocaleString()}
+          </Text>
+        </View>
       </View>
     );
   };
@@ -164,18 +150,28 @@ export default function ChatScreen() {
 
   return (
     <View style={styles.container}>
+      {/* Imagen de fondo en el centro */}
+      <Image
+        source={require("@/assets/images/logo.png")} 
+        style={styles.backgroundLogo}
+      />
+
+      {/* Lista de mensajes (invertida) */}
       <FlatList
         data={messages}
         keyExtractor={(item, index) => (item.id ? item.id.toString() : index.toString())}
         renderItem={renderItem}
-        onRefresh={fetchMessages}
-        refreshing={loading}
+        inverted
       />
+
+      {/* Barra de entrada de texto/imágenes */}
       <View style={styles.inputContainer}>
-        <TouchableOpacity onPress={pickImage} style={styles.imageButton}>
-          <Text style={styles.imageButtonText}>Img</Text>
-        </TouchableOpacity>
-        <TextInput style={styles.input} placeholder="Escribe un mensaje..." value={text} onChangeText={setText} />
+        <TextInput
+          style={styles.input}
+          placeholder="Escribe un mensaje..."
+          value={text}
+          onChangeText={setText}
+        />
         <TouchableOpacity onPress={handleSend} style={styles.sendButton}>
           <Text style={styles.sendButtonText}>Enviar</Text>
         </TouchableOpacity>
@@ -184,98 +180,4 @@ export default function ChatScreen() {
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    padding: 10,
-    backgroundColor: "#ADD8E6", // Fondo azul pastel
-  },
-  messageContainer: {
-    marginVertical: 5,
-    padding: 10,
-    borderRadius: 5,
-    maxWidth: "70%",
-  },
-  messageContainerMe: {
-    alignSelf: "flex-end",
-    backgroundColor: "#DCF8C6",
-    marginLeft: 50,
-  },
-  messageContainerOther: {
-    alignSelf: "flex-start",
-    backgroundColor: "#f0f0f0",
-    marginRight: 50,
-  },
-  messageText: {
-    fontSize: 16,
-    fontFamily: "DancingScript-Regular",
-    color: "#333",
-  },
-  messageImage: {
-    width: 200,
-    height: 200,
-    marginTop: 5,
-  },
-  messageDate: {
-    fontSize: 10,
-    color: "#555",
-    marginTop: 5,
-  },
 
-  // Estilos para la barra de input
-  inputContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginVertical: 10,
-    marginHorizontal: 5,
-    padding: 10,
-    backgroundColor: "#FFFFFF", // Fondo blanco para resaltar
-    borderRadius: 10,
-
-    // Sombras (para iOS y Android)
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 3,
-    elevation: 2, // Android
-  },
-  input: {
-    flex: 1,
-    fontFamily: "DancingScript-Regular",
-    fontSize: 16,
-    backgroundColor: "#F9F9F9", // Un gris muy claro para el interior
-    borderWidth: 1,
-    borderColor: "#ccc",
-    borderRadius: 5,
-    paddingHorizontal: 10,
-    paddingVertical: 6,
-    marginRight: 5,
-  },
-  sendButton: {
-    backgroundColor: "#007bff",
-    paddingVertical: 10,
-    paddingHorizontal: 16,
-    borderRadius: 5,
-  },
-  sendButtonText: {
-    color: "#fff",
-    fontFamily: "DancingScript-Regular",
-    fontSize: 16,
-  },
-  imageButton: {
-    backgroundColor: "#28a745",
-    padding: 10,
-    borderRadius: 5,
-    marginRight: 5,
-  },
-  imageButtonText: {
-    color: "#fff",
-    fontFamily: "DancingScript-Regular",
-    fontSize: 16,
-  },
-  centered: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-});
