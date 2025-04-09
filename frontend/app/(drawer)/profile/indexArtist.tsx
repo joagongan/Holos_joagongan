@@ -130,7 +130,7 @@ const userArtistProfileScreen = () => {
         phoneNumber: artist.phoneNumber,
         description: artist.description,
         linkToSocialMedia: artist.linkToSocialMedia,
-        tableCommissionsPrice: artist.tableCommisionsPrice,
+        tableCommissionsPrice: artist.tableCommisionsPrice ,
         imageProfile: artist.imageProfile,
         numSlotsOfWork: artist.numSlotsOfWork,
       }}

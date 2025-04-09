@@ -16,10 +16,10 @@ export interface artistUser {
     username: string;
     email: string;
     phoneNumber: string;
-    description: undefined;
-    linkToSocialMedia: undefined;
-    tableCommissionsPrice: undefined;
+    description: null;
+    linkToSocialMedia: null;
+    tableCommissionsPrice: null;
     imageProfile: string | undefined;
-    numSlotsOfWork: undefined;
+    numSlotsOfWork: null;
   
   }

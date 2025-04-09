@@ -24,10 +24,10 @@ const validationSchema = Yup.object().shape({
   username: Yup.string().trim("El usuario no puede tener solo espacios").required("El nombre de usuario es obligatorio"),
   email: Yup.string().trim("El correo no puede tener solo espacios").email("Formato de correo inválido").required("El correo es obligatorio"),
   phoneNumber: Yup.string().trim("El teléfono no puede tener solo espacios").matches(/^[0-9]+$/, "Solo se permiten números").min(9, "Debe tener al menos 7 dígitos").max(12, "Debe tener como máximo 12 dígitos").required("El teléfono es obligatorio"),
-  description: Yup.mixed().test('is-undefined','Este campo no debe tener ningún valor', value => value === undefined ),
-  imageProfile: Yup.string().trim().required("Debe subir para poder guardar los cambios una imagen para el perfil"),
-  tableCommissionsPrice: Yup.mixed().test('is-undefined','Este campo no debe tener ningún valor', value => value === undefined ),
-  numSlotsOfWork: Yup.mixed().test('is-undefined','Este campo no debe tener ningún valor', value => value === undefined )
+  description: Yup.mixed().notRequired(),
+  imageProfile: Yup.string().nullable(),
+  tableCommissionsPrice: Yup.mixed().notRequired(),
+  numSlotsOfWork: Yup.mixed().notRequired(),
 });
 
 const userClientProfileScreen = () => {
@@ -51,7 +51,7 @@ const userClientProfileScreen = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const userInfo = await getUser(loggedInUser.token);      
+        const userInfo = await getUser(loggedInUser.token); 
         setUser(userInfo);
       } catch (error) {
         console.error(error);
@@ -98,6 +98,7 @@ const userClientProfileScreen = () => {
         linkToSocialMedia: values.linkToSocialMedia,
         numSlotsOfWork: values.numSlotsOfWork
             };
+            console.log(clientUser)
             
       await updateUserClient(clientUser, loggedInUser.token );
       popUpMovilWindows("Éxito", " Enviado correctamente");
@@ -106,7 +107,9 @@ const userClientProfileScreen = () => {
       console.log(error)
       popUpMovilWindows("Error", "No se pudo enviar el reporte. Intentelo de nuevo más tarde");
     }
+  
   };
+
 
   return (
     <Formik
@@ -115,11 +118,11 @@ const userClientProfileScreen = () => {
         username: user.baseUser.username,
         email: user.baseUser.email,
         phoneNumber: user.baseUser.phoneNumber ?? "0000000000",
-        description: undefined,
-        linkToSocialMedia: undefined,
-        tableCommissionsPrice: undefined,
+        description: null,
+        linkToSocialMedia: null,
+        tableCommissionsPrice: null,
         imageProfile: user.baseUser.imageProfile,
-        numSlotsOfWork: undefined,
+        numSlotsOfWork: null,
       }}
       validationSchema={validationSchema}
       onSubmit={(values, { resetForm }) => sendWork(values, resetForm)}
@@ -144,11 +147,11 @@ const userClientProfileScreen = () => {
             username: user.baseUser.username,
             email: user.baseUser.email,
             phoneNumber: user.baseUser.phoneNumber ?? "0000000000",
-            description: undefined,
-            linkToSocialMedia: undefined,
-            tableCommissionsPrice: undefined,
+            description: null,
+            linkToSocialMedia: null,
+            tableCommissionsPrice: null,
             imageProfile: user.baseUser.imageProfile,
-            numSlotsOfWork: undefined,
+            numSlotsOfWork: null,
           };
   
           setValues(originalValues);

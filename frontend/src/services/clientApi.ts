@@ -33,25 +33,17 @@ export const updateUserClient = async (
 
   const { imageProfile,tableCommissionsPrice, ...restOfUser } = user;
     
+  formData.append("updateUser", JSON.stringify(restOfUser)); 
+
   const emptyFile = new File([], "archivo-vacio.txt", { type: "text/plain" });
   formData.append("tableCommissionsPrice", emptyFile);
-  if(user.imageProfile!== undefined){
-    const imageProfileData = base64ToFile(user.imageProfile, "image.png");
+  if(user.imageProfile && typeof user.imageProfile === "string"){
+    const imageProfileData = base64ToFile(user?.imageProfile, "image.png");
     formData.append("imageProfile", imageProfileData);
 
   }else{
     formData.append("imageProfile", emptyFile);
   }
-
-
-  Object.entries(restOfUser).forEach(([key, value]) => {
-    formData.append(key, String(value));
-  });
-
-
-  Object.entries(user).forEach(([key, value]) => {
-    formData.append(key, String(value));
-  });
 
 
   const response = await api.put(`${API_URL}/auth/update`, formData, {
