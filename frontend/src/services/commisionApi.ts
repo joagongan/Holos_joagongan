@@ -1,7 +1,12 @@
 import { API_URL } from "@/src/constants/api";
 import api from "@/src/services/axiosInstance";
 import { handleError } from "@/src/utils/handleError";
-import { Commission, CommissionDTO, CommissionProtected, HistoryCommisionsDTO } from "@/src/constants/CommissionTypes";
+import {
+  Commission,
+  CommissionDTO,
+  CommissionProtected,
+  HistoryCommisionsDTO,
+} from "@/src/constants/CommissionTypes";
 
 const COMMISSION_URL = `${API_URL}/commisions`;
 
@@ -17,7 +22,9 @@ export const getAllCommissions = async (): Promise<Commission[]> => {
 };
 
 // Obtener el historial de comisiones
-export const getAllRequestedCommissions = async (token: string): Promise<HistoryCommisionsDTO> => {
+export const getAllRequestedCommissions = async (
+  token: string
+): Promise<HistoryCommisionsDTO> => {
   try {
     const response = await api.get(`${COMMISSION_URL}/historyOfCommisions`, {
       headers: { Authorization: `Bearer ${token}` },
@@ -40,9 +47,15 @@ export const getCommissionById = async (id: number): Promise<CommissionDTO> => {
 };
 
 // Crear una nueva comisión
-export const createCommission = async (commissionData: Partial<Commission>, artistId: number): Promise<Commission> => {
+export const createCommission = async (
+  commissionData: Partial<Commission>,
+  artistId: number
+): Promise<Commission> => {
   try {
-    const response = await api.post(`${COMMISSION_URL}/${artistId}`, commissionData);
+    const response = await api.post(
+      `${COMMISSION_URL}/${artistId}`,
+      commissionData
+    );
     return response.data;
   } catch (error) {
     handleError(error, "Error creating commission");
@@ -51,10 +64,13 @@ export const createCommission = async (commissionData: Partial<Commission>, arti
 };
 
 // Aceptar una comisión
-export const acceptCommission = async (id: number, token: string): Promise<void> => {
+export const acceptCommission = async (
+  id: number,
+  token: string
+): Promise<void> => {
   try {
     await api.put(`${COMMISSION_URL}/${id}/accept`, null, {
-      headers: { Authorization: `Bearer ${token}` }, 
+      headers: { Authorization: `Bearer ${token}` },
     });
   } catch (error) {
     handleError(error, "Error accepting commission");
@@ -63,43 +79,65 @@ export const acceptCommission = async (id: number, token: string): Promise<void>
 };
 
 // Rechazar una comisión
-export const rejectCommission = async (id: number, token: string): Promise<void> => {
+export async function reject(id: number, token: string) {
   try {
-    await api.put(`${COMMISSION_URL}/${id}/reject`, null, {
+    return await api.put(`${COMMISSION_URL}/${id}/reject`, null, {
       headers: { Authorization: `Bearer ${token}` },
     });
-  } catch (error) {
-    handleError(error, "Error rejecting commission");
-    throw error;
+  } catch (error: any) {
+    if (error.response?.data) {
+      const raw = error.response.data;
+      if (typeof raw === "string")
+        throw new Error(raw.replace(/^Error:\s*/, ""));
+      if (typeof raw === "object" && raw.message) throw new Error(raw.message);
+    }
+    throw new Error("Hubo un error al rechazar la comisión");
   }
-};
+}
 
 // Cambiar el estado de la comisión a 'espera' (waiting)
-export const waitingCommission = async (id: number, token: string): Promise<void> => {
+export async function waiting(
+  id: number,
+  updatedCommission: any,
+  token: string
+) {
   try {
-    await api.put(`${COMMISSION_URL}/${id}/waiting`, null, {
+    return await api.put(`${COMMISSION_URL}/${id}/waiting`, updatedCommission, {
       headers: { Authorization: `Bearer ${token}` },
     });
-  } catch (error) {
-    handleError(error, "Error setting commission to waiting");
-    throw error;
+  } catch (error: any) {
+    if (error.response?.data) {
+      const raw = error.response.data;
+      if (typeof raw === "string")
+        throw new Error(raw.replace(/^Error:\s*/, ""));
+      if (typeof raw === "object" && raw.message) throw new Error(raw.message);
+    }
+    throw new Error("Hubo un error al actualizar el precio");
   }
-};
+}
 
 // Cambiar el estado de la comisión a 'pago' (toPay)
-export const toPayCommission = async (id: number, token: string): Promise<void> => {
+export async function toPay(id: number, token: string) {
   try {
-    await api.put(`${COMMISSION_URL}/${id}/toPay`, null, {
+    return await api.put(`${COMMISSION_URL}/${id}/toPay`, null, {
       headers: { Authorization: `Bearer ${token}` },
     });
-  } catch (error) {
-    handleError(error, "Error setting commission to pay");
-    throw error;
+  } catch (error: any) {
+    if (error.response?.data) {
+      const raw = error.response.data;
+      if (typeof raw === "string")
+        throw new Error(raw.replace(/^Error:\s*/, ""));
+      if (typeof raw === "object" && raw.message) throw new Error(raw.message);
+    }
+    throw new Error("Hubo un error al aceptar la comisión");
   }
-};
+}
 
 // Cancelar una comisión
-export const cancelCommission = async (id: number, token: string): Promise<void> => {
+export const cancelCommission = async (
+  id: number,
+  token: string
+): Promise<void> => {
   try {
     await api.put(`${COMMISSION_URL}/${id}/cancel`, null, {
       headers: { Authorization: `Bearer ${token}` },
@@ -109,16 +147,3 @@ export const cancelCommission = async (id: number, token: string): Promise<void>
     throw error;
   }
 };
-
-export const requestChangesCommission = async (id: number, updatedCommission: CommissionProtected, token: string) => {
-  try {
-    await api.put(`${COMMISSION_URL}/${id}/requestChanges`, updatedCommission, {
-      headers: { Authorization: `Bearer ${token}` },
-    });
-  } catch (error) {
-    handleError(error, "Error requesting changes to commission");
-    throw error;
-  }
-};
-
-

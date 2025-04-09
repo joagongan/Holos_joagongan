@@ -93,14 +93,14 @@ export default PaymentDetails;
 
 const styles = StyleSheet.create({
   ticket: {
-    backgroundColor: colors.surfaceBase,
+    backgroundColor: "white",
     borderRadius: 5,
     padding: 20,
     alignSelf: "center",
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.08,
-    shadowRadius: 12,
+    shadowColor: colors.brandPrimary,
+    shadowOffset: { width: 0, height: 5 },
+    shadowOpacity: 0.25,
+    shadowRadius: 15,
     elevation: 6,
     maxWidth: "100%",
   },

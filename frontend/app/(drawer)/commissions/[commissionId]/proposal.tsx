@@ -1,163 +1,101 @@
-import { useLocalSearchParams, useNavigation, useRouter } from "expo-router";
+import { useLocalSearchParams, useNavigation } from "expo-router";
+import { View, Text, StyleSheet, Image } from "react-native";
 import { useContext, useEffect, useState } from "react";
-import {
-  View,
-  Text,
-  TouchableOpacity,
-  TextInput,
-  StyleSheet,
-  ScrollView,
-} from "react-native";
-import {
-  rejectCommission,
-  getCommissionById,
-  requestChangesCommission,
-  toPayCommission,
-  waitingCommission,
-} from "@/src/services/commisionApi";
-import { CommissionDTO } from "@/src/constants/CommissionTypes";
-import { AuthenticationContext } from "@/src/contexts/AuthContext";
-import ProtectedRoute from "@/src/components/ProtectedRoute";
+import { Button, IconButton, TextInput } from "react-native-paper";
 import * as yup from "yup";
+import { useCommissionDetails } from "@/src/hooks/useCommissionDetails";
+import { reject, toPay, waiting } from "@/src/services/commisionApi";
+import { priceValidationSchema } from "@/src/utils/priceValidation";
+import { AuthenticationContext } from "@/src/contexts/AuthContext";
 import PaymentDetails from "@/src/components/checkout/PaymentDetails";
-import LoadingScreen from "@/src/components/LoadingScreen";
+import WIPPlaceholder from "@/src/components/WorkInProgress";
 import colors from "@/src/constants/colors";
-import { Button } from "react-native-paper";
+import { BaseUser, StatusCommission } from "@/src/constants/CommissionTypes";
+import LoadingScreen from "@/src/components/LoadingScreen";
+import { BASE_URL } from "@/src/constants/api";
+import { getUser } from "@/src/services/userApi";
+import UserPanel from "@/src/components/proposal/UserPanel";
 
 export default function CommissionDetailsScreen() {
   const { commissionId } = useLocalSearchParams();
   const { loggedInUser } = useContext(AuthenticationContext);
-  const router = useRouter();
+  const {
+    commission,
+    setCommission,
+    loading,
+    errorMessage,
+    setErrorMessage,
+    refreshCommission,
+  } = useCommissionDetails(commissionId);
+
   const navigation = useNavigation();
-
-  const [commission, setCommission] = useState<CommissionDTO | null>(null);
-  const [isEditingPrice, setIsEditingPrice] = useState(false);
-  const [newPrice, setNewPrice] = useState<string>("");
-  const [totalPrice, setTotalPrice] = useState<number>(0);
-  const [loading, setLoading] = useState(true);
-  const [errorMessage, setErrorMessage] = useState<string | null>(null);
-
-  const priceValidationSchema = yup.object().shape({
-    newPrice: yup
-      .string()
-      .required("El precio es obligatorio")
-      .matches(
-        /^\d+(\.\d{1,2})?$/,
-        "El precio debe ser un número con hasta 2 decimales"
-      ),
-  });
-
-  useEffect(() => {
-    const fetchCommission = async () => {
-      try {
-        if (commissionId) {
-          const data = await getCommissionById(Number(commissionId));
-          setCommission(data);
-          setNewPrice(data.price.toString());
-          setTotalPrice(data.price + data.price * 0.06);
-        }
-      } catch (error) {
-        router.push(`/`);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchCommission();
-  }, [commissionId]);
-
-  useEffect(() => {
-    const price = parseFloat(newPrice) || 0;
-    setTotalPrice(price + price * 0.06);
-  }, [newPrice]);
+  const [newPrice, setNewPrice] = useState("");
+  const [showEditCard, setShowEditCard] = useState(false);
+  const [saving, setSaving] = useState(false);
 
   const handleAccept = async () => {
-    if (commission) {
-      try {
-        await toPayCommission(commission.id, loggedInUser.token);
-        alert("Comisión aceptada");
-      } catch (error: any) {
-        let errorMessage = "Hubo un error al aceptar la comisión";
-        if (error.response?.data) {
-          if (typeof error.response.data === "string") {
-            errorMessage = error.response.data.replace(/^Error:\s*/, "");
-          } else if (
-            typeof error.response.data === "object" &&
-            error.response.data.message
-          ) {
-            errorMessage = error.response.data.message;
-          }
-        }
-        setErrorMessage(errorMessage);
-      }
+    if (!commission) return;
+    try {
+      await toPay(commission.id, loggedInUser.token);
+      await refreshCommission();
+      alert("Comisión aceptada");
+    } catch (err: any) {
+      setErrorMessage(err.message);
     }
   };
 
   const handleReject = async () => {
-    if (commission) {
-      try {
-        await rejectCommission(commission.id, loggedInUser.token);
-        alert("Comisión rechazada");
-      } catch (error: any) {
-        let errorMessage = "Hubo un error al rechazar la comisión";
-        if (error.response?.data) {
-          if (typeof error.response.data === "string") {
-            errorMessage = error.response.data.replace(/^Error:\s*/, "");
-          } else if (
-            typeof error.response.data === "object" &&
-            error.response.data.message
-          ) {
-            errorMessage = error.response.data.message;
-          }
-        }
-        setErrorMessage(errorMessage);
-      }
+    if (!commission) return;
+    try {
+      await reject(commission.id, loggedInUser.token);
+      await refreshCommission();
+      alert("Comisión rechazada");
+    } catch (err: any) {
+      setErrorMessage(err.message);
     }
   };
 
   const handleSavePrice = async () => {
-    if (!commission || !commission.id || !loggedInUser.token) return;
-
+    if (!commission || !loggedInUser.token) return;
+    setSaving(true);
     try {
-      if (isEditingPrice) {
-        await priceValidationSchema.validate({ newPrice });
-        const updatedCommission = {
-          ...commission,
-          price: parseFloat(newPrice),
-        };
-        await requestChangesCommission(
-          commission.id,
-          updatedCommission,
-          loggedInUser.token
-        );
-        await waitingCommission(commission.id, loggedInUser.token);
-        setIsEditingPrice(!isEditingPrice);
-      }
+      const parsedPrice = parseFloat(newPrice);
+      const price = isClient
+        ? parseFloat((parsedPrice / 1.06).toFixed(2))
+        : parsedPrice;
+
+      await priceValidationSchema.validate({ newPrice });
+
+      const updatedCommission = { ...commission, price };
+      await waiting(commission.id, updatedCommission, loggedInUser.token);
+
+      setCommission(updatedCommission);
+      await refreshCommission();
+      setShowEditCard(false);
       alert("Precio actualizado con éxito");
     } catch (error: any) {
-      let errorMessage = "Hubo un error al actualizar el precio";
+      const message =
+        error instanceof yup.ValidationError
+          ? error.message
+          : error.message || "Hubo un error al actualizar el precio";
 
-      if (error instanceof yup.ValidationError) {
-        errorMessage = error.message;
-      } else if (error.response?.data) {
-        if (typeof error.response.data === "string") {
-          errorMessage = error.response.data.replace(/^Error:\s*/, "");
-        } else if (
-          typeof error.response.data === "object" &&
-          error.response.data.message
-        ) {
-          errorMessage = error.response.data.message;
-        }
-      }
-
-      setErrorMessage(errorMessage);
+      setErrorMessage(message);
       console.error("Error al actualizar el precio:", error);
+    } finally {
+      setSaving(false);
     }
   };
 
-  const handleEditPrice = () => {
-    setIsEditingPrice(true);
-  };
+  useEffect(() => {
+    if (commission) {
+      const basePrice = commission.price;
+      const displayedPrice = isClient
+        ? (basePrice * 1.06).toFixed(2)
+        : basePrice.toFixed(2);
+
+      setNewPrice(displayedPrice);
+    }
+  }, [commission]);
 
   useEffect(() => {
     navigation.setOptions({
@@ -167,50 +105,190 @@ export default function CommissionDetailsScreen() {
     });
   }, [commission?.name, navigation]);
 
-  if (!commission) {
-    return (
-      <View>
-        <Text style={styles.errorText}>
-          No se encontraron detalles para esta comisión.
-        </Text>
-      </View>
-    );
-  }
+  if (!commission) return <WIPPlaceholder />;
+  if (!loggedInUser) return <LoadingScreen />;
+
+  const yourTurn =
+    (commission.artistUsername === loggedInUser.username &&
+      (commission.status === StatusCommission.WAITING_ARTIST ||
+        commission.status === StatusCommission.REQUESTED)) ||
+    (commission.clientUsername === loggedInUser.username &&
+      commission.status === StatusCommission.WAITING_CLIENT);
+
+  const isClient = loggedInUser.username === commission.clientUsername;
+
+  const basePrice = commission.price;
+  const displayedPrice = isClient
+    ? (basePrice * 1.06).toFixed(2)
+    : basePrice.toFixed(2);
+
+  const parsedInput = parseFloat(newPrice);
+  const canSend =
+    !saving &&
+    !isNaN(parsedInput) &&
+    newPrice.trim() !== "" &&
+    parseFloat(newPrice) !== parseFloat(displayedPrice);
 
   return (
     <View style={styles.container}>
-      <View style={styles.content}>
+      <View style={styles.sides}>
         <PaymentDetails commission={commission} />
       </View>
-      <View style={styles.content}>
-        <Text style={styles.errorText}>{errorMessage}</Text>
-
-        <Text style={styles.priceLabel}>Fijar precio</Text>
-        {isEditingPrice ? (
-          <TextInput
-            style={styles.priceInput}
-            value={newPrice}
-            onChangeText={setNewPrice}
-            keyboardType="numeric"
-          />
-        ) : (
-          <Text style={styles.priceInput}>{newPrice}€</Text>
-        )}
-        <TouchableOpacity
-          style={styles.adjustButton}
-          onPress={isEditingPrice ? handleSavePrice : handleEditPrice}
-        >
-          <Text style={styles.buttonText}>
-            {isEditingPrice ? "GUARDAR" : "AJUSTAR PRECIO"}
-          </Text>
-        </TouchableOpacity>
-
-        <View style={styles.buttonRow}>
-          <Button onPress={handleAccept}>Aceptar</Button>
-          <Button onPress={handleReject}>Rechazar</Button>
+      <View style={styles.sides}>
+        <View style={styles.card}>
+          <View style={{ flexDirection: "row" }}>
+            {/* <UserPanel user={commission.client} />
+            <UserPanel user={commission.artist} /> */}
+          </View>
+          <View style={{ flex: 1, alignItems: "center" }}>TODO</View>
         </View>
+        {showEditCard ? (
+          <View style={[styles.card, { alignItems: "center" }]}>
+            <View
+              style={{
+                flexDirection: "row",
+                width: "100%",
+                alignItems: "center",
+                justifyContent: "space-between",
+              }}
+            >
+              <View style={{ flex: 1 }}>
+                <IconButton
+                  icon="arrow-left"
+                  iconColor={colors.contentStrong}
+                  onPress={() => setShowEditCard(false)}
+                />
+              </View>
+              <View style={{ flex: 1, alignItems: "center" }}>
+                <Text style={styles.label}>¿Cambiar precio?</Text>
+              </View>
+              <View style={{ flex: 1 }} />
+            </View>
 
-        <Text style={styles.totalPrice}>Total = €{totalPrice.toFixed(2)}</Text>
+            <Text style={{ color: colors.contentStrong, paddingBottom: 10 }}>
+              ¡Puedes proponer otro si crees que el actual no está bien!
+            </Text>
+            <TextInput
+              value={newPrice}
+              onChangeText={setNewPrice}
+              mode="outlined"
+              keyboardType="numeric"
+              placeholder="€"
+              outlineColor={colors.brandPrimary}
+              activeOutlineColor={colors.brandPrimary}
+              returnKeyType="done"
+              onSubmitEditing={handleSavePrice}
+              theme={{ roundness: 999 }}
+              style={{ backgroundColor: "transparent" }}
+              right={
+                <TextInput.Icon
+                  icon="send"
+                  onPress={canSend ? handleSavePrice : undefined}
+                  color={canSend ? colors.brandPrimary : colors.surfaceBase}
+                  disabled={!canSend}
+                />
+              }
+            />
+            <Text style={styles.errorText}>{errorMessage}</Text>
+          </View>
+        ) : (
+          <View style={[styles.card, { alignItems: "center" }]}>
+            <View
+              style={{
+                flexDirection: "row",
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+            >
+              <Text
+                style={{
+                  fontSize: 24,
+                  fontWeight: "bold",
+                  color: colors.contentStrong,
+                }}
+              >
+                {isClient
+                  ? parseFloat(newPrice || "0").toFixed(2)
+                  : (parseFloat(newPrice || "0") * 1.06).toFixed(2)}{" "}
+                €
+              </Text>
+              {yourTurn && (
+                <IconButton
+                  onPress={() => setShowEditCard(true)}
+                  icon="pencil"
+                  iconColor={colors.brandPrimary}
+                />
+              )}
+            </View>
+            <Text
+              style={{
+                color: colors.contentStrong,
+                fontStyle: "italic",
+              }}
+            >
+              ¡Precio total con tarifa incluida!
+            </Text>
+            {yourTurn && (
+              <View style={{ flexDirection: "row", gap: 10, marginTop: 10 }}>
+                <Button
+                  onPress={handleAccept}
+                  buttonColor={colors.contentStrong}
+                  textColor="white"
+                >
+                  Aceptar
+                </Button>
+                <Button
+                  onPress={handleReject}
+                  buttonColor={colors.brandPrimary}
+                  textColor="white"
+                >
+                  Rechazar
+                </Button>
+              </View>
+            )}
+            <Text style={styles.errorText}>{errorMessage}</Text>
+          </View>
+        )}
+
+        {isClient ? (
+          <View style={[styles.card, { gap: 20 }]}>
+            <View>
+              <Text style={{ color: colors.brandPrimary, fontSize: 16 }}>
+                💰 Tú pagarás: {parseFloat(newPrice || "0").toFixed(2)}€
+              </Text>
+              <Text
+                style={{ color: colors.contentStrong, fontStyle: "italic" }}
+              >
+                ¡Este es el monto que debes abonar!
+              </Text>
+            </View>
+          </View>
+        ) : (
+          <View style={[styles.card, { gap: 20 }]}>
+            <View>
+              <Text style={{ color: colors.brandPrimary, fontSize: 16 }}>
+                🎨 Tú recibes: {parseFloat(newPrice || "0").toFixed(2)}€
+              </Text>
+              <Text
+                style={{ color: colors.contentStrong, fontStyle: "italic" }}
+              >
+                ¡Este será el monto que obtendrás una vez completada la
+                comisión!
+              </Text>
+            </View>
+            <View>
+              <Text style={{ color: colors.brandPrimary, fontSize: 16 }}>
+                💰 Cliente paga:{" "}
+                {(parseFloat(newPrice || "0") * 1.06).toFixed(2)}€
+              </Text>
+              <Text
+                style={{ color: colors.contentStrong, fontStyle: "italic" }}
+              >
+                ¡Este es el monto que el cliente abonará!
+              </Text>
+            </View>
+          </View>
+        )}
       </View>
     </View>
   );
@@ -223,76 +301,35 @@ const styles = StyleSheet.create({
     backgroundColor: colors.surfaceMuted,
     width: "100%",
   },
-  content: {
+  sides: {
     flex: 1,
     alignContent: "center",
     justifyContent: "center",
     padding: "10%",
-  },
-  priceLabel: { fontSize: 18, fontWeight: "bold", marginBottom: 5 },
-  buttonRow: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    width: "100%",
+    gap: 33,
   },
   totalPrice: {
-    fontSize: 18,
-    fontWeight: "bold",
-    color: "#183771",
-    alignSelf: "flex-start",
-    marginBottom: 10,
-  },
-  imagePlaceholder: {
-    width: 150,
-    height: 150,
-    borderRadius: 8,
-    backgroundColor: "#E0E0E0",
-    justifyContent: "center",
-    alignItems: "center",
-    marginBottom: 20,
-  },
-  clientImage: { width: 150, height: 150, borderRadius: 8 },
-  imagePlaceholderText: { fontSize: 14, color: "#888", textAlign: "center" },
-  priceInput: {
-    fontSize: 18,
-    fontWeight: "bold",
-    color: "#183771",
-    textAlign: "center",
-    marginBottom: 10,
-    borderWidth: 1,
-    borderColor: "#E5E7EB",
-    borderRadius: 5,
-    padding: 8,
-    width: "80%",
-  },
-  adjustButton: {
-    backgroundColor: "#D4A5F7",
-    paddingVertical: 8,
-    paddingHorizontal: 16,
-    borderRadius: 8,
-  },
-  acceptButton: {
-    backgroundColor: "#4CAF50",
-    paddingVertical: 8,
-    paddingHorizontal: 16,
-    borderRadius: 8,
-  },
-  rejectButton: {
-    backgroundColor: "#F44336",
-    paddingVertical: 8,
-    paddingHorizontal: 16,
-    borderRadius: 8,
-  },
-  buttonText: {
-    color: "#fff",
-    fontWeight: "bold",
     fontSize: 16,
-    textAlign: "center",
+    color: colors.contentStrong,
+    marginBottom: 10,
+  },
+  label: {
+    fontSize: 16,
+    fontWeight: "bold",
+    color: colors.brandPrimary,
   },
   errorText: {
-    color: "#FF0000",
-    fontSize: 16,
-    textAlign: "center",
-    marginTop: 20,
+    color: colors.brandPrimary,
+    marginTop: 15,
+  },
+  card: {
+    padding: 25,
+    backgroundColor: "white",
+    borderRadius: 20,
+    shadowColor: colors.brandPrimary,
+    shadowOffset: { width: 0, height: 5 },
+    shadowOpacity: 0.25,
+    shadowRadius: 15,
+    elevation: 6,
   },
 });
