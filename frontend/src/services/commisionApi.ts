@@ -4,7 +4,6 @@ import { handleError } from "@/src/utils/handleError";
 import {
   Commission,
   CommissionDTO,
-  CommissionProtected,
   HistoryCommisionsDTO,
 } from "@/src/constants/CommissionTypes";
 
