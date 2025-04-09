@@ -146,7 +146,7 @@ public class CommisionService {
     }
 
     @Transactional
-    public void waitingCommission(Long commisionId) throws Exception {
+    public void waitingCommission(CommissionDTO priceChanged, Long commisionId) throws Exception {
         Commision commision = commisionRepository.findById(commisionId)
                 .orElseThrow(() -> new ResourceNotFoundException("Commision", "id", commisionId));
         Long id = userService.findCurrentUser().getId();
@@ -156,6 +156,7 @@ public class CommisionService {
             }
             if (commision.getStatus() == StatusCommision.WAITING_CLIENT) {
                 commision.setStatus(StatusCommision.WAITING_ARTIST);
+                commision.setPrice(priceChanged.getPrice());
             } else {
                 throw new IllegalStateException("La comisión no puede ser puesta en espera en su estado actual.");
             }
@@ -167,6 +168,7 @@ public class CommisionService {
             if (commision.getStatus() == StatusCommision.REQUESTED ||
                     commision.getStatus() == StatusCommision.WAITING_ARTIST) {
                 commision.setStatus(StatusCommision.WAITING_CLIENT);
+                commision.setPrice(priceChanged.getPrice());
             } else {
                 throw new IllegalStateException("La comisión no puede ser puesta en espera en su estado actual.");
             }
