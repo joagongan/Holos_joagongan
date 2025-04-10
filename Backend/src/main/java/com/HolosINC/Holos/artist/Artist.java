@@ -22,7 +22,7 @@ import lombok.Data;
 @Table(name = "artists")
 public class Artist{
 
-    @Id
+    @Id 
 	@SequenceGenerator(name = "entity_seq", sequenceName = "entity_sequence", initialValue = 500)
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "entity_seq")
     protected Long id;
