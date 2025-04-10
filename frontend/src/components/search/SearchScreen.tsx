@@ -1,5 +1,14 @@
 import React, { useState, useEffect } from "react";
-import { View, Text, TextInput, FlatList, TouchableOpacity, Image, ScrollView, useWindowDimensions } from "react-native";
+import {
+  View,
+  Text,
+  TextInput,
+  FlatList,
+  TouchableOpacity,
+  Image,
+  ScrollView,
+  useWindowDimensions,
+} from "react-native";
 import { useRouter } from "expo-router";
 import { BASE_URL } from "@/src/constants/api";
 import { mobileStyles } from "@/src/styles/Search.styles";
@@ -44,10 +53,8 @@ const SearchScreen = ({ query }: { query: string }) => {
       }
       return 1; // pequeñas, 1 columna
     };
-    setNumColumns(getNumColumns())
-    console.log("Window width:", width);
+    setNumColumns(getNumColumns());
   }, [width]);
-
 
   const isBase64Path = (base64: string): boolean => {
     try {
@@ -62,7 +69,9 @@ const SearchScreen = ({ query }: { query: string }) => {
     <ScrollView style={mobileStyles.container}>
       <View style={mobileStyles.topSection}>
         <Text style={mobileStyles.topSectionText}>
-          {query.trim() === "" ? "Todos los resultados" : `Resultados para "${query}"`}
+          {query.trim() === ""
+            ? "Todos los resultados"
+            : `Resultados para "${query}"`}
         </Text>
       </View>
 
@@ -77,30 +86,44 @@ const SearchScreen = ({ query }: { query: string }) => {
               <Text style={mobileStyles.sectionTitle}>Trabajos</Text>
               <FlatList
                 data={workResults}
-                keyExtractor={(item, index) => (item?.id ? item.id.toString() : `work-${index}`)}
+                keyExtractor={(item, index) =>
+                  item?.id ? item.id.toString() : `work-${index}`
+                }
                 key={`work-columns-${numColumns}`}
                 numColumns={numColumns}
                 contentContainerStyle={mobileStyles.worksScrollContainer}
                 renderItem={({ item }) => (
                   <TouchableOpacity
                     style={mobileStyles.cardWrapper}
-                    onPress={() => router.push({ pathname: "/work/[workId]", params: { workId: String(item.id) } })}
+                    onPress={() =>
+                      router.push({
+                        pathname: "/work/[workId]",
+                        params: { workId: String(item.id) },
+                      })
+                    }
                   >
                     <View style={mobileStyles.cardContainer}>
                       <Image
                         source={{
-                          uri: item.image && isBase64Path(item.image)
-                            ? `${BASE_URL}${atob(item.image)}`
-                            : `data:image/jpeg;base64,${item.image}`,  // Estaria bien usar predeterminada(No está aun)
+                          uri:
+                            item.image && isBase64Path(item.image)
+                              ? `${BASE_URL}${atob(item.image)}`
+                              : `data:image/jpeg;base64,${item.image}`, // Estaria bien usar predeterminada(No está aun)
                         }}
                         style={mobileStyles.image}
                         resizeMode="cover"
-                        onError={() => console.log("Error cargando imagen:", item.image)}
+                        onError={() =>
+                          console.log("Error cargando imagen:", item.image)
+                        }
                       />
                       <View style={mobileStyles.textContainer}>
                         <Text style={mobileStyles.title}>{item.name}</Text>
-                        <Text style={mobileStyles.artist}>por  @{item.artistUsername ?? "Desconocido"}</Text>
-                        <Text style={mobileStyles.description}>{item.description}</Text>
+                        <Text style={mobileStyles.artist}>
+                          por @{item.artistUsername ?? "Desconocido"}
+                        </Text>
+                        <Text style={mobileStyles.description}>
+                          {item.description}
+                        </Text>
                       </View>
                     </View>
                   </TouchableOpacity>
@@ -116,27 +139,37 @@ const SearchScreen = ({ query }: { query: string }) => {
               <View style={mobileStyles.artistsContainer}>
                 {artistResults.map((artist) => {
                   // Log de los datos del artista para verificar
-                  console.log(artist);
-
                   return (
-                    <View key={artist.id} style={mobileStyles.artistCardWrapper}>
+                    <View
+                      key={artist.id}
+                      style={mobileStyles.artistCardWrapper}
+                    >
                       <TouchableOpacity
                         style={mobileStyles.artistCard}
                         onPress={() =>
-                          router.push({ pathname: "/profile/[artistId]", params: { artistId: String(artist.id) } })
+                          router.push({
+                            pathname: "/profile/[artistId]",
+                            params: { artistId: String(artist.id) },
+                          })
                         }
                       >
                         <Image
                           source={{
-                            uri: artist.baseUser?.imageProfile && isBase64Path(artist.baseUser?.imageProfile)
-                              ? `${BASE_URL}${atob(artist.baseUser?.imageProfile)}`
-                              : `data:image/jpeg;base64,${artist.baseUser?.imageProfile}`,  // Estaria bien usar predeterminada(No está aun)
+                            uri:
+                              artist.baseUser?.imageProfile &&
+                              isBase64Path(artist.baseUser?.imageProfile)
+                                ? `${BASE_URL}${atob(
+                                    artist.baseUser?.imageProfile
+                                  )}`
+                                : `data:image/jpeg;base64,${artist.baseUser?.imageProfile}`, // Estaria bien usar predeterminada(No está aun)
                           }}
                           style={mobileStyles.artistImage}
                         />
                         <View style={mobileStyles.artistTextContainer}>
                           <Text style={mobileStyles.artistName}>
-                            {artist.baseUser?.username || artist.username || 'Nombre no disponible'}
+                            {artist.baseUser?.username ||
+                              artist.username ||
+                              "Nombre no disponible"}
                           </Text>
                         </View>
                       </TouchableOpacity>
