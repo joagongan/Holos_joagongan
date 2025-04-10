@@ -97,6 +97,7 @@ export interface HistoryCommisionsDTO {
 
 export interface CommissionInProgress {
   image?: string;
+  id: number;
   imageProfile?: string;
   name: string;
   artistUsername: string;
@@ -127,3 +128,14 @@ export interface CommissionDTO {
   imageProfileA: string;
   imageProfileC: string;
 }
+
+export interface ClientCommissionDTO {
+    id: number;
+    image: string | null;
+    imageProfile: string | null;
+    name: string;
+    artistUsername: string;
+    clientUsername: string;   
+    currentStep: number;
+    totalSteps: number;
+  }
