@@ -6,6 +6,7 @@ import com.HolosINC.Holos.client.Client;
 import com.HolosINC.Holos.commision.Commision;
 import com.HolosINC.Holos.commision.CommisionRepository;
 import com.HolosINC.Holos.exceptions.AccessDeniedException;
+import com.HolosINC.Holos.exceptions.BadRequestException;
 import com.HolosINC.Holos.exceptions.ResourceNotFoundException;
 import com.HolosINC.Holos.model.BaseUser;
 import com.HolosINC.Holos.model.BaseUserService;
@@ -50,7 +51,7 @@ public class PaymentService {
             String email = activeUser.getEmail();
 
             if (paymentDTO == null ||paymentDTO.getAmount() == null || paymentDTO.getAmount() <= 0) {
-                throw new IllegalArgumentException("La cantidad del pago no puede ser nulo o 0");
+                throw new BadRequestException("La cantidad del pago no puede ser nulo o 0");
             }
 
             if (commision.getClient()==null || !client.getBaseUser().equals(activeUser)){
@@ -58,7 +59,7 @@ public class PaymentService {
             }
         
             if (commision.getPaymentIntentId()!=null){
-                throw new IllegalStateException("Esta comisión ya tiene un pago asociado");
+                throw new BadRequestException("Esta comisión ya tiene un pago asociado");
             }
 
             if (artist==null){
@@ -88,12 +89,10 @@ public class PaymentService {
 
         } catch (ResourceNotFoundException e) {
             throw new ResourceNotFoundException(e.getMessage());
-        } catch (IllegalStateException e) {
-            throw new IllegalStateException(e.getMessage());
+        } catch (BadRequestException e) {
+            throw new BadRequestException(e.getMessage());
         } catch (AccessDeniedException e) {
             throw new AccessDeniedException(e.getMessage());
-        } catch (IllegalArgumentException e) {
-            throw new IllegalArgumentException(e.getMessage());
         } catch (StripeException e) { 
             throw new RuntimeException("Error al procesar el pago: " + e.getMessage(), e);
         } catch (Exception e) {

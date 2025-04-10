@@ -5,6 +5,7 @@ import com.HolosINC.Holos.client.Client;
 import com.HolosINC.Holos.commision.Commision;
 import com.HolosINC.Holos.commision.CommisionRepository;
 import com.HolosINC.Holos.exceptions.AccessDeniedException;
+import com.HolosINC.Holos.exceptions.BadRequestException;
 import com.HolosINC.Holos.exceptions.ResourceNotFoundException;
 import com.HolosINC.Holos.model.BaseUser;
 import com.HolosINC.Holos.model.BaseUserService;
@@ -138,14 +139,14 @@ public class PaymentControllerTest {
     }
 
     @Test
-    public void testCreatePaymentIllegalState() throws Exception {
+    public void testCreatePaymentBadRequest() throws Exception {
         when(paymentService.createPayment(any(PaymentDTO.class), eq(1L)))
-                .thenThrow(new IllegalStateException("Estado inválido"));
+                .thenThrow(new BadRequestException("Bad request"));
 
         mockMvc.perform(post("/api/v1/payment/create/1")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(paymentDTO)))
-                .andExpect(status().isNotFound());
+                .andExpect(status().isBadRequest());
 
         verify(paymentService, times(1)).createPayment(any(PaymentDTO.class), eq(1L));
     }
@@ -178,6 +179,18 @@ public class PaymentControllerTest {
                 .andExpect(content().string("Stripe API is down"));
 
         verify(paymentService, times(1)).createPayment(any(PaymentDTO.class), eq(1L));
+    }
+
+    @Test
+    public void testCreatePaymentWithException() throws Exception {
+        when(paymentService.createPayment(any(PaymentDTO.class), eq(1L)))
+                .thenThrow(new Exception("Error inesperado"));
+        mockMvc.perform(post("/api/v1/payment/create/1")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(paymentDTO)))
+                .andExpect(status().isInternalServerError());
+
+        verify(paymentService, times(1)).createPayment(any(PaymentDTO.class), eq(1L));  
     }
 }
 
