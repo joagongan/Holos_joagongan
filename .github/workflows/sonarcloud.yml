@@ -39,8 +39,8 @@ jobs:
           -Dsonar.projectKey=joagongan_Holos_joagongan 
           -Dsonar.surefire.reportPaths=target/surefire-reports 
           -Dsonar.jacoco.reportPaths=target/jacoco.exec 
-          -Dsonar.coverage.exclusions=**/**
-          -Dsonar.coverage.inclusions=**/*Service.java,**/*Controller.java
+          -Dsonar.coverage.exclusions=**/*DTO.*
+          
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
