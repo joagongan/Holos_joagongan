@@ -39,5 +39,5 @@ jobs:
           -Dsonar.projectKey=joagongan_Holos_joagongan 
           -Dsonar.surefire.reportPaths=target/surefire-reports 
           -Dsonar.jacoco.reportPaths=target/jacoco.exec 
-          -Dsonar.sonar.excludes = "**/src/**"
+          -Dsonar.sonar.inclusions = "**/**"
         
