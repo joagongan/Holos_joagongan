@@ -24,6 +24,7 @@ import com.HolosINC.Holos.client.Client;
 import com.HolosINC.Holos.commision.Commision;
 import com.HolosINC.Holos.commision.CommisionRepository;
 import com.HolosINC.Holos.exceptions.AccessDeniedException;
+import com.HolosINC.Holos.exceptions.BadRequestException;
 import com.HolosINC.Holos.exceptions.ResourceNotFoundException;
 import com.HolosINC.Holos.model.BaseUser;
 import com.HolosINC.Holos.model.BaseUserService;
@@ -133,7 +134,7 @@ public class PaymentServiceTest {
         try {
             paymentService.createPayment(paymentDTO, 1L);
             fail("Se esperaba una IllegalStateException");
-        } catch (IllegalStateException e) {
+        } catch (BadRequestException e) {
             assertEquals("Esta comisión ya tiene un pago asociado", e.getMessage());
         }
     }
@@ -152,8 +153,8 @@ public class PaymentServiceTest {
                 .when(() -> PaymentIntent.create(Mockito.any(PaymentIntentCreateParams.class)))
                 .thenThrow(new IllegalArgumentException("La cantidad del pago no puede ser nulo o 0"));
     
-            IllegalArgumentException exception = assertThrows(
-                IllegalArgumentException.class,
+            BadRequestException exception = assertThrows(
+                BadRequestException.class,
                 () -> paymentService.createPayment(paymentDTO, 1L)
             );
     
@@ -172,8 +173,8 @@ public class PaymentServiceTest {
                 .when(() -> PaymentIntent.create(Mockito.any(PaymentIntentCreateParams.class)))
                 .thenThrow(new IllegalArgumentException("La cantidad del pago no puede ser nulo o 0"));
     
-            IllegalArgumentException exception = assertThrows(
-                IllegalArgumentException.class,
+            BadRequestException exception = assertThrows(
+                BadRequestException.class,
                 () -> paymentService.createPayment(null, 1L)
             );
     

@@ -1,6 +1,7 @@
 package com.HolosINC.Holos.stripe;
 
 import com.HolosINC.Holos.exceptions.AccessDeniedException;
+import com.HolosINC.Holos.exceptions.BadRequestException;
 import com.HolosINC.Holos.exceptions.ResourceNotFoundException;
 import com.stripe.exception.StripeException;
 
@@ -35,16 +36,14 @@ public class PaymentController {
             return new ResponseEntity<>(paymentIntent, HttpStatus.OK);
         } catch (ResourceNotFoundException e) {
             throw new ResourceNotFoundException("Comisión o artista no encontrado: " + e.getMessage());
-        } catch (IllegalStateException e) {
-            throw new ResourceNotFoundException(e.getMessage());
-        } catch (IllegalArgumentException e) {
-            throw new ResourceNotFoundException(e.getMessage());
+        } catch (BadRequestException e) {
+            throw new BadRequestException(e.getMessage());
         } catch (AccessDeniedException e) {
             throw new AccessDeniedException(e.getMessage());
         } catch (StripeException e) { 
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_GATEWAY);
         } catch (Exception e) {
-            throw new Exception("Error inesperado al crear el pago: " + e.getMessage());
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 }
