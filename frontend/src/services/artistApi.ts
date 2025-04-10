@@ -55,13 +55,26 @@ export const updateUserArtist = async (
 
   formData.append("updateUser", JSON.stringify(restOfUser)); 
 
-  const imageProfileData = base64ToFile(user.imageProfile, "image.png");
-  const tableCommissionsPriceData = base64ToFile(user.tableCommissionsPrice, "image.png");
-  formData.append("imageProfile", imageProfileData);
-  formData.append("tableCommissionsPrice", tableCommissionsPriceData);
+
+  const emptyFile = new File([], "archivo-vacio.txt", { type: "text/plain" });
+  formData.append("tableCommissionsPrice", emptyFile);
+  
+  if(user.imageProfile && typeof user.imageProfile !== null){
+    const imageProfileData = base64ToFile(user.imageProfile, "image.png");
+    formData.append("imageProfile", imageProfileData);
+
+  }else{
+    formData.append("imageProfile", emptyFile);
+  }
+  if(user.imageProfile && typeof user.imageProfile !== null){
+    const tableCommissionsPriceData = base64ToFile(user.tableCommissionsPrice, "image.png");
+    formData.append("tableCommissionsPrice", tableCommissionsPriceData);
+
+  }else{
+    formData.append("tableCommissionsPrice", emptyFile);
+  }
 
  
-
 
   const response = await api.put(`${API_URL}/auth/update`, formData, {
     headers: {
