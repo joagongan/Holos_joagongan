@@ -332,14 +332,19 @@ const styles = StyleSheet.create({
       alignSelf: "center",
     },
     stripeButton: {
-      backgroundColor: "#3D2C47", 
-      paddingVertical: 12,
+      backgroundColor: "#3D2C47",
+      padding: 20,
       borderRadius: 10,
       alignItems: "center",
-      marginTop: 20,
-      width: "30%",
+      justifyContent: "center",
+      marginTop: 10,
+      textAlign:"center",
       alignSelf: "center",
+      minWidth: 180,         
+      maxWidth: "90%",   
+      flexWrap: "wrap",  
     },
+
 
     stripeButtonSmall: {
       backgroundColor: "#3D2C47",
@@ -350,6 +355,11 @@ const styles = StyleSheet.create({
       borderRadius: 8,
       alignItems: "center",
       marginTop: 10,
+      textAlign:"center",
+      alignSelf: "center",
+      minWidth: 180,         
+      maxWidth: "90%",   
+      flexWrap: "wrap", 
     },
       stripeButtonSmallAlt: {
     backgroundColor: "#3D2C47",
@@ -365,6 +375,9 @@ const styles = StyleSheet.create({
       color: "#FFF",
       fontWeight: "bold",
       fontSize: 16,
+      flexWrap: "wrap",
+      textAlign: "center", 
+      textAlignVertical: "center",
       
     },
     label: {

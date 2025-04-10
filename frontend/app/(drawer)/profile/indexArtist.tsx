@@ -278,15 +278,16 @@ const userArtistProfileScreen = () => {
                   )}
   
                   <View style={styles.buttonContainer}>
-                    <TouchableOpacity
+                    
+                    {isEditing ? (
+                      <View style={styles.secondButtonContainer}>
+                        <TouchableOpacity
                       onPress={() => navigation.navigate("profile/stripe-setup")}
                       style={styles.stripeButton}
                     >
                       <Text style={styles.stripeButtonText}>Conectate con Stripe</Text>
                     </TouchableOpacity>
   
-                    {isEditing ? (
-                      <>
                         <TouchableOpacity onPress={() => handleSubmit()} style={styles.stripeButton}>
                           <Text style={styles.stripeButtonText}>Guardar Cambios</Text>
                         </TouchableOpacity>
@@ -294,7 +295,7 @@ const userArtistProfileScreen = () => {
                         <TouchableOpacity onPress={cancelChange} style={styles.stripeButton}>
                           <Text style={styles.stripeButtonText}>Cancelar los cambios</Text>
                         </TouchableOpacity>
-                      </>
+                      </View>
                     ) : (
                       <TouchableOpacity onPress={() => setIsEditing(true)} style={styles.stripeButton}>
                         <Text style={styles.stripeButtonText}>Editar Perfil</Text>
@@ -377,6 +378,9 @@ const styles = StyleSheet.create({
       backgroundColor: "#EEE",
       marginBottom: 10,
     },
+    secondButtonContainer:{
+      width: isWeb ? "30%" : "20%",
+    },
    
 
     image: {
@@ -395,24 +399,29 @@ const styles = StyleSheet.create({
       alignSelf: "center",
     },
     stripeButton: {
-      backgroundColor: "#3D2C47", 
-      paddingVertical: 12,
+      backgroundColor: "#3D2C47",
+      padding: 20,
       borderRadius: 10,
       alignItems: "center",
-      marginTop: 20,
-      width: "30%",
+      justifyContent: "center",
+      marginTop: 10,
+      textAlign:"center",
       alignSelf: "center",
+      minWidth: 180,         
+      maxWidth: "90%",   
+      flexWrap: "wrap",  
     },
 
     stripeButtonSmall: {
       backgroundColor: "#3D2C47",
       paddingVertical: 8,
-      height:"30%",
-      width:"40%",
-      paddingHorizontal: 12,
+      paddingHorizontal: 16,
       borderRadius: 8,
       alignItems: "center",
+      justifyContent: "center",
       marginTop: 10,
+      alignSelf: "center", 
+      maxWidth: "90%",     
     },
       stripeButtonSmallAlt: {
     backgroundColor: "#3D2C47",
@@ -428,6 +437,8 @@ const styles = StyleSheet.create({
       color: "#FFF",
       fontWeight: "bold",
       fontSize: 16,
+      textAlign: "center", 
+      textAlignVertical: "center",
       
     },
     label: {
