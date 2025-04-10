@@ -26,6 +26,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.HolosINC.Holos.auth.payload.request.LoginRequest;
 import com.HolosINC.Holos.auth.payload.request.SignupRequest;
+import com.HolosINC.Holos.auth.payload.request.UpdateRequest;
 import com.HolosINC.Holos.auth.payload.response.JwtResponse;
 import com.HolosINC.Holos.auth.payload.response.MessageResponse;
 import com.HolosINC.Holos.configuration.jwt.JwtUtils;
@@ -108,21 +109,21 @@ public class AuthController {
 	@PutMapping(
 			path = "/update", 
 			consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-	public ResponseEntity<MessageResponse> updateUser(@RequestPart("updateUser") String signUpRequest,
+	public ResponseEntity<MessageResponse> updateUser(@RequestPart("updateUser") String updateRequestform,
 			@RequestPart(value = "imageProfile", required = false) MultipartFile imageProfile,
 			@RequestPart(value = "tableCommissionsPrice", required = false) MultipartFile tableCommissionsPrice) {
 		try {
 			ObjectMapper objectMapper = new ObjectMapper();
-			SignupRequest signupRequest = objectMapper.readValue(signUpRequest, SignupRequest.class);
+			UpdateRequest updateRequest = objectMapper.readValue(updateRequestform, UpdateRequest.class);
 
 			if (imageProfile != null && !imageProfile.isEmpty())
-				signupRequest.setImageProfile(imageProfile);
+				updateRequest.setImageProfile(imageProfile);
 
 			if (tableCommissionsPrice != null && !tableCommissionsPrice.isEmpty())
-				signupRequest.setTableCommisionsPrice(tableCommissionsPrice);
+				updateRequest.setTableCommissionsPrice(tableCommissionsPrice);
 
-			authService.updateUser(signupRequest);
-			return ResponseEntity.ok().body(new MessageResponse("succesfully updated: " + signUpRequest.toString()));
+			authService.updateUser(updateRequest);
+			return ResponseEntity.ok().body(new MessageResponse("succesfully updated: " + updateRequest.getUsername()));
 		} catch (Exception e) {
 			return ResponseEntity.badRequest().body(new MessageResponse(e.getMessage()));
 		}
