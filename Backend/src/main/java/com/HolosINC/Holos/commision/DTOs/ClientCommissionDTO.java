@@ -4,13 +4,11 @@ import lombok.Getter;
 import lombok.Setter;
 
 @Getter
-@Setter // Sorry 😖
+@Setter
 public class ClientCommissionDTO {
 
     private byte[] image;
 
-    private byte[] imageProfile;
-    
     private String name;
 
     private String artistUsername;
@@ -19,12 +17,19 @@ public class ClientCommissionDTO {
 
     private Integer totalSteps;
 
-    public ClientCommissionDTO( byte[] image, String name, String artistUsername, int currentStep, int totalSteps, byte[] imageProfile ) {
+    private byte[] imageProfileArtist;
+
+    private byte[] imageProfileClient;
+
+    public ClientCommissionDTO(byte[] image, String name, String artistUsername,
+                                int currentStep, int totalSteps,
+                                byte[] imageProfileArtist, byte[] imageProfileClient) {
         this.image = image;
         this.name = name;
         this.artistUsername = artistUsername;
         this.currentStep = currentStep;
         this.totalSteps = totalSteps;
-        this.imageProfile = imageProfile;
+        this.imageProfileArtist = imageProfileArtist;
+        this.imageProfileClient = imageProfileClient;
     }
 }
