@@ -4,10 +4,12 @@ import { useRouter } from "expo-router";
 import { BASE_URL } from "@/src/constants/api";
 import { mobileStyles } from "@/src/styles/Search.styles";
 import { Work, Artist } from "@/src/constants/ExploreTypes"; // Añadir tipo Artist
+import { NativeStackView } from "@react-navigation/native-stack";
 
 const SearchScreen = ({ query }: { query: string }) => {
   const [workResults, setWorkResults] = useState<Work[]>([]);
   const [artistResults, setArtistResults] = useState<Artist[]>([]);
+  const [numColumns, setNumColumns] = useState<number>();
   const router = useRouter();
   const { width } = useWindowDimensions(); // Obtener el ancho de la pantalla
 
@@ -34,18 +36,19 @@ const SearchScreen = ({ query }: { query: string }) => {
   }, [query]);
 
   useEffect(() => {
-    getNumColumns()
+    const getNumColumns = () => {
+      if (width > 1200) {
+        return 3; // grandes, 3 columnas
+      }
+      if (width > 600) {
+        return 2; // medianas, 2 columnas
+      }
+      return 1; // pequeñas, 1 columna
+    };
+    setNumColumns(getNumColumns())
+    console.log("Window width:", width);
   }, [width]);
 
-  const getNumColumns = () => {
-    if (width > 1200) {
-      return 3; // grandes, 3 columnas
-    }
-    if (width > 600) {
-      return 2; // medianas, 2 columnas
-    }
-    return 1; // pequeñas, 1 columna
-  };
 
   const isBase64Path = (base64: string): boolean => {
     try {
@@ -76,7 +79,8 @@ const SearchScreen = ({ query }: { query: string }) => {
               <FlatList
                 data={workResults}
                 keyExtractor={(item, index) => (item?.id ? item.id.toString() : `work-${index}`)}
-                numColumns={getNumColumns()}
+                key={`work-columns-${numColumns}`}
+                numColumns={numColumns}
                 contentContainerStyle={mobileStyles.worksScrollContainer}
                 renderItem={({ item }) => (
                   <TouchableOpacity
