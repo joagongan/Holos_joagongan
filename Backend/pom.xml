@@ -92,11 +92,6 @@
 			</exclusions>
 		</dependency>
 		<dependency>
-			<groupId>com.fasterxml.jackson.datatype</groupId>
-			<artifactId>jackson-datatype-jsr310</artifactId>
-			<version>2.15.2</version> <!-- Asegúrate de usar la versión compatible con tu proyecto -->
-		</dependency>
-		<dependency>
 			<groupId>org.springframework.security</groupId>
 			<artifactId>spring-security-test</artifactId>
 			<scope>test</scope>
@@ -182,13 +177,6 @@
 			<groupId>com.stripe</groupId>
 			<artifactId>stripe-java</artifactId>
 			<version>28.5.0-beta.1</version>
-		</dependency>
-		<!-- https://mvnrepository.com/artifact/org.sonarsource.sonarqube/sonar-plugin-api -->
-		<dependency>
-			<groupId>org.sonarsource.sonarqube</groupId>
-			<artifactId>sonar-plugin-api</artifactId>
-			<version>9.4.0.54424</version>
-			<scope>provided</scope>
 		</dependency>
 
 	</dependencies>
