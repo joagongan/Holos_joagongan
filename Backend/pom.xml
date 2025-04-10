@@ -262,7 +262,7 @@
 			<version>0.8.8</version> <!-- Usa la versión más reciente -->
 			<configuration>
 			<excludes>
-				<exclude>**/!(*)Controller.java</exclude> <!-- Todos los Controller.java en subdirectorios -->
+				<exclude>**/ArtistController.java</exclude> <!-- Todos los Controller.java en subdirectorios -->
 				<exclude>**/!(*)Service.java</exclude> <!-- Todos los Service.java en subdirectorios -->
 			</excludes>
 			</configuration>
