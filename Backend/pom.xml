@@ -262,8 +262,8 @@
 			<version>0.8.8</version> <!-- Usa la versión más reciente -->
 			<configuration>
 			<includes>
-				<include>**/*Service.java</include> <!-- Incluye todos los archivos que terminen en Service.java -->
-				<include>**/*Controller.java</include> <!-- Incluye todos los archivos que terminen en Controller.java -->
+				<include>**/src/main/java/com/HolosINC/Holos/**/*Service.java</include> <!-- Incluye todos los archivos que terminen en Service.java -->
+				<include>**/src/main/java/com/HolosINC/Holos/**/*Controller.java</include> <!-- Incluye todos los archivos que terminen en Controller.java -->
 			</includes>
 			</configuration>
 
