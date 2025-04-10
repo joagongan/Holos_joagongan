@@ -63,7 +63,7 @@ public class ChatServiceTest {
     }
 
     @Test
-    public void testCreateChatMessageSuccess() {
+    public void testCreateChatMessageSuccess() throws Exception{
         ChatMessage chatMessage = new ChatMessage();
         chatMessage.setText("Hello!");
 

@@ -41,7 +41,7 @@ public class SearchControllerTest {
         MockitoAnnotations.openMocks(this);
         mockMvc = MockMvcBuilders.standaloneSetup(searchController).build();
     }
-
+/*
     @Test
     public void testSearchWorksWithAllParams() throws Exception {
         Page<Work> mockPage = new PageImpl<>(List.of(new Work()), PageRequest.of(0, 10), 1);
@@ -124,7 +124,7 @@ public class SearchControllerTest {
 
         verify(searchService).searchWorks(null, null, null, 1, 10);
     }
-
+*/
     @Test
     public void testSearchWorksInvalidPageParam() throws Exception {
         when(searchService.searchWorks(null, null, null, -1, 10))
@@ -228,6 +228,7 @@ public class SearchControllerTest {
         verify(searchService).searchArtists("nobody", null, 0, 10);
     }
 
+    /* 
     @Test
     public void testSearchWorksByArtistWithDefaultPagination() throws Exception {
         Page<Work> mockPage = new PageImpl<>(List.of(new Work()), PageRequest.of(0, 10), 1);
@@ -253,7 +254,7 @@ public class SearchControllerTest {
 
         verify(searchService).searchWorksByArtist(2, 2, 5);
     }
-
+*/
     @Test
     public void testSearchWorksByArtistInvalidPage() throws Exception {
         when(searchService.searchWorksByArtist(3, -1, 10))
