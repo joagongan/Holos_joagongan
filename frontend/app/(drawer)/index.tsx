@@ -2,21 +2,23 @@ import React, { useState, useEffect, useMemo } from "react";
 import { Text, ScrollView, View, TouchableWithoutFeedback,TextInput} from "react-native";
 import { desktopStyles } from "@/src/styles/Explore.styles";
 import { WorksDoneDTO } from "@/src/constants/ExploreTypes";
-import { getTopThreeArtists } from "@/src/services/ExploreWorkHelpers";
+import { fetchWorksAndTransform, getTopThreeArtists } from "@/src/services/ExploreWorkHelpers";
 import { desktopStyles as styles } from "@/src/styles/Explore.styles";
 import WorkCard from "@/src/components/explore/WorkCard";
 import { fetchWorksDone } from "@/src/services/WorksDoneApi";
 import SearchScreen from "@/src/components/search/SearchScreen"; // Importa la pantalla de búsqueda
+import { useAuth } from "@/src/hooks/useAuth";
 
 export default function ExploreScreen() {
   const [works, setWorks] = useState<WorksDoneDTO[]>([]); // Obras destacadas
   const [searchQuery, setSearchQuery] = useState<string>(""); // Estado para la búsqueda
   const [isSearching, setIsSearching] = useState<boolean>(false); // Estado para alternar vistas
+  const { loggedInUser } = useAuth();
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const works = await fetchWorksDone(); // Obtén las obras destacadas
+        const works = await fetchWorksAndTransform(loggedInUser.token); // Obtén las obras destacadas
         setWorks(works);
       } catch (error) {
         console.error("Error fetching works:", error);

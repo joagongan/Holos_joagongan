@@ -5,14 +5,15 @@ import { WorksDoneDTO, ArtistDTO } from "@/src/constants/ExploreTypes";
 import { BASE_URL } from "@/src/constants/api";
 import { getArtistById } from "@/src/services/artistApi";
 import { getMostPublicationsArtists } from "@/src/services/WorksDoneApi"; // Nuevo import
+import api from "./axiosInstance";
 
 /**
  * Llama a la API y devuelve el array de WorksDoneDTO.
  */
-export async function fetchWorksAndTransform(): Promise<WorksDoneDTO[]> {
+export async function fetchWorksAndTransform(token: string): Promise<WorksDoneDTO[]> {
   try {
-    const data = await getAllWorksDoneDTO();
-    return data;
+    const data = await api.get(`${BASE_URL}/api/v1/search/works?size=5`, { headers: { Authorization: `Bearer ${token}`}});
+    return data.data.content;
   } catch (error) {
     console.error("Error fetching works done:", error);
     throw error;

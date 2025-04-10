@@ -105,7 +105,7 @@ export default function ArtistDetailScreen() {
       <ScrollView style={styles.container}>
         {/* Botón "Atrás" */}
         <TouchableOpacity
-          onPress={() => router.push("/(drawer)/explore")}
+          onPress={() => router.push("/")}
           style={styles.backButton}
         >
           <Text style={styles.backArrow}>←</Text>

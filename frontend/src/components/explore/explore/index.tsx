@@ -23,9 +23,11 @@ import {
   ArtistMin,
 } from "@/src/services/ExploreWorkHelpers";
 import { WorksDoneDTO } from "@/src/constants/ExploreTypes";
+import { useAuth } from "@/src/hooks/useAuth";
 
 export default function ExploreScreen() {
   const [works, setWorks] = useState<WorksDoneDTO[]>([]);
+  const { loggedInUser } = useAuth();
   // Guardamos en este estado los tres artistas obtenidos de la nueva API.
   const [topThreeArtists, setTopThreeArtists] = useState<ArtistMin[]>([]);
   const router = useRouter();
@@ -45,7 +47,7 @@ export default function ExploreScreen() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const data = await fetchWorksAndTransform();
+        const data = await fetchWorksAndTransform(loggedInUser.token);
         setWorks(data);
       } catch (error) {
         console.error("Error fetching works:", error);
