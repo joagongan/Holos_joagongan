@@ -261,11 +261,10 @@
 			<artifactId>jacoco-maven-plugin</artifactId>
 			<version>0.8.8</version> <!-- Usa la versión más reciente -->
 			<configuration>
-			<includes>
+			<excludes>
 				<include>**/*Controller.java</include> <!-- Todos los Controller.java en subdirectorios -->
-				<include>**/*Service.java</include> <!-- Todos los Service.java en subdirectorios -->
-				<include>**/src/main/java/com/HolosINC/Holos/client/ClientService.java</include> <!-- Todos los Service.java en subdirectorios -->
-			</includes>
+				
+			</excludes>
 			</configuration>
 			
 				<executions>
