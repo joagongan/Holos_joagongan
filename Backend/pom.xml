@@ -260,20 +260,27 @@
 			<groupId>org.jacoco</groupId>
 			<artifactId>jacoco-maven-plugin</artifactId>
 			<version>0.8.8</version> <!-- Usa la versión más reciente -->
-			<executions>
-				<execution>
-				<id>prepare-agent</id> <!-- Asigna un id único -->
-				<goals>
-					<goal>prepare-agent</goal> <!-- Configura el agente de cobertura para que capture los datos -->
-				</goals>
-				</execution>
-				<execution>
-				<id>generate-report</id> <!-- Asigna un id único -->
-				<goals>
-					<goal>report</goal> <!-- Genera el informe de cobertura -->
-				</goals>
-				<phase>verify</phase> <!-- Ejecuta este paso después de la fase de verificación -->
-				</execution>
+			<configuration>
+			<includes>
+				<include>**/*Service.java</include> <!-- Incluye todos los archivos que terminen en Service.java -->
+				<include>**/*Controller.java</include> <!-- Incluye todos los archivos que terminen en Controller.java -->
+			</includes>
+			</configuration>
+
+				<executions>
+					<execution>
+					<id>prepare-agent</id> <!-- Asigna un id único -->
+					<goals>
+						<goal>prepare-agent</goal> <!-- Configura el agente de cobertura para que capture los datos -->
+					</goals>
+					</execution>
+					<execution>
+					<id>generate-report</id> <!-- Asigna un id único -->
+					<goals>
+						<goal>report</goal> <!-- Genera el informe de cobertura -->
+					</goals>
+					<phase>verify</phase> <!-- Ejecuta este paso después de la fase de verificación -->
+					</execution>
 			</executions>
 			</plugin>
 		</plugins>
