@@ -126,28 +126,33 @@ export interface CommissionProtected {
 
 export interface CommissionInProgress {
   image?: string;
-
   imageProfile?: string;
-
   name: string;
-
   artistUsername: string;
-
   currentStep: number;
-
   totalSteps: number;
 }
 
+export interface BaseUserDTO {
+  name: string;
+  username: string;
+  email: string;
+  phoneNumber: string;
+  imageProfile: string;
+  tableCommissionsPrice: string;
+}
+
 export interface CommissionDTO {
-    id: number,
-    name: string,
-    description: string,
-    price: number,
-    status: StatusCommission,
-    paymentArrangement:PaymentArrangement,
-    milestoneDate: Date,
-    artistUsername: string,
-    clientUsername: string,
-    image: string,
-    imageProfile: string
+  id: number;
+  name: string;
+  description: string;
+  price: number;
+  status: StatusCommission;
+  paymentArrangement: PaymentArrangement;
+  milestoneDate: Date;
+  artistUsername: string;
+  clientUsername: string;
+  image: string;
+  imageProfileA: string;
+  imageProfileC: string;
 }
