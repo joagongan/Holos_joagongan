@@ -4,6 +4,7 @@ import com.HolosINC.Holos.artist.Artist;
 import com.HolosINC.Holos.client.Client;
 import com.HolosINC.Holos.commision.Commision;
 import com.HolosINC.Holos.commision.CommisionRepository;
+import com.HolosINC.Holos.exceptions.AccessDeniedException;
 import com.HolosINC.Holos.exceptions.ResourceNotFoundException;
 import com.HolosINC.Holos.model.BaseUser;
 import com.HolosINC.Holos.model.BaseUserService;
@@ -145,6 +146,20 @@ public class PaymentControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(paymentDTO)))
                 .andExpect(status().isNotFound());
+
+        verify(paymentService, times(1)).createPayment(any(PaymentDTO.class), eq(1L));
+    }
+
+    @Test
+    public void testCreateByAnotherClient() throws Exception {
+        commision.setClient(client2);
+        when(paymentService.createPayment(any(PaymentDTO.class), eq(1L)))
+            .thenThrow(new AccessDeniedException("No tienes acceso a esta comisión"));
+
+        mockMvc.perform(post("/api/v1/payment/create/1")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(paymentDTO)))
+                .andExpect(status().isForbidden());
 
         verify(paymentService, times(1)).createPayment(any(PaymentDTO.class), eq(1L));
     }
