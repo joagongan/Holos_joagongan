@@ -21,13 +21,13 @@ const isWeb = Platform.OS === "web";
 
 const validationSchema = Yup.object().shape({
   firstName: Yup.string().trim("El nombre no puede tener solo espacios").required("El nombre es obligatorio"),
-  username: Yup.string().trim("El usuario no puede tener solo espacios").required("El nombre de usuario es obligatorio"),
+  username: Yup.mixed().notRequired(),
   email: Yup.string().trim("El correo no puede tener solo espacios").email("Formato de correo inválido").required("El correo es obligatorio"),
   phoneNumber: Yup.string().trim("El teléfono no puede tener solo espacios").matches(/^[0-9]+$/, "Solo se permiten números").min(9, "Debe tener al menos 7 dígitos").max(12, "Debe tener como máximo 12 dígitos").required("El teléfono es obligatorio"),
   description: Yup.mixed().notRequired(),
-  imageProfile: Yup.string().nullable(),
+  imageProfile: Yup.string().notRequired(),
   tableCommissionsPrice: Yup.mixed().notRequired(),
-  numSlotsOfWork: Yup.mixed().notRequired(),
+  linkToSocialMedia: Yup.mixed().notRequired()
 });
 
 const userClientProfileScreen = () => {
@@ -37,6 +37,8 @@ const userClientProfileScreen = () => {
   const [loading, setLoading] = useState<boolean>(true);
   const [imageProfile, setImageProfile] = useState<string | null>(null);
   const [isEditing, setIsEditing] = useState(false);
+  const [shouldRefresh, setShouldRefresh] = useState(false);
+  
 
   const [fontsLoaded] = useFonts({
     "Merriweather-Bold": require("../../../assets/fonts/Merriweather_24pt-Bold.ttf"),
@@ -94,18 +96,17 @@ const userClientProfileScreen = () => {
         phoneNumber: values.phoneNumber,
         tableCommissionsPrice: values.tableCommissionsPrice,
         imageProfile: values.imageProfile,
-        description: values.description,
-        linkToSocialMedia: values.linkToSocialMedia,
-        numSlotsOfWork: values.numSlotsOfWork
+        description: "",
+        linkToSocialMedia: "",
             };
-            console.log(clientUser)
             
       await updateUserClient(clientUser, loggedInUser.token );
       popUpMovilWindows("Éxito", " Enviado correctamente");
-      resetForm(); 
+      setShouldRefresh(prev => !prev);
+      setIsEditing(!isEditing)
     } catch (error: any) {
       console.log(error)
-      popUpMovilWindows("Error", "No se pudo enviar el reporte. Intentelo de nuevo más tarde");
+      popUpMovilWindows("Error", "No se puede actualizar el perfil. Intentelo de nuevo más tarde");
     }
   
   };
@@ -113,16 +114,16 @@ const userClientProfileScreen = () => {
 
   return (
     <Formik
+    enableReinitialize={true}
       initialValues={{
         firstName: user.baseUser.name,
         username: user.baseUser.username,
         email: user.baseUser.email,
         phoneNumber: user.baseUser.phoneNumber ?? "0000000000",
         description: null,
-        linkToSocialMedia: null,
+        linkToSocialMedia: "",
         tableCommissionsPrice: null,
         imageProfile: user.baseUser.imageProfile,
-        numSlotsOfWork: null,
       }}
       validationSchema={validationSchema}
       onSubmit={(values, { resetForm }) => sendWork(values, resetForm)}
@@ -148,10 +149,9 @@ const userClientProfileScreen = () => {
             email: user.baseUser.email,
             phoneNumber: user.baseUser.phoneNumber ?? "0000000000",
             description: null,
-            linkToSocialMedia: null,
+            linkToSocialMedia:   "",
             tableCommissionsPrice: null,
             imageProfile: user.baseUser.imageProfile,
-            numSlotsOfWork: null,
           };
   
           setValues(originalValues);

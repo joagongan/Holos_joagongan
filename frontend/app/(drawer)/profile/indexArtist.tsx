@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from "react";
-import { View, Text, TextInput, Image, ScrollView, StyleSheet, TouchableOpacity, Platform, Alert,} from "react-native";
+import { View, Text, TextInput, Image, ScrollView, StyleSheet, TouchableOpacity, Platform} from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import * as ImagePicker from "expo-image-picker";
 import { Formik } from "formik";
@@ -21,14 +21,13 @@ import { artistUser } from "@/src/constants/user";
 const isWeb = Platform.OS === "web";
 
 const validationSchema = Yup.object().shape({
-  firstName: Yup.string().trim("El nombre no puede tener solo espacios").required("El nombre es obligatorio"),
-  username: Yup.string().trim("El usuario no puede tener solo espacios").required("El nombre de usuario es obligatorio"),
+  firstName: Yup.string().trim("El nombre no puede tener solo espacios").max(30, "No puede escribir más de 30 caracteres").required("El nombre es obligatorio"),
+  username: Yup.string().notRequired(),
   email: Yup.string().trim("El correo no puede tener solo espacios").email("Formato de correo inválido").required("El correo es obligatorio"),
   phoneNumber: Yup.string().trim("El teléfono no puede tener solo espacios").matches(/^[0-9]+$/, "Solo se permiten números").min(9, "Debe tener al menos 7 dígitos").max(12, "Debe tener como máximo 12 dígitos").required("El teléfono es obligatorio"),
-  description: Yup.string().notRequired(),
+  description: Yup.string().max(200, "No puede escribir más de 200 carácteres"),
   imageProfile: Yup.string().notRequired(),
   tableCommissionsPrice: Yup.string().notRequired(),
-  numSlotsOfWork: Yup.number().required()
 
 });
 
@@ -40,6 +39,7 @@ const userArtistProfileScreen = () => {
   const [imageProfile, setImageProfile] = useState<string | null>(null);
   const [tableCommisionsPrice, setTableCommisionsPrice] = useState<string | null>(null);
   const [isEditing, setIsEditing] = useState(false);
+  const [shouldRefresh, setShouldRefresh] = useState(false);
 
   const [fontsLoaded] = useFonts({
     "Merriweather-Bold": require("../../../assets/fonts/Merriweather_24pt-Bold.ttf"),
@@ -51,7 +51,6 @@ const userArtistProfileScreen = () => {
       try {
         const usuario = await getUser(loggedInUser.token);
         const artistData: ArtistDTO = await getArtistById(Number(usuario.id));
-
         setArtist(artistData);
       } catch (error) {
         console.error(error);
@@ -60,7 +59,7 @@ const userArtistProfileScreen = () => {
       }
     };
     fetchData();
-  }, [loggedInUser.token]);
+  }, [loggedInUser.token, isEditing]);
 
     useEffect(() => {
       navigation.setOptions("Su perfil");
@@ -95,7 +94,7 @@ const userArtistProfileScreen = () => {
   if (!fontsLoaded || loading || !artist) return <LoadingScreen />;
 
 
-  const sendWork = async (values: artistUser, resetForm: () => void) => {
+  const sendWork = async (values: artistUser) => {
     try {
       const clientUser = {
         username: values.username,
@@ -104,17 +103,17 @@ const userArtistProfileScreen = () => {
         phoneNumber: values.phoneNumber,
         tableCommissionsPrice: values.tableCommissionsPrice,
         imageProfile: values.imageProfile,
-        description: values.description,
-        linkToSocialMedia: values.linkToSocialMedia,
-        numSlotsOfWork: values.numSlotsOfWork
+        description: values.description ?? "",
+        linkToSocialMedia: values.linkToSocialMedia ?? "",
             };
             
       await updateUserArtist(clientUser, loggedInUser.token );
-      popUpMovilWindows("Éxito", " Enviado correctamente");
-      resetForm(); 
+      popUpMovilWindows("Éxito", " Enviado correctamente"); 
+      setShouldRefresh(prev => !prev);
+      setIsEditing(!isEditing)
     } catch (error: any) {
       console.log(error)
-      popUpMovilWindows("Error", "No se pudo enviar el reporte. Intentelo de nuevo más tarde");
+      popUpMovilWindows("Error", "No se puede actualizar el perfil. Intentelo de nuevo más tarde");
     }
   };
 
@@ -123,6 +122,7 @@ const userArtistProfileScreen = () => {
 
   return (
     <Formik
+     enableReinitialize={true}
       initialValues={{
         firstName: artist.name,
         username: artist.username,
@@ -135,7 +135,7 @@ const userArtistProfileScreen = () => {
         numSlotsOfWork: artist.numSlotsOfWork,
       }}
       validationSchema={validationSchema}
-      onSubmit={(values, { resetForm }) => sendWork(values, resetForm)}
+      onSubmit={(values) => sendWork(values)}
     >
       {({ handleChange, handleBlur, handleSubmit,values, errors, touched, setFieldValue, setValues, setErrors, setTouched }) => {
         const cancelChange = () => {
