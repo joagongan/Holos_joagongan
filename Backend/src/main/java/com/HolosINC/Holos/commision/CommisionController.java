@@ -37,8 +37,6 @@ public class CommisionController {
         try {
             CommissionDTO createdCommision = commisionService.createCommision(commision, artistId);
             return ResponseEntity.ok(createdCommision);
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
