@@ -1,5 +1,6 @@
 package com.HolosINC.Holos.stripe;
 
+import com.HolosINC.Holos.exceptions.AccessDeniedException;
 import com.HolosINC.Holos.exceptions.ResourceNotFoundException;
 import com.stripe.exception.StripeException;
 
@@ -38,6 +39,8 @@ public class PaymentController {
             throw new ResourceNotFoundException(e.getMessage());
         } catch (IllegalArgumentException e) {
             throw new ResourceNotFoundException(e.getMessage());
+        } catch (AccessDeniedException e) {
+            throw new AccessDeniedException(e.getMessage());
         } catch (StripeException e) { 
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_GATEWAY);
         } catch (Exception e) {
