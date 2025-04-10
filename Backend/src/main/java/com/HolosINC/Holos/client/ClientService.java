@@ -7,13 +7,7 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import com.HolosINC.Holos.auth.AuthoritiesRepository;
-import com.HolosINC.Holos.commision.Commision;
-import com.HolosINC.Holos.commision.CommisionRepository;
 import com.HolosINC.Holos.exceptions.ResourceNotFoundException;
-import com.HolosINC.Holos.milestone.Milestone;
-import com.HolosINC.Holos.milestone.MilestoneRepository;
 import com.HolosINC.Holos.model.BaseUser;
 import com.HolosINC.Holos.model.BaseUserRepository;
 import com.HolosINC.Holos.reports.Report;
@@ -24,19 +18,12 @@ public class ClientService {
 
 	private final ClientRepository clientRepository;
 	private BaseUserRepository baseUserRepository;
-	private CommisionRepository commisionRepository;
-	private MilestoneRepository milestoneRepository;
-	@SuppressWarnings("unused")
-	private AuthoritiesRepository authoritiesRepository;
 	private ReportRepository reportRepository;
 
 	@Autowired
-	public ClientService(ClientRepository clientRepository, BaseUserRepository baseUserRepository, CommisionRepository commisionRepository, MilestoneRepository milestoneRepository, AuthoritiesRepository authoritiesRepository,ReportRepository reportRepository) {
+	public ClientService(ClientRepository clientRepository, BaseUserRepository baseUserRepository,ReportRepository reportRepository) {
 		this.clientRepository = clientRepository;
 		this.baseUserRepository = baseUserRepository;
-		this.commisionRepository = commisionRepository;
-		this.milestoneRepository = milestoneRepository;
-		this.authoritiesRepository = authoritiesRepository;
 		this.reportRepository = reportRepository;
 	}
 
@@ -88,13 +75,6 @@ public class ClientService {
 
 			List<Report> reportsMade = reportRepository.findAllByMadeById(clientId);
 			reportRepository.deleteAll(reportsMade);
-	
-			List<Commision> commissions = commisionRepository.findAllByClientId(clientId);
-			for (Commision commission : commissions) {
-				List<Milestone> milestones = milestoneRepository.findAllByCommisionId(commission.getId());
-				milestoneRepository.deleteAll(milestones);
-			}
-			commisionRepository.deleteAll(commissions);
 	
 			if (client.getBaseUser() != null) {
 				baseUserRepository.deleteById(client.getBaseUser().getId());

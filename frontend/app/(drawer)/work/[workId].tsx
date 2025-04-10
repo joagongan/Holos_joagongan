@@ -125,7 +125,7 @@ export default function WorkDetailScreen() {
 
         <ScrollView style={styles.rightColumn}>
           <TouchableOpacity
-            onPress={() => router.push(`/explore`)}
+            onPress={() => router.push(`/`)}
             style={styles.backButton}
           >
             <Text style={styles.backArrow}>←</Text>

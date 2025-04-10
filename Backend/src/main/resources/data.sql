@@ -4,7 +4,7 @@ INSERT INTO authorities (id, authority) VALUES
 (3, 'ARTIST'),
 (4, 'ARTIST_PREMIUM');
 
-INSERT INTO base_user (id, first_name, username, password, email, phone_number, image_profile, created_user, authority) VALUES
+INSERT INTO base_user (id, name, username, password, email, phone_number, image_profile, created_user, authority) VALUES
 (1, 'client1', 'client1', '$2a$10$bQCIA7E2i4469olxpfn9keJqj22QmiDRZHQ2JbAKWUgYLK7ZgAnae', 'client1@gmail.com', '600619217', NULL, '2025-03-06', 2),
 (2, 'Jeenii', 'jeenni', '$2a$10$Kpe6DPMrQ3cVvUX7InB/C.l556UiudzbjVt/u/fhejE5l.hBW6FZi', 'reinapata20@gmail.com', '123456789', NULL, '2025-03-06', 2),
 (3, 'Emilio', 'emilio', '$2a$10$14GTyUA2jImRAIvh9p9yNe.2DC818K1/y7CX9VP3hWp4L5gnr9oeS', 'emilio.esp99@gmail.com', '123456789', NULL, '2025-03-06', 2),
@@ -122,11 +122,21 @@ INSERT INTO categories (id, name, description, image) VALUES
 
 
 INSERT INTO works_done(id, artist_id, name, description, price, image) VALUES 
-(25, 1, 'Sunset Painting', 'A beautiful sunset painting', 150.0, '/images/sunset_painting.jpg'), 
-(26, 1, 'Ocean Waves', 'A calming ocean scene with waves', 200.0, '/images/ocean_waves.jpg'), 
-(27, 1, 'Starry Night Replica', 'Inspired by Van Gogh`s Starry Night', 300.0, '/images/starry_night_replica.jpg'), 
-(28, 1, 'Abstract Art', 'A modern abstract composition', 180.0, '/images/abstract_art.jpg'),
-(29, 1, 'Forest Path', 'A peaceful forest pathway', 120.0, '/images/abstract_art.jpg');
+(200, 1, 'Sunset Painting', 'A beautiful sunset painting', 150.0, '/images/sunset_painting.jpg'), 
+(201, 1, 'Ocean Waves', 'A calming ocean scene with waves', 200.0, '/images/ocean_waves.jpg'), 
+(202, 1, 'Starry Night Replica', 'Inspired by Van Gogh`s Starry Night', 300.0, '/images/starry_night_replica.jpg'), 
+(203, 1, 'Abstract Art', 'A modern abstract composition', 180.0, '/images/abstract_art.jpg'),
+(204, 1, 'Forest Path', 'A peaceful forest pathway', 120.0, '/images/abstract_art.jpg'),
+(205, 2, 'Sunset Painting', 'A beautiful sunset painting', 150.0, '/images/sunset_painting.jpg'), 
+(206, 2, 'Ocean Waves', 'A calming ocean scene with waves', 200.0, '/images/ocean_waves.jpg'), 
+(207, 3, 'Starry Night Replica', 'Inspired by Van Gogh`s Starry Night', 300.0, '/images/starry_night_replica.jpg'), 
+(208, 3, 'Abstract Art', 'A modern abstract composition', 180.0, '/images/abstract_art.jpg'),
+(209, 4, 'Forest Path', 'A peaceful forest pathway', 120.0, '/images/abstract_art.jpg'),
+(210, 4, 'Sunset Painting', 'A beautiful sunset painting', 150.0, '/images/sunset_painting.jpg'), 
+(211, 5, 'Ocean Waves', 'A calming ocean scene with waves', 200.0, '/images/ocean_waves.jpg'), 
+(212, 5, 'Starry Night Replica', 'Inspired by Van Gogh`s Starry Night', 300.0, '/images/starry_night_replica.jpg'), 
+(213, 6, 'Abstract Art', 'A modern abstract composition', 180.0, '/images/abstract_art.jpg'),
+(214, 6, 'Forest Path', 'A peaceful forest pathway', 120.0, '/images/abstract_art.jpg');
 
 INSERT INTO status_kanban_order (id, artist_id, name, order_in_kanban, description, color) VALUES 
 (1, 1, 'To Do', 1, 'Tasks that need to be started', '#FF5733'),
@@ -473,28 +483,6 @@ INSERT INTO commisions (id, artist_id, name, description, price, client_id, stat
 (195, 20, 'Golden Wheat', 'A field of golden wheat under the setting sun', 240.0, 9, 'ENDED', '2025-08-20', 'FIFTYFIFTY', NULL),
 (196, 20, 'Ocean Breeze', 'A peaceful ocean breeze with gentle waves', 210.0, 10, 'REJECTED', '2025-08-21', 'INITIAL', NULL);
 
-INSERT INTO milestones (id, name, accepted, commision_id) VALUES 
-(1, 'Initial Sketch', TRUE, 6),
-(2, 'Line Art', FALSE, 6),
-(3, 'Coloring Phase 1', TRUE, 7),
-(4, 'Final Touches', FALSE, 7),
-(5, '3D Model Base', TRUE, 8),
-(6, 'Texture Painting', FALSE, 8),
-(7, 'Concept Art Approval', TRUE, 9),
-(8, 'First Revision', FALSE, 9),
-(9, 'Final Rendering', TRUE, 10),
-(10, 'Lighting Adjustments', FALSE, 10),
-(11, 'Sketch Approval', TRUE, 11),
-(12, 'Base Colors', FALSE, 11),
-(13, 'Initial Composition', TRUE, 12),
-(14, 'Details Refinement', FALSE, 12),
-(15, 'Pose Approval', TRUE, 13),
-(16, 'Shading Process', FALSE, 13),
-(17, 'Sculpt Base Form', TRUE, 14),
-(18, 'Final Texture Mapping', FALSE, 14),
-(19, 'Animation Draft', TRUE, 15),
-(20, 'Final Review', FALSE, 15);
-
 INSERT INTO artist_category(id,artist_id,category_id) VALUES
 (1, 1, 1),
 (2, 1, 2),
@@ -521,13 +509,6 @@ INSERT INTO report_types (id, type) VALUES
 (3, 'Customer Feedback'),
 (4, 'Technical Review'),
 (5, 'Annual Summary');
-
-INSERT INTO works (id, name, description, price, artist_id) VALUES 
-(1, 'Sunset Painting', 'A beautiful sunset painting', 150.00, 1),
-(2, 'Abstract Vibes', 'Modern abstract artwork', 200.50, 2),
-(3, 'Cityscape', 'A detailed cityscape at night', 300.00, 3),
-(4, 'Portrait of a Woman', 'Realistic portrait painting', 250.75, 1),
-(5, 'Sculpture: The Thinker', 'Bronze sculpture inspired by Rodin', 500.00, 4);
 
 
 INSERT INTO reports (id, name, description, status, made_by_id, reported_user_id, work_id, report_type_id) VALUES 

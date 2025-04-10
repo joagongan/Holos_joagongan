@@ -1,7 +1,6 @@
 package com.HolosINC.Holos.commision;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -9,7 +8,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import com.HolosINC.Holos.commision.DTOs.CommisionRequestDTO;
 import com.HolosINC.Holos.commision.DTOs.CommissionDTO;
@@ -92,10 +90,10 @@ public class CommisionController {
 
 
     @PutMapping("/{commissionId}/waiting")
-    public ResponseEntity<?> waitingCommission(
+    public ResponseEntity<?> waitingCommission(@Valid @RequestBody CommissionDTO commission,
             @PathVariable Long commissionId) {
         try {
-            commisionService.waitingCommission(commissionId);
+            commisionService.waitingCommission(commission, commissionId);
             return ResponseEntity.ok("En espera de confirmación del precio.");
         } catch (IllegalArgumentException | IllegalStateException e) {
             return ResponseEntity.badRequest().body("Error: " + e.getMessage());

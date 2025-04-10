@@ -44,7 +44,7 @@ public class StatusKanbanOrderController {
             statusKanbanOrderService.addStatusToKanban(
                 dto.getColor(),
                 dto.getDescription(),
-                dto.getNombre()
+                dto.getName()
             );
             return ResponseEntity.status(HttpStatus.CREATED).build();
         } catch (DataIntegrityViolationException e) {
@@ -101,15 +101,23 @@ public class StatusKanbanOrderController {
     @PutMapping("/{id}/next")
     @Operation(summary = "Avanza una comisión al siguiente estado Kanban")
     public ResponseEntity<Void> advanceCommisionToNextStatus(@PathVariable Long id) {
-        statusKanbanOrderService.nextStatusOfCommision(id);
-        return ResponseEntity.noContent().build();
+        try{
+            statusKanbanOrderService.nextStatusOfCommision(id);
+            return ResponseEntity.noContent().build();
+        } catch (Exception e) {
+            throw new BadRequestException(e.getMessage());
+        }
     }
 
     @PutMapping("/{id}/previous")
     @Operation(summary = "Retrocede la comisión al estado anterior Kanban")
     public ResponseEntity<Void> moveCommisionToPreviousStatus(@PathVariable Long id) {
-        statusKanbanOrderService.previousStatusOfCommision(id);
-        return ResponseEntity.noContent().build();
+        try{
+            statusKanbanOrderService.previousStatusOfCommision(id);
+            return ResponseEntity.noContent().build();
+        } catch (Exception e) {
+            throw new BadRequestException(e.getMessage());
+        }
     }
     
     @GetMapping("/{id}")

@@ -30,7 +30,7 @@ export const CommissionCard: React.FC<CommissionCardProps> = ({ id, title, image
       <View style={commissionCardstyles.content}>
         <View style={commissionCardstyles.titleContainer}>
           <Text style={commissionCardstyles.title}>{title}</Text>
-          <Text style={commissionCardstyles.artist}>by @{artistUsername}</Text>
+          <Text style={commissionCardstyles.artist}>por @{artistUsername}</Text>
         </View>
         <ProgressDots totalSteps={totalSteps} currentStep={currentStep} />
         <Text>{currentStep}/{totalSteps}</Text>

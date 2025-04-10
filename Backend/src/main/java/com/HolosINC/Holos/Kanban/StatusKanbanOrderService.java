@@ -49,7 +49,7 @@ public class StatusKanbanOrderService {
     }
 
     @Transactional
-    public StatusKanbanOrder addStatusToKanban(String color, String description, String nombre) {
+    public StatusKanbanOrder addStatusToKanban(String color, String description, String nombre) throws Exception {
         StatusKanbanOrder statusKanbanOrder = new StatusKanbanOrder();
         statusKanbanOrder.setColor(color);
         statusKanbanOrder.setDescription(description);
@@ -80,7 +80,7 @@ public class StatusKanbanOrderService {
             throw new BadRequestException("No se puede modificar un estado que está asignado a una o más comisiones.");
         }
     
-        sk.setName(dto.getNombre());
+        sk.setName(dto.getName());
         sk.setColor(dto.getColor());
         sk.setDescription(dto.getDescription());
     
@@ -166,7 +166,7 @@ public class StatusKanbanOrderService {
     }
 
     @Transactional
-    public void nextStatusOfCommision(Long id) {
+    public void nextStatusOfCommision(Long id) throws Exception {
         try {
             BaseUser currentUser = userService.findCurrentUser();
             Artist currentArtist = artistService.findArtistByUserId(currentUser.getId());
@@ -198,16 +198,13 @@ public class StatusKanbanOrderService {
             System.out.println("Artista de la comisión: " + c.getArtist().getId());
                 
             commisionRepository.save(c);
-
-        } catch (ResourceNotFoundException e) {
-            throw e;
         } catch (Exception e) {
             throw e;
         }
     }
 
     @Transactional
-    public void previousStatusOfCommision(Long id) {
+    public void previousStatusOfCommision(Long id) throws Exception {
         BaseUser currentUser = userService.findCurrentUser();
         Artist currentArtist = artistService.findArtistByUserId(currentUser.getId());
     
@@ -235,7 +232,7 @@ public class StatusKanbanOrderService {
     }
 
     @Transactional
-    public void reorderStatuses(List<Long> orderedIds) {
+    public void reorderStatuses(List<Long> orderedIds) throws Exception {
         if (orderedIds == null || orderedIds.isEmpty())
             throw new BadRequestException("La lista de IDs no puede estar vacía.");
 
