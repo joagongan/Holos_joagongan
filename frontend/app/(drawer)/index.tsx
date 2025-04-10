@@ -47,7 +47,7 @@ export default function ExploreScreen() {
         <View style={styles.container}>
           {/* Barra de búsqueda */}
           <TextInput
-            style={styles.searchBar}
+            style={[styles.searchBar, {marginTop: 25 }]}
             placeholder="Buscar trabajos o artistas..."
             value={searchQuery}
             onChangeText={setSearchQuery}

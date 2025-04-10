@@ -33,6 +33,10 @@ const SearchScreen = ({ query }: { query: string }) => {
     handleSearch();
   }, [query]);
 
+  useEffect(() => {
+    getNumColumns()
+  }, [width]);
+
   const getNumColumns = () => {
     if (width > 1200) {
       return 3; // grandes, 3 columnas
