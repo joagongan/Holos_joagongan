@@ -52,6 +52,7 @@ class ArtistRestController {
             Artist artist = artistService.findArtist(id);
             ArtistDTO artistDTO = EntityToDTOMapper.toArtistDTO(artist);
             return ResponseEntity.ok().body(artistDTO);
+
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(new MessageResponse(e.getMessage()));
         }
@@ -70,10 +71,10 @@ class ArtistRestController {
 
 	@GetMapping(value = "username/{username}")
 	@Operation(summary = "Get artist", description = "Retrieve a list of all artists")
-    public ResponseEntity<MessageResponse> findByUsername(@PathVariable("username") String username) {
+    public ResponseEntity<?> findByUsername(@PathVariable("username") String username) {
         try{
             Artist artist = artistService.findArtistByUsername(username);
-            return ResponseEntity.ok().body(new MessageResponse(artist.toString()));
+            return ResponseEntity.ok(artist);
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(new MessageResponse(e.getMessage()));
         }
