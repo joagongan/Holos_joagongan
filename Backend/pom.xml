@@ -261,14 +261,6 @@
 			<groupId>org.jacoco</groupId>
 			<artifactId>jacoco-maven-plugin</artifactId>
 			<version>0.8.8</version> <!-- Usa la versión más reciente -->
-				<configuration>
-					<excludes>
-						<exclude>**/ArtistController.java</exclude> <!-- Todos los Controller.java en subdirectorios -->
-						<exclude>**/!(*)Service.java</exclude> <!-- Todos los Service.java en subdirectorios -->
-						<exclude>**/src/main/java/com/HolosINC/Holos/**/*DTO.*</exclude>
-					</excludes>
-				</configuration>
-			
 				<executions>
 					<execution>
 					<id>prepare-agent</id> <!-- Asigna un id único -->
