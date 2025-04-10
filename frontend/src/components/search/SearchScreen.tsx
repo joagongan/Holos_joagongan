@@ -3,11 +3,10 @@ import { View, Text, TextInput, FlatList, TouchableOpacity, Image, ScrollView, u
 import { useRouter } from "expo-router";
 import { BASE_URL } from "@/src/constants/api";
 import { mobileStyles } from "@/src/styles/Search.styles";
-import { Work, Artist } from "@/src/constants/ExploreTypes"; // Añadir tipo Artist
-import { NativeStackView } from "@react-navigation/native-stack";
+import { Artist, SearchWorkDTO } from "@/src/constants/ExploreTypes"; // Añadir tipo Artist
 
 const SearchScreen = ({ query }: { query: string }) => {
-  const [workResults, setWorkResults] = useState<Work[]>([]);
+  const [workResults, setWorkResults] = useState<SearchWorkDTO[]>([]);
   const [artistResults, setArtistResults] = useState<Artist[]>([]);
   const [numColumns, setNumColumns] = useState<number>();
   const router = useRouter();
@@ -89,18 +88,18 @@ const SearchScreen = ({ query }: { query: string }) => {
                   >
                     <View style={mobileStyles.cardContainer}>
                       <Image
-                        source={{ 
-                          uri: isBase64Path(item.image)
-                            ?`${BASE_URL}${item.image}`
-                            :`data:image/jpeg;base64,${item.image}`
-                          }}
+                        source={{
+                          uri: item.image && isBase64Path(item.image)
+                            ? `${BASE_URL}${atob(item.image)}`
+                            : `data:image/jpeg;base64,${item.image}`,  // Estaria bien usar predeterminada(No está aun)
+                        }}
                         style={mobileStyles.image}
                         resizeMode="cover"
                         onError={() => console.log("Error cargando imagen:", item.image)}
                       />
                       <View style={mobileStyles.textContainer}>
                         <Text style={mobileStyles.title}>{item.name}</Text>
-                        <Text style={mobileStyles.artist}>por  @{item.artist?.baseUser?.username ?? "Desconocido"}</Text>
+                        <Text style={mobileStyles.artist}>por  @{item.artistUsername ?? "Desconocido"}</Text>
                         <Text style={mobileStyles.description}>{item.description}</Text>
                       </View>
                     </View>
@@ -129,7 +128,9 @@ const SearchScreen = ({ query }: { query: string }) => {
                       >
                         <Image
                           source={{
-                            uri: `${BASE_URL}${artist.baseUser?.imageProfile || '/default-image.png'}`  // Estaria bien usar predeterminada(No está aun)
+                            uri: artist.baseUser?.imageProfile && isBase64Path(artist.baseUser?.imageProfile)
+                              ? `${BASE_URL}${atob(artist.baseUser?.imageProfile)}`
+                              : `data:image/jpeg;base64,${artist.baseUser?.imageProfile}`,  // Estaria bien usar predeterminada(No está aun)
                           }}
                           style={mobileStyles.artistImage}
                         />
