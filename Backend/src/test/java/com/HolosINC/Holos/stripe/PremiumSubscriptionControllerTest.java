@@ -2,6 +2,7 @@ package com.HolosINC.Holos.stripe;
 
 import com.HolosINC.Holos.exceptions.BadRequestException;
 import com.HolosINC.Holos.exceptions.ResourceNotFoundException;
+import com.stripe.exception.ApiException;
 import com.stripe.model.Subscription;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -49,16 +50,26 @@ public class PremiumSubscriptionControllerTest {
     }
 
     @Test
-    public void testCancelSubscriptionSuccess() throws Exception {
-        when(stripeService.cancelSubscription()).thenReturn(subscription);
+    public void testCreateSubscriptionNoSubscriptionFound() throws Exception {
+        when(stripeService.createSubscription(any(String.class))).thenThrow(new ResourceNotFoundException("No subscription found"));
 
-        mockMvc.perform(post("/api/v1/stripe-subsciption/delete"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id").value("sub_123"));
+        mockMvc.perform(post("/api/v1/stripe-subsciption/create"))
+                .andExpect(status().isBadRequest());
 
-        verify(stripeService, times(1)).cancelSubscription();
+                verify(stripeService, times(0)).createSubscription(any(String.class));
     }
-    
+
+    @Test
+    public void testCreateSuscriptionStripeException() throws Exception {
+        ApiException stripeException = new ApiException("Stripe API is down", null, null, 500, null);
+
+        when(stripeService.createSubscription(any(String.class))).thenThrow(stripeException);
+
+        mockMvc.perform(post("/api/v1/stripe-subsciption/create"))
+        .andExpect(status().isBadRequest());
+
+        verify(stripeService, times(0)).createSubscription(any(String.class));
+    }
     @Test
     public void testCreateSubscriptionBadRequest() throws Exception {
         when(stripeService.createSubscription(any(String.class))).thenThrow(new BadRequestException("Payment method is invalid"));
@@ -71,6 +82,17 @@ public class PremiumSubscriptionControllerTest {
     }
 
     @Test
+    public void testCancelSubscriptionSuccess() throws Exception {
+        when(stripeService.cancelSubscription()).thenReturn(subscription);
+
+        mockMvc.perform(post("/api/v1/stripe-subsciption/delete"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value("sub_123"));
+
+        verify(stripeService, times(1)).cancelSubscription();
+    }
+    
+    @Test
     public void testCancelSubscriptionNoSubscriptionFound() throws Exception {
         when(stripeService.cancelSubscription()).thenThrow(new ResourceNotFoundException("No subscription found"));
 
@@ -78,6 +100,28 @@ public class PremiumSubscriptionControllerTest {
                 .andExpect(status().isNotFound());
 
         verify(stripeService, times(1)).cancelSubscription();
+    }
+
+    @Test
+    public void testCancelSubscriptionBadRequest() throws Exception {
+        when(stripeService.cancelSubscription()).thenThrow(new BadRequestException("Payment method is invalid"));
+
+        mockMvc.perform(post("/api/v1/stripe-subsciption/delete"))
+                .andExpect(status().isBadRequest());
+
+                verify(stripeService, times(1)).cancelSubscription();
+    }
+
+    @Test
+    public void testCancelSuscriptionStripeException() throws Exception {
+        ApiException stripeException = new ApiException("Stripe API is down", null, null, 500, null);
+
+        when(stripeService.cancelSubscription()).thenThrow(stripeException);
+
+        mockMvc.perform(post("/api/v1/stripe-subsciption/delete"))
+            .andExpect(status().isBadGateway());
+
+            verify(stripeService, times(1)).cancelSubscription();
     }
 }
 
