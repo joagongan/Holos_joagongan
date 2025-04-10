@@ -1,5 +1,13 @@
 import React, { useEffect, useState } from "react";
-import { View, Text, Image, ScrollView, TouchableOpacity, ActivityIndicator, TouchableWithoutFeedback } from "react-native";
+import {
+  View,
+  Text,
+  Image,
+  ScrollView,
+  TouchableOpacity,
+  ActivityIndicator,
+  TouchableWithoutFeedback,
+} from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { getArtistById } from "@/src/services/artistApi";
 import { getWorksDoneByArtist } from "@/src/services/WorksDoneApi";
@@ -38,7 +46,8 @@ export default function ArtistDetailScreen() {
   }, [artistId]);
 
   useEffect(() => {
-    navigation.setOptions({ title: `${artist?.baseUser.username}` });
+    if (!artist?.baseUser?.username) return;
+    navigation.setOptions({ title: artist.baseUser.username });
   }, [navigation, artist]);
 
   if (loading) {
@@ -62,27 +71,26 @@ export default function ArtistDetailScreen() {
           />
           <View style={styles.artistDetails}>
             <Text style={styles.artistName}>{artist?.baseUser?.username}</Text>
-            <Text style={styles.artistDescription}>@{artist?.baseUser?.username}</Text>
+            <Text style={styles.artistDescription}>
+              @{artist?.baseUser?.username}
+            </Text>
           </View>
         </View>
 
-          {/* Botones de acción */}
-          <View style={styles.buttonContainer}>
-            <TouchableOpacity
-              style={styles.button}
-              onPress={() =>
-                router.push({
-                  pathname: "/commissions/request/[artistUsername]",
-                  params: { artistUsername: String(artist?.baseUser.username) },
-                })
-              }
-            >
-              <Text style={styles.buttonText}>Solicitar trabajo</Text>
-            </TouchableOpacity>
-
-          
-          
-          </View>
+        {/* Botones de acción */}
+        <View style={styles.buttonContainer}>
+          <TouchableOpacity
+            style={styles.button}
+            onPress={() =>
+              router.push({
+                pathname: "/commissions/request/[artistUsername]",
+                params: { artistUsername: String(artist?.baseUser.username) },
+              })
+            }
+          >
+            <Text style={styles.buttonText}>Solicitar trabajo</Text>
+          </TouchableOpacity>
+        </View>
 
         {/* Obras del artista */}
         <View style={styles.artworksContainer}>
@@ -90,7 +98,6 @@ export default function ArtistDetailScreen() {
           <View style={styles.artworksList}>
             {works.map((work: Artwork) => (
               <View key={work.id} style={styles.artworkItem}>
-
                 <Image
                   source={
                     work.image
@@ -101,7 +108,12 @@ export default function ArtistDetailScreen() {
                 />
                 <Text style={styles.artworkTitle}>{work.name}</Text>
                 <View style={styles.reportDropDownContainer}>
-                  <ReportDropdown workId={work.id} menuVisibleId={menuVisibleId} setMenuVisibleId={setMenuVisibleId} isBigScreen={false} />
+                  <ReportDropdown
+                    workId={work.id}
+                    menuVisibleId={menuVisibleId}
+                    setMenuVisibleId={setMenuVisibleId}
+                    isBigScreen={false}
+                  />
                 </View>
               </View>
             ))}
