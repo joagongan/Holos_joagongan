@@ -1,8 +1,6 @@
-import { StyleSheet, Platform } from "react-native";
+import { StyleSheet } from "react-native";
 
-const isWeb = Platform.OS === "web";
-
-const styles = StyleSheet.create({
+export const mobileStyles = StyleSheet.create({
   container: {
     paddingTop: 20,
     paddingHorizontal: 20,
@@ -14,7 +12,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#F9FAFB",
   },
   headerRow: {
-    flexDirection: isWeb ? "row" : "column",
+    flexDirection: "column",
     alignItems: "center",
     justifyContent: "space-between",
     width: "100%",
@@ -22,7 +20,7 @@ const styles = StyleSheet.create({
     gap: 20,
   },
   buttonContainer: {
-    flexDirection: isWeb ? "row" : "column",
+    flexDirection: "column",
     alignItems: "center",
     width: "100%",
     flexWrap: "wrap",
@@ -31,12 +29,164 @@ const styles = StyleSheet.create({
     gap: 20,
   },
   imageSection: {
-    width: isWeb ? "30%" : "100%",
+    width: "100%",
     alignItems: "center",
     justifyContent: "center",
   },
   formSection: {
-    width: isWeb ? "68%" : "100%",
+    width: "100%",
+    backgroundColor: "#FFFFFFDD",
+    padding: 20,
+    borderRadius: 12,
+    shadowColor: "#000",
+    shadowOpacity: 0.1,
+    shadowOffset: { width: 0, height: 2 },
+    shadowRadius: 8,
+    elevation: 3,
+  },
+  title: {
+    paddingTop: 20,
+    fontFamily: "Merriweather-Bold",
+    fontSize: 30,
+    marginBottom: 24,
+    textAlign: "center",
+  },
+  imageProfile: {
+    width: "50%",
+    aspectRatio: 3 / 4,
+    borderRadius: 16,
+    resizeMode: "cover",
+    backgroundColor: "#EEE",
+    marginBottom: 10,
+  },
+  secondButtonContainer: {
+    width: "20%",
+  },
+  image: {
+    width: 120,
+    height: 120,
+    borderRadius: 60,
+    marginBottom: 10,
+  },
+  priceImage: {
+    width: "20%",
+    aspectRatio: 3 / 4,
+    resizeMode: "contain",
+    borderRadius: 10,
+    marginTop: 10,
+    alignSelf: "center",
+  },
+  stripeButton: {
+    backgroundColor: "#3D2C47",
+    padding: 20,
+    borderRadius: 10,
+    alignItems: "center",
+    justifyContent: "center",
+    marginTop: 10,
+    textAlign: "center",
+    alignSelf: "center",
+    minWidth: 180,
+    maxWidth: "90%",
+    flexWrap: "wrap",
+  },
+  stripeButtonSmall: {
+    backgroundColor: "#3D2C47",
+    paddingVertical: 8,
+    paddingHorizontal: 16,
+    borderRadius: 8,
+    alignItems: "center",
+    justifyContent: "center",
+    marginTop: 10,
+    alignSelf: "center",
+    maxWidth: "90%",
+  },
+  stripeButtonSmallAlt: {
+    backgroundColor: "#3D2C47",
+    paddingVertical: 8,
+    paddingHorizontal: 16,
+    borderRadius: 8,
+    alignItems: "center",
+    marginTop: 16,
+    alignSelf: "center",
+    width: "60%",
+  },
+  stripeButtonText: {
+    color: "#FFF",
+    fontWeight: "bold",
+    fontSize: 16,
+    textAlign: "center",
+  },
+  label: {
+    alignSelf: "flex-start",
+    fontFamily: "Merriweather-Bold",
+    marginTop: 12,
+    fontSize: 24,
+    color: "#374151",
+  },
+  input: {
+    width: "100%",
+    padding: 10,
+    borderWidth: 1,
+    borderColor: "#E5E7EB",
+    borderRadius: 8,
+    backgroundColor: "#FFFFFF",
+    marginTop: 5,
+    fontSize: 20,
+  },
+  error: {
+    color: "red",
+    alignSelf: "flex-start",
+    fontSize: 12,
+  },
+  readOnlyBox: {
+    backgroundColor: "#F3F4F6",
+    padding: 10,
+    borderRadius: 8,
+    width: "100%",
+    marginBottom: 10,
+  },
+  readOnlyText: {
+    color: "#1F2937",
+    fontSize: 20,
+    paddingStart: 40,
+  },
+});
+
+export const desktopStyles = StyleSheet.create({
+  container: {
+    paddingTop: 20,
+    paddingHorizontal: 20,
+    backgroundColor: "#F9FAFB",
+    flex: 1,
+    alignItems: "center",
+  },
+  scrollView: {
+    backgroundColor: "#F9FAFB",
+  },
+  headerRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    width: "100%",
+    flexWrap: "wrap",
+    gap: 20,
+  },
+  buttonContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    width: "100%",
+    flexWrap: "wrap",
+    justifyContent: "center",
+    paddingTop: 20,
+    gap: 20,
+  },
+  imageSection: {
+    width: "30%",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  formSection: {
+    width: "68%",
     backgroundColor: "#FFFFFFDD",
     padding: 20,
     borderRadius: 12,
@@ -62,7 +212,7 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   secondButtonContainer: {
-    width: isWeb ? "30%" : "20%",
+    width: "30%",
   },
   image: {
     width: 120,
@@ -154,5 +304,3 @@ const styles = StyleSheet.create({
     paddingStart: 40,
   },
 });
-
-export default styles;
