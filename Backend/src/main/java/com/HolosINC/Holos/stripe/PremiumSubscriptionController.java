@@ -31,7 +31,7 @@ public class PremiumSubscriptionController {
         String accountId = stripeService.createSubscription(paymentMethod);
         return new ResponseEntity<String>(accountId, HttpStatus.OK);
         } catch (ResourceNotFoundException e) {
-            throw new ResourceNotFoundException("Comisión o artista no encontrado: " + e.getMessage());
+            throw new ResourceNotFoundException(e.getMessage());
         } catch (BadRequestException e) {
             throw new BadRequestException(e.getMessage());
         } catch (StripeException e) { 
