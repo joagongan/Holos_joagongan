@@ -5,9 +5,7 @@ import com.HolosINC.Holos.artist.Artist;
 import com.HolosINC.Holos.artist.ArtistRepository;
 import com.HolosINC.Holos.exceptions.ResourceNotOwnedException;
 import com.HolosINC.Holos.search.DTOs.SearchWorkDTO;
-import com.HolosINC.Holos.work.Work;
 import com.HolosINC.Holos.work.WorkRepository;
-import com.HolosINC.Holos.worksdone.WorksDone;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -61,6 +59,7 @@ public class SearchService {
             return workRepository.searchByPriceRange(minPrice, maxPrice, pageable);
         }
 
+        return workRepository.searchAll(pageable);
         return workRepository.searchAll(pageable);
     }
 

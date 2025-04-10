@@ -1,5 +1,5 @@
 import axios from "axios";
-import { API_URL } from "@/src/constants/api";
+import { API_URL, BASE_URL } from "@/src/constants/api";
 import { WorksDone, Artist } from "@/src/constants/CommissionTypes";
 import api from "@/src/services/axiosInstance";
 import { handleError } from "@/src/utils/handleError";
@@ -9,7 +9,7 @@ const WORKS_DONE_URL = `${API_URL}/worksdone`;
 
 export const getAllWorksDone = async (): Promise<WorksDoneDTO[]> => {
   try {
-    const response = await api.get(WORKS_DONE_URL);
+    const response = await api.get(`${BASE_URL}/api/v1/search/works`);
     return response.data; // Aquí será un array de WorksDoneDTO
   } catch (error) {
     handleError(error, "Error fetching works done");
