@@ -126,7 +126,17 @@ INSERT INTO works_done(id, artist_id, name, description, price, image) VALUES
 (201, 1, 'Ocean Waves', 'A calming ocean scene with waves', 200.0, '/images/ocean_waves.jpg'), 
 (202, 1, 'Starry Night Replica', 'Inspired by Van Gogh`s Starry Night', 300.0, '/images/starry_night_replica.jpg'), 
 (203, 1, 'Abstract Art', 'A modern abstract composition', 180.0, '/images/abstract_art.jpg'),
-(204, 1, 'Forest Path', 'A peaceful forest pathway', 120.0, '/images/abstract_art.jpg');
+(204, 1, 'Forest Path', 'A peaceful forest pathway', 120.0, '/images/abstract_art.jpg'),
+(205, 2, 'Sunset Painting', 'A beautiful sunset painting', 150.0, '/images/sunset_painting.jpg'), 
+(206, 2, 'Ocean Waves', 'A calming ocean scene with waves', 200.0, '/images/ocean_waves.jpg'), 
+(207, 3, 'Starry Night Replica', 'Inspired by Van Gogh`s Starry Night', 300.0, '/images/starry_night_replica.jpg'), 
+(208, 3, 'Abstract Art', 'A modern abstract composition', 180.0, '/images/abstract_art.jpg'),
+(209, 4, 'Forest Path', 'A peaceful forest pathway', 120.0, '/images/abstract_art.jpg'),
+(210, 4, 'Sunset Painting', 'A beautiful sunset painting', 150.0, '/images/sunset_painting.jpg'), 
+(211, 5, 'Ocean Waves', 'A calming ocean scene with waves', 200.0, '/images/ocean_waves.jpg'), 
+(212, 5, 'Starry Night Replica', 'Inspired by Van Gogh`s Starry Night', 300.0, '/images/starry_night_replica.jpg'), 
+(213, 6, 'Abstract Art', 'A modern abstract composition', 180.0, '/images/abstract_art.jpg'),
+(214, 6, 'Forest Path', 'A peaceful forest pathway', 120.0, '/images/abstract_art.jpg');
 
 INSERT INTO status_kanban_order (id, artist_id, name, order_in_kanban, description, color) VALUES 
 (1, 1, 'To Do', 1, 'Tasks that need to be started', '#FF5733'),

@@ -1,13 +1,13 @@
 import { API_URL } from "@/src/constants/api";
 import api from "@/src/services/axiosInstance";
 import { handleError } from "@/src/utils/handleError";
-import {
-  Commission,
-  CommissionDTO,
-  HistoryCommisionsDTO,
-} from "@/src/constants/CommissionTypes";
+import { ClientCommissionDTO, Commission, CommissionDTO, CommissionProtected, HistoryCommisionsDTO } from "@/src/constants/CommissionTypes";
+
 
 const COMMISSION_URL = `${API_URL}/commisions`;
+
+
+
 
 // Obtener todas las comisiones
 export const getAllCommissions = async (): Promise<Commission[]> => {
@@ -153,6 +153,30 @@ export const cancelCommission = async (
     });
   } catch (error) {
     handleError(error, "Error cancelling commission");
+    throw error;
+  }
+};
+
+export const requestChangesCommission = async (id: number, updatedCommission: CommissionProtected, token: string) => {
+  try {
+    await api.put(`${COMMISSION_URL}/${id}/requestChanges`, updatedCommission, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+  } catch (error) {
+    handleError(error, "Error requesting changes to commission");
+    throw error;
+  }
+};
+
+export const getAcceptedCommissions = async (token: string): Promise<ClientCommissionDTO[]> => {
+  try {
+    const response = await api.get(`${COMMISSION_URL}/historyOfCommisions`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    // asume que response.data.accepted es un array de ClientCommissionDTO
+    return response.data.accepted;
+  } catch (error) {
+    handleError(error, "Error fetching accepted commissions");
     throw error;
   }
 };

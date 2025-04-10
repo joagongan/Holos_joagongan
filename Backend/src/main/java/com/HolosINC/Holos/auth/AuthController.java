@@ -6,6 +6,7 @@ import java.util.stream.Collectors;
 import jakarta.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -92,7 +93,7 @@ public class AuthController {
 			ObjectMapper objectMapper = new ObjectMapper();
 			SignupRequest signupRequest = objectMapper.readValue(signupRequestJson, SignupRequest.class);
 
-			if (imageProfile != null && !imageProfile.isEmpty())
+			if (imageProfile != null && !imageProfile.isEmpty()) 
 				signupRequest.setImageProfile(imageProfile);
 
 			if (tableCommissionsPrice != null && !tableCommissionsPrice.isEmpty()) {
@@ -102,7 +103,7 @@ public class AuthController {
 			authService.createUser(signupRequest);
 			return ResponseEntity.ok(new MessageResponse("User registered successfully!"));
 		} catch (Exception e) {
-			return ResponseEntity.badRequest().body(new MessageResponse("Error: " + e.getMessage()));
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new MessageResponse("Error during registration: " + e.getMessage()));
 		}
 	}
 
@@ -131,7 +132,7 @@ public class AuthController {
 	
 	@DeleteMapping("/delete/{id}")
 	public ResponseEntity<MessageResponse> deleteUser(@RequestParam Long id) {
-		try{
+		try {
 			authService.deleteUser(id);
 			return ResponseEntity.ok(new MessageResponse("User deleted successfully!"));
 		}catch (Exception e) {

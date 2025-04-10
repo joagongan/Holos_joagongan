@@ -44,6 +44,16 @@ export interface Work {
   image: string;
 }
 
+
+export interface SearchWorkDTO {
+  id: number;
+  name: string;
+  description: string;
+  price: number;
+  artistUsername: String;
+  image: string;
+}
+
 export interface WorksDoneDTO {
   id: number;
   name: string;

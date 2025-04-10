@@ -321,4 +321,13 @@ export const desktopStyles = StyleSheet.create({
     justifyContent: "space-between",
     paddingHorizontal: 16,
   },
+  searchBar: {
+    backgroundColor: "#F4F4F2",
+    padding: 10,
+    marginHorizontal: 16,
+    borderRadius: 8,
+    fontSize: 16,
+    color: "#333",
+    marginBottom: 16,
+  },
 });

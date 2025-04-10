@@ -5,15 +5,15 @@ import java.util.List;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.util.Pair;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import com.HolosINC.Holos.Kanban.DTOs.StatusKanbanCreateDTO;
 import com.HolosINC.Holos.Kanban.DTOs.StatusKanbanDTO;
 import com.HolosINC.Holos.Kanban.DTOs.StatusKanbanFullResponseDTO;
 import com.HolosINC.Holos.Kanban.DTOs.StatusKanbanUpdateDTO;
-import com.HolosINC.Holos.Kanban.DTOs.StatusKanbanWithCommisionsDTO;
 import com.HolosINC.Holos.exceptions.BadRequestException;
 import com.HolosINC.Holos.exceptions.ResourceNotFoundException;
 import com.HolosINC.Holos.exceptions.ResourceNotOwnedException;
@@ -36,29 +36,20 @@ public class StatusKanbanOrderController {
 	}
 
     @PostMapping
-    public ResponseEntity<StatusKanbanOrder> addStatusToKanban(@RequestParam String color, @RequestParam String description, 
-    @RequestParam String nombre, @RequestParam Integer artistId) throws Exception{
-        StatusKanbanOrder sk = statusKanbanOrderService.addStatusToKanban(color, description, nombre, artistId);
-        return new ResponseEntity<>(sk, HttpStatus.OK);
-    }
-
-    //Cambiar color o descripción ¿Añadir nombre?
-
-    @PutMapping("/{id}/updateKanban")
-    public ResponseEntity<StatusKanbanOrder> updateKanban(@RequestBody StatusKanbanOrder sk) throws Exception{
-        Integer id = sk.getId().intValue();
-        String color = sk.getColor();
-        String nombre = sk.getName();
-        String description = sk.getDescription();
-
-        StatusKanbanOrder sk2 = statusKanbanOrderService.updateKanban(id, color, description, nombre);
-        return new ResponseEntity<>(sk2, HttpStatus.OK);
-    }
-
-    @PutMapping("/{id}/updateKanbanOrder")
-    public ResponseEntity<StatusKanbanOrder> updateOrder(@PathVariable Long id, @RequestBody Integer order) throws Exception{
-        StatusKanbanOrder sk2 = statusKanbanOrderService.updateOrder(id, order);
-        return new ResponseEntity<>(sk2, HttpStatus.OK);
+    @Operation(summary = "Crea un nuevo estado Kanban para el artista autenticado")
+    public ResponseEntity<?> addStatusToKanban(@Valid @RequestBody StatusKanbanCreateDTO dto) {
+        try {
+            statusKanbanOrderService.addStatusToKanban(dto);
+            return ResponseEntity.status(HttpStatus.CREATED).build();
+        } catch (DataIntegrityViolationException e) {
+            return ResponseEntity
+                    .badRequest()
+                    .body("Ya existe un estado con ese nombre para este artista.");
+        } catch (Exception e) {
+            return ResponseEntity
+                    .badRequest()
+                    .body("No se pudo crear el estado Kanban: " + e.getMessage());
+        }
     }
 
     @PutMapping("/update")
@@ -88,15 +79,12 @@ public class StatusKanbanOrderController {
     @GetMapping
     @Operation(summary = "Obtiene todos los estados Kanban del artista junto con sus comisiones asociadas")
     public ResponseEntity<StatusKanbanFullResponseDTO> getAllStatusKanban() {
-        Pair<List<StatusKanbanDTO>, List<StatusKanbanWithCommisionsDTO>> data =
-                statusKanbanOrderService.getAllStatusFromArtist();
-
-        StatusKanbanFullResponseDTO response = new StatusKanbanFullResponseDTO(
-                data.getFirst(),
-                data.getSecond()
-        );
-
-        return ResponseEntity.ok(response);
+        try {
+            StatusKanbanFullResponseDTO response = statusKanbanOrderService.getAllStatusFromArtist();
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().build();
+        }
     }
 
     @PutMapping("/{id}/next")
