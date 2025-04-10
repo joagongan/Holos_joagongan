@@ -6,6 +6,7 @@ import java.util.stream.Collectors;
 import jakarta.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -97,7 +98,6 @@ public class AuthController {
 			ObjectMapper objectMapper = new ObjectMapper();
 			SignupRequest signupRequest = objectMapper.readValue(signupRequestJson, SignupRequest.class);
 
-			// Validar y asignar la imagen de perfil
 			if (imageProfile != null && !imageProfile.isEmpty()) {
 				signupRequest.setImageProfile(imageProfile);
 			}
@@ -106,15 +106,10 @@ public class AuthController {
 				signupRequest.setTableCommissionsPrice(tableCommissionsPrice);
 			}
 
-			// Registrar usuario
 			authService.createUser(signupRequest);
-			return ResponseEntity.ok(new MessageResponse("Usuario registrado con exito!"));
-
-		} catch (IllegalArgumentException e) {
-			return ResponseEntity.badRequest().body(e.getMessage());
+			return ResponseEntity.ok(new MessageResponse("User registered successfully!"));
 		} catch (Exception e) {
-			e.printStackTrace(); // Para ver el error en consola
-			return ResponseEntity.badRequest().body(new MessageResponse("Error durante el registro: " + e.getMessage()));
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new MessageResponse("Error during registration: " + e.getMessage()));
 		}
 	}
 
@@ -133,11 +128,11 @@ public class AuthController {
 
 	@DeleteMapping("/delete/{id}")
 	public ResponseEntity<MessageResponse> deleteUser(@RequestParam Long id) {
-		try{
+		try {
 			authService.deleteUser(id);
-			return ResponseEntity.ok(new MessageResponse("Usuario eliminado con exito!"));
+			return ResponseEntity.ok(new MessageResponse("User deleted successfully!"));
 		} catch (Exception e) {
-			return ResponseEntity.badRequest().body(new MessageResponse(e.getMessage()));
+			return ResponseEntity.badRequest().body(new MessageResponse("Error: " + e.getMessage()));
 		}
 	}
 

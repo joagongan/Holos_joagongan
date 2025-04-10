@@ -1,5 +1,6 @@
 package com.HolosINC.Holos.search;
 
+
 import com.HolosINC.Holos.artist.Artist;
 import com.HolosINC.Holos.artist.ArtistRepository;
 import com.HolosINC.Holos.exceptions.ResourceNotOwnedException;
@@ -18,6 +19,12 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+
+import com.HolosINC.Holos.artist.Artist;
+import com.HolosINC.Holos.artist.ArtistRepository;
+import com.HolosINC.Holos.exceptions.ResourceNotOwnedException;
+import com.HolosINC.Holos.work.Work;
+import com.HolosINC.Holos.work.WorkRepository;
 
 @Service
 public class SearchService {
@@ -38,14 +45,18 @@ public class SearchService {
             throw new ResourceNotOwnedException("minPrice no puede ser mayor que maxPrice.");
         }
 
+        if (page < 0) {
+            throw new ResourceNotOwnedException("El número de página no puede ser negativo.");
+        }
+
         if (query != null && (minPrice != null || maxPrice != null)) {
             return workRepository.searchByTitleAndPrice(query, minPrice, maxPrice, pageable);
         }
 
         if (query != null) {
             return workRepository.searchByTitle(query, pageable);
-        } 
-        
+        }
+
         if (minPrice != null || maxPrice != null) {
             return workRepository.searchByPriceRange(minPrice, maxPrice, pageable);
         }
@@ -71,8 +82,7 @@ public class SearchService {
 
             List<Artist> combinedResults = Stream.concat(
                     Stream.concat(byName.getContent().stream(), byUsername.getContent().stream()),
-                    byEmail.getContent().stream()
-            ).distinct().collect(Collectors.toList());
+                    byEmail.getContent().stream()).distinct().collect(Collectors.toList());
 
             return new PageImpl<>(combinedResults, pageable, combinedResults.size());
         }
@@ -89,7 +99,8 @@ public class SearchService {
         return workRepository.searchByArtist(artistId, pageable);
     }
 
-    public Page<Object> searchAll(String query, Integer minWorksDone, Double minPrice, Double maxPrice, int page, int size) {
+    public Page<Object> searchAll(String query, Integer minWorksDone, Double minPrice, Double maxPrice, int page,
+            int size) {
         Pageable pageable = PageRequest.of(page, size);
 
         if (minPrice != null && maxPrice != null && minPrice > maxPrice) {

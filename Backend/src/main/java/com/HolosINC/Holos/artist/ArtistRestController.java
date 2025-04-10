@@ -25,14 +25,16 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 @Tag(name = "Artist", description = "API for managing artists")
 class ArtistRestController {
 
-	private final ArtistService artistService;
-
-	@Autowired
-	public ArtistRestController(ArtistService artistService) {
-		this.artistService = artistService;
+    private final ArtistService artistService;
+    
+    private final ProfileService profileService;
+	
+    @Autowired
+	public ArtistRestController(ArtistService artistService, ProfileService profileService) {
+        this.artistService = artistService;
+        this.profileService = profileService;
 	}
-	@Autowired
-    private ProfileService profileService;
+	
 
     @PutMapping("/update")
     public ResponseEntity<?> updateProfile(@RequestBody BaseUserDTO baseUserDTO) {

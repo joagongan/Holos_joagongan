@@ -45,6 +45,10 @@ public class CommisionService {
         this.statusKanbanOrderService = statusKanbanOrderService;
     }
 
+    public List<Commision> getAllCommisions() {
+        return commisionRepository.findAll();
+    }
+
     @Transactional
     public CommissionDTO createCommision(CommisionRequestDTO commisionDTO, Long artistId) throws Exception {
         try {

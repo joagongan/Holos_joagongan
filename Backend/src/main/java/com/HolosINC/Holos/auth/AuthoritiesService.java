@@ -54,7 +54,7 @@ public class AuthoritiesService {
 	}
 
 	@Transactional
-	public void createUser(@Valid SignupRequest request) throws IllegalArgumentException, Exception {
+	public void createUser(@Valid SignupRequest request) throws Exception {
 
 		try {
 			if(authoritiesRepository.existsBaseUserByUsername(request.getUsername()))
@@ -106,8 +106,6 @@ public class AuthoritiesService {
 				// Guardar el usuario base si no es ARTIST ni CLIENT
 				baseUserService.save(user);
 			}
-		} catch (IllegalArgumentException e) {
-			throw e;
 		} catch (Exception e) {
 			throw e;
 		}
