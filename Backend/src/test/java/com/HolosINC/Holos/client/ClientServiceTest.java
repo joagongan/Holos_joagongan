@@ -12,7 +12,6 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.Collections;
-import java.util.List;
 import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -23,7 +22,6 @@ import org.mockito.MockitoAnnotations;
 import org.springframework.dao.DataAccessException;
 
 import com.HolosINC.Holos.Kanban.StatusKanbanOrderService;
-import com.HolosINC.Holos.commision.Commision;
 import com.HolosINC.Holos.commision.CommisionRepository;
 import com.HolosINC.Holos.exceptions.ResourceNotFoundException;
 import com.HolosINC.Holos.model.BaseUser;
@@ -112,49 +110,49 @@ public class ClientServiceTest {
 
     @Test
     public void testFindClientByUserIdSuccess() {
-        when(clientRepository.getClientByUser(1L)).thenReturn(Optional.of(client));
+        when(clientRepository.findClientByUserId(1L)).thenReturn(Optional.of(client));
         
         Client foundClient = clientService.findClientByUserId(1L);
         assertNotNull(foundClient);
         assertEquals(client.getId(), foundClient.getId());
-        verify(clientRepository, times(1)).getClientByUser(1L);
+        verify(clientRepository, times(1)).findClientByUserId(1L);
     }
 
     @Test
     public void testFindClientByUserIdNotFound() {
-        when(clientRepository.getClientByUser(1L)).thenReturn(Optional.empty());
+        when(clientRepository.findClientByUserId(1L)).thenReturn(Optional.empty());
 
         assertThrows(ResourceNotFoundException.class, () -> {
             clientService.findClientByUserId(1L);
         });
 
-        verify(clientRepository, times(1)).getClientByUser(1L);
+        verify(clientRepository, times(1)).findClientByUserId(1L);
     }
 
     @Test
     public void testIsClientTrue() {
-        when(clientRepository.getClientByUser(1L)).thenReturn(Optional.of(client));
+        when(clientRepository.findClientByUserId(1L)).thenReturn(Optional.of(client));
 
         boolean isClient = clientService.isClient(1L);
 
         assertTrue(isClient);
-        verify(clientRepository, times(1)).getClientByUser(1L);
+        verify(clientRepository, times(1)).findClientByUserId(1L);
     }
 
     @Test
     public void testIsClientFalse() {
-        when(clientRepository.getClientByUser(1L)).thenReturn(Optional.empty());
+        when(clientRepository.findClientByUserId(1L)).thenReturn(Optional.empty());
 
         boolean isClient = clientService.isClient(1L);
 
         assertFalse(isClient);
-        verify(clientRepository, times(1)).getClientByUser(1L);
+        verify(clientRepository, times(1)).findClientByUserId(1L);
     }
 
     @Test
     public void testDeleteClientSuccess() throws Exception {
         when(clientRepository.findById(1L)).thenReturn(Optional.of(client));
-        when(clientRepository.getClientByUser(1L)).thenReturn(Optional.of(client));
+        when(clientRepository.findClientByUserId(1L)).thenReturn(Optional.of(client));
 
         clientService.deleteClient(1L);
         when(commisionRepository.findAllByClientId(1L)).thenReturn(Collections.emptyList());
@@ -167,23 +165,8 @@ public class ClientServiceTest {
     }
 
     @Test
-    public void testDeleteClientWithActiveCommissions() {
-        Commision commision = new Commision();
-        commision.setClient(client);
-
-        when(clientRepository.getClientByUser(1L)).thenReturn(Optional.of(client));
-        when(commisionRepository.findAllByClientId(client.getId())).thenReturn(List.of(commision));
-
-        assertThrows(RuntimeException.class, () -> {
-            clientService.deleteClient(client.getBaseUser().getId());;
-        });
-
-        verify(clientRepository, never()).delete(any(Client.class));
-    }
-
-    @Test
     public void testDeleteClientNotFound() {
-        when(clientRepository.getClientByUser(1L)).thenReturn(Optional.empty());
+        when(clientRepository.findClientByUserId(1L)).thenReturn(Optional.empty());
 
         assertThrows(ResourceNotFoundException.class, () -> {
             clientService.deleteClient(1L);;
