@@ -60,7 +60,6 @@ public class SearchService {
         }
 
         return workRepository.searchAll(pageable);
-        return workRepository.searchAll(pageable);
     }
 
     public Page<Artist> searchArtists(String query, Integer minWorksDone, int page, int size) {
