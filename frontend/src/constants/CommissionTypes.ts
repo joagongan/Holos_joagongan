@@ -131,6 +131,8 @@ export interface CommissionInProgress {
     
     name: string;
 
+    id: number;
+
     artistUsername: string;
 
     currentStep: number;
