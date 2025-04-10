@@ -27,6 +27,7 @@ export interface Artist {
   username: string;
   email: string;
   subscriptionId: string | null;
+  imageProfile: string;
 }
 
 export type User = Client | Artist;

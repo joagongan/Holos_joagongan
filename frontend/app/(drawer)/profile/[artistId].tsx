@@ -5,7 +5,6 @@ import {
   Image,
   ScrollView,
   TouchableOpacity,
-  ActivityIndicator,
   TouchableWithoutFeedback,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
@@ -46,8 +45,8 @@ export default function ArtistDetailScreen() {
   }, [artistId]);
 
   useEffect(() => {
-    if (!artist?.baseUser?.username) return;
-    navigation.setOptions({ title: artist.baseUser.username });
+    if (!artist?.username) return;
+    navigation.setOptions({ title: artist.username });
   }, [navigation, artist]);
 
   if (loading) {
@@ -66,13 +65,13 @@ export default function ArtistDetailScreen() {
         {/* Información del artista */}
         <View style={styles.header}>
           <Image
-            source={{ uri: `${API_URL}${artist?.baseUser?.imageProfile}` }}
+            source={{ uri: `${API_URL}${artist?.imageProfile}` }}
             style={styles.artistImage}
           />
           <View style={styles.artistDetails}>
-            <Text style={styles.artistName}>{artist?.baseUser?.username}</Text>
+            <Text style={styles.artistName}>{artist?.username}</Text>
             <Text style={styles.artistDescription}>
-              @{artist?.baseUser?.username}
+              @{artist?.username}
             </Text>
           </View>
         </View>
@@ -81,12 +80,13 @@ export default function ArtistDetailScreen() {
         <View style={styles.buttonContainer}>
           <TouchableOpacity
             style={styles.button}
-            onPress={() =>
+            onPress={() => {
+              if (!artist?.username) return;
               router.push({
                 pathname: "/commissions/request/[artistUsername]",
-                params: { artistUsername: String(artist?.baseUser.username) },
-              })
-            }
+                params: { artistUsername: artist.username },
+              });
+            }}
           >
             <Text style={styles.buttonText}>Solicitar trabajo</Text>
           </TouchableOpacity>
