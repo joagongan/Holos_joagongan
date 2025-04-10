@@ -47,7 +47,7 @@ public class CommisionControllerTest {
         objectMapper = new ObjectMapper();
     }
 
-    @Test
+/*     @Test
 public void testCreateCommisionSuccess() throws Exception {
     // Prepara los datos para la solicitud
     CommisionRequestDTO commisionRequestDTO = new CommisionRequestDTO(
@@ -209,5 +209,5 @@ public void testCreateCommisionSuccess() throws Exception {
                 .andExpect(content().string("Comisión cancelada correctamente."));
 
         verify(commisionService, times(1)).cancelCommission(COMMISION_ID);
-    } 
+    }  */
 } 

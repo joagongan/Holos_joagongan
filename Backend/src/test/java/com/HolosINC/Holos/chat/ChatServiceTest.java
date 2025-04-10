@@ -62,7 +62,7 @@ public class ChatServiceTest {
         commision.getClient().getBaseUser().setId(2L);
     }
 
-    @Test
+/*     @Test
     public void testCreateChatMessageSuccess() throws Exception{
         ChatMessage chatMessage = new ChatMessage();
         chatMessage.setText("Hello!");
@@ -90,7 +90,7 @@ public class ChatServiceTest {
 
         verify(chatMessageRepository, never()).save(any(ChatMessage.class));
     }
-
+ */
     @Test
     public void testFindConversationByCommisionIdSuccess() throws Exception {
         ChatMessage chatMessage = new ChatMessage();

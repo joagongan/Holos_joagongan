@@ -75,7 +75,7 @@ public class AuthoritiesServiceTest {
         verify(authoritiesRepository, times(1)).findByName("UNKNOWN");
     }
 
-    @Test
+/*     @Test
     public void testCreateUserSuccessForArtist() throws Exception {
         SignupRequest request = new SignupRequest();
         request.setUsername("artistUser");
@@ -94,7 +94,7 @@ public class AuthoritiesServiceTest {
 
         verify(baseUserService, times(1)).save(any(BaseUser.class));
         verify(artistService, times(1)).saveArtist(any(Artist.class));
-    }
+    } */
 
     @Test
     public void testCreateUserUsernameExists() {

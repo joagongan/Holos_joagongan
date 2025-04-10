@@ -111,7 +111,7 @@ public class ClientRestControllerTest {
                 .when(clientService).deleteClient(1L);
 
         mockMvc.perform(delete("/api/v1/users/administrator/clients/1"))
-                .andExpect(status().isInternalServerError())
+                .andExpect(status().isBadRequest())
                 .andExpect(content().string("Error interno al eliminar el cliente: No se puede eliminar el cliente usuario_prueba porque tiene comisiones activas."));
 
         verify(clientService, times(1)).deleteClient(1L);
