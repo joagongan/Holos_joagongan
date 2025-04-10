@@ -137,7 +137,7 @@ public class PremiumSubscriptionServiceTest {
             premiumSubscriptionService.cancelSubscription();
             fail("Se esperaba una excepción indicando que el usuario no tiene una suscripción activa");
         } catch (Exception e) {
-            assertEquals("Este usuario no es propietario de esta suscripción", e.getMessage());
+            assertEquals("Este usuario no tiene una suscripción asociada", e.getMessage());
         }
     }
 
