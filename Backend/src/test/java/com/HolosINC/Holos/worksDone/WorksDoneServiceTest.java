@@ -52,7 +52,7 @@ public class WorksDoneServiceTest {
 
     // 1) createWorksDone
     @Test
-    public void testCreateWorksDone_Success() {
+    public void testCreateWorksDone_Success() throws Exception {
         when(worksDoneRepository.save(any(WorksDone.class))).thenReturn(worksDone);
 
         WorksDone result = worksDoneService.createWorksDone(worksDone);

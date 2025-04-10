@@ -51,6 +51,10 @@ public class StatusKanbanOrderService {
     }
 
     @Transactional
+    public StatusKanbanOrder createStatusKanbanOrder(StatusKanbanOrder statusKanbanOrder) {
+        return statusKanbanOrderRepository.save(statusKanbanOrder);
+    }
+
     public StatusKanbanOrder addStatusToKanban(StatusKanbanCreateDTO dto) throws Exception {
         StatusKanbanOrder statusKanbanOrder = new StatusKanbanOrder();
         BeanUtils.copyProperties(dto, statusKanbanOrder);
@@ -73,15 +77,56 @@ public class StatusKanbanOrderService {
     public void updateStatusKanban(StatusKanbanUpdateDTO dto) {
         StatusKanbanOrder sk = statusKanbanOrderRepository.findById(dto.getId().intValue())
             .orElseThrow(() -> new ResourceNotFoundException("StatusKanbanOrder", "id", dto.getId()));
-    
         if (commisionService.isStatusKanbanInUse(sk)) {
             throw new BadRequestException("No se puede modificar un estado que está asignado a una o más comisiones.");
         }
+
     
         BeanUtils.copyProperties(dto, sk, "id");
     
         try {
             statusKanbanOrderRepository.save(sk);
+        } catch (DataIntegrityViolationException e) {
+            throw new BadRequestException("Ya existe otro estado con ese nombre u orden para este artista.");
+        }
+    }
+    
+    @Transactional
+    public StatusKanbanOrder updateStatusKanbanOrder(StatusKanbanOrder statusKanbanOrder) {
+        return statusKanbanOrderRepository.save(statusKanbanOrder);
+    }
+
+    @Transactional
+    public StatusKanbanOrder updateKanban(int id, String color, String description, String nombre) throws Exception {
+        StatusKanbanOrder sk = statusKanbanOrderRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("StatusKanbanOrder", "id", id));
+        sk.setColor(color);
+        sk.setDescription(description);
+        sk.setName(nombre);
+        return statusKanbanOrderRepository.save(sk);
+    }
+
+    @Transactional
+    public StatusKanbanOrder updateOrder(Long id, Integer order) throws Exception{
+        StatusKanbanOrder statusKanban = statusKanbanOrderRepository.findById(id.intValue())
+                .orElseThrow(() -> new ResourceNotFoundException("StatusKanbanOrder", "id", id));
+        
+        Artist artist = artistService.findArtist(userService.findCurrentUser().getId());
+        List<StatusKanbanOrder> kanban = statusKanbanOrderRepository.findByArtistIdOrderByOrderAsc(artist.getId());
+
+        if (order <= 0 || kanban.size() < order)
+            throw new IllegalArgumentException("El orden proporcionado no es válido. Debe estar entre 1 y " + kanban.size());
+
+        kanban.remove(statusKanban);
+        kanban.add(order - 1, statusKanban);
+
+        for(int i=1; i<=kanban.size(); i++) {
+            kanban.get(i - 1).setOrder(-i);
+        }
+    
+        try {
+            statusKanbanOrderRepository.save(statusKanban);
+            return statusKanban;
         } catch (DataIntegrityViolationException e) {
             throw new BadRequestException("Ya existe otro estado con ese nombre u orden para este artista.");
         }

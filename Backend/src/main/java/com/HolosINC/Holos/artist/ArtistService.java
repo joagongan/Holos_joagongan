@@ -4,11 +4,11 @@ import java.util.Optional;
 import java.nio.file.AccessDeniedException;
 import java.util.Collections;
 import java.util.List;
+
 import com.HolosINC.Holos.Category.ArtistCategory;
 import com.HolosINC.Holos.Category.ArtistCategoryRepository;
 import com.HolosINC.Holos.Kanban.StatusKanbanOrder;
 import com.HolosINC.Holos.Kanban.StatusKanbanOrderService;
-import com.HolosINC.Holos.auth.AuthoritiesRepository;
 import com.HolosINC.Holos.commision.Commision;
 import com.HolosINC.Holos.commision.CommisionRepository;
 import com.HolosINC.Holos.commision.StatusCommision;
@@ -25,14 +25,14 @@ import org.springframework.transaction.annotation.Transactional;
 public class ArtistService {
 
 	private final ArtistRepository artistRepository;
-	private BaseUserRepository baseUserRepository;
+	private final BaseUserRepository baseUserRepository;
 
-	private CommisionRepository commisionRepository;
-	private StatusKanbanOrderService statusKanbanOrderService;
-	private ArtistCategoryRepository artistCategoryRepository;
+	private final CommisionRepository commisionRepository;
+	private final StatusKanbanOrderService statusKanbanOrderService;
+	private final ArtistCategoryRepository artistCategoryRepository;
 
 	@Autowired
-	public ArtistService(ArtistRepository artistRepository, BaseUserRepository baseUserRepository, AuthoritiesRepository authoritiesRepository, CommisionRepository commisionRepository, @Lazy StatusKanbanOrderService statusKanbanOrderService, ArtistCategoryRepository artistCategoryRepository) {
+	public ArtistService(ArtistRepository artistRepository, BaseUserRepository baseUserRepository, CommisionRepository commisionRepository, @Lazy StatusKanbanOrderService statusKanbanOrderService, ArtistCategoryRepository artistCategoryRepository) {
 		this.artistRepository = artistRepository;
 		this.baseUserRepository = baseUserRepository;
 		this.commisionRepository = commisionRepository;
@@ -53,7 +53,7 @@ public class ArtistService {
 	}
 
 	@Transactional(readOnly = true)
-	public Artist findArtistByUserId(Long artistId) throws Exception {
+	public Artist findArtistByUserId(Long artistId) throws Exception{
 		return artistRepository.findByUserId(artistId)
 				.orElseThrow(() -> new ResourceNotFoundException("Artist", "id", artistId));
 	}

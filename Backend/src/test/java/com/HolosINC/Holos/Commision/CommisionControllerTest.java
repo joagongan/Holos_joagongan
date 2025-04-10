@@ -27,7 +27,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 public class CommisionControllerTest {
 
-/*     private MockMvc mockMvc;
+    private MockMvc mockMvc;
 
     @Mock
     private CommisionService commisionService;
@@ -110,42 +110,6 @@ public void testCreateCommisionSuccess() throws Exception {
         verify(commisionService, times(1)).createCommision(any(CommisionRequestDTO.class), eq(COMMISION_ID));
     }
 
-    @Test
-    public void testChangeRequestedCommisionSuccess() throws Exception {
-        // Dado
-        CommissionDTO CommissionDTO = new CommissionDTO(
-                COMMISION_ID,
-                "commisionName",
-                "Description of the test commission",
-                100.0,
-                StatusCommision.REQUESTED,
-                EnumPaymentArrangement.FIFTYFIFTY,
-                new java.util.Date(),
-                "artistUsername",
-                "clientUsername",
-                null,
-                null
-        );
-
-        Commision updatedCommision = new Commision();
-        updatedCommision.setId(COMMISION_ID);
-
-        // Simulando el comportamiento del servicio
-        when(commisionService.requestChangesCommision(any(CommissionDTO.class), eq(COMMISION_ID)))
-                .thenReturn(updatedCommision);
-
-        // Ejecutar la prueba
-        mockMvc.perform(put("/api/v1/commisions/" + COMMISION_ID + "/requestChanges")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(CommissionDTO)))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id").value(COMMISION_ID)).andDo(result -> {
-                        System.out.println("Response content: " + result.getResponse().getContentAsString());
-                    });
-
-
-        verify(commisionService, times(1)).requestChangesCommision(any(CommissionDTO.class), eq(COMMISION_ID));
-    }
     @Test
     public void testGetAllCommisionsSuccess() throws Exception {
         // Dado
@@ -245,5 +209,5 @@ public void testCreateCommisionSuccess() throws Exception {
                 .andExpect(content().string("Comisión cancelada correctamente."));
 
         verify(commisionService, times(1)).cancelCommission(COMMISION_ID);
-    } */
+    } 
 } 

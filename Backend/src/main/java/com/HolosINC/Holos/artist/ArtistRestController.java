@@ -54,6 +54,7 @@ class ArtistRestController {
             Artist artist = artistService.findArtist(id);
             ArtistDTO artistDTO = EntityToDTOMapper.toArtistDTO(artist);
             return ResponseEntity.ok().body(artistDTO);
+
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(new MessageResponse(e.getMessage()));
         }
@@ -61,21 +62,21 @@ class ArtistRestController {
 
     
     @DeleteMapping("/administrator/artists/{id}")
-    public ResponseEntity<MessageResponse> deleteArtist(@PathVariable Long id) {
+    public ResponseEntity<?> deleteArtist(@PathVariable Long id) {
         try {
             artistService.deleteArtist(id);
             return ResponseEntity.ok().body(new MessageResponse("Artista eliminado con exito"));
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(new MessageResponse(e.getMessage()));
+            return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
 
 	@GetMapping(value = "username/{username}")
 	@Operation(summary = "Get artist", description = "Retrieve a list of all artists")
-    public ResponseEntity<MessageResponse> findByUsername(@PathVariable("username") String username) {
+    public ResponseEntity<?> findByUsername(@PathVariable("username") String username) {
         try{
             Artist artist = artistService.findArtistByUsername(username);
-            return ResponseEntity.ok().body(new MessageResponse(artist.toString()));
+            return ResponseEntity.ok(artist);
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(new MessageResponse(e.getMessage()));
         }

@@ -32,12 +32,19 @@ public class ChatMessageService {
     }
 
     @Transactional
-    public ChatMessage createChatMessage(ChatMessage chatMessage) {
+    public ChatMessage createChatMessage(ChatMessage chatMessage) throws Exception {
         BaseUser user = baseUserService.findCurrentUser();
-        if (user == null) {
-            throw new AccessDeniedException("You must be logged in to send a message");
+        try{
+            if (user == null) {
+                throw new AccessDeniedException("You must be logged in to send a message");
+            }
+            if (chatMessage.getImage().length > 5 * 1024 * 1024) {
+                throw new IllegalArgumentException("The image cannot be larger than 5MB.");
+            }
+            return chatMessageRepository.save(chatMessage);
+        } catch (Exception e) {
+            throw new Exception();
         }
-        return chatMessageRepository.save(chatMessage);
     }
 
     @Transactional(readOnly = true)

@@ -6,7 +6,6 @@ import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.data.util.Pair;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -15,7 +14,6 @@ import com.HolosINC.Holos.Kanban.DTOs.StatusKanbanCreateDTO;
 import com.HolosINC.Holos.Kanban.DTOs.StatusKanbanDTO;
 import com.HolosINC.Holos.Kanban.DTOs.StatusKanbanFullResponseDTO;
 import com.HolosINC.Holos.Kanban.DTOs.StatusKanbanUpdateDTO;
-import com.HolosINC.Holos.Kanban.DTOs.StatusKanbanWithCommisionsDTO;
 import com.HolosINC.Holos.exceptions.BadRequestException;
 import com.HolosINC.Holos.exceptions.ResourceNotFoundException;
 import com.HolosINC.Holos.exceptions.ResourceNotOwnedException;
@@ -56,12 +54,10 @@ public class StatusKanbanOrderController {
 
     @PutMapping("/update")
     @Operation(summary = "Actualiza los atributos de un estado Kanban (nombre, color y descripción)")
-    public ResponseEntity<?> updateStatusKanban(@Valid @RequestBody StatusKanbanUpdateDTO dto) {
+    public ResponseEntity<?> updateStatusKanban(@RequestBody StatusKanbanUpdateDTO dto) {
         try {
             statusKanbanOrderService.updateStatusKanban(dto);
             return ResponseEntity.ok().build();
-        } catch (BadRequestException | ResourceNotFoundException e) {
-            throw e;
         } catch (Exception e) {
             throw new BadRequestException("Error inesperado al actualizar el estado Kanban: " + e.getMessage());
         }

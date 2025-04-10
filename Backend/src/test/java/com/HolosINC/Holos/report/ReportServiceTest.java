@@ -70,7 +70,7 @@ public class ReportServiceTest {
     }
 
 @Test
-public void testCreateReportSuccess() {
+public void testCreateReportSuccess() throws Exception {
     // Crear el DTO del reporte
     ReportDTO reportDTO = new ReportDTO("Inappropriate Content", "This artwork violates our policy", WORK_ID, "Policy Violation");
 
@@ -111,8 +111,8 @@ public void testCreateReportSuccess() {
     verify(reportRepository, times(1)).save(any(Report.class));
 }
 
-/* @Test
-public void testCreateReportAlreadyReported() {
+@Test
+public void testCreateReportAlreadyReported() throws Exception {
     // Paso 1: Crear el DTO del reporte (el primero)
     ReportDTO reportDTO = new ReportDTO("Inappropriate Content", "This artwork violates our policy", WORK_ID, "Policy Violation");
 
@@ -164,9 +164,9 @@ public void testCreateReportAlreadyReported() {
 
     // Verificar que se haya llamado al método existsByMadeByIdAndWorkIdAndReportTypeId con los parámetros correctos
     verify(reportRepository, times(1)).existsByMadeByIdAndWorkIdAndReportTypeId(USER_ID, WORK_ID, reportType.getId());
-} */
+} 
 @Test
-public void testAcceptReportSuccess() {
+public void testAcceptReportSuccess() throws Exception {
     // Mockear el reporte y su aceptación
     Report report = new Report();
     report.setId(REPORT_ID);
@@ -208,7 +208,7 @@ public void testAcceptReportInvalidStatus() {
 
 
 @Test
-public void testRejectReportSuccess() {
+public void testRejectReportSuccess() throws Exception {
     // Crear el reporte con estado PENDING
     Report report = new Report();
     report.setId(REPORT_ID);
@@ -229,7 +229,7 @@ public void testRejectReportSuccess() {
 }
 
     @Test
-    public void testDeleteReportSuccess() {
+    public void testDeleteReportSuccess() throws Exception {
         // Mockear el reporte con estado REJECTED
         Report report = new Report();
         report.setId(REPORT_ID);

@@ -79,7 +79,7 @@ class ClientRestController {
         // Captura específicamente el error de violación de restricción de clave foránea
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("No se puede eliminar el cliente porque tiene registros relacionados en otras partes del sistema.");
     } catch (Exception e) {
-        return ResponseEntity.internalServerError().body("Error interno al eliminar el cliente: " + e.getMessage());
+        return ResponseEntity.badRequest().body("Error interno al eliminar el cliente: " + e.getMessage());
     }
     }
 }
