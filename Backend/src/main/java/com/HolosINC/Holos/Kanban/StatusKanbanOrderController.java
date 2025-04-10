@@ -54,7 +54,7 @@ public class StatusKanbanOrderController {
 
     @PutMapping("/update")
     @Operation(summary = "Actualiza los atributos de un estado Kanban (nombre, color y descripción)")
-    public ResponseEntity<?> updateStatusKanban(@Valid @RequestBody StatusKanbanUpdateDTO dto) {
+    public ResponseEntity<?> updateStatusKanban(@RequestBody StatusKanbanUpdateDTO dto) {
         try {
             statusKanbanOrderService.updateStatusKanban(dto);
             return ResponseEntity.ok().build();
