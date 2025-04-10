@@ -262,11 +262,12 @@
 			<version>0.8.8</version> <!-- Usa la versión más reciente -->
 			<configuration>
 			<includes>
-				<include>**/src/main/java/com/HolosINC/Holos/**/*Service.java</include> <!-- Incluye todos los archivos que terminen en Service.java -->
-				<include>**/src/main/java/com/HolosINC/Holos/**/*Controller.java</include> <!-- Incluye todos los archivos que terminen en Controller.java -->
+				<include>**/*Controller.java</include> <!-- Todos los Controller.java en subdirectorios -->
+				<include>**/*Service.java</include> <!-- Todos los Service.java en subdirectorios -->
+				<include>**/src/main/java/com/HolosINC/Holos/client/ClientService.java</include> <!-- Todos los Service.java en subdirectorios -->
 			</includes>
 			</configuration>
-
+			
 				<executions>
 					<execution>
 					<id>prepare-agent</id> <!-- Asigna un id único -->
