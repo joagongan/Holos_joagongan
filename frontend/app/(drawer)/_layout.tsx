@@ -53,7 +53,6 @@ export default function DrawerLayout() {
         <Drawer.Screen name="kanban/index" options={{ drawerLabel: "Encargos",title: "🎨 Mis encargos", drawerIcon: () => <Text style={{ fontSize: 22 }}>🎨</Text>, drawerItemStyle: { display: isArtist ? 'flex' : 'none', height: isArtist ? 'auto' : 0 } }} />
         <Drawer.Screen name="admin/index" options={{ drawerLabel: "Panel Admin", drawerIcon: () => <Text style={{ fontSize: 22 }}>⚙️</Text>, drawerItemStyle: { display: isAdmin ? 'flex' : 'none', height: isAdmin ? 'auto' : 0 } }} />
         <Drawer.Screen name="commissions/index" options={{ drawerLabel: "Pedidos", title:"📦 Mis pedidos", drawerIcon: () => <Text style={{ fontSize: 22 }}>📦</Text>, drawerItemStyle: { display: isArtist || isClient ? 'flex' : 'none', height: isArtist || isClient ? 'auto' : 0 } }} />
-        <Drawer.Screen name="chats/chat" options={{drawerLabel: "Mis Chats",title: " Mis Chats",drawerIcon: () => <Text style={{ fontSize: 22 }}>💬</Text>,drawerItemStyle: {display: isAuthenticated ? "flex" : "none",height: isAuthenticated ? "auto" : 0,},}}/>
         <Drawer.Screen name="work/uploadNewWorkArtist" options={{ drawerLabel: "Subir obra", title:"  Subir obra", drawerIcon: () => <Text style={{ fontSize: 22 }}>⬆️</Text>, drawerItemStyle: { display: isArtist ? 'flex' : 'none', height: isArtist ? 'auto' : 0 } }} />
       </Drawer>
       )}
