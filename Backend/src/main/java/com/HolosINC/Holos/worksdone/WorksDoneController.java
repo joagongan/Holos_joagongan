@@ -150,8 +150,8 @@ public class WorksDoneController {
         }
     }
 
-    @GetMapping("/artist/{artistId}")
-    public ResponseEntity<?> getWorksDoneByArtist(@PathVariable Long artistId) {
+    @GetMapping("/artist/id/{artistId}")
+    public ResponseEntity<?> getWorksDoneByArtistId(@PathVariable Long artistId) {
         try{
             Artist artist = artistService.findArtist(artistId);
             List<WorksDone> works = worksDoneService.getWorksDoneByArtist(artist);
