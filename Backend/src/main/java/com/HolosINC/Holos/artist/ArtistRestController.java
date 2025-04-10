@@ -62,12 +62,12 @@ class ArtistRestController {
 
     
     @DeleteMapping("/administrator/artists/{id}")
-    public ResponseEntity<MessageResponse> deleteArtist(@PathVariable Long id) {
+    public ResponseEntity<?> deleteArtist(@PathVariable Long id) {
         try {
             artistService.deleteArtist(id);
             return ResponseEntity.ok().body(new MessageResponse("Artista eliminado con exito"));
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(new MessageResponse(e.getMessage()));
+            return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
 

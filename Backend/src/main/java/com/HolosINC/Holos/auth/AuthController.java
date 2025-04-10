@@ -27,11 +27,11 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.HolosINC.Holos.auth.payload.request.LoginRequest;
 import com.HolosINC.Holos.auth.payload.request.SignupRequest;
+import com.HolosINC.Holos.auth.payload.request.UpdateRequest;
 import com.HolosINC.Holos.auth.payload.response.JwtResponse;
 import com.HolosINC.Holos.auth.payload.response.MessageResponse;
 import com.HolosINC.Holos.configuration.jwt.JwtUtils;
 import com.HolosINC.Holos.configuration.service.UserDetailsImpl;
-import com.HolosINC.Holos.model.BaseUserService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -43,21 +43,16 @@ import org.springframework.security.authentication.BadCredentialsException;
 @Tag(name = "Authentication", description = "The Authentication API based on JWT")
 public class AuthController {
 	private final AuthenticationManager authenticationManager;
-	private final BaseUserService baseUserService;
 	private final JwtUtils jwtUtils;
 	private final AuthoritiesService authService;
-	@SuppressWarnings("unused")
-	private final PasswordEncoder encoder;
-
+	
 	@Autowired
-	public AuthController(AuthenticationManager authenticationManager, BaseUserService baseUserService,
+	public AuthController(AuthenticationManager authenticationManager,
 			JwtUtils jwtUtils, PasswordEncoder encoder,
 			AuthoritiesService authService) {
-		this.baseUserService = baseUserService;
 		this.jwtUtils = jwtUtils;
 		this.authenticationManager = authenticationManager;
 		this.authService = authService;
-		this.encoder = encoder;
 	}
 
 	@PostMapping("/signin")
@@ -81,7 +76,7 @@ public class AuthController {
 			return ResponseEntity.badRequest().body("Fallo de autenticacion!");
 		}
 	}
-
+	
 	@GetMapping("/validate")
 	public ResponseEntity<Boolean> validateToken(@RequestParam String token) {
 		Boolean isValid = jwtUtils.validateJwtToken(token);
@@ -89,7 +84,7 @@ public class AuthController {
 	}
 
 	@PostMapping(value = "/signup", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-	public ResponseEntity<?> registerUser(
+	public ResponseEntity<MessageResponse> registerUser(
 			@RequestPart("user") String signupRequestJson,
 			@RequestPart(value = "imageProfile", required = false) MultipartFile imageProfile,
 			@RequestPart(value = "tableCommissionsPrice", required = false) MultipartFile tableCommissionsPrice) {
@@ -98,12 +93,11 @@ public class AuthController {
 			ObjectMapper objectMapper = new ObjectMapper();
 			SignupRequest signupRequest = objectMapper.readValue(signupRequestJson, SignupRequest.class);
 
-			if (imageProfile != null && !imageProfile.isEmpty()) {
+			if (imageProfile != null && !imageProfile.isEmpty()) 
 				signupRequest.setImageProfile(imageProfile);
-			}
 
 			if (tableCommissionsPrice != null && !tableCommissionsPrice.isEmpty()) {
-				signupRequest.setTableCommissionsPrice(tableCommissionsPrice);
+				signupRequest.setTableCommisionsPrice(tableCommissionsPrice);
 			}
 
 			authService.createUser(signupRequest);
@@ -113,26 +107,36 @@ public class AuthController {
 		}
 	}
 
-	@PutMapping("/update")
-	public ResponseEntity<MessageResponse> updateUser(@Valid @RequestBody SignupRequest signUpRequest) {
-		try{
-			if (baseUserService.existsUser(signUpRequest.getUsername()).equals(false)) {
-				return ResponseEntity.badRequest().body(new MessageResponse("Error: Usuario no encontrado!"));
-			}
-			authService.updateUser(signUpRequest);
-			return ResponseEntity.ok(new MessageResponse("Usuario editado con exito!"));
+	@PutMapping(
+			path = "/update", 
+			consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+	public ResponseEntity<MessageResponse> updateUser(@RequestPart("updateUser") String updateRequestform,
+			@RequestPart(value = "imageProfile", required = false) MultipartFile imageProfile,
+			@RequestPart(value = "tableCommissionsPrice", required = false) MultipartFile tableCommissionsPrice) {
+		try {
+			ObjectMapper objectMapper = new ObjectMapper();
+			UpdateRequest updateRequest = objectMapper.readValue(updateRequestform, UpdateRequest.class);
+
+			if (imageProfile != null && !imageProfile.isEmpty())
+				updateRequest.setImageProfile(imageProfile);
+
+			if (tableCommissionsPrice != null && !tableCommissionsPrice.isEmpty())
+				updateRequest.setTableCommissionsPrice(tableCommissionsPrice);
+
+			authService.updateUser(updateRequest);
+			return ResponseEntity.ok().body(new MessageResponse("succesfully updated: " + updateRequest.getUsername()));
 		} catch (Exception e) {
 			return ResponseEntity.badRequest().body(new MessageResponse(e.getMessage()));
 		}
 	}
-
+	
 	@DeleteMapping("/delete/{id}")
 	public ResponseEntity<MessageResponse> deleteUser(@RequestParam Long id) {
 		try {
 			authService.deleteUser(id);
 			return ResponseEntity.ok(new MessageResponse("User deleted successfully!"));
-		} catch (Exception e) {
-			return ResponseEntity.badRequest().body(new MessageResponse("Error: " + e.getMessage()));
+		}catch (Exception e) {
+			return ResponseEntity.badRequest().body(new MessageResponse(e.getMessage()));
 		}
 	}
 

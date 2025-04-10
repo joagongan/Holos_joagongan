@@ -26,8 +26,9 @@ export interface Artist {
   name: string;
   username: string;
   email: string;
-  subscriptionId: string | null;
-  imageProfile: string;
+  description: string;
+  location: string;
+  subscriptionId: string|null;
 }
 
 export type User = Client | Artist;
@@ -90,10 +91,37 @@ export interface Category {
 }
 
 export interface HistoryCommisionsDTO {
-  requested: CommissionDTO[];
-  accepted: CommissionInProgress[];
-  history: CommissionDTO[];
+  requested: CommissionProtected[];
+
+  accepted: CommissionDTO[];
+
+  history: CommissionProtected[];
+
   error: string;
+}
+
+export interface CommissionProtected {
+  image?: string;
+
+  imageProfile?: string;
+
+  id: number;
+
+  name: string;
+
+  description: string;
+
+  price: number;
+
+  status: StatusCommission;
+
+  paymentArrangement: PaymentArrangement;
+
+  milestoneDate: Date;
+
+  artistUsername: string;
+
+  clientUsername: string;
 }
 
 export interface CommissionInProgress {

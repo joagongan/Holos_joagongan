@@ -23,7 +23,7 @@ public interface WorkRepository extends JpaRepository<Work, Long>{
     @Query("SELECT new com.HolosINC.Holos.search.DTOs.SearchWorkDTO(w) FROM WorksDone w WHERE w.artist.id = :artistId")
     Page<SearchWorkDTO> searchByArtist(Integer artistId, Pageable pageable);
 
-    @Query("SELECT w FROM WorksDone w WHERE LOWER(w.name) LIKE LOWER(CONCAT('%', :query, '%')) " +
+    @Query("SELECT new com.HolosINC.Holos.search.DTOs.SearchWorkDTO(w) FROM WorksDone w WHERE LOWER(w.name) LIKE LOWER(CONCAT('%', :query, '%')) " +
        "AND (:minPrice IS NULL OR w.price >= :minPrice) " +
        "AND (:maxPrice IS NULL OR w.price <= :maxPrice)")
     Page<SearchWorkDTO> searchByTitleAndPrice(String query, Double minPrice, Double maxPrice, Pageable pageable);
