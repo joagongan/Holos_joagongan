@@ -1,5 +1,7 @@
 package com.HolosINC.Holos.commision.DTOs;
 
+import com.HolosINC.Holos.commision.Commision;
+
 import lombok.Getter;
 import lombok.Setter;
 
@@ -29,5 +31,17 @@ public class ClientCommissionDTO {//Cambio Backend: he añadido id y el client u
         this.clientUsername = clientUsername; 
         this.imageProfileArtist = imageProfileArtist;
         this.imageProfileClient = imageProfileClient;
+    }
+
+    public ClientCommissionDTO(Commision c) {
+        this.id = c.getId();
+        this.image = c.getImage() != null ? c.getImage() : new byte[0];
+        this.name = c.getName();
+        this.artistUsername = c.getArtist().getBaseUser().getUsername();
+        this.currentStep = c.getStatusKanbanOrder() != null ? c.getStatusKanbanOrder().getOrder() : null;
+        this.totalSteps = 0;
+        this.clientUsername = c.getClient().getBaseUser().getUsername(); 
+        this.imageProfileArtist = c.getArtist().getBaseUser().getImageProfile();
+        this.imageProfileClient = c.getClient().getBaseUser().getImageProfile();
     }
 }

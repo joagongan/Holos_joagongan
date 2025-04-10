@@ -93,7 +93,7 @@ export interface Category {
 export interface HistoryCommisionsDTO {
   requested: CommissionProtected[];
 
-  accepted: CommissionInProgress[];
+  accepted: CommissionDTO[];
 
   history: CommissionProtected[];
 

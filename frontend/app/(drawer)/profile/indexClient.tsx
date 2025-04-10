@@ -13,7 +13,7 @@ import { useFonts } from "expo-font";
 import { updateUserClient } from "@/src/services/clientApi";
 import popUpMovilWindows from "@/src/components/PopUpAlertMovilWindows";
 import { clientUser } from "@/src/constants/user";
-import  styles  from "@/src/styles/userProfile.styles";
+import { desktopStyles as styles } from "@/src/styles/userProfile.styles";
 
 
 const validationSchema = Yup.object().shape({
